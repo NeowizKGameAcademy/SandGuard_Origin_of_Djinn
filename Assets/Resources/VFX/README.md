@@ -1,6 +1,7 @@
 # VFX
 
-코드로 생성하는 파티클 프리팹 모음. 근거 문서: `Docs/SandGuard_VFX_제작계획_v0.2.md`.
+코드로 생성하는 파티클 프리팹 모음. 근거 문서: `Docs/plan/SandGuard_VFX_제작계획_v0.2.md`.
+폴더는 `Assets/Resources/VFX`이고 빌더가 빌려 쓰는 팩도 `Assets/Resources/` 아래에 있다 (`VfxBuildKit`의 경로 상수).
 프리팹은 손으로 고치지 말고 `Editor/` 빌더를 수정한 뒤 다시 빌드한다(GUID 유지, 덮어쓰기 안전).
 
 ## 빌드
@@ -43,6 +44,30 @@ Unity.exe -batchmode -projectPath . -executeMethod DesertTower.VFX.Editor.VfxBat
 | `VFX_Wave_Clear` | #27 | 코어 바닥 | 없음 |
 | `VFX_Torch` | #36 | 횃불 머리 | 루프. 프리팹 1개 반복 배치 |
 | `VFX_Floating_Dust` | #38 | 레벨 중심 | 루프. 20×6×20 상자 안에서 부유. 씬에 1개 |
+| `VFX_Player_Hit` | #8 | 적중점, +Z가 표면 바깥 | `VfxHitReaction.HitPrefab` |
+| `VFX_Player_Hit_Screen` | #8 | 위치 무관 (오버레이 캔버스) | `VfxHitReaction.ScreenPrefab`. 가장자리 빨강 비네트 0.35s |
+| `VFX_Enemy_Hit` | #8 | 적중점 | `VfxHitReaction.HitPrefab`. 조각 색은 `VfxTint` |
+| `VFX_Staff_Cast` | #1 | 지팡이 끝, 로컬 +Z가 발사 방향 | `VfxOneShot.Fire()` ← `PlayerVisuals.onFired` |
+| `VFX_Jump_Dust` · `VFX_Land_Dust` | — | 발밑 | `VfxCharacterMovement` (CharacterController 접지 변화로 자동) |
+| `VFX_AirJump_Ring` | #6 | 공중의 발 위치 | `VfxCharacterMovement.AirJumpPrefab` |
+| `VFX_Footstep_Sand` | #24 | 발 위치에 자식으로 | 루프. Rate over Distance. 붙어 있는 `VfxFootstepDust`가 속도·접지로 켜고 끈다 |
+| `VFX_Wall_Hit` | — | 적중점, +Z가 표면 법선 | `VfxHitReaction.HitPrefab` (벽·타워·코어) |
+| `VFX_Wall_Destroy` | — | 경계 상자 바닥 중심 | `VfxHitReaction.DeathPrefab` + `FitDeathToBounds` → `VfxVolume.Fit(bounds)`가 벽 크기로 늘린다 |
+
+## 전투 연결 컴포넌트 (`Runtime/`)
+
+| 컴포넌트 | 역할 |
+|---|---|
+| `VfxHitReaction` | `IDamageEvents.Damaged` → 피격 프리팹·흰색 플래시(`_BaseColor` MPB)·움찔·화면 프리팹·카메라 셰이크. `ILifeState.Died` → 사망 프리팹(크기 맞춤·틴트·흡수 대상). 적·플레이어·벽·코어 공용 |
+| `VfxCameraShake` | `VfxCameraShake.Shake(강도, 시간)`. Camera.main에 자동 부착. 카메라 리그가 매 프레임 위치를 다시 써도 동작 |
+| `VfxCharacterMovement` | CharacterController의 접지·속도 변화로 점프·공중 점프·착지 프리팹 스폰 |
+| `VfxFootstepDust` | 발자국 루프의 방출을 수평 속도·접지 레이캐스트로 켜고 끔 |
+| `VfxOneShot` | UnityEvent용 1회 스폰기 (`Fire()`), 기준 Transform의 위치·방향 사용 |
+| `VfxVolume` | 부피형 이펙트를 경계 상자 크기에 맞추고 파편 수를 부피 비율로 늘림 |
+| `VfxAfterimage` | 대시 잔상. `Play(대시 시간)`마다 메시 스냅샷을 틸 실루엣으로 남김 (대시 구현 시 호출) |
+| `VfxFadeOut` | CanvasGroup 페이드 후 제거 (비네트) |
+
+`DesertTower > VFX > Wire Combat VFX Into Demo Assets`가 위 컴포넌트를 `Assets/Enemy/Generated/Enemy.prefab`, `Assets/Player/Generated/Player.prefab`, `EnemyTest.unity`의 표적에 꽂는다. 여러 번 실행해도 안전하다. 데모 프리팹을 다시 생성했으면 다시 실행한다.
 
 임팩트형(플래시·코어·링·파편·불씨·먼지 + 라이트)은 전부 `ImpactVfxBuilder`의 `ImpactSpec` 하나로 정의된다.
 새 임팩트가 필요하면 스펙을 하나 더 만들고 `ImpactVfxBuilder.All()`에 추가하면 `Build All`·프리뷰가 같이 돈다.
@@ -69,4 +94,5 @@ Unity.exe -batchmode -projectPath . -executeMethod DesertTower.VFX.Editor.VfxBat
 
 ## 아직 없는 것 (계획서 §5)
 
-카메라 셰이크·히트스톱·비네트 스크립트, Shader Graph 4종(링·디졸브·빔·히트플래시), 오브젝트 풀 `VfxService`.
+히트스톱, Shader Graph 4종(링·디졸브·빔·히트플래시 — 히트플래시는 현재 MPB `_BaseColor`로 대체), 오브젝트 풀 `VfxService`.
+셰이크·비네트는 `VfxCameraShake`·`VFX_Player_Hit_Screen`으로 들어왔다. Feel을 도입하면 `VfxHitReaction`의 플래시·움찔·셰이크 부분만 MMF_Player 호출로 바꾸면 된다.

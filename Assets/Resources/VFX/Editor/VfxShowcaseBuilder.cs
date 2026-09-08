@@ -11,7 +11,7 @@ using UnityEngine.SceneManagement;
 namespace DesertTower.VFX.Editor
 {
     /// <summary>
-    /// Builds Assets/VFX/Scenes/VFX_Showcase.unity: every VFX prefab on its own station, with the
+    /// Builds Assets/Resources/VFX/Scenes/VFX_Showcase.unity: every VFX prefab on its own station, with the
     /// props each one needs (a target for the XP cubes, a dummy enemy to burn, a facility that rises).
     /// Open it and press Play — VfxShowcaseStation keeps everything cycling so the scripted parts
     /// (attractor, spin, flicker, scale-in, core stability, beams) can be seen, not just the particles.
@@ -165,6 +165,54 @@ namespace DesertTower.VFX.Editor
             new Exhibit { Label = "18 Floating Dust (whole scene)", Mode = VfxShowcaseStation.Mode.Loop, Prefab = LoopVfxBuilder.FloatingDustPath, Dress = st =>
             {
                 st.transform.position = new Vector3(0f, 0f, SpacingZ * 1.5f); // centre of the grid
+            }},
+
+            // Row 5: melee combat set
+            new Exhibit { Label = "19 Player Hit", Mode = VfxShowcaseStation.Mode.Replay, Prefab = CombatVfxBuilder.PlayerHitPath, Dress = st =>
+            {
+                Capsule("Player", st.transform.position + new Vector3(0f, 0f, 0.5f));
+                st.transform.position += new Vector3(0f, 1.1f, 0.1f);
+                st.transform.rotation = Quaternion.LookRotation(Vector3.back);
+                st.Interval = 1.6f;
+            }},
+            new Exhibit { Label = "20 Enemy Hit", Mode = VfxShowcaseStation.Mode.Replay, Prefab = CombatVfxBuilder.EnemyHitPath, Dress = st =>
+            {
+                Capsule("Enemy", st.transform.position + new Vector3(0f, 0f, 0.5f));
+                st.transform.position += new Vector3(0f, 1.1f, 0.1f);
+                st.transform.rotation = Quaternion.LookRotation(Vector3.back);
+                st.Interval = 1.4f;
+            }},
+            new Exhibit { Label = "21 Staff Cast", Mode = VfxShowcaseStation.Mode.Replay, Prefab = CombatVfxBuilder.StaffCastPath, Dress = st =>
+            {
+                st.transform.position += new Vector3(-1.2f, 1.2f, 0f);
+                st.transform.rotation = Quaternion.LookRotation(Vector3.right);
+                Box("Staff", st.transform.position + new Vector3(-0.15f, -0.5f, 0f), new Vector3(0.08f, 1.2f, 0.08f));
+                st.Interval = 1.2f;
+            }},
+            new Exhibit { Label = "22 Jump → Air Jump → Land", Mode = VfxShowcaseStation.Mode.Replay, Prefab = CombatVfxBuilder.JumpDustPath, Dress = st =>
+            {
+                st.transform.position += new Vector3(-1.4f, 0f, 0f);
+                st.Interval = 2.4f;
+                var air = new GameObject("Air Jump (mid-air)");
+                air.transform.position = st.transform.position + new Vector3(1.4f, 1.2f, 0f);
+                var st2 = air.AddComponent<VfxShowcaseStation>();
+                st2.Kind = VfxShowcaseStation.Mode.Replay; st2.Prefab = Load(CombatVfxBuilder.AirJumpRingPath); st2.Interval = 2.4f;
+                var land = new GameObject("Land");
+                land.transform.position = st.transform.position + new Vector3(2.8f, 0f, 0f);
+                var st3 = land.AddComponent<VfxShowcaseStation>();
+                st3.Kind = VfxShowcaseStation.Mode.Replay; st3.Prefab = Load(CombatVfxBuilder.LandDustPath); st3.Interval = 2.4f;
+            }},
+            new Exhibit { Label = "23 Wall Hit + Destroy", Mode = VfxShowcaseStation.Mode.Replay, Prefab = CombatVfxBuilder.WallHitPath, Dress = st =>
+            {
+                st.transform.position += new Vector3(-1.2f, 1.0f, 0f);
+                st.transform.rotation = Quaternion.LookRotation(Vector3.back);
+                Box("Wall", st.transform.position + new Vector3(0f, 0f, 0.3f), new Vector3(1.6f, 2f, 0.5f));
+                st.Interval = 1.5f;
+                var destroy = new GameObject("Wall Destroy");
+                destroy.transform.position = st.transform.position + new Vector3(2.6f, -1.0f, 0f);
+                var st2 = destroy.AddComponent<VfxShowcaseStation>();
+                st2.Kind = VfxShowcaseStation.Mode.EnemyDeath; st2.Prefab = Load(CombatVfxBuilder.WallDestroyPath); st2.Interval = 3.5f;
+                st2.TintPalette = new[] { new Color(0.85f, 0.72f, 0.48f), new Color(0.9f, 0.75f, 0.2f) };
             }},
         };
 

@@ -13,7 +13,7 @@ namespace DesertTower.VFX.Editor
     /// </summary>
     public static class VfxBuildKit
     {
-        public const string RootDir = "Assets/VFX";
+        public const string RootDir = "Assets/Resources/VFX";
         public const string TexDir = RootDir + "/Textures";
         public const string MatDir = RootDir + "/Materials";
         public const string PrefabDir = RootDir + "/Prefabs";
@@ -56,15 +56,15 @@ namespace DesertTower.VFX.Editor
         public const string MagicCircleTexPath = TexDir + "/T_VFX_MagicCircle.png";
 
         // ---- Borrowed pack assets (§6: Cartoon FX Remaster FREE, Hovl Magic Effects Pack) ----
-        // Textures are converted into Assets/VFX/Textures at build time (CFXR fire masks carry the shape in
+        // Textures are converted into Assets/Resources/VFX/Textures at build time (CFXR fire masks carry the shape in
         // luminance, not alpha); meshes are referenced in place and fitted by their bounds, so pack units don't matter.
-        public const string CfxrFireAnimPath = "Assets/JMO Assets/Cartoon FX Remaster/CFXR Assets/Graphics/cfxr fire small anim.png";
-        public const string CfxrFlameSteppedPath = "Assets/JMO Assets/Cartoon FX Remaster/CFXR Assets/Graphics/cfxr flamme stepped.png";
-        public const string CfxrSmokeCloudPath = "Assets/JMO Assets/Cartoon FX Remaster/CFXR Assets/Graphics/cfxr smoke cloud x4.png";
-        public const string HovlTorusPath = "Assets/Hovl Studio/Magic effects pack/Models/Torus1.fbx";
-        public const string HovlCrystalPath = "Assets/Hovl Studio/Magic effects pack/Models/Crystal1.fbx";
-        public const string HovlCylinderPath = "Assets/Hovl Studio/Magic effects pack/Models/Cylinder.fbx";
-        public const string HovlMagicCirclePath = "Assets/Hovl Studio/Magic effects pack/Textures/MagicCircle.png";
+        public const string CfxrFireAnimPath = "Assets/Resources/JMO Assets/Cartoon FX Remaster/CFXR Assets/Graphics/cfxr fire small anim.png";
+        public const string CfxrFlameSteppedPath = "Assets/Resources/JMO Assets/Cartoon FX Remaster/CFXR Assets/Graphics/cfxr flamme stepped.png";
+        public const string CfxrSmokeCloudPath = "Assets/Resources/JMO Assets/Cartoon FX Remaster/CFXR Assets/Graphics/cfxr smoke cloud x4.png";
+        public const string HovlTorusPath = "Assets/Resources/Hovl Studio/Magic effects pack/Models/Torus1.fbx";
+        public const string HovlCrystalPath = "Assets/Resources/Hovl Studio/Magic effects pack/Models/Crystal1.fbx";
+        public const string HovlCylinderPath = "Assets/Resources/Hovl Studio/Magic effects pack/Models/Cylinder.fbx";
+        public const string HovlMagicCirclePath = "Assets/Resources/Hovl Studio/Magic effects pack/Textures/MagicCircle.png";
         public const int FireFlipbookTiles = 3;   // 3×3 sheet
         public const int FireFlipbookFrames = 8;  // last cell is empty
 
@@ -113,7 +113,7 @@ namespace DesertTower.VFX.Editor
         {
             var asset = AssetDatabase.LoadAssetAtPath<T>(path);
             if (asset == null)
-                throw new FileNotFoundException($"[VFX] Pack asset missing: {path}. The VFX builders borrow from Cartoon FX Remaster FREE and Hovl Magic Effects Pack (see Assets/VFX/README.md).");
+                throw new FileNotFoundException($"[VFX] Pack asset missing: {path}. The VFX builders borrow from Cartoon FX Remaster FREE and Hovl Magic Effects Pack (see Assets/Resources/VFX/README.md).");
             return asset;
         }
 
@@ -593,7 +593,7 @@ namespace DesertTower.VFX.Editor
         static Texture2D ConvertMaskToAlpha(string sourcePath, string destPath, int posterizeSteps)
         {
             if (!File.Exists(sourcePath))
-                throw new FileNotFoundException($"[VFX] Pack texture missing: {sourcePath} (see Assets/VFX/README.md for the packs the builders borrow from).");
+                throw new FileNotFoundException($"[VFX] Pack texture missing: {sourcePath} (see Assets/Resources/VFX/README.md for the packs the builders borrow from).");
             var src = new Texture2D(2, 2, TextureFormat.RGBA32, false);
             src.LoadImage(File.ReadAllBytes(sourcePath));
             var pixels = src.GetPixels();
@@ -611,7 +611,7 @@ namespace DesertTower.VFX.Editor
 
         static float Posterize(float v, int steps) => Mathf.Round(v * steps) / steps;
 
-        static Texture2D SavePng(Texture2D tex, string path)
+        public static Texture2D SavePng(Texture2D tex, string path)
         {
             File.WriteAllBytes(path, tex.EncodeToPNG());
             Object.DestroyImmediate(tex);
@@ -634,7 +634,7 @@ namespace DesertTower.VFX.Editor
         // ---------------------------------------------------------------------
         static void EnsureFolders()
         {
-            EnsureFolder("Assets", "VFX");
+            EnsureFolder("Assets/Resources", "VFX");
             EnsureFolder(RootDir, "Textures");
             EnsureFolder(RootDir, "Materials");
             EnsureFolder(RootDir, "Prefabs");

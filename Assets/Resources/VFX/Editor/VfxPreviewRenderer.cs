@@ -86,6 +86,15 @@ namespace DesertTower.VFX.Editor
                 Forward = Vector3.right,
             },
             new Job { PrefabPath = BeamVfxBuilder.SummonPillarPath, Times = new[] { 0.1f, 0.3f, 0.55f, 0.9f }, StartPos = Vector3.zero },
+            // ---- combat set ----
+            new Job { PrefabPath = CombatVfxBuilder.PlayerHitPath, Times = new[] { 0.04f, 0.12f, 0.3f, 0.55f }, StartPos = new Vector3(0f, 1f, 0f), Forward = Vector3.back },
+            new Job { PrefabPath = CombatVfxBuilder.EnemyHitPath, Times = new[] { 0.04f, 0.12f, 0.3f, 0.55f }, StartPos = new Vector3(0f, 1f, 0f), Forward = Vector3.back },
+            new Job { PrefabPath = CombatVfxBuilder.StaffCastPath, Times = new[] { 0.04f, 0.12f, 0.25f, 0.4f }, StartPos = new Vector3(-1f, 1.2f, 0f), Forward = Vector3.right },
+            new Job { PrefabPath = CombatVfxBuilder.JumpDustPath, Times = new[] { 0.05f, 0.2f, 0.5f, 0.9f }, StartPos = Vector3.zero },
+            new Job { PrefabPath = CombatVfxBuilder.AirJumpRingPath, Times = new[] { 0.05f, 0.15f, 0.35f, 0.6f }, StartPos = new Vector3(0f, 1.2f, 0f) },
+            new Job { PrefabPath = CombatVfxBuilder.LandDustPath, Times = new[] { 0.05f, 0.2f, 0.5f, 0.9f }, StartPos = Vector3.zero },
+            new Job { PrefabPath = CombatVfxBuilder.WallHitPath, Times = new[] { 0.04f, 0.15f, 0.35f, 0.7f }, StartPos = new Vector3(0f, 1f, 0f), Forward = Vector3.back },
+            new Job { PrefabPath = CombatVfxBuilder.WallDestroyPath, Times = new[] { 0.05f, 0.2f, 0.5f, 1.0f, 1.6f }, StartPos = Vector3.zero },
         };
 
         [MenuItem("DesertTower/VFX/Render Preview Frames (All)")]
