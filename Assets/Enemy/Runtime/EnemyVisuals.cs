@@ -110,6 +110,20 @@ namespace SandGuard.Enemy
             if (target != null) target.localRotation = to;
         }
 
+        /// <summary>풀 재사용: 사망 자세·회전을 풀고 애니메이터를 기본 상태로 되돌린다.</summary>
+        public void ResetForReuse()
+        {
+            CancelAttack();
+            StopAllCoroutines(); swing = null;
+            if (visualRoot != null) visualRoot.localRotation = Quaternion.identity;
+            if (animator != null)
+            {
+                if (HasParameter(dieTrigger, AnimatorControllerParameterType.Trigger)) animator.ResetTrigger(dieTrigger);
+                if (HasParameter(attackTrigger, AnimatorControllerParameterType.Trigger)) animator.ResetTrigger(attackTrigger);
+                animator.Rebind(); animator.Update(0f);
+            }
+        }
+
         void OnDied(DeathInfo info)
         {
             CancelAttack();

@@ -16,11 +16,30 @@ namespace SandGuard.Enemy.Tests
     /// <summary>Mixamo 리깅 몸체·클립·장비가 Enemy 프리팹에서 실제로 움직이는지 확인하고 렌더를 저장한다.</summary>
     public sealed class EnemyArtTests
     {
-        const string Captures = "Docs/model-art/enemy-combat-art-v1/captures";
+        static readonly string Captures = Environment.GetEnvironmentVariable("SANDGUARD_ART_TEST_CAPTURES")
+            ?? "Docs/model-art/enemy-combat-art-v1/captures";
         readonly List<GameObject> objects = new List<GameObject>();
         GameObject Track(GameObject value) { objects.Add(value); return value; }
 
         [SetUp] public void Setup() { Time.timeScale = 1f; }
+
+        [UnityTest] public IEnumerator HammerSwingPlaysFullTakeBeforeReturning()
+        {
+            const string art = "Assets/Enemy/Art/Characters/HammerBrute/HammerBrute";
+            var clip = AssetDatabase.LoadAllAssetsAtPath(art + "_Attack.fbx").OfType<AnimationClip>()
+                .First(c => !c.name.StartsWith("__preview__"));
+            Assert.AreEqual(5.2f, clip.length, .001f, "Use the complete downloaded Heavy Weapon Swing take.");
+            Assert.False(clip.isLooping);
+            var visual = Track(UnityEngine.Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(art + "_CombatVisual.prefab")));
+            var animator = visual.GetComponentInChildren<Animator>();
+            yield return null;
+            animator.Play("Attack", 0, .92f); animator.Update(0f);
+            animator.Update(.02f);
+            Assert.True(animator.GetCurrentAnimatorStateInfo(0).IsName("Attack"));
+            Assert.False(animator.IsInTransition(0), "Do not cut the final ten percent of the swing.");
+            animator.Update(.3f); animator.Update(.1f);
+            Assert.True(animator.GetCurrentAnimatorStateInfo(0).IsName("Locomotion"), "Return after completing the swing.");
+        }
         [UnityTearDown] public IEnumerator Cleanup()
         {
             foreach (var value in objects) if (value != null) UnityEngine.Object.Destroy(value);

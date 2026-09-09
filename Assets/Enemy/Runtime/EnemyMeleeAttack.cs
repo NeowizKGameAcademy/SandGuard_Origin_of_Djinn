@@ -55,6 +55,9 @@ namespace SandGuard.Enemy
             if (visuals != null) visuals.CancelAttack();
         }
 
+        /// <summary>풀 재사용: 쿨다운·기록을 비운다.</summary>
+        public void ResetForReuse() { Cancel(); CooldownRemaining = 0f; HitCount = 0; CombatEnabled = true; }
+
         /// <summary>대상의 충돌체가 사거리 안에 있고 사이를 가리는 것이 없다.</summary>
         public bool IsInRange(ICombatTarget target) => target != null && FindReachable(target) != null;
 

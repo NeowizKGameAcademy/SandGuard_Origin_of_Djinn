@@ -1,4 +1,5 @@
 using SandGuard.Enemy;
+using SandGuard.Waves;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -9,14 +10,17 @@ namespace SandGuard.Integration
     {
         [Tooltip("플레이어의 IHealth/ILifeState 컴포넌트 (PlayerHealth 또는 PlayerCombatTarget)")]
         public MonoBehaviour playerLife;
-        public EnemyStreamSpawner spawner;
+        [Tooltip("비우면 씬에서 찾는다")]
+        public WaveDirector waves;
         public EnemyTestTarget core;
         public bool showCrosshair = true;
+
+        void Awake() { if (waves == null) waves = FindFirstObjectByType<WaveDirector>(); }
 
         void OnGUI()
         {
             GUI.Box(new Rect(16, 16, 470, 150), "SandGuard | Player and Enemy Test");
-            GUI.Label(new Rect(28, 40, 450, 22), "WASD 이동 | 마우스 시점 | Space 점프(2단) | Shift 대시 | 좌클릭 발사 | Esc 커서 해제");
+            GUI.Label(new Rect(28, 40, 450, 22), "WASD 이동 | 마우스 시점 | Space 점프(2단) | Shift 대시 | 좌클릭 발사 | 숫자 키 건설 | Esc 커서 해제");
             var health = playerLife as IHealth;
             var life = playerLife as ILifeState;
             if (health != null)
@@ -27,12 +31,13 @@ namespace SandGuard.Integration
             if (GUI.Button(new Rect(340, 62, 130, 22), "씬 다시 시작")) Restart();
             if (core != null)
                 GUI.Label(new Rect(28, 84, 450, 22), "코어 HP " + Mathf.CeilToInt(core.CurrentHealth) + "/" + Mathf.CeilToInt(core.maxHealth) + (core.State == LifeState.Alive ? "" : "  (파괴됨)"));
-            if (spawner != null)
+            if (waves != null)
             {
-                GUI.Label(new Rect(28, 106, 450, 22), "적 생존 " + spawner.AliveCount + " / 최대 " + spawner.maxAlive + "  누적 " + spawner.TotalSpawned + (spawner.autoSpawn ? "  자동 공급 중" : "  자동 공급 꺼짐"));
-                if (GUI.Button(new Rect(28, 130, 110, 24), "적 추가")) spawner.Spawn();
-                if (GUI.Button(new Rect(144, 130, 110, 24), "적 전부 제거")) spawner.ClearAll();
-                if (GUI.Button(new Rect(260, 130, 130, 24), spawner.autoSpawn ? "자동 공급 끄기" : "자동 공급 켜기")) spawner.autoSpawn = !spawner.autoSpawn;
+                string phase = waves.Phase == GamePhase.Preparation ? "준비 " + Mathf.CeilToInt(waves.PreparationSecondsRemaining ?? 0f) + "초"
+                    : waves.Phase == GamePhase.Combat ? "전투" : waves.Phase.ToString();
+                GUI.Label(new Rect(28, 106, 450, 22), "웨이브 " + waves.WaveNumber + "/" + waves.TotalWaves + "  " + phase
+                    + "  |  남은 등장 " + waves.PendingEnemyCount + "  생존 " + waves.AliveEnemyCount + "  누적 " + waves.SpawnedTotal);
+                if (waves.Phase == GamePhase.Preparation && GUI.Button(new Rect(28, 130, 130, 24), waves.Started ? "준비 건너뛰기" : "웨이브 시작")) waves.SkipPreparation();
             }
             if (showCrosshair) GUI.Label(new Rect(Screen.width / 2f - 5f, Screen.height / 2f - 10f, 20f, 24f), "+");
         }

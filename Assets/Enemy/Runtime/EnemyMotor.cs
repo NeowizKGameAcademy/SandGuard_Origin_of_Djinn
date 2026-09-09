@@ -86,6 +86,17 @@ namespace SandGuard.Enemy
             if (agent != null) agent.enabled = false;
         }
 
+        /// <summary>풀 재사용: 지정 위치에 다시 세우고 이동을 켠다.</summary>
+        public void Enable(Vector3 position)
+        {
+            if (agent == null) agent = GetComponent<NavMeshAgent>();
+            agent.enabled = true;
+            if (NavMesh.SamplePosition(position, out NavMeshHit hit, sampleRadius, NavMesh.AllAreas)) position = hit.position;
+            agent.Warp(position);
+            if (agent.isOnNavMesh) agent.isStopped = false;
+            HasDestination = false; PathState = MovementPathState.None; destination = position; PathEndPosition = position;
+        }
+
         void Apply(NavMeshPathStatus status, Vector3[] corners)
         {
             PathState = status == NavMeshPathStatus.PathComplete ? MovementPathState.Complete

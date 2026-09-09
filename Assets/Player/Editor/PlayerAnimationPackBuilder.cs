@@ -16,15 +16,15 @@ namespace SandGuard.Player.Editor
         public static void Build()
         {
             Directory.CreateDirectory(Folder);
-            Import("Pro Magic Pack/Standing 1H Magic Attack 01.fbx", "CastMagic", "Cast Magic", false);
-            Import("Great Sword Pack/spell cast.fbx", "CastGreatSword", "Cast Great Sword", false);
-            Import("Pro Sword and Shield Pack/sword and shield casting (2).fbx", "CastSwordShield", "Cast Sword Shield", false);
+            Import("protagonist/Standing 1H Magic Attack 01.fbx", "CastMagic", "Cast Magic", false);
+            Import("protagonist/character-protagonist-mixamo@Spell Cast.fbx", "CastGreatSword", "Cast Great Sword", false);
+            Import("protagonist/character-protagonist-mixamo@Sword And Shield Casting.fbx", "CastSwordShield", "Cast Sword Shield", false);
             foreach (string gait in new[] { "Walk", "Run" })
                 foreach (string direction in new[] { "Forward", "Back", "Left", "Right" })
-                    Import("Pro Magic Pack/Standing " + gait + " " + direction + ".fbx", gait + direction,
+                    Import("protagonist/character-protagonist-mixamo@Standing " + gait + " " + direction + ".fbx", gait + direction,
                         direction == "Forward" ? gait : gait + " " + direction, true);
-            Import("Pro Magic Pack/Standing React Small From Front.fbx", "Hit", "Player Hit", false);
-            Import("Pro Magic Pack/Standing React Death Backward.fbx", "Death", "Player Death", false);
+            Import("protagonist/character-protagonist-mixamo@Standing React Small From Front.fbx", "Hit", "Player Hit", false);
+            Import("protagonist/character-protagonist-mixamo@Standing Death Backward 01.fbx", "Death", "Player Death", false);
             // Refreshes the hand binding and the serialized visual inside Player without changing its tuning.
             // Its final hook applies the pack states after the fallback casting setup.
             PlayerCastingAnimationBuilder.Build();
@@ -34,7 +34,7 @@ namespace SandGuard.Player.Editor
         static void Import(string source, string file, string name, bool loop)
         {
             string path = Folder + "/" + file + ".fbx";
-            if (!File.Exists(path)) File.Copy("Docs/model-art/" + source, path);
+            File.Copy("Docs/model-art/" + source, path, true);
             AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceSynchronousImport);
             var importer = (ModelImporter)AssetImporter.GetAtPath(path);
             importer.animationType = ModelImporterAnimationType.Human;
@@ -186,3 +186,4 @@ namespace SandGuard.Player.Editor
         }
     }
 }
+

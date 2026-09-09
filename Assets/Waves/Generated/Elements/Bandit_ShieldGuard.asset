@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7ce5938058aa4245824ee870241d2fb, type: 3}
+  m_Name: Bandit_ShieldGuard
+  m_EditorClassIdentifier: DesertTower.Levels.Runtime::DesertTower.Levels.LevelElementDefinition
+  displayName: "\uBC29\uD328\uBCD1"
+  gameKey: bandit.shieldguard
+  previewPrefab: {fileID: 5772900462070000592, guid: 2ab566d1fb89341428cd0eb907057933, type: 3}
+  footprint: {x: 0.7, y: 2, z: 0.7}
+  previewRange: 8
+  previewColor: {r: 0.7, g: 0.55, b: 0.3, a: 1}

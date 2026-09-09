@@ -84,7 +84,7 @@ namespace SandGuard.Player.Tests
             yield return new WaitForSeconds(.07f);
             Assert.AreEqual(0, fired, "Windup must precede the first projectile.");
             yield return new WaitForSeconds(.65f);
-            Assert.GreaterOrEqual(fired, 2);
+            Assert.GreaterOrEqual(fired, 2, $"Input={attack.input.PrimaryAttackHeld}, accepts={attack.input.AcceptsInput}, mouse={mouse.leftButton.isPressed}, life={(attack.lifeSource as ILifeState)?.State}, projectile={attack.projectilePrefab != null}, combat={attack.CombatEnabled}, weight={casting.Weight}, ready={casting.ReadyToFire}");
             Assert.Greater(player.transform.position.z - start.z, 2f);
             Assert.Greater(Quaternion.Angle(legStart, animator.GetBoneTransform(HumanBodyBones.LeftLowerLeg).localRotation), 1f);
             Assert.True(animator.GetCurrentAnimatorStateInfo(0).IsName("Locomotion"));
@@ -186,7 +186,7 @@ namespace SandGuard.Player.Tests
                 Assert.Greater(Vector3.Dot(attack.visuals.FirePoint.forward, casting.AimDirection), .9f);
                 Assert.False(animator.applyRootMotion);
             }
-            Assert.GreaterOrEqual(fired, 2);
+            Assert.GreaterOrEqual(fired, 2, $"Input={attack.input.PrimaryAttackHeld}, accepts={attack.input.AcceptsInput}, mouse={mouse.leftButton.isPressed}, life={(attack.lifeSource as ILifeState)?.State}, projectile={attack.projectilePrefab != null}, combat={attack.CombatEnabled}, weight={casting.Weight}, ready={casting.ReadyToFire}");
         }
 
         [UnityTest] public IEnumerator CombatMovementSelectsForwardBackAndStrafeClips()
@@ -264,3 +264,4 @@ namespace SandGuard.Player.Tests
     }
 }
 #endif
+

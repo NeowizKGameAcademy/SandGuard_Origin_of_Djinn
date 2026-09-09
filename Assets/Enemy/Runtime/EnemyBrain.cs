@@ -101,5 +101,12 @@ namespace SandGuard.Enemy
             selector?.ClearTarget();
             motor?.Disable();
         }
+
+        /// <summary>풀 재사용: 사망 상태를 풀고 처음부터 판단한다.</summary>
+        public void ResetForReuse()
+        {
+            State = EnemyBrainState.Idle; nextThink = 0f; AIEnabled = true;
+            attack?.Cancel(); selector?.ClearTarget();
+        }
     }
 }

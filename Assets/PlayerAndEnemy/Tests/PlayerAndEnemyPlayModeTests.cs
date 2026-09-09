@@ -42,8 +42,9 @@ namespace SandGuard.Integration.Tests
             yield return EditorSceneManager.LoadSceneInPlayMode(ScenePath, new LoadSceneParameters(LoadSceneMode.Single));
             yield return null;
             var motor = UnityEngine.Object.FindFirstObjectByType<PlayerMotor>();
-            var spawner = UnityEngine.Object.FindFirstObjectByType<EnemyStreamSpawner>();
-            Assert.NotNull(motor); Assert.NotNull(spawner);
+            var director = UnityEngine.Object.FindFirstObjectByType<SandGuard.Waves.WaveDirector>();
+            Assert.NotNull(motor); Assert.NotNull(director, "The scene must run waves through a WaveDirector.");
+            director.SkipPreparation();
             var player = motor.gameObject;
             player.GetComponent<PlayerInputReader>().captureCursor = false;
             Assert.AreEqual(1, player.GetComponents<ICombatTarget>().Length, "The player must expose exactly one combat target.");
@@ -58,9 +59,8 @@ namespace SandGuard.Integration.Tests
             Assert.AreEqual(1, activeListeners, "Only the player camera's listener may be active.");
             Assert.AreEqual(1, activeCameras, "Only the player camera may be active.");
 
-            yield return new WaitForSeconds(0.5f);
+            yield return Until(() => UnityEngine.Object.FindObjectsByType<EnemyMotor>(FindObjectsSortMode.None).Length >= 3, 40f, "Wave 1 enemies must spawn.");
             var motors = UnityEngine.Object.FindObjectsByType<EnemyMotor>(FindObjectsSortMode.None);
-            Assert.GreaterOrEqual(motors.Length, 3, "Initial enemies must spawn.");
             foreach (var enemy in motors) Assert.True(enemy.IsOnNavMesh, enemy.name + " must stand on the level NavMesh.");
 
             bool playerHit = false;

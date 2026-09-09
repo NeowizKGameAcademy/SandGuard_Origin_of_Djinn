@@ -43,7 +43,7 @@ namespace SandGuard.Player.Editor
                 visual = PrefabUtility.SaveAsPrefabAsset(root, Root + "/PlayerVisual.prefab");
                 Object.DestroyImmediate(root);
             }
-            var projectile = AssetDatabase.LoadAssetAtPath<PlayerProjectile>(Root + "/PlayerBolt.prefab");
+            var projectile = AssetDatabase.LoadAssetAtPath<GameObject>(Root + "/PlayerBolt.prefab")?.GetComponent<PlayerProjectile>();
             if (projectile == null)
             {
                 GameObject root = new GameObject("PlayerBolt");
