@@ -17,7 +17,7 @@ public class ShowRange : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Scale = new Vector3(findEnemy.range * 2, 0.01f, findEnemy.range * 2);
+        Scale = new Vector3(findEnemy.range * 2, findEnemy.range * 2, 0f);
         transform.localScale = Scale;
     }
 }

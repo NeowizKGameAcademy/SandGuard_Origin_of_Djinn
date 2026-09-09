@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Circle
+  m_Name: Range Circle
   m_Shader: {fileID: -6465566751694194690, guid: 9e30c2784a24f2147ba5c41e0931d50b, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -138,7 +138,7 @@ Material:
     - _Outline_Alpha: 1
     - _Outline_Width: 0.001
     - _Parallax: 0.005
-    - _Progress: 0.404
+    - _Progress: 0.5
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 0
@@ -160,9 +160,9 @@ Material:
     - _Color: {r: 0, g: 1, b: 0.9999997, a: 1}
     - _Effect_Color: {r: 0, g: 0.9450979, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _Hex_Color: {r: 0, g: 0.9820709, b: 1, a: 1}
-    - _Outline_Color: {r: 0.6933962, g: 0.9704154, b: 1, a: 1}
-    - _Ring_Color: {r: 0, g: 1, b: 0.99273896, a: 1}
+    - _Hex_Color: {r: 1, g: 0.07738829, b: 0, a: 1}
+    - _Outline_Color: {r: 1, g: 0.705737, b: 0.69411767, a: 1}
+    - _Ring_Color: {r: 1, g: 0.07661387, b: 0, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
