@@ -19,8 +19,13 @@ namespace SandGuard.Player
         {
             if (lamp == null) lamp = FindFirstObjectByType<PlayerLampEquipment>();
             if (Keyboard.current == null || Time.timeScale <= 0 || motor == null || motor.input == null || !motor.input.AcceptsInput) return;
-            if (Keyboard.current.lKey.wasPressedThisFrame && lamp != null) lamp.SetHeld(!lamp.IsHeld);
+            if (Keyboard.current.lKey.wasPressedThisFrame && lamp != null) lamp.SetHeld(!lamp.RequestedHeld);
             if (Keyboard.current.gKey.wasPressedThisFrame && lamp != null) lamp.SetGlowing(!lamp.IsGlowing);
+            var casting = motor.GetComponent<PlayerVisuals>()?.Spellcasting;
+            if (Keyboard.current.bKey.wasPressedThisFrame && casting != null)
+                casting.castStyle = (PlayerSpellcasting.CastStyle)(((int)casting.castStyle + 1) % 3);
+            if (Keyboard.current.kKey.wasPressedThisFrame)
+                motor.GetComponent<PlayerHealth>()?.TakeDamage(new DamageInfo(10f, "Enemy"));
             if (Keyboard.current.vKey.wasPressedThisFrame)
             {
                 walking = !walking;
@@ -29,7 +34,9 @@ namespace SandGuard.Player
         }
         void OnGUI()
         {
-            GUI.Box(new Rect(12, Screen.height - 78, 460, 64), "Character preview: WASD + mouse | V: walk/run\nL: lamp belt/hand | G: lamp light | Esc: release cursor");
+            var casting = motor != null ? motor.GetComponent<PlayerVisuals>()?.Spellcasting : null;
+            string style = casting != null ? casting.castStyle.ToString() : "None";
+            GUI.Box(new Rect(12, Screen.height - 100, 580, 88), "Character preview: WASD + mouse | V: walk/run\nL: lamp belt/hand | G: lamp light | Esc: release cursor\nB: casting style (" + style + ") | K: test hit (10 damage)");
         }
     }
 }

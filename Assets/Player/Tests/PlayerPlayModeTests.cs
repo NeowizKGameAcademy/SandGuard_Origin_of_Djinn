@@ -138,7 +138,7 @@ namespace SandGuard.Player.Tests
             var player = Player();
             var visuals = player.GetComponent<PlayerVisuals>();
             var motor = player.GetComponent<PlayerMotor>();
-            Assert.AreSame(visuals.fallbackFirePoint, visuals.FirePoint);
+            Assert.AreEqual("RightPalmMuzzle", visuals.FirePoint.name);
             var model = Track(new GameObject("Replacement Model"));
             var bindings = model.AddComponent<PlayerVisualBindings>();
             var socket = new GameObject("Custom Muzzle").transform; socket.SetParent(model.transform);
@@ -157,13 +157,19 @@ namespace SandGuard.Player.Tests
         [UnityTest] public IEnumerator BasicAttackHonorsCooldownAndPause()
         {
             var attack = Player().GetComponent<PlayerBasicAttack>();
-            Assert.True(attack.TryFire());
+            int fired = 0;
+            attack.visuals.onFired.AddListener(() => fired++);
+            Assert.False(attack.TryFire(), "The first shot waits for the hand to rise.");
+            yield return new WaitForSeconds(.2f);
+            Assert.AreEqual(1, fired);
             Assert.False(attack.TryFire());
             yield return new WaitForSeconds(attack.attackInterval + 0.05f);
             Time.timeScale = 0f;
             Assert.False(attack.TryFire());
             Time.timeScale = 1f;
-            Assert.True(attack.TryFire());
+            attack.TryFire();
+            yield return new WaitForSeconds(.2f);
+            Assert.AreEqual(2, fired);
         }
 
         [Test] public void ManaReservationsDoNotCreateCapacityOrAllowDoubleSpending()

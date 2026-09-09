@@ -116,6 +116,8 @@ namespace SandGuard.Integration.Editor
             var overlay = new GameObject("Test HUD").AddComponent<PlayerAndEnemyOverlay>();
             overlay.playerLife = playerLife; overlay.spawner = spawner; overlay.core = coreTarget;
 
+            // 건설 슬롯마다 타워 받침대를 놓고 건설 서비스·메뉴를 넣는다 (SandGuard/Facility).
+            SandGuard.Facility.Editor.FacilitySetupBuilder.WireIntoScene(scene);
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
             AssetDatabase.SaveAssets();

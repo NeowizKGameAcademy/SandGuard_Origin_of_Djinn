@@ -20,18 +20,22 @@ namespace SandGuard.Player
         [Range(0, 25)] public float swayDegrees = 10f;
         [SerializeField] bool held;
         [SerializeField] bool glowing;
-        public bool IsHeld => held;
+        public bool IsHeld => held && !handSuppressed;
+        public bool RequestedHeld => held;
         public bool IsGlowing => glowing;
         Animator animator;
         PlayerMotor motor;
         MaterialPropertyBlock block;
         Vector3 sway, swayVelocity;
         float phase, handWeight;
+        bool handSuppressed;
+        PlayerSpellcasting spellcasting;
 
         void Awake()
         {
             animator = GetComponent<Animator>();
             motor = GetComponentInParent<PlayerMotor>();
+            spellcasting = GetComponent<PlayerSpellcasting>();
             block = new MaterialPropertyBlock();
             SetHeld(held);
             SetGlowing(glowing);
@@ -40,8 +44,20 @@ namespace SandGuard.Player
         public void SetHeld(bool value)
         {
             held = value;
+            Attach();
+        }
+
+        public void SetHandSuppressed(bool value)
+        {
+            if (handSuppressed == value) return;
+            handSuppressed = value;
+            Attach();
+        }
+
+        void Attach()
+        {
             if (lamp == null) return;
-            Transform socket = held ? handSocket : beltSocket;
+            Transform socket = IsHeld ? handSocket : beltSocket;
             if (socket == null) return;
             lamp.SetParent(socket, false);
             sway = swayVelocity = Vector3.zero;
@@ -66,7 +82,7 @@ namespace SandGuard.Player
             if (lamp == null) return;
             float speed = motor != null ? Vector3.ProjectOnPlane(motor.Velocity, Vector3.up).magnitude : 0f;
             phase += Time.deltaTime * Mathf.Lerp(3f, 11f, Mathf.Clamp01(speed / 5f));
-            float amount = Mathf.Clamp01(speed / 5f) * swayDegrees * (held ? 0.2f : 1f);
+            float amount = Mathf.Clamp01(speed / 5f) * swayDegrees * (IsHeld ? 0.2f : 1f);
             Vector3 target = new Vector3(Mathf.Sin(phase) * amount, 0, Mathf.Sin(phase * 0.5f) * amount * 0.35f);
             sway = Vector3.SmoothDamp(sway, target, ref swayVelocity, 0.1f);
             ApplyPose();
@@ -74,7 +90,7 @@ namespace SandGuard.Player
 
         void ApplyPose()
         {
-            if (held)
+            if (IsHeld)
             {
                 Transform owner = motor != null ? motor.transform : transform;
                 // Keep the vessel upright and its spout forward instead of inheriting
@@ -92,8 +108,15 @@ namespace SandGuard.Player
 
         void OnAnimatorIK(int layerIndex)
         {
-            if (animator == null || !animator.isHuman) return;
-            handWeight = Mathf.MoveTowards(handWeight, held ? 1f : 0f, Time.deltaTime * 6f);
+            if (layerIndex != 0 || animator == null || !animator.isHuman) return;
+            if (spellcasting != null && spellcasting.isActiveAndEnabled && spellcasting.UsesRightHand)
+            {
+                handWeight = 0f;
+                animator.SetIKPositionWeight(AvatarIKGoal.RightHand, 0f);
+                animator.SetIKRotationWeight(AvatarIKGoal.RightHand, 0f);
+                return;
+            }
+            handWeight = Mathf.MoveTowards(handWeight, IsHeld ? 1f : 0f, Time.deltaTime * 6f);
             animator.SetIKPositionWeight(AvatarIKGoal.RightHand, handWeight);
             animator.SetIKRotationWeight(AvatarIKGoal.RightHand, handWeight * 0.8f);
             Transform owner = motor != null ? motor.transform : transform;

@@ -43,10 +43,13 @@ namespace SandGuard.Enemy
         public void RebuildVisual()
         {
             if (visualRoot == null) return;
-            if (visualInstance != null)
+            // VisualRoot 아래는 전부 교체 대상이다. 프리팹 변형은 원본이 새 외형을 받으면 그 자식을 다시 상속하므로 visualInstance 하나만 지우면 겹친다.
+            for (int i = visualRoot.childCount - 1; i >= 0; i--)
             {
-                visualInstance.SetActive(false);
-                if (Application.isPlaying) Destroy(visualInstance); else DestroyImmediate(visualInstance);
+                GameObject child = visualRoot.GetChild(i).gameObject;
+                child.SetActive(false);
+                if (Application.isPlaying) Destroy(child);
+                else try { DestroyImmediate(child); } catch (System.InvalidOperationException) { /* 변형에서 지울 수 없는 상속 자식은 꺼 둔다. */ }
             }
             animator = null; weaponPivot = null; AttackOrigin = null; visualInstance = null;
             if (visualPrefab == null) return;

@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4944132502634030467
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8566560244770957588}
+  - component: {fileID: 2021490349897540156}
+  m_Layer: 0
+  m_Name: FacilityBuildMenu
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8566560244770957588
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4944132502634030467}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2021490349897540156
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4944132502634030467}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7dc72bf2ddd53b043bbbc2b83221a444, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SandGuard.Facility.Runtime::SandGuard.Facility.FacilityBuildMenu
+  service: {fileID: 0}
+  player: {fileID: 0}
+  font: {fileID: 12800000, guid: 6667090b733bd0d45bddd91049480137, type: 3}
+  discSprite: {fileID: 21300000, guid: 2babb6b0372a1634c8a51b62e9d9a862, type: 3}
+  ringSprite: {fileID: 21300000, guid: 1e54b8f1228b0854e9fa51e1c363e500, type: 3}
+  numberSprites:
+  - {fileID: 21300000, guid: 135ebc908fa8ba54babf2e5c7bdc8dd8, type: 3}
+  - {fileID: 21300000, guid: fba61f1403a0c7f4a9477ba96e452467, type: 3}
+  - {fileID: 21300000, guid: a320dbca53463ea49a4df3bb1772ecff, type: 3}
+  - {fileID: 21300000, guid: fb42ff1958a289349b141225a282ba0c, type: 3}
+  - {fileID: 21300000, guid: b033b2d62c9316145bc5739c6fd1d7c3, type: 3}
+  tileSize: {x: 104, y: 104}
+  tileSpacing: 14
+  title: "\uAC74\uC124  \u2014  \uBC88\uD638 \uD0A4"

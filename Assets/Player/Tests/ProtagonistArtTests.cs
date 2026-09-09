@@ -101,6 +101,79 @@ namespace SandGuard.Player.Tests
             Assert.AreEqual(Color.black,block.GetColor("_EmissionColor"));
             Object.Destroy(floorMat);
         }
+        [UnityTest] public IEnumerator JumpAndDashFollowMotorAndReturnToLocomotion()
+        {
+            var floor = Track(GameObject.CreatePrimitive(PrimitiveType.Cube));
+            floor.transform.position = new Vector3(0, -.5f, 0);
+            floor.transform.localScale = new Vector3(100, 1, 100);
+            var sun = Track(new GameObject("Mobility Verification Sun")).AddComponent<Light>();
+            sun.type = LightType.Directional;
+            sun.intensity = 2;
+            sun.transform.rotation = Quaternion.Euler(40, -35, 0);
+            Physics.SyncTransforms();
+            var player = Track(Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Player/Generated/Player.prefab")));
+            player.GetComponent<PlayerInputReader>().captureCursor = false;
+            var motor = player.GetComponent<PlayerMotor>();
+            int jumps = 0;
+            motor.Jumped += () => jumps++;
+            yield return new WaitForSeconds(.4f);
+            var animator = player.GetComponentInChildren<Animator>();
+            Assert.True(motor.IsGrounded);
+            Assert.True(animator.GetCurrentAnimatorStateInfo(0).IsName("Locomotion"));
+            var modelOrigin = animator.transform.localPosition;
+
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.Space));
+            yield return new WaitForSeconds(.2f);
+            Assert.AreEqual(1, jumps);
+            Assert.False(motor.IsGrounded);
+            Assert.True(animator.GetCurrentAnimatorStateInfo(0).IsName("Jump"));
+            AssertClip(animator, "Jump");
+            float firstJumpTime = animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState());
+            yield return null;
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.Space));
+            yield return new WaitForSeconds(.08f);
+            Assert.AreEqual(2, jumps);
+            Assert.Less(animator.GetCurrentAnimatorStateInfo(0).normalizedTime, firstJumpTime, "Air jump restarts the animation.");
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState());
+            yield return null;
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.Space));
+            yield return new WaitForSeconds(.06f);
+            Assert.AreEqual(2, jumps, "Rejected third jump must not retrigger animation.");
+
+            Assert.True(motor.TryDash().Succeeded);
+            yield return new WaitForSeconds(.07f);
+            Assert.True(motor.IsDashing);
+            Assert.True(animator.GetCurrentAnimatorStateInfo(0).IsName("Dash"));
+            AssertClip(animator, "Run");
+            Assert.False(motor.TryDash().Succeeded);
+            yield return new WaitForSeconds(.23f);
+            Assert.False(motor.IsDashing);
+            Assert.False(motor.IsGrounded);
+            Assert.True(animator.GetCurrentAnimatorStateInfo(0).IsName("Jump"));
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState());
+            yield return new WaitForSeconds(1.2f);
+            Assert.True(motor.IsGrounded);
+            Assert.True(animator.GetCurrentAnimatorStateInfo(0).IsName("Locomotion"));
+            Assert.True(motor.TryDash().Succeeded);
+            yield return new WaitForSeconds(.07f);
+            Assert.True(animator.GetCurrentAnimatorStateInfo(0).IsName("Dash"));
+            yield return new WaitForSeconds(.35f);
+            Assert.True(animator.GetCurrentAnimatorStateInfo(0).IsName("Locomotion"));
+            Assert.False(animator.applyRootMotion);
+            Assert.Less(Vector3.Distance(modelOrigin, animator.transform.localPosition), .01f);
+
+            // Rendering can stall a frame; capture after the timing-sensitive assertions.
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.Space));
+            yield return new WaitForSeconds(.2f);
+            Capture(player, "jump");
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState());
+            yield return new WaitForSeconds(1.2f);
+            Assert.True(motor.TryDash().Succeeded);
+            yield return new WaitForSeconds(.07f);
+            Capture(player, "dash");
+        }
+
         static void AssertClip(Animator animator, string name)
         {
             foreach (var info in animator.GetCurrentAnimatorClipInfo(0))
@@ -120,8 +193,8 @@ namespace SandGuard.Player.Tests
             camera.Render(); var previous=RenderTexture.active; RenderTexture.active=rt;
             var texture=new Texture2D(1200,1000,TextureFormat.RGB24,false);
             texture.ReadPixels(new Rect(0,0,1200,1000),0,0); texture.Apply();
-            Directory.CreateDirectory("Docs/model-art/verification");
-            File.WriteAllBytes("Docs/model-art/verification/"+name+".png",texture.EncodeToPNG());
+            Directory.CreateDirectory("Logs/player-animation-captures");
+            File.WriteAllBytes("Logs/player-animation-captures/"+name+".png",texture.EncodeToPNG());
             RenderTexture.active=previous; camera.targetTexture=null; rt.Release();
             Object.Destroy(rt); Object.Destroy(texture); camera.enabled=false;
         }

@@ -3,7 +3,8 @@
   "rootNamespace": "SandGuard.Integration.Editor",
   "references": [
     "SandGuard.PlayerAndEnemy.Runtime", "SandGuard.Player.Runtime", "SandGuard.Player.Editor",
-    "SandGuard.Enemy.Runtime", "SandGuard.Enemy.Editor", "DesertTower.Levels.Runtime", "DesertTower.VFX.Runtime",
+    "SandGuard.Enemy.Runtime", "SandGuard.Enemy.Editor", "SandGuard.Facility.Runtime", "SandGuard.Facility.Editor",
+    "DesertTower.Levels.Runtime", "DesertTower.VFX.Runtime",
     "DesertTower.Combat.Runtime", "DesertTower.Gameplay.Abstractions", "Unity.InputSystem"
   ],
   "includePlatforms": ["Editor"]

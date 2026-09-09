@@ -1,0 +1,14 @@
+C:\course\unity\SandGuard\Docs\model-art\verification\check_new_rigs.py:18: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  mat=bpy.data.materials.new(name+'_Review'); mat.use_nodes=True
+C:\course\unity\SandGuard\Docs\model-art\verification\check_new_rigs.py:34: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  world=bpy.data.worlds.new('World'); scene.world=world; world.use_nodes=True; world.node_tree.nodes['Background'].inputs[0].default_value=(.1,.13,.19,1); world.node_tree.nodes['Background'].inputs[1].default_value=.55
+00:04.609  render           | Saved: 'C:\course\unity\SandGuard\Docs\model-art\verification\new-rigs\HammerBrute_poses.png'
+00:07.203  render           | Saved: 'C:\course\unity\SandGuard\Docs\model-art\verification\new-rigs\Chief_poses.png'
+00:09.922  render           | Saved: 'C:\course\unity\SandGuard\Docs\model-art\verification\new-rigs\ShieldGuard_poses.png'
+FBX version: 7700
+FBX version: 7700
+FBX version: 7700
+NEW_RIGS_CHECKED [{"character": "HammerBrute", "file": "bandit-hammerer\\tripo_convert_f6afc70a-5519-4fe3-a262-5cce52cb0405@Capoeira.fbx", "bones": 41, "missing_major_bones": [], "unweighted_vertices": 0, "max_weight_sum_error": 1.341104507446289e-07, "duration_seconds": 3.433333333333333, "sample_frames": [16, 47, 78], "sample_vertex_motion_at_1_8m_scale": 1.8590365069687145}, {"character": "Chief", "file": "bandit-leader\\fantasy+warrior+3d+model\\tripo_convert_bbf82915-ce36-4617-a23e-b6111bc37ec3@Capoeira.fbx", "bones": 33, "missing_major_bones": [], "unweighted_vertices": 0, "max_weight_sum_error": 1.2665987014770508e-07, "duration_seconds": 3.433333333333333, "sample_frames": [16, 47, 78], "sample_vertex_motion_at_1_8m_scale": 1.9563691224066035}, {"character": "ShieldGuard", "file": "bandit-shielder\\voxel+warrior+3d+model\\tripo_convert_c7299b91-62c1-45e9-8127-161d99f726d2@Dying.fbx", "bones": 41, "missing_major_bones": [], "unweighted_vertices": 0, "max_weight_sum_error": 1.341104507446289e-07, "duration_seconds": 4.4, "sample_frames": [21, 60, 100], "sample_vertex_motion_at_1_8m_scale": 1.4429299599117411}]
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 02:38:20)
+
+Blender quit

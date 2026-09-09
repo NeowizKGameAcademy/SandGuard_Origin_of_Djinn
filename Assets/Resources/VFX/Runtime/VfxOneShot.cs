@@ -15,6 +15,7 @@ namespace DesertTower.VFX
         [Tooltip("기준 Transform의 자식으로 붙여 같이 움직이게 한다")]
         public bool ParentToAnchor;
         public float Lifetime = 2f;
+        public Vector3 SpawnScale = Vector3.one;
 
         /// <summary>UnityEvent 인스펙터 연결용 (반환값 없음).</summary>
         public void Fire() => Play();
@@ -24,6 +25,7 @@ namespace DesertTower.VFX
             if (Prefab == null) return null;
             Transform anchor = Anchor != null ? Anchor : transform;
             var instance = Instantiate(Prefab, anchor.TransformPoint(LocalOffset), anchor.rotation, ParentToAnchor ? anchor : null);
+            instance.transform.localScale = Vector3.Scale(instance.transform.localScale, SpawnScale);
             Destroy(instance, Lifetime);
             return instance;
         }
@@ -33,6 +35,7 @@ namespace DesertTower.VFX
             if (Prefab == null) return null;
             var rotation = forward.sqrMagnitude > 0.0001f ? Quaternion.LookRotation(forward) : Quaternion.identity;
             var instance = Instantiate(Prefab, position, rotation);
+            instance.transform.localScale = Vector3.Scale(instance.transform.localScale, SpawnScale);
             Destroy(instance, Lifetime);
             return instance;
         }

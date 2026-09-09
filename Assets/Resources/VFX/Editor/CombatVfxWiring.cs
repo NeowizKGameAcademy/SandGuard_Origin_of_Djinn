@@ -67,7 +67,9 @@ namespace DesertTower.VFX.Editor
 
                 var cast = Ensure<VfxOneShot>(root);
                 cast.Prefab = Load(CombatVfxBuilder.StaffCastPath);
-                cast.Anchor = root.transform.Find("DefaultFirePoint");
+                var handAnchor = root.transform.Find("CastingEffectAnchor");
+                cast.Anchor = handAnchor != null ? handAnchor : root.transform.Find("DefaultFirePoint");
+                cast.SpawnScale = Vector3.one * (handAnchor != null ? .35f : 1f);
                 cast.Lifetime = 1.5f;
                 var visuals = root.GetComponent<PlayerVisuals>();
                 if (visuals != null && !HasListener(visuals.onFired, cast))

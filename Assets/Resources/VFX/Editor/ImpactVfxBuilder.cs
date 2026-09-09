@@ -69,6 +69,7 @@ namespace DesertTower.VFX.Editor
         public Vector2 DustSize = new Vector2(0.5f, 0.9f);
         public Vector2 DustSpeed = new Vector2(0.6f, 1.2f);
         public Vector2 DustLife = new Vector2(0.8f, 1.4f);
+        public float DustStartSize = 0.5f;          // size-over-life start multiplier; 1 = full size from the first frame (covering puff)
 
         // Light (colour follows the core particles: white flash → CoreB)
         public float LightIntensity = 4f;
@@ -85,6 +86,7 @@ namespace DesertTower.VFX.Editor
         public const string ManaBoltImpactPath = PrefabDir + "/VFX_ManaBolt_Impact.prefab";
         public const string EnemyDeathPath = PrefabDir + "/VFX_Enemy_Death.prefab";
         public const string BuildCompletePath = PrefabDir + "/VFX_Build_Complete.prefab";
+        public const string BuildPoofPath = PrefabDir + "/VFX_Build_Poof.prefab";
         public const string FireImpactPath = PrefabDir + "/VFX_Fire_Impact.prefab";
         public const string SandBurstPath = PrefabDir + "/VFX_Sand_Burst.prefab";
         public const string EnemySpawnPath = PrefabDir + "/VFX_Enemy_Spawn.prefab";
@@ -98,6 +100,7 @@ namespace DesertTower.VFX.Editor
             (ManaBoltImpact(), ManaBoltImpactPath),
             (EnemyDeath(), EnemyDeathPath),
             (BuildComplete(), BuildCompletePath),
+            (BuildPoof(), BuildPoofPath),
             (FireImpact(), FireImpactPath),
             (SandBurst(), SandBurstPath),
             (EnemySpawn(), EnemySpawnPath),
@@ -175,6 +178,37 @@ namespace DesertTower.VFX.Editor
             EmberLife = new Vector2(1.0f, 1.4f),
             EmberColor = Gold,
             LightIntensity = 3.5f, LightRange = 4f,
+        };
+
+        /// <summary>
+        /// 시설 "짠" 등장용 연막(범용): 진한 모래 구름이 0.1초에 덮고 0.6초에 걷힌다. 대상은 구름 속에서 이미 서 있는 채로 드러난다(VfxPopIn).
+        /// 밝은 큐브·금 큐브는 넣지 않아 완료 이펙트(VFX_Build_Complete)와 역할이 겹치지 않는다. 크기는 VfxPopIn이 대상 바운즈로 맞춘다.
+        /// </summary>
+        public static ImpactSpec BuildPoof() => new ImpactSpec
+        {
+            PrefabName = "VFX_Build_Poof",
+            Scale = 1.2f,
+            BodyHeight = 0.6f,
+            GroundCollision = true,
+            FlashSize = 0.9f, FlashColor = new Color(1f, 0.96f, 0.86f),
+            CoreCount = 2, CoreSize = 0.16f, CoreA = Beige, CoreB = Beige, CoreC = BeigeDark,
+            Shockwave = true, ShockwaveSize = 2.4f, ShockwaveColor = Beige,
+            DebrisCount = 18,
+            DebrisSize = new Vector2(0.05f, 0.1f),
+            DebrisSpeed = new Vector2(1.4f, 2.6f),
+            DebrisLife = new Vector2(0.45f, 0.7f),
+            DebrisGravity = 0.9f,
+            DebrisA = Beige * 0.65f, DebrisB = BeigeDark, DebrisC = BeigeDark * 0.6f,
+            DebrisShape = DebrisShape.ConeUp, DebrisConeAngle = 75f,
+            EmberCount = 0,
+            // 연막: 많고 크고 빠르며 짧다.
+            DustCount = 26,
+            DustColor = new Color(0.66f, 0.54f, 0.36f, 0.98f),
+            DustSize = new Vector2(0.9f, 1.5f),
+            DustSpeed = new Vector2(1.6f, 2.8f),
+            DustLife = new Vector2(0.45f, 0.7f),
+            DustStartSize = 1f,
+            LightIntensity = 2f, LightRange = 3f,
         };
 
         /// <summary>#17 화염 코브라 — 적 피격 시 주황 Impact. Spawn at the hit point; pair with VFX_Burning_Loop on the enemy.</summary>
@@ -348,6 +382,9 @@ namespace DesertTower.VFX.Editor
 
         [MenuItem("DesertTower/VFX/Build Facility Complete + Place In Scene")]
         public static void BuildBuildCompleteAndPlace() => PlaceInScene(Build(BuildComplete(), BuildCompletePath));
+
+        [MenuItem("DesertTower/VFX/Build Facility Pop-In Poof")]
+        public static void BuildBuildPoof() => Ping(Build(BuildPoof(), BuildPoofPath));
 
         static void Ping(GameObject prefab) => EditorGUIUtility.PingObject(prefab);
 
@@ -542,7 +579,7 @@ namespace DesertTower.VFX.Editor
             go.transform.localPosition = new Vector3(0f, 0.1f, 0f);
             Drag(ps, 0.3f, 1f);
             Noise(ps, 0.2f, 0.3f, 0.3f);
-            Size(ps, EaseOut(0.5f, 1.3f));
+            Size(ps, EaseOut(spec.DustStartSize, 1.3f));
             AlphaFade(ps, Color.white, 0.25f);
             RandomTile(ps, 2, 2);
 

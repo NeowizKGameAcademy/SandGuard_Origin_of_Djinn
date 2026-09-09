@@ -36,6 +36,10 @@
 설정하지 않으면 플레이어 루트의 `DefaultFirePoint`를 사용하므로 모델만 바꿔도 기본 공격이 유지된다.
 Animator도 Bindings에서 지정할 수 있으며, 비워 두면 모델 자식에서 찾는다.
 
+현재 Protagonist는 `RightPalmMuzzle`에 연결되어 손바닥에서 발사한다. 기본 동작은 Pro Magic Pack의 `Standing 1H Magic Attack 01`이다. 약 0.12초의 준비 뒤 발사하고, 연사 중에는 상체 시전 자세를 유지한다. 오른손 램프는 시전 동안 허리로 이동했다가 복귀한다. `SandGuard > Player > Apply Animation Packs`으로 팩 동작을 재연결할 수 있다. 상세 설정은 `Assets/Player/Art/README.md`의 손바닥 시전 항목을 참고한다.
+
+`Assets/Player/Generated/PlayerArtPreview.unity`에서 B는 시전 3종 비교, V는 걷기/달리기, K는 10 피해 적용이다. 시전 대안은 Great Sword의 `spell cast`, Sword and Shield의 `casting (2)`이며 오른손용으로 미러링했다. 체력 0이면 사망 동작을 확인할 수 있고 Play를 재시작하면 복구된다. 이 키들은 미리보기 전용이다.
+
 ### 애니메이션 / 발사 효과
 
 `PlayerVisuals`의 파라미터 이름을 Animator Controller와 맞춘다.
@@ -43,13 +47,19 @@ Animator도 Bindings에서 지정할 수 있으며, 비워 두면 모델 자식�
 | 필드 | 종류 | 전달 값 |
 |---|---|---|
 | Speed Parameter | Float | 수평 이동 속도 |
+| Move X Parameter | Float | 캐릭터 기준 수평 이동 방향 X (-1~1) |
+| Move Z Parameter | Float | 캐릭터 기준 수평 이동 방향 Z (-1~1) |
 | Grounded Parameter | Bool | 지면 접촉 상태 |
 | Attack Trigger | Trigger | 기본 공격 발사 |
 | Hit Trigger | Trigger | 피해 적용 |
 | Death Trigger | Trigger | 체력 0, 무력화 |
 | Dash Parameter | Bool | 대시 중 여부 |
+| Jump Trigger | Trigger | 성공한 지상/추가 공중 점프 |
 
 해당 파라미터나 Animator가 없어도 게임 동작은 유지된다.
+현재 Protagonist Controller는 Idle, Pro Magic Pack의 전후좌우 Walk/Run, Jump(앞 공중회전), Dash(기존 Run 1.8배속)를 연결한다. 상체 시전과 하체 이동은 별도로 혼합하며, 공중 시전은 몸이 뒤집히지 않는 Air Cast 동작을 사용한다. Space로 점프/추가 점프, Shift로 대시를 확인한다. 착지와 대시 종료는 Exit Time을 기다리지 않고 전환한다. 점프 높이와 대시 거리는 루트 모션이 아닌 PlayerMotor가 제어한다.
+
+피격은 상체에 짧게 재생해 이동을 유지한다. 현재 Controller의 전신 사망은 `Dead` Bool로 유지하며 체력 상태에서 자동으로 전달한다. 사망 중에는 시전·피격 레이어를 끄고 점프·대시 전환을 막는다. `Death Trigger` 필드는 다른 외형 Controller와 연결할 때 사용할 수 있다. `Casting`/`CastPhase`/`CastStyle`은 `PlayerSpellcasting`이 전달한다.
 **On Fired** 이벤트에는 효과음/파티클 재생을 인스펙터에서 연결할 수 있다.
 교체되어 파괴되는 모델 인스턴스를 이벤트의 고정 참조로 사용하지 않는다. 루트의 안정적인 효과 컴포넌트를 연결한다.
 
@@ -101,6 +111,8 @@ Animator도 Bindings에서 지정할 수 있으며, 비워 두면 모델 자식�
 테스트 전용 `PlayerDemoOverlay`, `PlayerTestTarget`은 실제 HUD/적 구현이 연결되면 제거할 수 있다.
 
 ## 검증 기록
+
+2026-09-09 현재 프로젝트의 Unity 6000.2.8f1에서 애니메이션 팩 적용 후 Player/PlayerAndEnemy PlayMode 테스트 **33개 통과**. 시전 3종, 손바닥 발사 위치와 방향, 이동 중 시전, 전후좌우/대각선 이동 혼합, 점프·대시, 피격·사망 우선순위를 확인했다. 결과는 `Logs/player-animation-packs-tests.xml`, 적용 렌더링은 `Logs/player-casting-captures/`에 있다.
 
 2026-09-08 후속 구현: Unity 6000.2.8f1 별도 검증 프로젝트에서 **PlayMode 테스트 15개 통과**. 기존 7개에 마나 예약/취소/초기화, 대시 비용/쿨다운/벽 충돌/일시정지/공중 방향, 예약 마나 부족 시 무변경, 치명타 처리와 행동 차단, 잘못된 피해 거부 검증을 추가했다. 테스트용 바닥 생성 직후 물리 월드 동기화도 명시했다.
 

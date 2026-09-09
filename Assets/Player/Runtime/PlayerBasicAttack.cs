@@ -2,7 +2,8 @@ using UnityEngine;
 
 namespace SandGuard.Player
 {
-    [DefaultExecutionOrder(100)]
+    // Release after the spell visual has applied its final wrist rotation in LateUpdate.
+    [DefaultExecutionOrder(200)]
     public sealed class PlayerBasicAttack : MonoBehaviour
     {
         public PlayerInputReader input;
@@ -20,19 +21,53 @@ namespace SandGuard.Player
         public string factionId = "Ally";
         public bool CombatEnabled { get; set; } = true;
         public float CooldownRemaining { get; private set; }
+        bool pendingShot;
+        PlayerSpellcasting Casting => visuals != null && visuals.Spellcasting != null && visuals.Spellcasting.isActiveAndEnabled
+            ? visuals.Spellcasting : null;
+
+        void OnEnable() { if (input != null) input.PrimaryActionPressed += RequestShot; }
+        void OnDisable()
+        {
+            if (input != null) input.PrimaryActionPressed -= RequestShot;
+            pendingShot = false;
+            if (Casting != null) Casting.SetCasting(false);
+        }
+
+        void RequestShot()
+        {
+            if (Available() && CooldownRemaining <= 0f) pendingShot = true;
+        }
+
+        void Update()
+        {
+            CooldownRemaining = Mathf.Max(0f, CooldownRemaining - Time.deltaTime);
+            if (!Available()) pendingShot = false;
+            bool wantsShot = Available() && (pendingShot || (input != null && input.PrimaryAttackHeld));
+            if (Casting != null) Casting.SetCasting(wantsShot);
+            if (wantsShot && motor != null) motor.FaceCamera();
+        }
 
         void LateUpdate()
         {
-            CooldownRemaining = Mathf.Max(0f, CooldownRemaining - Time.deltaTime);
-            IPlayerInput controls = input;
-            if (controls != null && controls.PrimaryAttackHeld) TryFire();
+            if (pendingShot || (input != null && input.PrimaryAttackHeld)) TryFire();
         }
 
+        bool Available() => isActiveAndEnabled && CombatEnabled && Time.timeScale > 0f
+            && (input == null || input.AcceptsInput)
+            && (lifeSource == null || (lifeSource as ILifeState)?.State == global::LifeState.Alive)
+            && projectilePrefab != null && aimer != null && visuals != null && visuals.FirePoint != null
+            && !string.IsNullOrWhiteSpace(factionId);
+
+        /// <summary>Returns true only when a bolt is released. A casting visual queues the shot during its short windup.</summary>
         public bool TryFire()
         {
-            if (lifeSource != null && (lifeSource as ILifeState)?.State != global::LifeState.Alive) return false;
-            if (!CombatEnabled || Time.timeScale <= 0f || CooldownRemaining > 0f || projectilePrefab == null
-                || aimer == null || visuals == null || visuals.FirePoint == null || string.IsNullOrWhiteSpace(factionId)) return false;
+            if (!Available() || CooldownRemaining > 0f) return false;
+            if (Casting != null)
+            {
+                pendingShot = true;
+                Casting.SetCasting(true);
+                if (!Casting.ReadyToFire) return false;
+            }
             Vector3 muzzle = visuals.FirePoint.position;
             Vector3 aim = aimer.GetAimPoint();
             Vector3 direction = (aim - muzzle).normalized;
@@ -41,6 +76,7 @@ namespace SandGuard.Player
             PlayerProjectile projectile = Instantiate(projectilePrefab, muzzle, Quaternion.LookRotation(direction));
             projectile.Launch(transform, (lifeSource as ICombatTarget)?.FactionId ?? factionId, damage, direction, origin);
             CooldownRemaining = attackInterval;
+            pendingShot = false;
             if (motor != null) motor.FaceCamera();
             visuals.PlayFire();
             return true;

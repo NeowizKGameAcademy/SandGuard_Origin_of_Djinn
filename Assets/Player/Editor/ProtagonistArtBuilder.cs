@@ -100,6 +100,7 @@ namespace SandGuard.Player.Editor
                 if (previous.IsValid() && previous.isLoaded) SceneManager.SetActiveScene(previous);
             }
             AssetDatabase.SaveAssets();
+            if (File.Exists(Art + "/ManaBoltPose.anim")) PlayerCastingAnimationBuilder.Build();
             Debug.Log("PROTAGONIST_ART_COMPLETE " + PreviewPath);
         }
 

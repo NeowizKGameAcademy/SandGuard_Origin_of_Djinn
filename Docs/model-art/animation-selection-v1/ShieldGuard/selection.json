@@ -1,0 +1,178 @@
+[
+  {
+    "role": "Idle",
+    "tier": "core",
+    "source": "Pro Sword and Shield Pack/sword and shield block idle.fbx",
+    "selected_file": "ShieldGuard/Idle.fbx",
+    "sha256": "388db354c91941667cd0530c1912a4c84e88f25fd6c5ea235182df5a44abd0df",
+    "duration_seconds": 1.4,
+    "source_frames": [
+      1.0,
+      43.0
+    ],
+    "fps": 30.0,
+    "loop_recommended": true,
+    "hips_delta_blender_xyz": [
+      -1.7834827303886414e-07,
+      -5.140900611877441e-07,
+      -7.450580596923828e-07
+    ],
+    "hips_horizontal_span": 0.0030202786407390082,
+    "notes": "방패를 앞에 세운 경계 자세로 검병과 구분.",
+    "retarget_and_equipment_verified": false
+  },
+  {
+    "role": "Move",
+    "tier": "core",
+    "source": "Pro Sword and Shield Pack/sword and shield walk.fbx",
+    "selected_file": "ShieldGuard/Move.fbx",
+    "sha256": "334b7c659ab29210387b30d8c76d6a426af0524bb4c57c723b43b1250a4fea5b",
+    "duration_seconds": 1.0667,
+    "source_frames": [
+      1.0,
+      33.0
+    ],
+    "fps": 30.0,
+    "loop_recommended": true,
+    "hips_delta_blender_xyz": [
+      0.0007443421054631472,
+      -0.7740687131881714,
+      -0.0057010650634765625
+    ],
+    "hips_horizontal_span": 0.7744795409421086,
+    "notes": "무거운 전진 걷기. 현재 공통 3.5m/s를 그대로 쓸 경우 발 미끄러짐 조정 필요.",
+    "retarget_and_equipment_verified": false
+  },
+  {
+    "role": "Attack",
+    "tier": "core",
+    "source": "Pro Sword and Shield Pack/sword and shield attack (4).fbx",
+    "selected_file": "ShieldGuard/Attack.fbx",
+    "sha256": "7ed00d36a57d86c41002db67ce48f33d3491a27c0b3936436b4a9386b9494131",
+    "duration_seconds": 1.0,
+    "source_frames": [
+      1.0,
+      31.0
+    ],
+    "fps": 30.0,
+    "loop_recommended": false,
+    "hips_delta_blender_xyz": [
+      0.006007752381265163,
+      -0.018471885472536087,
+      0.0005422532558441162
+    ],
+    "hips_horizontal_span": 0.049939952624848426,
+    "notes": "큰 도약 없는 짧은 검 공격. 타워 방패와 오른팔 궤적 간섭 확인 필요.",
+    "retarget_and_equipment_verified": false
+  },
+  {
+    "role": "Death",
+    "tier": "core",
+    "source": "Pro Sword and Shield Pack/sword and shield death.fbx",
+    "selected_file": "ShieldGuard/Death.fbx",
+    "sha256": "80e6fc35713313e98c0d298ee82b57200bd29a874ef2c8590b692f24451c458e",
+    "duration_seconds": 2.3,
+    "source_frames": [
+      1.0,
+      70.0
+    ],
+    "fps": 30.0,
+    "loop_recommended": false,
+    "hips_delta_blender_xyz": [
+      0.02017717994749546,
+      0.5754939913749695,
+      -0.3412347435951233
+    ],
+    "hips_horizontal_span": 0.5792257749798915,
+    "notes": "뒤로 쓰러짐. 큰 방패의 몸·바닥 간섭 확인 필요.",
+    "retarget_and_equipment_verified": false
+  },
+  {
+    "role": "Run",
+    "tier": "support",
+    "source": "Pro Sword and Shield Pack/sword and shield run.fbx",
+    "selected_file": "ShieldGuard/Run.fbx",
+    "sha256": "bf1646dd1160a204a91fe686508630f5c55fd0b2638e470b697b77ce3d1a415a",
+    "duration_seconds": 0.7,
+    "source_frames": [
+      1.0,
+      22.0
+    ],
+    "fps": 30.0,
+    "loop_recommended": true,
+    "hips_delta_blender_xyz": [
+      2.555013634264469e-05,
+      -1.400551438331604,
+      1.1920928955078125e-07
+    ],
+    "hips_horizontal_span": 1.4006421094650696,
+    "notes": "빠른 추격이 필요할 때 걷기 대신 사용.",
+    "retarget_and_equipment_verified": false
+  },
+  {
+    "role": "Hit",
+    "tier": "support",
+    "source": "Pro Sword and Shield Pack/sword and shield impact (3).fbx",
+    "selected_file": "ShieldGuard/Hit.fbx",
+    "sha256": "d8938ccca57c2118806f89ae2cbf78c76c24425ac627a44a32df1df284736c3f",
+    "duration_seconds": 0.7,
+    "source_frames": [
+      1.0,
+      22.0
+    ],
+    "fps": 30.0,
+    "loop_recommended": false,
+    "hips_delta_blender_xyz": [
+      -1.7560087144374847e-06,
+      4.536937922239304e-06,
+      2.9802322387695312e-08
+    ],
+    "hips_horizontal_span": 0.06519233984175117,
+    "notes": "피격 후보. 방패 방어 성공 반응과 구분.",
+    "retarget_and_equipment_verified": false
+  },
+  {
+    "role": "GuardStart",
+    "tier": "support",
+    "source": "Pro Sword and Shield Pack/sword and shield block.fbx",
+    "selected_file": "ShieldGuard/GuardStart.fbx",
+    "sha256": "00976a2f750dbd27f0e79d84876e71b984b9800c3ac42ade5a48e7749e36b968",
+    "duration_seconds": 0.4667,
+    "source_frames": [
+      1.0,
+      15.0
+    ],
+    "fps": 30.0,
+    "loop_recommended": false,
+    "hips_delta_blender_xyz": [
+      -0.015421953983604908,
+      -0.1112869381904602,
+      -0.055203020572662354
+    ],
+    "hips_horizontal_span": 0.11244527009873068,
+    "notes": "공격 후 방패를 다시 드는 전환 후보.",
+    "retarget_and_equipment_verified": false
+  },
+  {
+    "role": "GuardEnd",
+    "tier": "support",
+    "source": "Pro Sword and Shield Pack/sword and shield block (2).fbx",
+    "selected_file": "ShieldGuard/GuardEnd.fbx",
+    "sha256": "2f150ea31208df83614bd72f9142bb5acdd4f80e5a4b14545221a79693ef89ed",
+    "duration_seconds": 0.5,
+    "source_frames": [
+      1.0,
+      16.0
+    ],
+    "fps": 30.0,
+    "loop_recommended": false,
+    "hips_delta_blender_xyz": [
+      -0.005003044381737709,
+      0.12544018030166626,
+      0.06387805938720703
+    ],
+    "hips_horizontal_span": 0.1263246980419774,
+    "notes": "방패 자세에서 공격 준비 자세로 복귀.",
+    "retarget_and_equipment_verified": false
+  }
+]

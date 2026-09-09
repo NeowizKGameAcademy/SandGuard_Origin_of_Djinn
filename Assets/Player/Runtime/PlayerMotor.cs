@@ -23,6 +23,7 @@ namespace SandGuard.Player
         public bool IsDashing => dashRemaining > 0f && Alive;
         public event Action<PlayerMobilityState> Changed;
         public event Action DashStarted;
+        public event Action Jumped;
         IPlayerInput Input => input;
         IManaWallet Mana => manaSource as IManaWallet;
         bool Alive => lifeSource == null || (lifeSource as ILifeState)?.State == global::LifeState.Alive;
@@ -181,6 +182,7 @@ namespace SandGuard.Player
                     if (!groundJump) RemainingAirJumps--;
                     verticalVelocity = Mathf.Sqrt(2f * gravity * jumpHeight);
                     IsGrounded = false; coyoteTimer = 0f; jumpBufferTimer = 0f; jumpedThisFrame = true;
+                    Jumped?.Invoke();
                 }
             }
             jumpBufferTimer = Mathf.Max(0f, jumpBufferTimer - dt);

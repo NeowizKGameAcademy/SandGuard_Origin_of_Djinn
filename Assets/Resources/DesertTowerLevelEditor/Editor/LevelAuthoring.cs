@@ -154,6 +154,84 @@ namespace DesertTower.Levels.Editor
             Dirty(root); return go;
         }
 
+        // URP에서 Terrain은 지형 전용 셰이더로만 그려집니다. 일반 Lit 재질을 Material 칸에 넣으면 표면이 통째로 깨집니다.
+        public static Material TerrainMaterial()
+        {
+            EnsureFolder(GeneratedFolder + "/Materials");
+            string path = GeneratedFolder + "/Materials/Terrain Surface.mat";
+            var mat = AssetDatabase.LoadAssetAtPath<Material>(path);
+            if (mat) return mat;
+            mat = new Material(Shader.Find("Universal Render Pipeline/Terrain/Lit") ?? Shader.Find("Nature/Terrain/Standard"));
+            AssetDatabase.CreateAsset(mat, path);
+            return mat;
+        }
+
+        // Terrain 표면은 Renderer가 아니라 TerrainLayer로 칠합니다. 재질의 알베도·노멀을 그 레이어로 옮겨 담습니다.
+        public static TerrainLayer SurfaceLayer(Material source, float tiling = 6)
+        {
+            EnsureFolder(GeneratedFolder + "/Terrain");
+            string path = GeneratedFolder + "/Terrain/" + source.name + ".terrainlayer";
+            var layer = AssetDatabase.LoadAssetAtPath<TerrainLayer>(path);
+            bool created = !layer;
+            if (created) layer = new TerrainLayer();
+            var albedo = MapOf(source, "_BaseMap") ?? MapOf(source, "_MainTex");
+            layer.diffuseTexture = albedo ? albedo : FlatTexture(source.name, Tint(source));
+            layer.normalMapTexture = MapOf(source, "_BumpMap");
+            layer.tileSize = new Vector2(tiling, tiling);
+            layer.metallic = source.HasProperty("_Metallic") ? source.GetFloat("_Metallic") : 0;
+            layer.smoothness = source.HasProperty("_Smoothness") ? source.GetFloat("_Smoothness") : 0;
+            if (created) AssetDatabase.CreateAsset(layer, path); else EditorUtility.SetDirty(layer);
+            return layer;
+        }
+
+        static Color Tint(Material material)
+            => material.HasProperty("_BaseColor") ? material.GetColor("_BaseColor")
+             : material.HasProperty("_Color") ? material.GetColor("_Color") : UnityEngine.Color.white;
+
+        static Texture2D MapOf(Material material, string property)
+            => material.HasProperty(property) ? material.GetTexture(property) as Texture2D : null;
+
+        static Texture2D FlatTexture(string name, Color color)
+        {
+            string path = GeneratedFolder + "/Terrain/" + name + " Albedo.asset";
+            var texture = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+            bool created = !texture;
+            if (created) texture = new Texture2D(16, 16, TextureFormat.RGB24, true) { name = name + " Albedo", wrapMode = TextureWrapMode.Repeat };
+            var pixels = new Color[texture.width * texture.height];
+            for (int i = 0; i < pixels.Length; i++) pixels[i] = color;
+            texture.SetPixels(pixels); texture.Apply();
+            if (created) AssetDatabase.CreateAsset(texture, path); else EditorUtility.SetDirty(texture);
+            return texture;
+        }
+
+        // 재질을 레이어로 등록합니다. 첫 레이어는 지형 전체에 깔리고, 이후 레이어는 Paint Texture 브러시로 칠합니다.
+        public static TerrainLayer PaintSurface(Terrain terrain, Material source, float tiling = 6)
+        {
+            var layer = SurfaceLayer(source, tiling);
+            var data = terrain.terrainData;
+            var layers = data.terrainLayers ?? new TerrainLayer[0];
+            if (Array.IndexOf(layers, layer) < 0)
+            {
+                var next = new TerrainLayer[layers.Length + 1];
+                layers.CopyTo(next, 0); next[layers.Length] = layer;
+                data.terrainLayers = next;   // 알파맵 채널 수는 Unity가 맞춰 줍니다.
+            }
+            RepairTerrainMaterial(terrain);
+            EditorUtility.SetDirty(data); EditorUtility.SetDirty(terrain);
+            AssetDatabase.SaveAssets();
+            return layer;
+        }
+
+        public static bool RepairTerrainMaterial(Terrain terrain)
+        {
+            var current = terrain.materialTemplate;
+            if (current && current.shader && current.shader.name.Contains("Terrain")) return false;
+            Undo.RecordObject(terrain, "Terrain material");
+            terrain.materialTemplate = TerrainMaterial();
+            EditorUtility.SetDirty(terrain);
+            return true;
+        }
+
         public static Terrain NewTerrain(LevelRoot root)
         {
             EnsureFolder(GeneratedFolder + "/Terrain");
@@ -164,7 +242,9 @@ namespace DesertTower.Levels.Editor
             go.name = "Landscape"; go.transform.SetParent(root.transform, false);
             go.transform.position = new Vector3(-48,0,-48);
             Undo.RegisterCreatedObjectUndo(go, "Create terrain");
-            Dirty(root); return go.GetComponent<Terrain>();
+            var terrain = go.GetComponent<Terrain>();
+            PaintSurface(terrain, Material("Ground surface", new Color(.76f, .60f, .38f)));
+            Dirty(root); return terrain;
         }
 
         public static NavMeshSurface Bake(LevelRoot root)
