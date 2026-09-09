@@ -217,5 +217,58 @@ namespace DesertTower.Levels.Tests
             }
             finally { AssetDatabase.DeleteAsset(wavePath); AssetDatabase.DeleteAsset(elementPath); }
         }
+
+        Terrain TestTerrain()
+        {
+            var data=new TerrainData { heightmapResolution=33,size=new Vector3(32,8,32),alphamapResolution=32 };
+            var go=Terrain.CreateTerrainGameObject(data); go.transform.SetParent(root.transform);
+            return go.GetComponent<Terrain>();
+        }
+        static void DeleteSurface(string name)
+        {
+            AssetDatabase.DeleteAsset("Assets/DesertTowerLevels/Terrain/"+name+".terrainlayer");
+            AssetDatabase.DeleteAsset("Assets/DesertTowerLevels/Terrain/"+name+" Albedo.asset");
+            AssetDatabase.DeleteAsset("Assets/DesertTowerLevels/Materials/"+name+".mat");
+        }
+        [Test] public void SurfaceMaterialIsPaintedAsATerrainLayerNotARenderer()
+        {
+            var terrain=TestTerrain();
+            try
+            {
+                var layer=LevelAuthoring.PaintSurface(terrain,LevelAuthoring.Material("Fixture sand",Color.red),4);
+                Assert.That(terrain.GetComponent<Renderer>(),Is.Null,"Terrain paints through layers, never a MeshRenderer material.");
+                Assert.That(terrain.terrainData.terrainLayers,Is.EqualTo(new[]{layer}));
+                Assert.That(layer.diffuseTexture,Is.Not.Null);
+                Assert.That(layer.tileSize,Is.EqualTo(new Vector2(4,4)));
+                Assert.That(terrain.materialTemplate.shader.name,Does.Contain("Terrain"));
+            }
+            finally { Object.DestroyImmediate(terrain.terrainData); DeleteSurface("Fixture sand"); }
+        }
+        [Test] public void SecondSurfaceKeepsTheFirstAndGainsAnAlphamapChannel()
+        {
+            var terrain=TestTerrain();
+            try
+            {
+                var sand=LevelAuthoring.PaintSurface(terrain,LevelAuthoring.Material("Fixture sand",Color.red));
+                var rock=LevelAuthoring.PaintSurface(terrain,LevelAuthoring.Material("Fixture rock",Color.gray));
+                Assert.That(terrain.terrainData.terrainLayers,Is.EqualTo(new[]{sand,rock}));
+                Assert.That(terrain.terrainData.alphamapLayers,Is.EqualTo(2));
+                LevelAuthoring.PaintSurface(terrain,LevelAuthoring.Material("Fixture rock",Color.gray));
+                Assert.That(terrain.terrainData.terrainLayers.Length,Is.EqualTo(2),"Repainting the same material must not stack duplicate layers.");
+            }
+            finally { Object.DestroyImmediate(terrain.terrainData); DeleteSurface("Fixture sand"); DeleteSurface("Fixture rock"); }
+        }
+        [Test] public void NonTerrainMaterialOnTerrainIsRepaired()
+        {
+            var terrain=TestTerrain();
+            try
+            {
+                terrain.materialTemplate=LevelAuthoring.Material("Fixture block",Color.white);
+                Assert.That(LevelAuthoring.RepairTerrainMaterial(terrain),Is.True);
+                Assert.That(terrain.materialTemplate.shader.name,Does.Contain("Terrain"));
+                Assert.That(LevelAuthoring.RepairTerrainMaterial(terrain),Is.False);
+            }
+            finally { Object.DestroyImmediate(terrain.terrainData); AssetDatabase.DeleteAsset("Assets/DesertTowerLevels/Materials/Fixture block.mat"); }
+        }
     }
 }

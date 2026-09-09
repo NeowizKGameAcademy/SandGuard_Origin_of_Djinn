@@ -1,0 +1,139 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8977132870309111719
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7574631450187757354}
+  - component: {fileID: 3010626743454679890}
+  - component: {fileID: 8937673858506985148}
+  m_Layer: 0
+  m_Name: FireCobraTower
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7574631450187757354
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8977132870309111719}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 4215035075748612969}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3010626743454679890
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8977132870309111719}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfa0e8f421187e74ab91ad8b51148f51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SandGuard.Facility.Runtime::SandGuard.Facility.FacilityInstance
+  definitionId: 
+  slotId: 
+  maxHealth: 150
+  maxUpgradeLevel: 3
+--- !u!114 &8937673858506985148
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8977132870309111719}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc33edca7f46a8444aabbc92f9ee5d01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesertTower.VFX.Runtime::DesertTower.VFX.VfxPopIn
+  PoofPrefab: {fileID: 3837854254998827864, guid: d5c9e15cee4fa8540994a7e0b79d8d88, type: 3}
+  RevealPrefab: {fileID: 3512970272418113126, guid: 8a12a735b8f61c04d8d156ac30658d6e, type: 3}
+  RevealDelay: 0.2
+  PunchScale: 1.25
+  PunchDuration: 0.18
+  FlashColor: {r: 1, g: 0.95, b: 0.75, a: 1}
+  FlashDuration: 0.22
+  Shake: 0.08
+  ShakeDuration: 0.15
+  ReferenceSize: 2.2
+  FitEffectsToBounds: 1
+  EffectLifetime: 3
+  PlayOnEnable: 0
+--- !u!1001 &4464309046621744258
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 7574631450187757354}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 027549bdf7a5f4842a1fc27967b2a7cd, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 027549bdf7a5f4842a1fc27967b2a7cd, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 027549bdf7a5f4842a1fc27967b2a7cd, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 027549bdf7a5f4842a1fc27967b2a7cd, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 027549bdf7a5f4842a1fc27967b2a7cd, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 027549bdf7a5f4842a1fc27967b2a7cd, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 027549bdf7a5f4842a1fc27967b2a7cd, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 027549bdf7a5f4842a1fc27967b2a7cd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 027549bdf7a5f4842a1fc27967b2a7cd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 027549bdf7a5f4842a1fc27967b2a7cd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 027549bdf7a5f4842a1fc27967b2a7cd, type: 3}
+      propertyPath: m_Name
+      value: Cobra
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 027549bdf7a5f4842a1fc27967b2a7cd, type: 3}
+--- !u!4 &4215035075748612969 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 027549bdf7a5f4842a1fc27967b2a7cd, type: 3}
+  m_PrefabInstance: {fileID: 4464309046621744258}
+  m_PrefabAsset: {fileID: 0}

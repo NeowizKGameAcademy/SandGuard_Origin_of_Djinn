@@ -1,0 +1,112 @@
+{
+  "units": "meters",
+  "blender_axes": "X right, -Y front, Z up",
+  "palette": "EquipmentPalette.png",
+  "assets": [
+    {
+      "name": "ShortSword",
+      "triangles": 252,
+      "mesh_objects": 1,
+      "dimensions_xyz_m": [
+        0.289000004529953,
+        0.11049999669194221,
+        1.0250000059604645
+      ],
+      "bones": 0,
+      "sockets": [
+        "HandGrip",
+        "BladeTip"
+      ]
+    },
+    {
+      "name": "AssassinDagger",
+      "triangles": 236,
+      "mesh_objects": 1,
+      "dimensions_xyz_m": [
+        0.2410000041127205,
+        0.11049999669194221,
+        0.6549999862909317
+      ],
+      "bones": 0,
+      "sockets": [
+        "HandGrip.001",
+        "BladeTip.001"
+      ]
+    },
+    {
+      "name": "ChiefScimitar",
+      "triangles": 400,
+      "mesh_objects": 1,
+      "dimensions_xyz_m": [
+        0.5488000065088272,
+        0.11049999669194221,
+        1.186000034213066
+      ],
+      "bones": 0,
+      "sockets": [
+        "HandGrip.002",
+        "BladeTip.002"
+      ]
+    },
+    {
+      "name": "Warhammer",
+      "triangles": 480,
+      "mesh_objects": 1,
+      "dimensions_xyz_m": [
+        0.6549999713897705,
+        0.29600000381469727,
+        1.1359999775886536
+      ],
+      "bones": 0,
+      "sockets": [
+        "HandGrip.003",
+        "OffHandGrip",
+        "ImpactCenter"
+      ]
+    },
+    {
+      "name": "RoundShield",
+      "triangles": 2240,
+      "mesh_objects": 1,
+      "dimensions_xyz_m": [
+        0.6299099922180176,
+        0.2620000056922436,
+        0.6299099922180176
+      ],
+      "bones": 0,
+      "sockets": [
+        "HandGrip.004",
+        "ShieldFace"
+      ]
+    },
+    {
+      "name": "TowerShield",
+      "triangles": 1284,
+      "mesh_objects": 1,
+      "dimensions_xyz_m": [
+        0.5740000009536743,
+        0.24950000271201134,
+        1.1399999856948853
+      ],
+      "bones": 0,
+      "sockets": [
+        "HandGrip.005",
+        "ShieldFace.001"
+      ]
+    },
+    {
+      "name": "ChiefCape",
+      "triangles": 1592,
+      "mesh_objects": 1,
+      "dimensions_xyz_m": [
+        0.9262180328369141,
+        0.32526104152202606,
+        1.1978988647460938
+      ],
+      "bones": 13,
+      "sockets": [
+        "ShoulderAttach"
+      ]
+    }
+  ]
+}

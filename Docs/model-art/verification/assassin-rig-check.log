@@ -1,0 +1,10 @@
+C:\course\unity\SandGuard\Docs\model-art\verification\check_new_rigs.py:20: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  mat=bpy.data.materials.new(name+'_Review'); mat.use_nodes=True
+C:\course\unity\SandGuard\Docs\model-art\verification\check_new_rigs.py:36: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  world=bpy.data.worlds.new('World'); scene.world=world; world.use_nodes=True; world.node_tree.nodes['Background'].inputs[0].default_value=(.1,.13,.19,1); world.node_tree.nodes['Background'].inputs[1].default_value=.55
+00:04.609  render           | Saved: 'C:\course\unity\SandGuard\Docs\model-art\verification\new-rigs\Assassin_poses.png'
+FBX version: 7700
+NEW_RIGS_CHECKED [{"character": "Assassin", "file": "bandit-ninja\\voxel+ninja+3d+model\\tripo_convert_a1d99f88-77b4-4753-a9e6-ea15dcbf2cae@Zombie Stand Up.fbx", "bones": 41, "missing_major_bones": [], "unweighted_vertices": 0, "max_weight_sum_error": 1.30385160446167e-07, "duration_seconds": 3.1, "sample_frames": [15, 43, 71], "sample_vertex_motion_at_1_8m_scale": 1.283436382407925}]
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 02:38:20)
+
+Blender quit

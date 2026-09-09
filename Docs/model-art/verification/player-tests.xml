@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="25" result="Passed" total="25" passed="25" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-08 09:00:46Z" end-time="2026-09-08 09:01:06Z" duration="19.2231492">
+  <test-suite type="TestSuite" id="1052" name="DesertTower" fullname="DesertTower" runstate="Runnable" testcasecount="31" result="Passed" start-time="2026-09-08 09:00:46Z" end-time="2026-09-08 09:01:06Z" duration="19.223149" total="25" passed="25" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1038" name="SandGuard.Player.Tests.dll" fullname="C:/course/unity/SandGuard/Library/ScriptAssemblies/SandGuard.Player.Tests.dll" runstate="Runnable" testcasecount="23" result="Passed" start-time="2026-09-08 09:00:46Z" end-time="2026-09-08 09:01:03Z" duration="16.777844" total="23" passed="23" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="38060" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1039" name="SandGuard" fullname="SandGuard" runstate="Runnable" testcasecount="23" result="Passed" start-time="2026-09-08 09:00:46Z" end-time="2026-09-08 09:01:03Z" duration="16.776982" total="23" passed="23" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1040" name="Player" fullname="SandGuard.Player" runstate="Runnable" testcasecount="23" result="Passed" start-time="2026-09-08 09:00:46Z" end-time="2026-09-08 09:01:03Z" duration="16.776451" total="23" passed="23" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1041" name="Tests" fullname="SandGuard.Player.Tests" runstate="Runnable" testcasecount="23" result="Passed" start-time="2026-09-08 09:00:46Z" end-time="2026-09-08 09:01:03Z" duration="16.775679" total="23" passed="23" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1012" name="PlayerFeelTests" fullname="SandGuard.Player.Tests.PlayerFeelTests" classname="SandGuard.Player.Tests.PlayerFeelTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-09-08 09:00:46Z" end-time="2026-09-08 09:00:56Z" duration="9.796670" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1018" name="CameraFollowsWithBoundedLagAndCatchesUp" fullname="SandGuard.Player.Tests.PlayerFeelTests.CameraFollowsWithBoundedLagAndCatchesUp" methodname="CameraFollowsWithBoundedLagAndCatchesUp" classname="SandGuard.Player.Tests.PlayerFeelTests" runstate="Runnable" seed="1743783029" result="Passed" start-time="2026-09-08 09:00:46Z" end-time="2026-09-08 09:00:48Z" duration="1.409053" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1016" name="DashKeepsMovingAfterItEndsInsteadOfStopping" fullname="SandGuard.Player.Tests.PlayerFeelTests.DashKeepsMovingAfterItEndsInsteadOfStopping" methodname="DashKeepsMovingAfterItEndsInsteadOfStopping" classname="SandGuard.Player.Tests.PlayerFeelTests" runstate="Runnable" seed="1875989438" result="Passed" start-time="2026-09-08 09:00:48Z" end-time="2026-09-08 09:00:48Z" duration="0.353915" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1017" name="FacesMovementDirectionUnlessAttacking" fullname="SandGuard.Player.Tests.PlayerFeelTests.FacesMovementDirectionUnlessAttacking" methodname="FacesMovementDirectionUnlessAttacking" classname="SandGuard.Player.Tests.PlayerFeelTests" runstate="Runnable" seed="2105368024" result="Passed" start-time="2026-09-08 09:00:48Z" end-time="2026-09-08 09:00:49Z" duration="0.953322" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1015" name="HoldingJumpGoesHigherThanTapping" fullname="SandGuard.Player.Tests.PlayerFeelTests.HoldingJumpGoesHigherThanTapping" methodname="HoldingJumpGoesHigherThanTapping" classname="SandGuard.Player.Tests.PlayerFeelTests" runstate="Runnable" seed="1962453938" result="Passed" start-time="2026-09-08 09:00:49Z" end-time="2026-09-08 09:00:52Z" duration="2.554101" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1014" name="JumpBufferFiresOnLandingAndCoyoteJumpKeepsAirJump" fullname="SandGuard.Player.Tests.PlayerFeelTests.JumpBufferFiresOnLandingAndCoyoteJumpKeepsAirJump" methodname="JumpBufferFiresOnLandingAndCoyoteJumpKeepsAirJump" classname="SandGuard.Player.Tests.PlayerFeelTests" runstate="Runnable" seed="1698394210" result="Passed" start-time="2026-09-08 09:00:52Z" end-time="2026-09-08 09:00:54Z" duration="2.057127" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1019" name="SnapsToGroundWhenWalkingDownASlope" fullname="SandGuard.Player.Tests.PlayerFeelTests.SnapsToGroundWhenWalkingDownASlope" methodname="SnapsToGroundWhenWalkingDownASlope" classname="SandGuard.Player.Tests.PlayerFeelTests" runstate="Runnable" seed="442287207" result="Passed" start-time="2026-09-08 09:00:54Z" end-time="2026-09-08 09:00:55Z" duration="1.603446" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1013" name="StopsAlmostImmediatelyAfterReleasingInput" fullname="SandGuard.Player.Tests.PlayerFeelTests.StopsAlmostImmediatelyAfterReleasingInput" methodname="StopsAlmostImmediatelyAfterReleasingInput" classname="SandGuard.Player.Tests.PlayerFeelTests" runstate="Runnable" seed="1760538779" result="Passed" start-time="2026-09-08 09:00:55Z" end-time="2026-09-08 09:00:56Z" duration="0.853106" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1020" name="PlayerPlayModeTests" fullname="SandGuard.Player.Tests.PlayerPlayModeTests" classname="SandGuard.Player.Tests.PlayerPlayModeTests" runstate="Runnable" testcasecount="15" result="Passed" start-time="2026-09-08 09:00:56Z" end-time="2026-09-08 09:01:00Z" duration="4.220766" total="15" passed="15" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1033" name="AirDashUsesMovementDirectionAndPreservesAirJump" fullname="SandGuard.Player.Tests.PlayerPlayModeTests.AirDashUsesMovementDirectionAndPreservesAirJump" methodname="AirDashUsesMovementDirectionAndPreservesAirJump" classname="SandGuard.Player.Tests.PlayerPlayModeTests" runstate="Runnable" seed="1960497036" result="Passed" start-time="2026-09-08 09:00:56Z" end-time="2026-09-08 09:00:56Z" duration="0.256838" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1027" name="BasicAttackHonorsCooldownAndPause" fullname="SandGuard.Player.Tests.PlayerPlayModeTests.BasicAttackHonorsCooldownAndPause" methodname="BasicAttackHonorsCooldownAndPause" classname="SandGuard.Player.Tests.PlayerPlayModeTests" runstate="Runnable" seed="87229991" result="Passed" start-time="2026-09-08 09:00:56Z" end-time="2026-09-08 09:00:57Z" duration="0.353804" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1025" name="CameraRetractsBeforeRearWall" fullname="SandGuard.Player.Tests.PlayerPlayModeTests.CameraRetractsBeforeRearWall" methodname="CameraRetractsBeforeRearWall" classname="SandGuard.Player.Tests.PlayerPlayModeTests" runstate="Runnable" seed="416454332" result="Passed" start-time="2026-09-08 09:00:57Z" end-time="2026-09-08 09:00:57Z" duration="0.006251" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1029" name="CancelledAndOldReservationsCannotSpendAfterReset" fullname="SandGuard.Player.Tests.PlayerPlayModeTests.CancelledAndOldReservationsCannotSpendAfterReset" methodname="CancelledAndOldReservationsCannotSpendAfterReset" classname="SandGuard.Player.Tests.PlayerPlayModeTests" runstate="Runnable" seed="1613310405" result="Passed" start-time="2026-09-08 09:00:57Z" end-time="2026-09-08 09:00:57Z" duration="0.002818" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1030" name="DashChargesOnceAndCannotCrossWall" fullname="SandGuard.Player.Tests.PlayerPlayModeTests.DashChargesOnceAndCannotCrossWall" methodname="DashChargesOnceAndCannotCrossWall" classname="SandGuard.Player.Tests.PlayerPlayModeTests" runstate="Runnable" seed="383356194" result="Passed" start-time="2026-09-08 09:00:57Z" end-time="2026-09-08 09:00:57Z" duration="0.355697" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1032" name="DashPauseFreezesMovementAndCooldown" fullname="SandGuard.Player.Tests.PlayerPlayModeTests.DashPauseFreezesMovementAndCooldown" methodname="DashPauseFreezesMovementAndCooldown" classname="SandGuard.Player.Tests.PlayerPlayModeTests" runstate="Runnable" seed="2026512913" result="Passed" start-time="2026-09-08 09:00:57Z" end-time="2026-09-08 09:00:57Z" duration="0.106683" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1035" name="HealthRejectsInvalidFriendlyAndPausedDamageWithoutEvents" fullname="SandGuard.Player.Tests.PlayerPlayModeTests.HealthRejectsInvalidFriendlyAndPausedDamageWithoutEvents" methodname="HealthRejectsInvalidFriendlyAndPausedDamageWithoutEvents" classname="SandGuard.Player.Tests.PlayerPlayModeTests" runstate="Runnable" seed="1467501480" result="Passed" start-time="2026-09-08 09:00:57Z" end-time="2026-09-08 09:00:57Z" duration="0.002559" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1031" name="InsufficientAvailableManaLeavesDashUnchanged" fullname="SandGuard.Player.Tests.PlayerPlayModeTests.InsufficientAvailableManaLeavesDashUnchanged" methodname="InsufficientAvailableManaLeavesDashUnchanged" classname="SandGuard.Player.Tests.PlayerPlayModeTests" runstate="Runnable" seed="2091786306" result="Passed" start-time="2026-09-08 09:00:57Z" end-time="2026-09-08 09:00:57Z" duration="0.005541" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1034" name="LethalDamageLocksActionsBeforeEventsAndOnlyDiesOnce" fullname="SandGuard.Player.Tests.PlayerPlayModeTests.LethalDamageLocksActionsBeforeEventsAndOnlyDiesOnce" methodname="LethalDamageLocksActionsBeforeEventsAndOnlyDiesOnce" classname="SandGuard.Player.Tests.PlayerPlayModeTests" runstate="Runnable" seed="1876824746" result="Passed" start-time="2026-09-08 09:00:57Z" end-time="2026-09-08 09:00:57Z" duration="0.202797" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1028" name="ManaReservationsDoNotCreateCapacityOrAllowDoubleSpending" fullname="SandGuard.Player.Tests.PlayerPlayModeTests.ManaReservationsDoNotCreateCapacityOrAllowDoubleSpending" methodname="ManaReservationsDoNotCreateCapacityOrAllowDoubleSpending" classname="SandGuard.Player.Tests.PlayerPlayModeTests" runstate="Runnable" seed="1616356865" result="Passed" start-time="2026-09-08 09:00:57Z" end-time="2026-09-08 09:00:57Z" duration="0.001676" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1021" name="MovementStopsAtWallAndPauseBlocksMovement" fullname="SandGuard.Player.Tests.PlayerPlayModeTests.MovementStopsAtWallAndPauseBlocksMovement" methodname="MovementStopsAtWallAndPauseBlocksMovement" classname="SandGuard.Player.Tests.PlayerPlayModeTests" runstate="Runnable" seed="365372094" result="Passed" start-time="2026-09-08 09:00:57Z" end-time="2026-09-08 09:00:58Z" duration="0.953792" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1024" name="MuzzleBeyondWallCannotShootThroughIt" fullname="SandGuard.Player.Tests.PlayerPlayModeTests.MuzzleBeyondWallCannotShootThroughIt" methodname="MuzzleBeyondWallCannotShootThroughIt" classname="SandGuard.Player.Tests.PlayerPlayModeTests" runstate="Runnable" seed="300729322" result="Passed" start-time="2026-09-08 09:00:58Z" end-time="2026-09-08 09:00:59Z" duration="0.202340" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1022" name="OnlyOneAirJumpAndLandingRestoresIt" fullname="SandGuard.Player.Tests.PlayerPlayModeTests.OnlyOneAirJumpAndLandingRestoresIt" methodname="OnlyOneAirJumpAndLandingRestoresIt" classname="SandGuard.Player.Tests.PlayerPlayModeTests" runstate="Runnable" seed="1809519964" result="Passed" start-time="2026-09-08 09:00:59Z" end-time="2026-09-08 09:01:00Z" duration="1.657639" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1023" name="ProjectileHitsNearestColliderOnlyOnce" fullname="SandGuard.Player.Tests.PlayerPlayModeTests.ProjectileHitsNearestColliderOnlyOnce" methodname="ProjectileHitsNearestColliderOnlyOnce" classname="SandGuard.Player.Tests.PlayerPlayModeTests" runstate="Runnable" seed="2006945380" result="Passed" start-time="2026-09-08 09:01:00Z" end-time="2026-09-08 09:01:00Z" duration="0.102215" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1026" name="VisualReplacementKeepsMotorAndUsesOptionalMuzzle" fullname="SandGuard.Player.Tests.PlayerPlayModeTests.VisualReplacementKeepsMotorAndUsesOptionalMuzzle" methodname="VisualReplacementKeepsMotorAndUsesOptionalMuzzle" classname="SandGuard.Player.Tests.PlayerPlayModeTests" runstate="Runnable" seed="1716588787" result="Passed" start-time="2026-09-08 09:01:00Z" end-time="2026-09-08 09:01:00Z" duration="0.006704" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1036" name="ProtagonistArtTests" fullname="SandGuard.Player.Tests.ProtagonistArtTests" classname="SandGuard.Player.Tests.ProtagonistArtTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-09-08 09:01:00Z" end-time="2026-09-08 09:01:03Z" duration="2.756506" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1037" name="TexturedPlayerMovesAndLampChangesAttachmentAndLight" fullname="SandGuard.Player.Tests.ProtagonistArtTests.TexturedPlayerMovesAndLampChangesAttachmentAndLight" methodname="TexturedPlayerMovesAndLampChangesAttachmentAndLight" classname="SandGuard.Player.Tests.ProtagonistArtTests" runstate="Runnable" seed="876591336" result="Passed" start-time="2026-09-08 09:01:00Z" end-time="2026-09-08 09:01:03Z" duration="2.755675" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[ART_RUNTIME_BOUNDS Center: (-0.01, 0.92, 0.08), Extents: (0.52, 1.06, 0.62) modelScale=(1.00, 1.00, 1.00) skinScale=(100.00, 100.00, 100.00)
+Camera PlayerCamera does not contain an additional camera data component. Open the Game Object in the inspector to add additional camera data.
+Camera Art Verification Camera does not contain an additional camera data component. Open the Game Object in the inspector to add additional camera data.
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="1045" name="SandGuard.PlayerAndEnemy.Tests.dll" fullname="C:/course/unity/SandGuard/Library/ScriptAssemblies/SandGuard.PlayerAndEnemy.Tests.dll" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-08 09:01:03Z" end-time="2026-09-08 09:01:06Z" duration="2.438251" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="38060" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1046" name="SandGuard" fullname="SandGuard" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-08 09:01:03Z" end-time="2026-09-08 09:01:06Z" duration="2.437788" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1047" name="Integration" fullname="SandGuard.Integration" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-08 09:01:03Z" end-time="2026-09-08 09:01:06Z" duration="2.437423" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1048" name="Tests" fullname="SandGuard.Integration.Tests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-08 09:01:03Z" end-time="2026-09-08 09:01:06Z" duration="2.436728" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1042" name="PlayerAndEnemyPlayModeTests" fullname="SandGuard.Integration.Tests.PlayerAndEnemyPlayModeTests" classname="SandGuard.Integration.Tests.PlayerAndEnemyPlayModeTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-08 09:01:03Z" end-time="2026-09-08 09:01:06Z" duration="2.436247" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1043" name="EnemiesSpawnOnNavMeshAndEngagePlayerOrCore" fullname="SandGuard.Integration.Tests.PlayerAndEnemyPlayModeTests.EnemiesSpawnOnNavMeshAndEngagePlayerOrCore" methodname="EnemiesSpawnOnNavMeshAndEngagePlayerOrCore" classname="SandGuard.Integration.Tests.PlayerAndEnemyPlayModeTests" runstate="Runnable" seed="1755777379" result="Passed" start-time="2026-09-08 09:01:03Z" end-time="2026-09-08 09:01:05Z" duration="1.431678" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1044" name="FallbackCombatTargetIncapacitatesThenRevivesWithProtection" fullname="SandGuard.Integration.Tests.PlayerAndEnemyPlayModeTests.FallbackCombatTargetIncapacitatesThenRevivesWithProtection" methodname="FallbackCombatTargetIncapacitatesThenRevivesWithProtection" classname="SandGuard.Integration.Tests.PlayerAndEnemyPlayModeTests" runstate="Runnable" seed="1647867292" result="Passed" start-time="2026-09-08 09:01:05Z" end-time="2026-09-08 09:01:06Z" duration="1.003411" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/m/AppData/LocalLow/DefaultCompany/DesertTower\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

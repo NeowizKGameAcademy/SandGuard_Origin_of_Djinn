@@ -1,0 +1,69 @@
+C:\course\unity\SandGuard\Docs\model-art\enemy-equipment-v1\build_equipment.py:25: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  mat=bpy.data.materials.new('EquipmentPalette'); mat.use_nodes=True
+Extensions: writing cache failed ([WinError 5] 액세스가 거부되었습니다: 'C:\\Users\\m\\AppData\\Roaming\\Blender Foundation\\Blender\\5.2\\extensions').
+
+FBX export starting... 'C:\\course\\unity\\SandGuard\\Docs\\model-art\\enemy-equipment-v1\\Exports\\ShortSword.fbx'
+export finished in 0.0163 sec.
+INFO Draco is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_draco_bridge.dll
+INFO MeshOptimizer is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_meshopt_bridge.dll
+11:27:41 | INFO: Starting glTF 2.0 export
+11:27:41 | INFO: Extracting primitive: ShortSword_Mesh
+11:27:41 | INFO: Primitives created: 1
+11:27:41 | INFO: Finished glTF 2.0 export in 0.3054473400115967 s
+
+
+FBX export starting... 'C:\\course\\unity\\SandGuard\\Docs\\model-art\\enemy-equipment-v1\\Exports\\AssassinDagger.fbx'
+export finished in 0.0203 sec.
+11:27:41 | INFO: Starting glTF 2.0 export
+11:27:41 | INFO: Extracting primitive: AssassinDagger_Mesh
+11:27:41 | INFO: Primitives created: 1
+11:27:41 | INFO: Finished glTF 2.0 export in 0.017068862915039062 s
+
+
+FBX export starting... 'C:\\course\\unity\\SandGuard\\Docs\\model-art\\enemy-equipment-v1\\Exports\\ChiefScimitar.fbx'
+export finished in 0.0215 sec.
+11:27:41 | INFO: Starting glTF 2.0 export
+11:27:41 | INFO: Extracting primitive: ChiefScimitar_Mesh
+11:27:41 | INFO: Primitives created: 1
+11:27:41 | INFO: Finished glTF 2.0 export in 0.01696300506591797 s
+
+
+FBX export starting... 'C:\\course\\unity\\SandGuard\\Docs\\model-art\\enemy-equipment-v1\\Exports\\Warhammer.fbx'
+export finished in 0.0335 sec.
+11:27:41 | INFO: Starting glTF 2.0 export
+11:27:41 | INFO: Extracting primitive: Warhammer_Mesh
+11:27:41 | INFO: Primitives created: 1
+11:27:41 | INFO: Finished glTF 2.0 export in 0.023035526275634766 s
+
+
+FBX export starting... 'C:\\course\\unity\\SandGuard\\Docs\\model-art\\enemy-equipment-v1\\Exports\\RoundShield.fbx'
+export finished in 0.0380 sec.
+11:27:41 | INFO: Starting glTF 2.0 export
+11:27:41 | INFO: Extracting primitive: RoundShield_Mesh
+11:27:41 | INFO: Primitives created: 1
+11:27:41 | INFO: Finished glTF 2.0 export in 0.023837804794311523 s
+
+
+FBX export starting... 'C:\\course\\unity\\SandGuard\\Docs\\model-art\\enemy-equipment-v1\\Exports\\TowerShield.fbx'
+export finished in 0.0376 sec.
+11:27:41 | INFO: Starting glTF 2.0 export
+11:27:41 | INFO: Extracting primitive: TowerShield_Mesh
+11:27:41 | INFO: Primitives created: 1
+11:27:41 | INFO: Finished glTF 2.0 export in 0.028790950775146484 s
+
+
+FBX export starting... 'C:\\course\\unity\\SandGuard\\Docs\\model-art\\enemy-equipment-v1\\Exports\\ChiefCape.fbx'
+export finished in 0.1950 sec.
+11:27:41 | INFO: Starting glTF 2.0 export
+11:27:41 | INFO: Extracting primitive: ChiefCape_Mesh
+11:27:41 | INFO: Primitives created: 1
+11:27:42 | INFO: Finished glTF 2.0 export in 0.15320253372192383 s
+C:\course\unity\SandGuard\Docs\model-art\enemy-equipment-v1\build_equipment.py:254: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  world=bpy.data.worlds.new('Studio'); scene.world=world; world.use_nodes=True; world.node_tree.nodes['Background'].inputs[0].default_value=(.065,.08,.12,1); world.node_tree.nodes['Background'].inputs[1].default_value=.45
+01:06.266  render           | Saved: 'C:\course\unity\SandGuard\Docs\model-art\enemy-equipment-v1\Previews\Equipment_Overview.png'
+
+Info: Saved as "EnemyEquipment.blend"
+EQUIPMENT_COMPLETE {"units": "meters", "blender_axes": "X right, -Y front, Z up", "palette": "EquipmentPalette.png", "assets": [{"name": "ShortSword", "triangles": 252, "mesh_objects": 1, "dimensions_xyz_m": [0.289000004529953, 0.11049999669194221, 1.0250000059604645], "bones": 0, "sockets": ["HandGrip", "BladeTip"]}, {"name": "AssassinDagger", "triangles": 236, "mesh_objects": 1, "dimensions_xyz_m": [0.2410000041127205, 0.11049999669194221, 0.6549999862909317], "bones": 0, "sockets": ["HandGrip.001", "BladeTip.001"]}, {"name": "ChiefScimitar", "triangles": 400, "mesh_objects": 1, "dimensions_xyz_m": [0.5488000065088272, 0.11049999669194221, 1.186000034213066], "bones": 0, "sockets": ["HandGrip.002", "BladeTip.002"]}, {"name": "Warhammer", "triangles": 480, "mesh_objects": 1, "dimensions_xyz_m": [0.6549999713897705, 0.29600000381469727, 1.1359999775886536], "bones": 0, "sockets": ["HandGrip.003", "OffHandGrip", "ImpactCenter"]}, {"name": "RoundShield", "triangles": 2240, "mesh_objects": 1, "dimensions_xyz_m": [0.6299099922180176, 0.2620000056922436, 0.6299099922180176], "bones": 0, "sockets": ["HandGrip.004", "ShieldFace"]}, {"name": "TowerShield", "triangles": 1284, "mesh_objects": 1, "dimensions_xyz_m": [0.5740000009536743, 0.24950000271201134, 1.1399999856948853], "bones": 0, "sockets": ["HandGrip.005", "ShieldFace.001"]}, {"name": "ChiefCape", "triangles": 1592, "mesh_objects": 1, "dimensions_xyz_m": [0.9262180328369141, 0.32526104152202606, 1.1978988647460938], "bones": 13, "sockets": ["ShoulderAttach"]}]}
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 02:38:20)
+
+Blender quit

@@ -1,0 +1,27 @@
+  Swordsman RightHand fingers (-0.16, -0.91, 0.38) thumb (-0.50, 0.41, 0.77) palm (-0.85, -0.07, -0.52) (mixamorig:RightHandIndex1)
+  Swordsman ShortSword -> mixamorig:RightHand scale 0.65 gripAt (0.40, 0.79, 0.08)
+  Swordsman LeftHand fingers (-0.13, -0.90, 0.42) thumb (0.83, 0.13, 0.54) palm (0.54, -0.42, -0.73) (mixamorig:LeftHandIndex1)
+  Swordsman RoundShield -> mixamorig:LeftHand scale 0.9 gripAt (-0.40, 0.79, 0.08)
+Swordsman: height=1.75m (target 1.75) stride=5.45m/s moveTimeScale=0.64 attack=1.00s (windup 0.5, interval 1.2) death=2.30s bones=34
+  Assassin RightHand fingers (0.43, -0.85, 0.30) thumb (-0.75, -0.15, 0.64) palm (-0.50, -0.50, -0.71) (mixamorig:RightHandIndex1)
+  Assassin AssassinDagger -> mixamorig:RightHand scale 0.63 gripAt (0.36, 0.75, 0.10)
+  Assassin LeftHand fingers (-0.42, -0.85, 0.33) thumb (0.76, -0.13, 0.64) palm (0.50, -0.51, -0.70) (mixamorig:LeftHandIndex1)
+  Assassin AssassinDagger -> mixamorig:LeftHand scale 0.63 gripAt (-0.36, 0.75, 0.09)
+Assassin: height=1.68m (target 1.68) stride=0.00m/s moveTimeScale=1.00 attack=1.07s (windup 0.3, interval 1.2) death=3.60s bones=34
+  ShieldGuard RightHand fingers (0.12, -0.91, 0.39) thumb (-0.92, 0.05, 0.39) palm (-0.38, -0.40, -0.83) (mixamorig:RightHandIndex1)
+  ShieldGuard ShortSword -> mixamorig:RightHand scale 0.72 gripAt (0.44, 0.81, 0.11)
+  ShieldGuard LeftHand fingers (-0.09, -0.95, 0.31) thumb (0.87, 0.08, 0.49) palm (0.49, -0.32, -0.81) (mixamorig:LeftHandIndex1)
+  ShieldGuard TowerShield -> mixamorig:LeftHand scale 1 gripAt (-0.44, 0.81, 0.11)
+ShieldGuard: height=1.84m (target 1.84) stride=2.28m/s moveTimeScale=0.88 attack=1.00s (windup 0.5, interval 1.2) death=2.30s bones=34
+  HammerBrute RightHand fingers (0.10, -0.98, 0.19) thumb (-0.88, 0.00, 0.48) palm (-0.46, -0.22, -0.86) (mixamorig:RightHandIndex1)
+  HammerBrute Warhammer -> mixamorig:RightHand scale 1 gripAt (0.49, 0.85, 0.14)
+HammerBrute: height=1.94m (target 1.94) stride=6.12m/s moveTimeScale=0.57 attack=1.83s (windup 0.93, interval 1.9) death=2.40s bones=34
+  Chief RightHand fingers (0.26, -0.93, 0.28) thumb (-0.07, 0.27, 0.96) palm (-0.96, -0.27, 0.00) (mixamorig:RightHandIndex1+assumedThumb)
+  Chief ChiefScimitar -> mixamorig:RightHand scale 1 gripAt (0.49, 0.93, -0.03)
+  Chief ChiefCape -> mixamorig:Spine1 scale 1.133333 gripAt (0.00, 1.64, -0.15)
+Chief: height=2.04m (target 2.04) stride=2.63m/s moveTimeScale=0.84 attack=1.50s (windup 0.6, interval 1.6) death=3.63s bones=28
+Swordsman prefab: Assets/Enemy/Generated/Enemy_Swordsman.prefab (variant of Enemy.prefab)
+Assassin prefab: Assets/Enemy/Generated/Enemy_Assassin.prefab (variant of Enemy.prefab)
+ShieldGuard prefab: Assets/Enemy/Generated/Enemy_ShieldGuard.prefab (variant of Enemy.prefab)
+HammerBrute prefab: Assets/Enemy/Generated/Enemy_HammerBrute.prefab (variant of Enemy.prefab)
+Chief prefab: Assets/Enemy/Generated/Enemy_Chief.prefab (variant of Enemy.prefab)
