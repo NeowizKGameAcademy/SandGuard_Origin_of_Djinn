@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cda2ba6ab5df9c249b01d99e290ae1b5, type: 3}
+  m_Name: WaveSet
+  m_EditorClassIdentifier: DesertTower.Levels.Runtime::DesertTower.Levels.WaveSet
+  waves:
+  - label: Wave 1
+    preparationSeconds: 20
+    groups:
+    - spawnId: 61f89511c5fe441680398e1592c7e833
+      targetId: 28bda669e4a44066a660cd83960f345f
+      routeId: 
+      element: {fileID: 0}
+      count: 8
+      delay: 0
+      interval: 1
