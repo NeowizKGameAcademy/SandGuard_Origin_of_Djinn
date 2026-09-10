@@ -1,0 +1,1231 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &149969087163888610
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2061156847788471382}
+  - component: {fileID: 3322431036388404526}
+  m_Layer: 0
+  m_Name: T5
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2061156847788471382
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 149969087163888610}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 42.33, y: 11.957, z: -0.78}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7347575392112855064}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3322431036388404526
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 149969087163888610}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f4a7ed6870599a9c3e5dd5f90fadec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesertTower.LevelIntegration.Runtime::DesertTower.LevelIntegration.RouteNode
+  id: 8dba32bc86964db49bd84322aa17ef93
+  label: T5
+  floor: 2
+  marker: {fileID: 0}
+  arrivalRadius: 0.5
+  heightTolerance: 0.5
+  outgoing:
+  - target: {fileID: 5587377520207479626}
+    weight: 1
+    available: 1
+  - target: {fileID: 6299483712473558420}
+    weight: 1
+    available: 1
+--- !u!1 &614523376451793733
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3461348967467382109}
+  - component: {fileID: 3528163062971867100}
+  m_Layer: 0
+  m_Name: Respawn 1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3461348967467382109
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 614523376451793733}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.17, y: 51.99999, z: 1.97}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7347575392112855064}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3528163062971867100
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 614523376451793733}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ab1e199ff9732541a82c81732c22516, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesertTower.Levels.Runtime::DesertTower.Levels.LevelMarker
+  id: c48a257d984b42b4ad21c90b3ec5d7ba
+  label: Respawn 1
+  kind: 3
+  definition: {fileID: 0}
+  footprint: {x: 0.8, y: 1.8, z: 0.8}
+  previewRange: 8
+  spawnRadius: 2
+--- !u!1 &1835445983782673120
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8666821060251574049}
+  - component: {fileID: 4255690789476090402}
+  m_Layer: 0
+  m_Name: T2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8666821060251574049
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1835445983782673120}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 60.82, y: 0.13, z: -24.53}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7347575392112855064}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4255690789476090402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1835445983782673120}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f4a7ed6870599a9c3e5dd5f90fadec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesertTower.LevelIntegration.Runtime::DesertTower.LevelIntegration.RouteNode
+  id: 3fb1245653a94f38a3679796dd5cf213
+  label: T2
+  floor: 1
+  marker: {fileID: 0}
+  arrivalRadius: 0.5
+  heightTolerance: 0.5
+  outgoing:
+  - target: {fileID: 3322431036388404526}
+    weight: 1
+    available: 1
+--- !u!1 &2994990934723144281
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2570001529909167533}
+  - component: {fileID: 5587377520207479626}
+  m_Layer: 0
+  m_Name: NE L3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2570001529909167533
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2994990934723144281}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 26, y: 24, z: 24.3}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7347575392112855064}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5587377520207479626
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2994990934723144281}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f4a7ed6870599a9c3e5dd5f90fadec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesertTower.LevelIntegration.Runtime::DesertTower.LevelIntegration.RouteNode
+  id: f57b4671b2144d60817490953bc8d276
+  label: NE L3
+  floor: 3
+  marker: {fileID: 0}
+  arrivalRadius: 0.5
+  heightTolerance: 0.5
+  outgoing:
+  - target: {fileID: 7117028460697831494}
+    weight: 1
+    available: 1
+--- !u!1 &3164514791501531040
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5114339306774452658}
+  - component: {fileID: 6261454956841857888}
+  - component: {fileID: 5124990675472750789}
+  m_Layer: 0
+  m_Name: SW Spawn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5114339306774452658
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3164514791501531040}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -64.32, y: 0, z: -63.93}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7347575392112855064}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6261454956841857888
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3164514791501531040}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f4a7ed6870599a9c3e5dd5f90fadec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesertTower.LevelIntegration.Runtime::DesertTower.LevelIntegration.RouteNode
+  id: 52558a49179f4aad94b45c36414d6e46
+  label: SW Spawn
+  floor: 0
+  marker: {fileID: 5124990675472750789}
+  arrivalRadius: 0.5
+  heightTolerance: 0.5
+  outgoing:
+  - target: {fileID: 7473521570364382750}
+    weight: 1
+    available: 1
+--- !u!114 &5124990675472750789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3164514791501531040}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ab1e199ff9732541a82c81732c22516, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesertTower.Levels.Runtime::DesertTower.Levels.LevelMarker
+  id: e01621156d5d496bad4a33a0b0e6c782
+  label: SW Spawn
+  kind: 1
+  definition: {fileID: 0}
+  footprint: {x: 2, y: 2, z: 2}
+  previewRange: 8
+  spawnRadius: 2
+--- !u!1 &3311410687827183943
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5086833881762884092}
+  - component: {fileID: 6299483712473558420}
+  m_Layer: 0
+  m_Name: SE L3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5086833881762884092
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3311410687827183943}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 26.6, y: 24.27, z: -24.8}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7347575392112855064}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6299483712473558420
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3311410687827183943}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f4a7ed6870599a9c3e5dd5f90fadec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesertTower.LevelIntegration.Runtime::DesertTower.LevelIntegration.RouteNode
+  id: b023da38f27a4ad6b307bf5322284aad
+  label: SE L3
+  floor: 3
+  marker: {fileID: 0}
+  arrivalRadius: 0.5
+  heightTolerance: 0.5
+  outgoing:
+  - target: {fileID: 7343694806784292229}
+    weight: 1
+    available: 1
+--- !u!1 &4608032317268764644
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7347575392112855064}
+  - component: {fileID: 8087007938291939131}
+  - component: {fileID: 6497633374297665909}
+  - component: {fileID: 7329238922625864213}
+  m_Layer: 0
+  m_Name: GraphIntegration
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7347575392112855064
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4608032317268764644}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 2, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1213284016232173335}
+  - {fileID: 3405335733724469169}
+  - {fileID: 5114339306774452658}
+  - {fileID: 7788724957821753698}
+  - {fileID: 920728503664386945}
+  - {fileID: 8666821060251574049}
+  - {fileID: 461983438311593792}
+  - {fileID: 2534626010659147704}
+  - {fileID: 2061156847788471382}
+  - {fileID: 6889963339705964391}
+  - {fileID: 2570001529909167533}
+  - {fileID: 5086833881762884092}
+  - {fileID: 3735782635286943137}
+  - {fileID: 5004851139130672844}
+  - {fileID: 6787754847482366438}
+  - {fileID: 3860361041607402688}
+  - {fileID: 2544806748085938965}
+  - {fileID: 4832625733562746562}
+  - {fileID: 3461348967467382109}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8087007938291939131
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4608032317268764644}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff89a751d70c5837b0c65c2ce229e4d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesertTower.LevelIntegration.Runtime::DesertTower.LevelIntegration.RouteGraph
+  level: {fileID: 0}
+--- !u!114 &6497633374297665909
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4608032317268764644}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 074a71440efc5b189264afb1c38ce2e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesertTower.LevelIntegration.Runtime::DesertTower.LevelIntegration.WaveDirector
+  graph: {fileID: 8087007938291939131}
+  catalog: {fileID: 0}
+  coreReceiver: {fileID: 0}
+  startAutomatically: 0
+  randomSeed: 1234
+  maxSpawnsPerFrame: 32
+  onStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  onWaveCleared:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &7329238922625864213
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4608032317268764644}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5acb746ccc75207a27283d2f5d0b3d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesertTower.LevelIntegration.Runtime::DesertTower.LevelIntegration.LevelBootstrap
+  level: {fileID: 0}
+  catalog: {fileID: 0}
+  director: {fileID: 6497633374297665909}
+  createOnStart: 1
+--- !u!1 &4813531953045734326
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 920728503664386945}
+  - component: {fileID: 673091648156478182}
+  m_Layer: 0
+  m_Name: T1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &920728503664386945
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4813531953045734326}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 60.93, y: 0.16, z: 24.22}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7347575392112855064}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &673091648156478182
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4813531953045734326}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f4a7ed6870599a9c3e5dd5f90fadec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesertTower.LevelIntegration.Runtime::DesertTower.LevelIntegration.RouteNode
+  id: 59703ad4d45341c4a2d2b793bac31bbd
+  label: T1
+  floor: 1
+  marker: {fileID: 0}
+  arrivalRadius: 0.5
+  heightTolerance: 0.5
+  outgoing:
+  - target: {fileID: 3322431036388404526}
+    weight: 1
+    available: 1
+--- !u!1 &5441273289983755950
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2544806748085938965}
+  - component: {fileID: 8085857453885177053}
+  - component: {fileID: 6913958930855554220}
+  m_Layer: 0
+  m_Name: Core
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2544806748085938965
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5441273289983755950}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.4, y: 52.05, z: -0.8}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7347575392112855064}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8085857453885177053
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5441273289983755950}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f4a7ed6870599a9c3e5dd5f90fadec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesertTower.LevelIntegration.Runtime::DesertTower.LevelIntegration.RouteNode
+  id: 1ff1bf2c8dd64ab0ac3e154217d2c783
+  label: Core
+  floor: 5
+  marker: {fileID: 6913958930855554220}
+  arrivalRadius: 0.5
+  heightTolerance: 0.5
+  outgoing: []
+--- !u!114 &6913958930855554220
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5441273289983755950}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ab1e199ff9732541a82c81732c22516, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesertTower.Levels.Runtime::DesertTower.Levels.LevelMarker
+  id: 835bc8b2a0bc4807985b5eebbd309dd8
+  label: Core
+  kind: 0
+  definition: {fileID: 0}
+  footprint: {x: 2, y: 2, z: 2}
+  previewRange: 8
+  spawnRadius: 2
+--- !u!1 &5720797728511721542
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7788724957821753698}
+  - component: {fileID: 4719616613749036436}
+  - component: {fileID: 3362017817692660122}
+  m_Layer: 0
+  m_Name: NW Spawn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7788724957821753698
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5720797728511721542}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -63.859, y: 0, z: 64.211}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7347575392112855064}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4719616613749036436
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5720797728511721542}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f4a7ed6870599a9c3e5dd5f90fadec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesertTower.LevelIntegration.Runtime::DesertTower.LevelIntegration.RouteNode
+  id: f4ce6d4a2c284222a21af17dba20b5a4
+  label: NW Spawn
+  floor: 0
+  marker: {fileID: 3362017817692660122}
+  arrivalRadius: 0.5
+  heightTolerance: 0.5
+  outgoing:
+  - target: {fileID: 2013683312565566381}
+    weight: 1
+    available: 1
+--- !u!114 &3362017817692660122
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5720797728511721542}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ab1e199ff9732541a82c81732c22516, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesertTower.Levels.Runtime::DesertTower.Levels.LevelMarker
+  id: 50dd3b485a11450c937f9325ec9e1d77
+  label: NW Spawn
+  kind: 1
+  definition: {fileID: 0}
+  footprint: {x: 2, y: 2, z: 2}
+  previewRange: 8
+  spawnRadius: 2
+--- !u!1 &6079745845785195808
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4832625733562746562}
+  - component: {fileID: 4456688164038222635}
+  m_Layer: 0
+  m_Name: PlayerStart 1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4832625733562746562
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6079745845785195808}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -1, y: 51.99999, z: 2}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7347575392112855064}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4456688164038222635
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6079745845785195808}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ab1e199ff9732541a82c81732c22516, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesertTower.Levels.Runtime::DesertTower.Levels.LevelMarker
+  id: 6f6bb4e428fc4d9f9341846a35de3c46
+  label: PlayerStart 1
+  kind: 2
+  definition: {fileID: 0}
+  footprint: {x: 0.8, y: 1.8, z: 0.8}
+  previewRange: 8
+  spawnRadius: 2
+--- !u!1 &6292966818975258234
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6787754847482366438}
+  - component: {fileID: 7343694806784292229}
+  m_Layer: 0
+  m_Name: T7
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6787754847482366438
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6292966818975258234}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.6, y: 37.13, z: -46.2}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7347575392112855064}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7343694806784292229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6292966818975258234}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f4a7ed6870599a9c3e5dd5f90fadec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesertTower.LevelIntegration.Runtime::DesertTower.LevelIntegration.RouteNode
+  id: 53ec6578af064814923a9cd37728c2af
+  label: T7
+  floor: 4
+  marker: {fileID: 0}
+  arrivalRadius: 0.5
+  heightTolerance: 0.5
+  outgoing:
+  - target: {fileID: 8085857453885177053}
+    weight: 1
+    available: 1
+--- !u!1 &6536795750377211416
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2534626010659147704}
+  - component: {fileID: 2013683312565566381}
+  m_Layer: 0
+  m_Name: T4
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2534626010659147704
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6536795750377211416}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -63.162, y: 0.74, z: 21.64}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7347575392112855064}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2013683312565566381
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6536795750377211416}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f4a7ed6870599a9c3e5dd5f90fadec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesertTower.LevelIntegration.Runtime::DesertTower.LevelIntegration.RouteNode
+  id: 3014612d847947fdb6b3e38206ce640f
+  label: T4
+  floor: 1
+  marker: {fileID: 0}
+  arrivalRadius: 0.5
+  heightTolerance: 0.5
+  outgoing:
+  - target: {fileID: 4989674833150764728}
+    weight: 1
+    available: 1
+--- !u!1 &6963103630003100759
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3860361041607402688}
+  - component: {fileID: 7117028460697831494}
+  m_Layer: 0
+  m_Name: T8
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3860361041607402688
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6963103630003100759}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.9, y: 36.3, z: 46.1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7347575392112855064}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7117028460697831494
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6963103630003100759}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f4a7ed6870599a9c3e5dd5f90fadec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesertTower.LevelIntegration.Runtime::DesertTower.LevelIntegration.RouteNode
+  id: 6f2082f19ae8405e9313e9647c82e015
+  label: T8
+  floor: 4
+  marker: {fileID: 0}
+  arrivalRadius: 0.5
+  heightTolerance: 0.5
+  outgoing:
+  - target: {fileID: 8085857453885177053}
+    weight: 1
+    available: 1
+--- !u!1 &7123013649434654107
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1213284016232173335}
+  - component: {fileID: 6772295335057425392}
+  - component: {fileID: 4885334625210751916}
+  m_Layer: 0
+  m_Name: NE Spawn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1213284016232173335
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7123013649434654107}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 64.2, y: 0, z: 63.71}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7347575392112855064}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6772295335057425392
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7123013649434654107}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f4a7ed6870599a9c3e5dd5f90fadec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesertTower.LevelIntegration.Runtime::DesertTower.LevelIntegration.RouteNode
+  id: 6b3d6a6d8c2f4361986e41d564ef62d1
+  label: NE Spawn
+  floor: 0
+  marker: {fileID: 4885334625210751916}
+  arrivalRadius: 0.5
+  heightTolerance: 0.5
+  outgoing:
+  - target: {fileID: 673091648156478182}
+    weight: 1
+    available: 1
+--- !u!114 &4885334625210751916
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7123013649434654107}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ab1e199ff9732541a82c81732c22516, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesertTower.Levels.Runtime::DesertTower.Levels.LevelMarker
+  id: 8ca42bbaa0e6424086dec32cb6b1c6ff
+  label: NE Spawn
+  kind: 1
+  definition: {fileID: 0}
+  footprint: {x: 2, y: 2, z: 2}
+  previewRange: 8
+  spawnRadius: 2
+--- !u!1 &7459936033018945984
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5004851139130672844}
+  - component: {fileID: 4786486749409712378}
+  m_Layer: 0
+  m_Name: NW L3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5004851139130672844
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7459936033018945984}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -24.8, y: 24.27, z: 24.1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7347575392112855064}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4786486749409712378
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7459936033018945984}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f4a7ed6870599a9c3e5dd5f90fadec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesertTower.LevelIntegration.Runtime::DesertTower.LevelIntegration.RouteNode
+  id: e9d93dc101e2452992dc1d2e72f2a719
+  label: NW L3
+  floor: 3
+  marker: {fileID: 0}
+  arrivalRadius: 0.5
+  heightTolerance: 0.5
+  outgoing:
+  - target: {fileID: 7117028460697831494}
+    weight: 1
+    available: 1
+--- !u!1 &8126139185692763492
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3735782635286943137}
+  - component: {fileID: 6378878777631025218}
+  m_Layer: 0
+  m_Name: SW L3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3735782635286943137
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8126139185692763492}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -26.86, y: 24.27, z: -24.06}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7347575392112855064}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6378878777631025218
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8126139185692763492}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f4a7ed6870599a9c3e5dd5f90fadec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesertTower.LevelIntegration.Runtime::DesertTower.LevelIntegration.RouteNode
+  id: 558d40bf68084781ace4197d54b67d29
+  label: SW L3
+  floor: 3
+  marker: {fileID: 0}
+  arrivalRadius: 0.5
+  heightTolerance: 0.5
+  outgoing:
+  - target: {fileID: 7343694806784292229}
+    weight: 1
+    available: 1
+--- !u!1 &8739902992765338920
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 461983438311593792}
+  - component: {fileID: 7473521570364382750}
+  m_Layer: 0
+  m_Name: T3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &461983438311593792
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8739902992765338920}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -61.39, y: 0.41, z: -24.96}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7347575392112855064}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7473521570364382750
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8739902992765338920}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f4a7ed6870599a9c3e5dd5f90fadec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesertTower.LevelIntegration.Runtime::DesertTower.LevelIntegration.RouteNode
+  id: 5b127893cf7f4a8b91d1198a0a6f5712
+  label: T3
+  floor: 1
+  marker: {fileID: 0}
+  arrivalRadius: 0.5
+  heightTolerance: 0.5
+  outgoing:
+  - target: {fileID: 4989674833150764728}
+    weight: 1
+    available: 1
+--- !u!1 &8927140700015681797
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6889963339705964391}
+  - component: {fileID: 4989674833150764728}
+  m_Layer: 0
+  m_Name: T6
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6889963339705964391
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8927140700015681797}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -44.11, y: 13.07, z: 0.29}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7347575392112855064}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4989674833150764728
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8927140700015681797}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f4a7ed6870599a9c3e5dd5f90fadec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesertTower.LevelIntegration.Runtime::DesertTower.LevelIntegration.RouteNode
+  id: fc0ee5d624594987a03e441913b7842c
+  label: T6
+  floor: 2
+  marker: {fileID: 0}
+  arrivalRadius: 0.5
+  heightTolerance: 0.5
+  outgoing:
+  - target: {fileID: 6378878777631025218}
+    weight: 1
+    available: 1
+  - target: {fileID: 4786486749409712378}
+    weight: 1
+    available: 1
+--- !u!1 &9074283517388780806
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3405335733724469169}
+  - component: {fileID: 3625429444686599254}
+  - component: {fileID: 2216680171483614313}
+  m_Layer: 0
+  m_Name: SE Spawn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3405335733724469169
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9074283517388780806}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 64.44, y: 0, z: -64.38}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7347575392112855064}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3625429444686599254
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9074283517388780806}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f4a7ed6870599a9c3e5dd5f90fadec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesertTower.LevelIntegration.Runtime::DesertTower.LevelIntegration.RouteNode
+  id: 6ff5f5de904d453295bd04a9c9fa2019
+  label: SE Spawn
+  floor: 0
+  marker: {fileID: 2216680171483614313}
+  arrivalRadius: 0.5
+  heightTolerance: 0.5
+  outgoing:
+  - target: {fileID: 4255690789476090402}
+    weight: 1
+    available: 1
+--- !u!114 &2216680171483614313
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9074283517388780806}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ab1e199ff9732541a82c81732c22516, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesertTower.Levels.Runtime::DesertTower.Levels.LevelMarker
+  id: 6ca1b69a93364dc0a8a5cfe841b4c3bb
+  label: SE Spawn
+  kind: 1
+  definition: {fileID: 0}
+  footprint: {x: 2, y: 2, z: 2}
+  previewRange: 8
+  spawnRadius: 2
