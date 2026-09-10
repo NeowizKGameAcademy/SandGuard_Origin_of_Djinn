@@ -1,0 +1,179 @@
+using System;
+using System.Collections.Generic;
+using DesertTower.Levels;
+using UnityEngine;
+using UnityEngine.Events;
+
+namespace DesertTower.LevelIntegration
+{
+    public enum RunState { Idle, Preparing, Running, Won, Lost, Error, Stopped }
+
+    public sealed class WaveDirector : MonoBehaviour
+    {
+        public RouteGraph graph;
+        public PrefabCatalog catalog;
+        [Tooltip("ILevelCoreReceiver 구현 컴포넌트")]
+        public MonoBehaviour coreReceiver;
+        public bool startAutomatically;
+        public int randomSeed = 1234;
+        [Min(1)] public int maxSpawnsPerFrame = 32;
+        public UnityEvent onStateChanged = new UnityEvent();
+        public UnityEvent onWaveCleared = new UnityEvent();
+        public RunState State { get; private set; }
+        public int WaveIndex { get; private set; } = -1;
+        public int AliveCount => actors.Count;
+        public int TotalSpawned { get; private set; }
+        public int Killed { get; private set; }
+        public int Absorbed { get; private set; }
+        public float PreparationRemaining { get; private set; }
+        public string LastError { get; private set; }
+
+        sealed class Schedule { public SpawnGroup group; public int emitted; public float next; }
+        sealed class Walker
+        {
+            public ActorBridge actor;
+            public RouteNode next, goal;
+            public Queue<Vector3> legacy;
+            public float damage;
+            public bool arrived;
+        }
+        readonly List<Schedule> schedules = new List<Schedule>();
+        readonly List<Walker> actors = new List<Walker>();
+        System.Random random;
+        float elapsed;
+        ILevelCoreReceiver Core => coreReceiver as ILevelCoreReceiver;
+
+        void Start() { if (startAutomatically) Begin(); }
+        void OnDisable() { StopRun(); }
+
+        public List<string> ValidateSetup()
+        {
+            var errors = new List<string>();
+            if (!graph || !graph.level || !graph.level.waves) { errors.Add("Graph / LevelRoot / WaveSet 필요"); return errors; }
+            errors.AddRange(graph.ValidateGraph());
+            if (!catalog) { errors.Add("PrefabCatalog 필요"); return errors; }
+            errors.AddRange(catalog.ValidateCatalog());
+            if (Core == null) errors.Add("ILevelCoreReceiver 연결 필요");
+            if (graph.level.waves.waves.Count == 0) errors.Add("웨이브가 없습니다.");
+            foreach (var wave in graph.level.waves.waves)
+            {
+                if (wave == null || !FiniteNonnegative(wave.preparationSeconds)) { errors.Add("준비 시간 오류"); continue; }
+                foreach (var group in wave.groups)
+                {
+                    if (group == null || group.count <= 0 || !FiniteNonnegative(group.delay) || !FiniteNonnegative(group.interval) || group.interval <= 0)
+                    { errors.Add("출현 수량/시간 오류"); continue; }
+                    if (!graph.level.TryResolveSpawnGroup(group, out var binding, out var error)) { errors.Add(error); continue; }
+                    var entry = group.element ? catalog.Find(group.element.gameKey) : null;
+                    if (entry == null || entry.role != PrefabRole.Enemy) errors.Add("웨이브의 gameKey가 적 프리팹에 연결되지 않았습니다.");
+                    if (!binding.SuggestedRoute)
+                    {
+                        var start = graph.Find(binding.Spawn); var goal = graph.Find(binding.Target);
+                        if (!start || !goal || !graph.CanReach(start, goal)) errors.Add("입구에서 코어까지 활성 노드 경로가 없습니다.");
+                    }
+                    var receiver = coreReceiver ? coreReceiver.transform : null;
+                    if (receiver && Vector3.Distance(receiver.position, binding.Target.transform.position) > 1f)
+                        errors.Add("코어 마커와 수신 컴포넌트 위치를 일치시키세요.");
+                }
+            }
+            return errors;
+        }
+        static bool FiniteNonnegative(float value) => value >= 0 && !float.IsNaN(value) && !float.IsInfinity(value);
+
+        public void Begin()
+        {
+            if (State == RunState.Preparing || State == RunState.Running) return;
+            var errors = ValidateSetup();
+            if (errors.Count > 0) { Fail(string.Join("\n", errors)); return; }
+            if (Core.IsDefeated) { Fail("코어를 초기화하거나 씬을 다시 시작하세요."); return; }
+            Cleanup(); random = new System.Random(randomSeed);
+            TotalSpawned = Killed = Absorbed = 0; WaveIndex = -1; LastError = null;
+            NextWave();
+        }
+        void NextWave()
+        {
+            WaveIndex++;
+            if (WaveIndex >= graph.level.waves.waves.Count) { SetState(RunState.Won); return; }
+            PreparationRemaining = graph.level.waves.waves[WaveIndex].preparationSeconds;
+            SetState(RunState.Preparing);
+        }
+        void Update()
+        {
+            if (State != RunState.Preparing && State != RunState.Running) return;
+            if (Time.timeScale <= 0) return;
+            if (Core == null || !coreReceiver) { Fail("코어 연결이 사라졌습니다."); return; }
+            if (Core.IsDefeated) { FinishLoss(); return; }
+            if (State == RunState.Preparing)
+            {
+                PreparationRemaining = Mathf.Max(0, PreparationRemaining - Time.deltaTime);
+                if (PreparationRemaining > 0) return;
+                schedules.Clear(); elapsed = 0;
+                foreach (var group in graph.level.waves.waves[WaveIndex].groups)
+                    schedules.Add(new Schedule { group = group, next = group.delay });
+                SetState(RunState.Running);
+            }
+            int budget = Mathf.Max(1, maxSpawnsPerFrame);
+            foreach (var schedule in schedules)
+                while (budget > 0 && schedule.emitted < schedule.group.count && elapsed >= schedule.next)
+                {
+                    if (!Spawn(schedule.group)) return;
+                    budget--; schedule.emitted++; schedule.next += schedule.group.interval;
+                }
+            elapsed += Time.deltaTime;
+            for (int i = actors.Count - 1; i >= 0; i--)
+            {
+                var walker = actors[i];
+                if (!walker.actor || !walker.actor.Alive) { if (walker.actor) walker.actor.Halt(); Killed++; actors.RemoveAt(i); continue; }
+                if (!Advance(walker)) return;
+                if (walker.arrived)
+                {
+                    walker.actor.Halt();
+                    if (!Core.TryAbsorb(walker.actor, walker.damage)) continue;
+                    if (State != RunState.Running) return; // external core callback may stop/clean the run
+                    Absorbed++; walker.actor.Remove(); actors.Remove(walker);
+                    if (Core.IsDefeated) { FinishLoss(); return; }
+                }
+            }
+            if (actors.Count == 0 && schedules.TrueForAll(s => s.emitted == s.group.count))
+            { onWaveCleared.Invoke(); if (State == RunState.Running) NextWave(); }
+        }
+        bool Spawn(SpawnGroup group)
+        {
+            if (!graph.level.TryResolveSpawnGroup(group, out var binding, out var error)) { Fail(error); return false; }
+            var entry = catalog.Find(group.element.gameKey);
+            if (entry == null || !entry.prefab) { Fail("적 프리팹이 사라졌습니다."); return false; }
+            // Exact marker position avoids NavMesh sampling onto an adjacent floor.
+            var instance = Instantiate(entry.prefab, binding.Spawn.transform.position, binding.Spawn.transform.rotation);
+            var actor = instance.GetComponent<ActorBridge>();
+            if (!actor || !actor.Prepare(out error)) { Destroy(instance); Fail(error ?? "ActorBridge 누락"); return false; }
+            var walker = new Walker { actor = actor, damage = entry.coreDamage };
+            if (binding.SuggestedRoute) walker.legacy = new Queue<Vector3>(binding.SuggestedRoute.WorldPoints());
+            else { walker.next = graph.Find(binding.Spawn); walker.goal = graph.Find(binding.Target); }
+            actors.Add(walker); TotalSpawned++; return true;
+        }
+        bool Advance(Walker w)
+        {
+            if (w.arrived) return true;
+            if (w.legacy != null)
+            {
+                if (w.legacy.Count > 0 && Vector3.Distance(w.actor.FeetPosition, w.legacy.Peek()) <= .5f) w.legacy.Dequeue();
+                if (w.legacy.Count == 0) w.arrived = true;
+                else w.actor.Travel(w.legacy.Peek());
+                return true;
+            }
+            if (!w.next || !w.goal) { Fail("이동 중 노드가 제거됐습니다."); return false; }
+            if (w.next.Contains(w.actor.FeetPosition))
+            {
+                if (w.next == w.goal) { w.arrived = true; return true; }
+                var next = graph.Choose(w.next, w.goal, random.NextDouble());
+                if (!next) { Fail(w.next.label + ": 코어로 이어지는 활성 분기가 없습니다."); return false; }
+                w.next = next;
+            }
+            w.actor.Travel(w.next.transform.position); return true;
+        }
+        void FinishLoss() { SetState(RunState.Lost); foreach (var w in actors) if (w.actor) w.actor.Halt(); }
+        void Fail(string error) { LastError = error; SetState(RunState.Error); foreach (var w in actors) if (w.actor) w.actor.Halt(); Debug.LogError(error, this); }
+        void SetState(RunState value) { State = value; onStateChanged.Invoke(); }
+        public void StopRun() { Cleanup(); if (State == RunState.Running || State == RunState.Preparing) SetState(RunState.Stopped); }
+        void Cleanup() { foreach (var w in actors) if (w.actor) w.actor.Remove(); actors.Clear(); schedules.Clear(); }
+    }
+}
