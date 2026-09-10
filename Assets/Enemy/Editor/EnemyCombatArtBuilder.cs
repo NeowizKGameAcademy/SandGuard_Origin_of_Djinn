@@ -29,6 +29,8 @@ namespace SandGuard.Enemy.Editor
         {
             public string Name, BodyFolder, RigFile, AttackClip = "Attack";
             public float Height, MoveSpeed = 3.5f, AttackSpeed = 1f, Windup, Interval = 1.2f;
+            public float? MoveTimeScale;
+            public float? AttackRange;
             public (string asset, HumanBodyBones bone, float scale)[] Gear;
         }
 
@@ -41,9 +43,9 @@ namespace SandGuard.Enemy.Editor
                 Gear = new[] { ("AssassinDagger", HumanBodyBones.RightHand, .63f), ("AssassinDagger", HumanBodyBones.LeftHand, .63f) } },
             new Spec { Name = "ShieldGuard", BodyFolder = "bandit-shielder", Height = 1.84f, MoveSpeed = 2f, Windup = .5f,
                 Gear = new[] { ("ShortSword", HumanBodyBones.RightHand, .72f), ("TowerShield", HumanBodyBones.LeftHand, 1f) } },
-            new Spec { Name = "HammerBrute", BodyFolder = "bandit-hammerer", Height = 1.94f, AttackSpeed = 2.836364f, Windup = .93f, Interval = 1.9f,
+            new Spec { Name = "HammerBrute", BodyFolder = "bandit-hammerer", Height = 1.94f, MoveTimeScale = 1f, AttackRange = 2.3f, AttackSpeed = 2.836364f, Windup = .93f, Interval = 1.9f,
                 Gear = new[] { ("Warhammer", HumanBodyBones.RightHand, 1f) } },
-            new Spec { Name = "Chief", BodyFolder = "bandit-leader", Height = 2.04f, MoveSpeed = 2.2f, Windup = .6f, Interval = 1.6f,
+            new Spec { Name = "Chief", BodyFolder = "bandit-leader", Height = 2.04f, MoveSpeed = 2.2f, AttackRange = 3f, Windup = .6f, Interval = 1.6f,
                 Gear = new[] { ("ChiefScimitar", HumanBodyBones.RightHand, 1f), ("ChiefCape", HumanBodyBones.Chest, 2.04f / 1.8f) } },
         };
 
@@ -110,7 +112,8 @@ namespace SandGuard.Enemy.Editor
                 animator.applyRootMotion = false; animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
                 animator.Rebind(); animator.Update(0f);
                 float stride = Stride(clips["Move"], animator);
-                float timeScale = stride < .2f ? 1f : Mathf.Clamp(spec.MoveSpeed / stride, .5f, 2.5f);
+                // 실측 보폭으로 발걸음이 너무 느려지는 클립은 캐릭터별 재생 배속을 우선한다.
+                float timeScale = spec.MoveTimeScale ?? (stride < .2f ? 1f : Mathf.Clamp(spec.MoveSpeed / stride, .5f, 2.5f));
                 animator.runtimeAnimatorController = Controller(spec, folder, clips, timeScale);
                 root.AddComponent<EnemyVisualBindings>().animator = animator;
 
@@ -293,6 +296,7 @@ namespace SandGuard.Enemy.Editor
             anchorLocal = anchor.position; // world
             model.transform.position += socket.position - anchorLocal;
             if (Vector3.Distance(anchor.position, socket.position) > .002f) throw new InvalidOperationException(asset + " grip offset " + Vector3.Distance(anchor.position, socket.position));
+            if (asset == "ChiefCape") wrapper.localPosition = new Vector3(0f, -.065f, .03f);
             report.Add("  " + owner + " " + asset + " -> " + bone.name + " scale " + scale + " gripAt " + socket.position.ToString("F2"));
         }
 
@@ -362,6 +366,8 @@ namespace SandGuard.Enemy.Editor
                 visuals.visualPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(visualPath);
                 visuals.localPosition = Vector3.zero; visuals.localEulerAngles = Vector3.zero; visuals.localScale = Vector3.one;
                 var attack = root.GetComponent<EnemyMeleeAttack>(); attack.windup = spec.Windup; attack.interval = spec.Interval;
+                // 캐릭터별 지정 사거리를 적용하고, 미지정 시 기본 프리팹(Swordsman)을 따른다.
+                attack.range = spec.AttackRange ?? AssetDatabase.LoadAssetAtPath<GameObject>(BasePrefab).GetComponent<EnemyMeleeAttack>().range;
                 root.GetComponent<EnemyMotor>().moveSpeed = spec.MoveSpeed;
                 root.GetComponent<UnityEngine.AI.NavMeshAgent>().speed = spec.MoveSpeed;
                 root.GetComponent<EnemyHealth>().removeDelay = deathLength + .3f;

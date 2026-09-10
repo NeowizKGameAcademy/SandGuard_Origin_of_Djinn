@@ -33,6 +33,9 @@ namespace SandGuard.Player
             if (Casting != null) Casting.SetCasting(false);
         }
 
+        /// <summary>부활 등으로 자원을 회복할 때 공격 쿨다운과 예약된 발사를 지운다.</summary>
+        public void ResetCooldown() { CooldownRemaining = 0f; pendingShot = false; }
+
         void RequestShot()
         {
             if (Available() && CooldownRemaining <= 0f) pendingShot = true;

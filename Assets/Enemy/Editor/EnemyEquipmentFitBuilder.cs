@@ -80,6 +80,9 @@ namespace SandGuard.Enemy.Editor
                     }
                     wrapper.rotation = Quaternion.LookRotation(targetLong, targetThin) * Quaternion.Inverse(Quaternion.LookRotation(longAxis, thinAxis)) * wrapper.rotation;
                     wrapper.position += palm.position - grip.position;
+                    // 망치 장착 방향을 로컬 X축으로 70도 보정한다.
+                    if (owner == "HammerBrute" && hammer)
+                        wrapper.localRotation *= Quaternion.Euler(70f, 0f, 0f);
                     if (right) fit.primaryGrip = grip;
                     if (shield)
                     {

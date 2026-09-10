@@ -43,11 +43,13 @@ namespace SandGuard.Enemy
             candidates.Clear(); entries.Clear();
             Guid? currentId = CurrentSelection.HasTarget ? CurrentSelection.Target.EntityId : (Guid?)null;
             Gather(transform.position, detectionRadius, false);
-            if (motor != null && motor.PathState == MovementPathState.Partial && motor.IsAtPathEnd)
+            if (motor != null && motor.PathState == MovementPathState.Partial)
             {
+                // 경로 끝에 닿기 전에도 실제로 공격 가능한 차단 대상을 선택한다.
+                bool requireAttackRange = !motor.IsAtPathEnd;
                 int before = candidates.Count;
-                Gather(motor.PathEndPosition, blockerSearchRadius, true);
-                if (candidates.Count == before) Gather(motor.PathEndPosition, blockerSearchRadius * 2f, true);
+                Gather(motor.PathEndPosition, blockerSearchRadius, true, requireAttackRange);
+                if (candidates.Count == before) Gather(motor.PathEndPosition, blockerSearchRadius * 2f, true, requireAttackRange);
             }
             // 탐지 반경 밖으로 나간 현재 대상도 놓아 줄 거리 안이면 계속 판단한다. 차단 시설은 거리와 무관하다.
             if (currentId.HasValue && !entries.ContainsKey(currentId.Value) && current.Collider != null
@@ -72,7 +74,7 @@ namespace SandGuard.Enemy
             current = default;
         }
 
-        void Gather(Vector3 center, float radius, bool blockers)
+        void Gather(Vector3 center, float radius, bool blockers, bool requireAttackRange = false)
         {
             buffer ??= new Collider[maxColliders];
             int count = Physics.OverlapSphereNonAlloc(center, radius, buffer, targetMask, QueryTriggerInteraction.Ignore);
@@ -80,6 +82,7 @@ namespace SandGuard.Enemy
             {
                 var target = buffer[i].GetComponentInParent<ICombatTarget>();
                 if (target == null || entries.ContainsKey(target.EntityId)) continue;
+                if (requireAttackRange && (attack == null || !attack.IsInRange(target))) continue;
                 int priority = Priority(target.Kind, blockers);
                 if (priority >= 0) Consider(target, buffer[i], priority);
             }
@@ -116,7 +119,9 @@ namespace SandGuard.Enemy
             float range = attack != null ? attack.range : 1.5f;
             Vector3 origin = transform.position;
             Vector3 closest = collider.ClosestPoint(origin);
-            if (EnemyMotor.Planar(origin, closest) <= range) return true;
+            // 모든 대상에 공격 시작/명중 판정과 동일한 기준점·충돌체·시야 검사를 쓴다.
+            var target = collider.GetComponentInParent<ICombatTarget>();
+            if (attack != null ? attack.IsInRange(target) : EnemyMotor.Planar(origin, closest) <= range) return true;
             if (motor == null || !motor.IsOnNavMesh) return false;
             if (!NavMesh.SamplePosition(closest, out NavMeshHit hit, range + 1f, motor.Agent.areaMask)) return false;
             path ??= new NavMeshPath();

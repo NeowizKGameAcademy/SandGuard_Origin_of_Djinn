@@ -39,6 +39,95 @@ namespace SandGuard.Waves.Tests
             Assert.True(condition(), message);
         }
 
+        WaveDirector CapacityFixture(int groups, int count)
+        {
+            var level = Track(new GameObject("Capacity Level")).AddComponent<LevelRoot>();
+            var ground = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            ground.transform.SetParent(level.transform, false);
+            ground.transform.position = new Vector3(0, -.5f, 5); ground.transform.localScale = new Vector3(20, 1, 30);
+            var surface = level.gameObject.AddComponent<NavMeshSurface>();
+            surface.collectObjects = CollectObjects.Children; surface.useGeometry = NavMeshCollectGeometry.PhysicsColliders; surface.BuildNavMesh();
+            var spawn = new GameObject("Spawn").AddComponent<LevelMarker>(); spawn.transform.SetParent(level.transform, false);
+            spawn.id = "spawn"; spawn.kind = MarkerKind.EnemySpawn;
+            var core = new GameObject("Core marker").AddComponent<LevelMarker>(); core.transform.SetParent(level.transform, false);
+            core.id = "core"; core.kind = MarkerKind.Core; core.transform.position = new Vector3(0, 0, 16);
+            var waves = Asset<WaveSet>(); waves.waves.Add(new Wave { preparationSeconds = 20 }); level.waves = waves;
+            var catalog = Asset<EnemyCatalog>();
+            for (int i = 0; i < groups; i++)
+            {
+                var element = Asset<LevelElementDefinition>(); element.gameKey = "capacity." + i;
+                var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Enemy/Generated/Enemy_" + (i % 2 == 0 ? "Swordsman" : "HammerBrute") + ".prefab");
+                catalog.entries.Add(new EnemyCatalog.Entry { gameKey = element.gameKey, prefab = prefab });
+                waves.waves[0].groups.Add(new SpawnGroup { spawnId = "spawn", targetId = "core", element = element, count = count, interval = .05f });
+            }
+            var pool = Track(new GameObject("Capacity Pool")).AddComponent<EnemyPool>();
+            var director = Track(new GameObject("Capacity Director")).AddComponent<WaveDirector>();
+            director.autoStart = false; director.level = level; director.catalog = catalog; director.pool = pool;
+            director.Changed += () => {
+                foreach (var enemy in UnityEngine.Object.FindObjectsByType<EnemyHealth>(FindObjectsSortMode.None))
+                { enemy.GetComponent<EnemyBrain>().AIEnabled = false; enemy.removeDelay = .6f; }
+            };
+            return director;
+        }
+
+        [UnityTest] public IEnumerator PrewarmIsInactiveBoundedAndSkipWaitsForIt()
+        {
+            Time.timeScale = 1;
+            var director = CapacityFixture(2, 10);
+            director.maxAliveEnemies = 4; director.maxActiveEnemies = 5; director.prewarmPerFrame = 1; director.maxSpawnsPerFrame = 1;
+            director.Begin();
+            Assert.True(director.IsPrewarming);
+            Assert.AreEqual(1, director.pool.CreatedCount);
+            Assert.AreEqual(0, director.pool.ActiveCount);
+            Assert.AreEqual(0, UnityEngine.Object.FindObjectsByType<EnemyHealth>(FindObjectsSortMode.None).Length);
+            director.SkipPreparation();
+            Assert.AreEqual(GamePhase.Preparation, director.Phase);
+            yield return Until(() => director.AliveEnemyCount == 4, 5, "The pool must finish and start the skipped wave.");
+            Assert.False(director.IsPrewarming);
+            Assert.AreEqual(4, director.pool.CreatedCount, "Prewarm is bounded by simultaneous demand, not the 20-enemy wave total.");
+            Assert.AreEqual(16, director.PendingEnemyCount);
+            yield return new WaitForSeconds(.2f);
+            Assert.AreEqual(4, director.SpawnedTotal);
+            Assert.True(director.IsSpawnCapacityFull);
+        }
+
+        [UnityTest] public IEnumerator GroupsShareLimitsAndWaitForDyingBodiesThenFinish()
+        {
+            Time.timeScale = 1;
+            var director = CapacityFixture(3, 3);
+            director.maxAliveEnemies = 2; director.maxActiveEnemies = 3; director.maxSpawnsPerFrame = 1;
+            director.SkipPreparation();
+            yield return Until(() => director.AliveEnemyCount == 2, 5, "First slots must fill.");
+            Assert.AreEqual(7, director.PendingEnemyCount);
+            var first = UnityEngine.Object.FindObjectsByType<EnemyHealth>(FindObjectsSortMode.None)[0];
+            first.TakeDamage(new DamageInfo(1000, "Ally"));
+            yield return Until(() => director.SpawnedTotal == 3, .4f, "A spare active slot allows replacement during death animation.");
+            Assert.AreEqual(3, director.pool.ActiveCount);
+            foreach (var enemy in UnityEngine.Object.FindObjectsByType<EnemyHealth>(FindObjectsSortMode.None))
+                if (enemy.IsAlive) enemy.TakeDamage(new DamageInfo(1000, "Ally"));
+            int pending = director.PendingEnemyCount;
+            yield return new WaitForSeconds(.1f);
+            Assert.AreEqual(3, director.SpawnedTotal, "Dead but still animated bodies must occupy the active cap.");
+            Assert.AreEqual(pending, director.PendingEnemyCount, "Waiting must not consume pending spawns.");
+            Assert.AreEqual(GamePhase.Combat, director.Phase, "Zero living enemies with queued spawns is not victory.");
+            int previousTotal = director.SpawnedTotal;
+            float deadline = Time.time + 10;
+            while (director.Phase != GamePhase.Victory && Time.time < deadline)
+            {
+                yield return null;
+                Assert.LessOrEqual(director.AliveEnemyCount, 2);
+                Assert.LessOrEqual(director.pool.ActiveCount, 3);
+                Assert.LessOrEqual(director.SpawnedTotal - previousTotal, 1, "Groups must share the per-frame budget.");
+                previousTotal = director.SpawnedTotal;
+                foreach (var enemy in UnityEngine.Object.FindObjectsByType<EnemyHealth>(FindObjectsSortMode.None))
+                    if (enemy.IsAlive) enemy.TakeDamage(new DamageInfo(1000, "Ally"));
+            }
+            Assert.AreEqual(GamePhase.Victory, director.Phase);
+            Assert.AreEqual(9, director.SpawnedTotal);
+            Assert.AreEqual(0, director.PendingEnemyCount);
+            Assert.Greater(director.pool.ReusedCount, 0);
+        }
+
         [UnityTest] public IEnumerator RunsWavesFromLevelDataAndReusesPooledEnemies()
         {
             var enemyPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Enemy/Generated/Enemy.prefab");

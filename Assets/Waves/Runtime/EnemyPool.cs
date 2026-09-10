@@ -10,13 +10,46 @@ namespace SandGuard.Waves
     {
         readonly Dictionary<GameObject, Stack<GameObject>> idle = new Dictionary<GameObject, Stack<GameObject>>();
         readonly Dictionary<GameObject, GameObject> sourceOf = new Dictionary<GameObject, GameObject>();
+        readonly HashSet<GameObject> rented = new HashSet<GameObject>();
+        readonly HashSet<GameObject> used = new HashSet<GameObject>();
+        Transform reserveRoot;
+        public int ActiveCount { get { rented.RemoveWhere(go => go == null); return rented.Count; } }
         public int CreatedCount { get; private set; }
         public int ReusedCount { get; private set; }
         public int IdleCount { get { int n = 0; foreach (var stack in idle.Values) n += stack.Count; return n; } }
 
-        public GameObject Rent(GameObject prefab, Vector3 position, Quaternion rotation)
+        /// <summary>비활성 예비 개체를 한 번에 하나 만든다. 준비 코루틴이 프레임별 생성량을 제한한다.</summary>
+        public void PrewarmOne(GameObject prefab)
+        {
+            if (prefab == null) return;
+            if (reserveRoot == null)
+            {
+                var reserve = new GameObject("Inactive Reserve");
+                reserve.SetActive(false); reserve.transform.SetParent(transform, false); reserveRoot = reserve.transform;
+            }
+            if (!idle.TryGetValue(prefab, out var stack)) idle[prefab] = stack = new Stack<GameObject>();
+            var instance = Instantiate(prefab, reserveRoot);
+            instance.SetActive(false); sourceOf[instance] = prefab; stack.Push(instance); CreatedCount++;
+        }
+
+        public int AvailableCount(GameObject prefab)
+        {
+            if (!idle.TryGetValue(prefab, out var stack)) return 0;
+            int count = 0; foreach (var go in stack) if (go != null) count++;
+            return count;
+        }
+
+        public int OwnedCount(GameObject prefab)
+        {
+            int count = 0;
+            foreach (var pair in sourceOf) if (pair.Key != null && pair.Value == prefab) count++;
+            return count;
+        }
+
+        public GameObject Rent(GameObject prefab, Vector3 position, Quaternion rotation, int maxActive = 0)
         {
             if (prefab == null) return null;
+            if (maxActive > 0 && ActiveCount >= maxActive) return null;
             if (!idle.TryGetValue(prefab, out var stack)) idle[prefab] = stack = new Stack<GameObject>();
             GameObject instance = null;
             while (stack.Count > 0 && instance == null) instance = stack.Pop();
@@ -24,6 +57,7 @@ namespace SandGuard.Waves
             {
                 instance = Instantiate(prefab, position, rotation);
                 sourceOf[instance] = prefab;
+                rented.Add(instance); used.Add(instance);
                 var health = instance.GetComponent<EnemyHealth>();
                 if (health != null) health.ReleaseHandler = Release;
                 CreatedCount++;
@@ -32,8 +66,11 @@ namespace SandGuard.Waves
             instance.transform.SetParent(null, false);
             instance.transform.SetPositionAndRotation(position, rotation);
             instance.SetActive(true);
+            var reusedHealth = instance.GetComponent<EnemyHealth>();
+            if (reusedHealth != null) reusedHealth.ReleaseHandler = Release;
+            rented.Add(instance);
             Revive(instance, position);
-            ReusedCount++;
+            if (!used.Add(instance)) ReusedCount++;
             return instance;
         }
 
@@ -50,6 +87,7 @@ namespace SandGuard.Waves
         {
             if (health == null) return;
             var instance = health.gameObject;
+            if (!rented.Remove(instance)) return;
             if (!sourceOf.TryGetValue(instance, out var prefab) || this == null) { Destroy(instance); return; }
             instance.SetActive(false);
             instance.transform.SetParent(transform, false);
@@ -59,7 +97,10 @@ namespace SandGuard.Waves
         public void Clear()
         {
             foreach (var stack in idle.Values) while (stack.Count > 0) { var go = stack.Pop(); if (go != null) Destroy(go); }
-            sourceOf.Clear();
+            // Active leases retain their return mapping when only idle storage is cleared.
+            var remove = new List<GameObject>();
+            foreach (var pair in sourceOf) if (pair.Key == null || !rented.Contains(pair.Key)) remove.Add(pair.Key);
+            foreach (var go in remove) { sourceOf.Remove(go); used.Remove(go); }
         }
     }
 }

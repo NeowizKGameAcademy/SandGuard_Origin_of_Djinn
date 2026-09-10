@@ -125,6 +125,39 @@ namespace SandGuard.Player.Tests
             Assert.AreEqual(1, fired, "Pausing cancels queued shots.");
         }
 
+        /// <summary>시전 마스크에 Body가 없어야 공격하며 달릴 때 척추가 계속 걷는다. 손은 IK가 어깨 기준으로 잡으므로 조준을 유지한다.</summary>
+        [UnityTest] public IEnumerator AttackingWhileRunningKeepsSpineWalkingAndPalmAimed()
+        {
+            var mask = animator.runtimeAnimatorController is UnityEditor.Animations.AnimatorController controller
+                ? controller.layers.First(l => l.name == casting.layerName).avatarMask : null;
+            Assert.NotNull(mask);
+            Assert.False(mask.GetHumanoidBodyPartActive(AvatarMaskBodyPart.Body), "The casting mask must leave the spine to locomotion.");
+            Assert.True(mask.GetHumanoidBodyPartActive(AvatarMaskBodyPart.RightArm) && mask.GetHumanoidBodyPartActive(AvatarMaskBodyPart.RightHandIK));
+            Fire(true); InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.W));
+            yield return new WaitForSeconds(.8f);
+            Assert.Greater(fired, 0);
+            int layer = animator.GetLayerIndex(casting.layerName);
+            Assert.Greater(animator.GetLayerWeight(layer), .95f, "Casting layer is fully raised while attacking.");
+            var hips = animator.GetBoneTransform(HumanBodyBones.Hips);
+            var chest = animator.GetBoneTransform(HumanBodyBones.UpperChest) ?? animator.GetBoneTransform(HumanBodyBones.Chest);
+            var hand = animator.GetBoneTransform(HumanBodyBones.RightHand);
+            var shoulder = animator.GetBoneTransform(HumanBodyBones.RightUpperArm);
+            Quaternion first = Quaternion.Inverse(hips.rotation) * chest.rotation;
+            float chestRange = 0f, worstPalm = 1f, worstReach = 1f;
+            for (float t = 0f; t < .7f; t += Time.deltaTime)
+            {
+                chestRange = Mathf.Max(chestRange, Quaternion.Angle(first, Quaternion.Inverse(hips.rotation) * chest.rotation));
+                worstPalm = Mathf.Min(worstPalm, Vector3.Dot(attack.visuals.FirePoint.forward, casting.AimDirection));
+                worstReach = Mathf.Min(worstReach, Vector3.Dot((hand.position - shoulder.position).normalized, casting.AimDirection));
+                Assert.Greater(animator.GetFloat("Speed"), 4f, "Keeps running while attacking.");
+                yield return null;
+            }
+            Assert.Greater(chestRange, 5f, "The chest keeps moving relative to the pelvis while attacking on the move.");
+            Assert.Greater(worstPalm, .9f, "The palm keeps facing the aim direction every frame.");
+            Assert.Greater(worstReach, .75f, "The arm keeps pointing from the shoulder toward the aim (recoil frames blend in some clip pose).");
+            Fire(false); InputSystem.QueueStateEvent(keyboard, new KeyboardState());
+        }
+
         [UnityTest] public IEnumerator AirCastingUsesUprightJumpAndVisualReplacementRebinds()
         {
             Fire(true);
@@ -135,7 +168,7 @@ namespace SandGuard.Player.Tests
             Assert.True(animator.GetCurrentAnimatorStateInfo(0).IsName("Air Cast"));
             Assert.Greater(Vector3.Dot(attack.visuals.FirePoint.forward, casting.AimDirection), .9f);
             Fire(false); InputSystem.QueueStateEvent(keyboard, new KeyboardState());
-            yield return new WaitForSeconds(.8f);
+            yield return new WaitForSeconds(1.3f); // 착지 동작(Landing)이 끝날 시간을 포함한다
             Assert.True(animator.GetCurrentAnimatorStateInfo(0).IsName("Locomotion"));
             attack.visuals.RebuildVisual();
             yield return null;
@@ -213,6 +246,7 @@ namespace SandGuard.Player.Tests
 
         [UnityTest] public IEnumerator HitKeepsMovementAndDeathOverridesCastingAndJump()
         {
+            player.GetComponent<PlayerRespawner>().enabled = false; // 이 검사는 사망 상태 자체를 본다. 부활은 PlayerRespawnTests가 다룬다.
             Fire(true); InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.W));
             yield return new WaitForSeconds(.25f);
             var health = player.GetComponent<PlayerHealth>();

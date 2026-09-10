@@ -26,14 +26,29 @@ namespace SandGuard.Player
         public string deathTrigger = "Death";
         public string dashParameter = "Dashing";
         public string jumpTrigger = "Jump";
+        [Tooltip("공중 추가 점프 트리거. 컨트롤러에 없으면 Jump 트리거를 대신 쓴다")]
+        public string doubleJumpTrigger = "DoubleJump";
+        [Tooltip("공중 수직 속도(위가 양수). 낙하 상태 전환에 쓴다")]
+        public string verticalSpeedParameter = "VerticalSpeed";
+        [Tooltip("이 속도 이상으로 착지하면 켜지는 Bool. 다시 공중에 뜨면 끈다")]
+        public string hardLandParameter = "HardLand";
+        [Min(0f), Tooltip("강한 착지로 판정하는 낙하 속도(m/s). 기본 점프 착지는 약 12~16, 4m 이상 낙하는 20 이상")]
+        public float hardLandingSpeed = 20f;
+        /// <summary>이 속도(m/s)보다 빠르게 내려갈 때만 애니메이터가 낙하로 본다. 생성 직후 내려앉기·계단·턱(0.15m 이하)에서는 낙하 동작이 나오지 않는다.</summary>
+        public const float FallingSpeedThreshold = 4f;
         public string moveXParameter = "MoveX";
         public string moveZParameter = "MoveZ";
+        [Min(0f), Tooltip("피격 반응(Damage Reactions) 레이어를 내리는 시간. 반응이 끝나면 0으로 내려 상체가 이동 동작을 따르게 한다")]
+        public float reactionBlendTime = 0.1f;
         public UnityEvent onFired = new UnityEvent();
         public UnityEvent onDamaged = new UnityEvent();
         public UnityEvent onIncapacitated = new UnityEvent();
         public UnityEvent onDashStarted = new UnityEvent();
+        public UnityEvent onLanded = new UnityEvent();
+        public UnityEvent onHardLanded = new UnityEvent();
         [SerializeField, HideInInspector] GameObject visualInstance;
         Animator animator;
+        float reactionWeight;
         Transform muzzle;
         public PlayerSpellcasting Spellcasting { get; private set; }
         public Transform FirePoint => muzzle != null ? muzzle : fallbackFirePoint;
@@ -43,20 +58,37 @@ namespace SandGuard.Player
         {
             if (healthSource is IDamageEvents damage) damage.Damaged += OnDamaged;
             if (healthSource is ILifeState life) life.Died += OnDied;
-            if (motor != null) motor.DashStarted += OnDash;
-            if (motor != null) motor.Jumped += OnJump;
+            if (motor != null) { motor.DashStarted += OnDash; motor.Jumped += OnJump; motor.Landed += OnLanded; }
         }
         void OnDisable()
         {
             if (healthSource is IDamageEvents damage) damage.Damaged -= OnDamaged;
             if (healthSource is ILifeState life) life.Died -= OnDied;
-            if (motor != null) motor.DashStarted -= OnDash;
-            if (motor != null) motor.Jumped -= OnJump;
+            if (motor != null) { motor.DashStarted -= OnDash; motor.Jumped -= OnJump; motor.Landed -= OnLanded; }
         }
         void OnDamaged(DamageAppliedInfo info)
         {
-            if (HasParameter(hitTrigger, AnimatorControllerParameterType.Trigger)) animator.SetTrigger(hitTrigger);
+            if (HasParameter(hitTrigger, AnimatorControllerParameterType.Trigger))
+            {
+                animator.SetTrigger(hitTrigger);
+                // 피격 첫 프레임부터 상체 반응이 보이도록 레이어를 즉시 올린다.
+                int layer = animator.GetLayerIndex("Damage Reactions");
+                if (layer >= 0) { reactionWeight = 1f; animator.SetLayerWeight(layer, 1f); }
+            }
             onDamaged.Invoke();
+        }
+
+        /// <summary>
+        /// 피격 반응 레이어는 Hit 동작이 재생되는 동안만 켠다. 모션이 없는 Empty 상태라도 가중치가 1이면 마스크 부위(척추·머리·팔)의
+        /// 근육 값을 고정해 버려서, 이동 중 상체가 골반과 함께 막대처럼 흔들리는 문제가 생긴다.
+        /// </summary>
+        float ReactionWeight(int layer, bool dead)
+        {
+            var current = animator.GetCurrentAnimatorStateInfo(layer);
+            bool playing = (current.IsName("Hit") && current.normalizedTime < 0.85f) || animator.GetNextAnimatorStateInfo(layer).IsName("Hit");
+            float target = !dead && playing ? 1f : 0f;
+            reactionWeight = reactionBlendTime <= 0f ? target : Mathf.MoveTowards(reactionWeight, target, Time.deltaTime / reactionBlendTime);
+            return reactionWeight;
         }
         void OnDied(DeathInfo info)
         {
@@ -68,7 +100,20 @@ namespace SandGuard.Player
         void OnDash() => onDashStarted.Invoke();
         void OnJump()
         {
-            if (HasParameter(jumpTrigger, AnimatorControllerParameterType.Trigger)) animator.SetTrigger(jumpTrigger);
+            // 지상 점프는 Jump, 공중 점프는 DoubleJump(플립). 옛 컨트롤러처럼 DoubleJump가 없으면 둘 다 Jump로 재생한다.
+            if (motor.LastJumpWasAirJump && HasParameter(doubleJumpTrigger, AnimatorControllerParameterType.Trigger))
+                animator.SetTrigger(doubleJumpTrigger);
+            else if (HasParameter(jumpTrigger, AnimatorControllerParameterType.Trigger)) animator.SetTrigger(jumpTrigger);
+        }
+        void OnLanded(float impactSpeed)
+        {
+            bool hard = impactSpeed >= hardLandingSpeed;
+            // 착지 순간 아직 소비되지 않은 점프 트리거가 남아 있으면 지상에서 엉뚱한 점프 동작이 나온다.
+            if (HasParameter(jumpTrigger, AnimatorControllerParameterType.Trigger)) animator.ResetTrigger(jumpTrigger);
+            if (HasParameter(doubleJumpTrigger, AnimatorControllerParameterType.Trigger)) animator.ResetTrigger(doubleJumpTrigger);
+            if (HasParameter(hardLandParameter, AnimatorControllerParameterType.Bool)) animator.SetBool(hardLandParameter, hard);
+            onLanded.Invoke();
+            if (hard) onHardLanded.Invoke();
         }
 
         [ContextMenu("외형 다시 연결 / Rebuild Visual")]
@@ -101,7 +146,7 @@ namespace SandGuard.Player
             bool dead = healthSource is ILifeState life && life.State != global::LifeState.Alive;
             if (HasParameter("Dead", AnimatorControllerParameterType.Bool)) animator.SetBool("Dead", dead);
             int reactionLayer = animator.GetLayerIndex("Damage Reactions");
-            if (reactionLayer >= 0) animator.SetLayerWeight(reactionLayer, dead ? 0f : 1f);
+            if (reactionLayer >= 0) animator.SetLayerWeight(reactionLayer, ReactionWeight(reactionLayer, dead));
             if (dead && Spellcasting != null) Spellcasting.Cancel();
             Vector3 velocity = dead ? Vector3.zero : Vector3.ProjectOnPlane(motor.Velocity, Vector3.up);
             Vector3 localDirection = motor.transform.InverseTransformDirection(velocity.normalized);
@@ -111,6 +156,10 @@ namespace SandGuard.Player
             if (HasParameter(moveZParameter, AnimatorControllerParameterType.Float)) animator.SetFloat(moveZParameter, localDirection.z);
             if (HasParameter(groundedParameter, AnimatorControllerParameterType.Bool))
                 animator.SetBool(groundedParameter, motor.IsGrounded);
+            if (HasParameter(verticalSpeedParameter, AnimatorControllerParameterType.Float))
+                animator.SetFloat(verticalSpeedParameter, dead ? 0f : motor.VerticalSpeed);
+            // 공중에 뜨면 강한 착지 표시를 지워 다음 착지에 남지 않게 한다 (대시·시전 중 착지처럼 착지 전환을 거치지 않은 경우 포함).
+            if (!motor.IsGrounded && HasParameter(hardLandParameter, AnimatorControllerParameterType.Bool)) animator.SetBool(hardLandParameter, false);
             if (HasParameter(dashParameter, AnimatorControllerParameterType.Bool)) animator.SetBool(dashParameter, motor.IsDashing);
         }
         public void PlayFire()

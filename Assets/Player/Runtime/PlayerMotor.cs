@@ -23,7 +23,15 @@ namespace SandGuard.Player
         public bool IsDashing => dashRemaining > 0f && Alive;
         public event Action<PlayerMobilityState> Changed;
         public event Action DashStarted;
+        /// <summary>지상 점프와 공중 점프 모두. 어느 쪽인지는 <see cref="LastJumpWasAirJump"/>로 구분한다.</summary>
         public event Action Jumped;
+        /// <summary>공중에서 바닥에 닿은 순간. 인자는 충돌 속도(m/s, 0 이상).</summary>
+        public event Action<float> Landed;
+        /// <summary>마지막 <see cref="Jumped"/>가 공중 추가 점프였는지.</summary>
+        public bool LastJumpWasAirJump { get; private set; }
+        /// <summary>공중에 있을 때의 수직 속도(위가 양수). 접지 중에는 0. 생성 뒤 처음 바닥에 닿기 전(스폰 낙하)에도 0을 보고해 낙하 동작이 나오지 않게 한다.</summary>
+        public float VerticalSpeed => IsGrounded || !groundedSinceSpawn ? 0f : verticalVelocity;
+        bool groundedSinceSpawn;
         IPlayerInput Input => input;
         IManaWallet Mana => manaSource as IManaWallet;
         bool Alive => lifeSource == null || (lifeSource as ILifeState)?.State == global::LifeState.Alive;
@@ -91,6 +99,8 @@ namespace SandGuard.Player
         }
         void QueueJump() => jumpBufferTimer = Mathf.Max(jumpBufferTime, 0.0001f);
         void QueueDash() => TryDash();
+        /// <summary>부활 등으로 자원을 회복할 때 대시 쿨다운과 진행 중인 대시를 지운다.</summary>
+        public void ResetDashCooldown() { DashCooldownRemaining = 0f; dashRemaining = 0f; PublishState(); }
         /// <summary>공격 등으로 잠시 카메라 정면을 보게 한다.</summary>
         public void FaceCamera() => faceCameraTimer = Mathf.Max(faceCameraTimer, faceCameraSeconds);
         bool JumpHeld => input != null && input.JumpHeld;
@@ -162,8 +172,10 @@ namespace SandGuard.Player
             }
             float dt = Time.deltaTime;
             bool wasGrounded = IsGrounded;
+            float impactSpeed = 0f; bool impactCaptured = false; // 이번 프레임에 공중→접지가 되었을 때의 낙하 속도
             IsGrounded = controller.isGrounded && verticalVelocity <= 0f;
-            if (IsGrounded) Land(); else coyoteTimer = Mathf.Max(0f, coyoteTimer - dt);
+            if (IsGrounded) { if (!wasGrounded) { impactSpeed = -verticalVelocity; impactCaptured = true; } Land(); }
+            else coyoteTimer = Mathf.Max(0f, coyoteTimer - dt);
 
             Vector3 forward = FlatForward();
             Vector3 right = Vector3.Cross(Vector3.up, forward);
@@ -182,6 +194,7 @@ namespace SandGuard.Player
                     if (!groundJump) RemainingAirJumps--;
                     verticalVelocity = Mathf.Sqrt(2f * gravity * jumpHeight);
                     IsGrounded = false; coyoteTimer = 0f; jumpBufferTimer = 0f; jumpedThisFrame = true;
+                    LastJumpWasAirJump = !groundJump;
                     Jumped?.Invoke();
                 }
             }
@@ -210,7 +223,8 @@ namespace SandGuard.Player
             if ((flags & CollisionFlags.Above) != 0 && verticalVelocity > 0f) verticalVelocity = 0f;
             IsGrounded = (flags & CollisionFlags.Below) != 0 && verticalVelocity <= 0f;
             if (!IsGrounded && wasGrounded && !jumpedThisFrame && verticalVelocity <= 0f && TrySnapToGround()) IsGrounded = true;
-            if (IsGrounded) Land();
+            if (IsGrounded) { if (!wasGrounded && !impactCaptured) impactSpeed = -verticalVelocity; Land(); }
+            if (IsGrounded && !wasGrounded) Landed?.Invoke(Mathf.Max(0f, impactSpeed));
 
             Vector3 facing = Vector3.zero;
             if (IsDashing) facing = dashDirection;
@@ -223,6 +237,7 @@ namespace SandGuard.Player
 
         void Land()
         {
+            groundedSinceSpawn = true;
             verticalVelocity = -groundStickSpeed;
             RemainingAirJumps = extraAirJumps;
             coyoteTimer = coyoteTime;

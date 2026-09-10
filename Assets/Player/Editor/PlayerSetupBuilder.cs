@@ -73,7 +73,9 @@ namespace SandGuard.Player.Editor
                 var camera = cameraObject.AddComponent<Camera>(); camera.nearClipPlane = 0.1f; camera.fieldOfView = 60f;
                 cameraObject.AddComponent<AudioListener>();
                 var rig = cameraObject.AddComponent<PlayerCameraRig>(); rig.input = reader; rig.target = cameraTarget; rig.owner = root.transform;
+                rig.distance = PlayerFeelTuning.CameraDistance; rig.shoulderOffset = PlayerFeelTuning.CameraShoulderOffset;
                 motor.view = camera.transform;
+                PlayerFeelTuning.ConnectCrosshair(root);
                 var aimer = root.AddComponent<PlayerAimer>(); aimer.viewCamera = camera; aimer.owner = root.transform;
                 var attack = root.AddComponent<PlayerBasicAttack>();
                 attack.input = reader; attack.aimer = aimer; attack.visuals = visuals; attack.projectilePrefab = projectile; attack.shotOrigin = hitPoint; attack.motor = motor;
@@ -138,6 +140,8 @@ namespace SandGuard.Player.Editor
                 if (attack.lifeSource == null) attack.lifeSource = health;
                 var visuals = root.GetComponent<PlayerVisuals>();
                 if (visuals.healthSource == null) visuals.healthSource = health;
+                PlayerFeelTuning.ConnectCrosshair(root);
+                PlayerFeelTuning.ConnectRespawner(root);
                 PrefabUtility.SaveAsPrefabAsset(root, path);
             }
             finally { PrefabUtility.UnloadPrefabContents(root); }

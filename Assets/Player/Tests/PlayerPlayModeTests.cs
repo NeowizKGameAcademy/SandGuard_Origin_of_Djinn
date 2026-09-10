@@ -274,6 +274,7 @@ namespace SandGuard.Player.Tests
             var health = player.GetComponent<PlayerHealth>();
             var motor = player.GetComponent<PlayerMotor>();
             var attack = player.GetComponent<PlayerBasicAttack>();
+            player.GetComponent<PlayerRespawner>().enabled = false; // 부활 없이 사망 상태의 잠금만 본다
             int deaths = 0, hits = 0;
             health.Died += _ => deaths++;
             health.Damaged += _ => hits++;

@@ -27,6 +27,16 @@ namespace SandGuard.Waves
         public bool loopWaves;
         [Min(0.5f), Tooltip("스폰 지점을 NavMesh 위로 옮길 때 허용 거리")]
         public float spawnSampleRadius = 2f;
+        [Header("스폰 부하 제한")]
+        [Min(1)] public int maxAliveEnemies = 100;
+        [Min(1), Tooltip("사망 연출 중인 개체를 포함한 풀의 활성 상한")]
+        public int maxActiveEnemies = 120;
+        [Min(1), Tooltip("여러 스폰 그룹을 합한 프레임당 생성 상한")]
+        public int maxSpawnsPerFrame = 2;
+        public bool prewarmPool = true;
+        [Min(1)] public int prewarmPerFrame = 2;
+        public bool IsPrewarming { get; private set; }
+        public bool IsSpawnCapacityFull => alive.Count >= Mathf.Max(1, maxAliveEnemies) || pool.ActiveCount >= Mathf.Max(1, maxActiveEnemies);
 
         public event Action Changed;
         public GamePhase Phase { get; private set; } = GamePhase.Preparation;
@@ -43,6 +53,8 @@ namespace SandGuard.Waves
         int waveIndex;
         float prepRemaining;
         int groupsRunning;
+        int spawnFrame = -1, spawnsThisFrame;
+        bool skipPreparation;
         readonly HashSet<Guid> alive = new HashSet<Guid>();
         readonly List<string> nextRoutes = new List<string>();
 
@@ -59,7 +71,7 @@ namespace SandGuard.Waves
         {
             if (!Started || Phase != GamePhase.Preparation) return;
             prepRemaining -= Time.deltaTime;
-            if (prepRemaining <= 0f) StartCombat();
+            if (prepRemaining <= 0f && !IsPrewarming) StartCombat();
         }
 
         /// <summary>첫 웨이브의 준비 단계로 들어간다. 이미 시작했으면 무시한다.</summary>
@@ -76,7 +88,7 @@ namespace SandGuard.Waves
         public void SkipPreparation()
         {
             if (!Started) Begin();
-            if (Started && Phase == GamePhase.Preparation) StartCombat();
+            if (Started && Phase == GamePhase.Preparation) { prepRemaining = 0; skipPreparation = true; if (!IsPrewarming) StartCombat(); }
         }
 
         Wave CurrentWave => level.waves.waves[waveIndex];
@@ -85,6 +97,7 @@ namespace SandGuard.Waves
         {
             Phase = GamePhase.Preparation;
             prepRemaining = CurrentWave.preparationSeconds;
+            skipPreparation = false;
             PendingEnemyCount = 0;
             foreach (var group in CurrentWave.groups) PendingEnemyCount += Mathf.Max(1, group.count);
             nextRoutes.Clear();
@@ -94,13 +107,48 @@ namespace SandGuard.Waves
                 if (!string.IsNullOrWhiteSpace(id) && !nextRoutes.Contains(id)) nextRoutes.Add(id);
             }
             Changed?.Invoke();
+            if (prewarmPool) StartCoroutine(PrewarmCurrentWave());
+        }
+
+        IEnumerator PrewarmCurrentWave()
+        {
+            IsPrewarming = true;
+            var demand = new Dictionary<GameObject, int>();
+            foreach (var group in CurrentWave.groups)
+                if (level.TryResolveSpawnGroup(group, out _, out _) && catalog.TryGet(group.element != null ? group.element.gameKey : null, out var prefab))
+                    demand[prefab] = (demand.TryGetValue(prefab, out int count) ? count : 0) + Mathf.Max(1, group.count);
+            var allocation = new Dictionary<GameObject, int>();
+            int remaining = Mathf.Min(Mathf.Max(1, maxAliveEnemies), Mathf.Max(1, maxActiveEnemies));
+            // Round-robin shares a bounded reserve across the enemy types in this wave.
+            while (remaining > 0)
+            {
+                bool allocated = false;
+                foreach (var pair in demand)
+                {
+                    int count = allocation.TryGetValue(pair.Key, out int value) ? value : 0;
+                    if (count >= pair.Value) continue;
+                    allocation[pair.Key] = count + 1; remaining--; allocated = true;
+                    if (remaining == 0) break;
+                }
+                if (!allocated) break;
+            }
+            int created = 0;
+            foreach (var pair in allocation)
+                while (pool.OwnedCount(pair.Key) < pair.Value)
+                {
+                    pool.PrewarmOne(pair.Key);
+                    if (++created >= Mathf.Max(1, prewarmPerFrame)) { created = 0; yield return null; }
+                }
+            IsPrewarming = false;
+            Changed?.Invoke();
+            if (skipPreparation && Phase == GamePhase.Preparation) StartCombat();
         }
 
         void StartCombat()
         {
             Phase = GamePhase.Combat;
-            groupsRunning = 0;
-            foreach (var group in CurrentWave.groups) { groupsRunning++; StartCoroutine(SpawnGroup(group)); }
+            groupsRunning = CurrentWave.groups.Count;
+            foreach (var group in CurrentWave.groups) StartCoroutine(SpawnGroup(group));
             Changed?.Invoke();
             if (groupsRunning == 0) CheckWaveComplete();
         }
@@ -119,7 +167,13 @@ namespace SandGuard.Waves
             }
             for (int i = 0; i < count; i++)
             {
-                Spawn(prefab, binding);
+                while (true)
+                {
+                    if (spawnFrame != Time.frameCount) { spawnFrame = Time.frameCount; spawnsThisFrame = 0; }
+                    if (!IsSpawnCapacityFull && spawnsThisFrame < Mathf.Max(1, maxSpawnsPerFrame) && Spawn(prefab, binding))
+                    { spawnsThisFrame++; break; }
+                    yield return null;
+                }
                 PendingEnemyCount--;
                 Changed?.Invoke();
                 if (i < count - 1) yield return new WaitForSeconds(Mathf.Max(.05f, group.interval));
@@ -128,19 +182,20 @@ namespace SandGuard.Waves
             CheckWaveComplete();
         }
 
-        void Spawn(GameObject prefab, SpawnBinding binding)
+        bool Spawn(GameObject prefab, SpawnBinding binding)
         {
             Vector2 offset = UnityEngine.Random.insideUnitCircle * binding.Spawn.spawnRadius;
             Vector3 position = binding.Spawn.transform.position + new Vector3(offset.x, 0f, offset.y);
             if (NavMesh.SamplePosition(position, out NavMeshHit hit, spawnSampleRadius, NavMesh.AllAreas)) position = hit.position;
-            GameObject instance = pool.Rent(prefab, position, binding.Spawn.transform.rotation);
-            if (instance == null) return;
+            GameObject instance = pool.Rent(prefab, position, binding.Spawn.transform.rotation, Mathf.Max(1, maxActiveEnemies));
+            if (instance == null) return false;
             instance.name = prefab.name + " " + (++SpawnedTotal);
             var brain = instance.GetComponent<EnemyBrain>();
             if (brain != null)
                 brain.objective = objective != null ? objective : EnemyObjective.Current != null ? EnemyObjective.Current.transform : binding.Target.transform;
             var health = instance.GetComponent<EnemyHealth>();
             if (health != null) Track(health);
+            return true;
         }
 
         void Track(EnemyHealth health)

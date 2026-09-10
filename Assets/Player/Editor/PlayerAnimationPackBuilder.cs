@@ -140,6 +140,11 @@ namespace SandGuard.Player.Editor
                 if (!transition.conditions.Any(c => c.parameter == "Dead")) transition.AddCondition(AnimatorConditionMode.IfNot, 0, "Dead");
             var die = Transition(machine.AddAnyStateTransition(death), "Death", .08f);
             die.AddCondition(AnimatorConditionMode.If, 0, "Dead");
+            // 부활: Dead가 꺼지면 쓰러진 자세에서 이동으로 돌아온다.
+            var locomotion = machine.states.First(s => s.state.name == "Locomotion").state;
+            foreach (var transition in death.transitions.ToArray()) if (transition.name == "Player Pack: Revive") death.RemoveTransition(transition);
+            var revive = Transition(death.AddTransition(locomotion), "Revive", .1f);
+            revive.AddCondition(AnimatorConditionMode.IfNot, 0, "Dead");
             machine.anyStateTransitions = new[] { die }.Concat(machine.anyStateTransitions.Where(t => t != die)).ToArray();
 
             string maskPath = Folder + "/HitUpperBody.mask";

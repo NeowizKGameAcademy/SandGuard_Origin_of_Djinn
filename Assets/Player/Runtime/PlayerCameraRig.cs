@@ -34,6 +34,8 @@ namespace SandGuard.Player
         /// <summary>지금 카메라가 바라보는 기준점(부드럽게 따라온 위치).</summary>
         public Vector3 Pivot => pivot;
         void Start() { yaw = owner != null ? owner.eulerAngles.y : transform.eulerAngles.y; }
+        /// <summary>순간이동·부활처럼 바라보는 방향을 바꿔야 할 때 카메라 회전을 즉시 맞춘다.</summary>
+        public void SetYaw(float degrees) { yaw = degrees; currentLength = -1f; }
         void LateUpdate()
         {
             if (target == null) return;

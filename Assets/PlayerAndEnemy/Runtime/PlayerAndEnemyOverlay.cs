@@ -13,9 +13,12 @@ namespace SandGuard.Integration
         [Tooltip("비우면 씬에서 찾는다")]
         public WaveDirector waves;
         public EnemyTestTarget core;
+        [Tooltip("씬에 PlayerCrosshair가 있으면 이 임시 + 표시는 그리지 않는다")]
         public bool showCrosshair = true;
+        bool hasCrosshairComponent;
 
         void Awake() { if (waves == null) waves = FindFirstObjectByType<WaveDirector>(); }
+        void Start() => hasCrosshairComponent = FindAnyObjectByType<SandGuard.Player.PlayerCrosshair>() != null;
 
         void OnGUI()
         {
@@ -39,7 +42,7 @@ namespace SandGuard.Integration
                     + "  |  남은 등장 " + waves.PendingEnemyCount + "  생존 " + waves.AliveEnemyCount + "  누적 " + waves.SpawnedTotal);
                 if (waves.Phase == GamePhase.Preparation && GUI.Button(new Rect(28, 130, 130, 24), waves.Started ? "준비 건너뛰기" : "웨이브 시작")) waves.SkipPreparation();
             }
-            if (showCrosshair) GUI.Label(new Rect(Screen.width / 2f - 5f, Screen.height / 2f - 10f, 20f, 24f), "+");
+            if (showCrosshair && !hasCrosshairComponent) GUI.Label(new Rect(Screen.width / 2f - 5f, Screen.height / 2f - 10f, 20f, 24f), "+");
         }
 
         /// <summary>빌드 설정에 없는 생성 씬이므로 에디터에서는 경로로 다시 연다.</summary>
