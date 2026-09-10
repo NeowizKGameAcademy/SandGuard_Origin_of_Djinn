@@ -4870,7 +4870,6 @@ Transform:
   m_Children:
   - {fileID: 422308052499793278}
   - {fileID: 3414591388988031387}
-  - {fileID: 7562271793544218307}
   m_Father: {fileID: 696931632667872335}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &3395692922512068842
@@ -5229,7 +5228,6 @@ GameObject:
   - component: {fileID: 7562271793544218307}
   - component: {fileID: 3444947273575492697}
   - component: {fileID: 8310601511589707388}
-  - component: {fileID: 4682838173643762912}
   - component: {fileID: 8114487628612535442}
   m_Layer: 0
   m_Name: Range Circle
@@ -5248,10 +5246,10 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0.01, z: 0}
-  m_LocalScale: {x: 50, y: 50, z: 1}
+  m_LocalScale: {x: 100, y: 100, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 6512031120180487448}
+  m_Father: {fileID: 696931632667872335}
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!33 &3444947273575492697
 MeshFilter:
@@ -5309,28 +5307,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &4682838173643762912
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2041211327101795439}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &8114487628612535442
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5343,7 +5319,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f15225beef3f124bbe5007befebcf34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShowRange
-  findEnemy: {fileID: 0}
+  findEnemy: {fileID: 7913829202368357501}
+  renderer: {fileID: 0}
 --- !u!1 &2318642389113166216
 GameObject:
   m_ObjectHideFlags: 0
@@ -15130,6 +15107,7 @@ Transform:
   - {fileID: 3279793870953188973}
   - {fileID: 2736248081083304209}
   - {fileID: 6512031120180487448}
+  - {fileID: 7562271793544218307}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6277516263013789860

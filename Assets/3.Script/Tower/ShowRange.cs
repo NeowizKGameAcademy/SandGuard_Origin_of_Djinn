@@ -6,18 +6,17 @@ public class ShowRange : MonoBehaviour
 {
     [Header("Components")]
     [SerializeField] private FindEnemy findEnemy;
-
-    private Vector3 Scale;
+    [SerializeField] private Renderer renderer;
 
     private void Awake()
     {
-        findEnemy = GetComponentInParent<FindEnemy>();
+        TryGetComponent(out renderer);
     }
 
     // Update is called once per frame
     void Update()
     {
-        Scale = new Vector3(findEnemy.range * 2, findEnemy.range * 2, 0f);
-        transform.localScale = Scale;
+        renderer.material.SetFloat("_Progress", findEnemy.range * 0.005f);
+        renderer.material.SetFloat("_RingWidth", findEnemy.range * 0.005f);
     }
 }
