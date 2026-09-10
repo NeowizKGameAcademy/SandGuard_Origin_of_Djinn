@@ -19,6 +19,8 @@ public class FindEnemy : MonoBehaviour
 
     private void Update()
     {
+        Auto_Aim_Range = Mathf.Clamp(Auto_Aim_Range, 0f, 50f);
+
         Auto_Aim_Distance = Auto_Aim_Range * Auto_Aim_Range;
 
         if (Target_Transform != null)

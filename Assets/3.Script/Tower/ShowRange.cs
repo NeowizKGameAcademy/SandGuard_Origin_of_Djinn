@@ -16,7 +16,7 @@ public class ShowRange : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        renderer.material.SetFloat("_Progress", findEnemy.range * 0.005f);
-        renderer.material.SetFloat("_RingWidth", findEnemy.range * 0.005f);
+        renderer.material.SetFloat("_Progress", findEnemy.range * 0.01f);
+        renderer.material.SetFloat("_RingWidth", findEnemy.range * 0.01f);
     }
 }
