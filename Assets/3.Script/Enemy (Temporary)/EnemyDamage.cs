@@ -156,7 +156,7 @@ public class EnemyDamage : MonoBehaviour
 
             return;
         }
-
+        0
 
         // Damage Range ¿Ã≈ª
         if (other.CompareTag("Damage Range"))
