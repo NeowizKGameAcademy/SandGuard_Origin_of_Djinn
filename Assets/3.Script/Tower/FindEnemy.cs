@@ -8,6 +8,8 @@ public class FindEnemy : MonoBehaviour
     [SerializeField] private float Auto_Aim_Range = 20f;
     [SerializeField] private float SearchTime = 0.2f;
 
+    [SerializeField] private GameObject Range;
+
     private float Auto_Aim_Distance;
     private float SearchTimer;
 
@@ -75,5 +77,13 @@ public class FindEnemy : MonoBehaviour
         }
 
         Target_Transform = Closest_Target;
+    }
+
+    private void SetRange()
+    {
+        if (Range == null)
+            return;
+
+        Range.transform.localScale
     }
 }
