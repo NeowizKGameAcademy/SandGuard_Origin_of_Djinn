@@ -98,7 +98,7 @@ namespace SandGuard.Player.Tests
             int count = fired;
             yield return new WaitForSeconds(.55f);
             Assert.AreEqual(count, fired); Assert.Less(casting.Weight, .01f);
-            Assert.True(lamp.IsHeld); Assert.AreSame(lamp.handSocket, lamp.lamp.parent);
+            Assert.False(lamp.IsHeld); Assert.AreSame(lamp.beltSocket, lamp.lamp.parent);
         }
 
         [UnityTest] public IEnumerator TapFiresOnceAndInterruptedWindupCannotReleaseLater()
@@ -234,6 +234,10 @@ namespace SandGuard.Player.Tests
                 Assert.True(animator.GetCurrentAnimatorStateInfo(0).IsName("Locomotion"));
                 Assert.True(animator.GetCurrentAnimatorClipInfo(0).Any(c => c.clip.name == clips[i] && c.weight > .8f), clips[i]);
                 Assert.Greater(Vector3.Dot(player.transform.forward, Vector3.forward), .95f, "Keep facing the aim while strafing.");
+                // 클립이 몸을 반대로 굽지 않았는지: 어깨선으로 구한 상체 정면이 캐릭터 정면과 같은 쪽을 본다.
+                Vector3 shoulders = animator.GetBoneTransform(HumanBodyBones.RightShoulder).position - animator.GetBoneTransform(HumanBodyBones.LeftShoulder).position;
+                Vector3 torsoForward = Vector3.Cross(shoulders, Vector3.up).normalized;
+                Assert.Greater(Vector3.Dot(torsoForward, player.transform.forward), .5f, "The torso keeps facing the aim while moving " + clips[i] + ".");
             }
             InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.W, Key.D));
             yield return new WaitForSeconds(.35f);

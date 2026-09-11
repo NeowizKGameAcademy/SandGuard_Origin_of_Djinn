@@ -85,7 +85,7 @@ namespace SandGuard.Player
             if (motor != null)
             {
                 float speed = Vector3.ProjectOnPlane(motor.Velocity, Vector3.up).magnitude;
-                target += moveSpread * Mathf.Clamp01(speed / Mathf.Max(0.01f, motor.moveSpeed));
+                target += moveSpread * Mathf.Clamp01(speed / Mathf.Max(0.01f, motor.MoveSpeed));
                 if (!motor.IsGrounded) target += airSpread;
             }
             spread = spreadSmoothTime <= 0f ? target : Mathf.SmoothDamp(spread, target, ref spreadVelocity, spreadSmoothTime);

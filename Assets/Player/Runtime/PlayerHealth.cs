@@ -11,6 +11,8 @@ namespace SandGuard.Player
         public Collider[] disableOnDeath = Array.Empty<Collider>();
         [Min(0f), Tooltip("부활 직후 피해를 거부하고 적의 대상에서 빠지는 시간(초). 0이면 보호 없음")]
         public float reviveProtection = 0f;
+        [Tooltip("스탯 수정자. DamageTaken 배수를 받는 피해에 곱한다. 비우면 같은 오브젝트에서 찾는다")]
+        public PlayerStats stats;
         float protectedUntil = -1f;
         /// <summary>부활 보호 중인지. 보호 중에는 피해를 거부하고 적의 대상에서 빠진다.</summary>
         public bool IsProtected => Time.time < protectedUntil;
@@ -31,7 +33,9 @@ namespace SandGuard.Player
         public event Action<Guid> Revived;
         public event Action<Guid> Despawned;
         bool notifying;
-        void Awake() { EntityId = Guid.NewGuid(); CurrentHealth = maxHealth; }
+        void Awake() { EntityId = Guid.NewGuid(); CurrentHealth = maxHealth; if (stats == null) stats = GetComponent<PlayerStats>(); }
+        /// <summary>수정자를 적용한 받는 피해 배수. 기본 1.</summary>
+        public float DamageTakenMultiplier => stats != null ? stats.Evaluate(PlayerStat.DamageTaken, 1f) : 1f;
         void OnValidate()
         {
             if (float.IsNaN(maxHealth) || float.IsInfinity(maxHealth) || maxHealth < 1f) maxHealth = 100f;
@@ -44,7 +48,7 @@ namespace SandGuard.Player
             if (damage.SourceFactionId == factionId) return DamageResult.Rejected(DamageStatus.NonHostile);
             if (!isActiveAndEnabled || Time.timeScale <= 0f || notifying || IsProtected) return DamageResult.Rejected(DamageStatus.Protected);
             float previous = CurrentHealth;
-            float applied = Mathf.Min(previous, damage.Amount);
+            float applied = Mathf.Min(previous, damage.Amount * DamageTakenMultiplier);
             CurrentHealth -= applied;
             bool killed = applied > 0f && CurrentHealth <= 0f;
             if (killed)

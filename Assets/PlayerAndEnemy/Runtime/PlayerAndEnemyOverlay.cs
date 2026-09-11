@@ -23,7 +23,7 @@ namespace SandGuard.Integration
         void OnGUI()
         {
             GUI.Box(new Rect(16, 16, 470, 150), "SandGuard | Player and Enemy Test");
-            GUI.Label(new Rect(28, 40, 450, 22), "WASD 이동 | 마우스 시점 | Space 점프(2단) | Shift 대시 | 좌클릭 발사 | 숫자 키 건설 | Esc 커서 해제");
+            GUI.Label(new Rect(28, 40, 450, 22), "WASD 이동 | 마우스 시점 | Space 점프(2단, 착지 후 길게: 상승 기류) | Shift 대시 | 좌클릭 발사 | 숫자 키 건설 | Esc 커서 해제");
             var health = playerLife as IHealth;
             var life = playerLife as ILifeState;
             if (health != null)

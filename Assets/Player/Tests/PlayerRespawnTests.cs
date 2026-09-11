@@ -107,7 +107,7 @@ namespace SandGuard.Player.Tests
             Assert.AreEqual(mana.MaxMana, mana.CurrentMana, "Mana is fully restored on respawn.");
             Assert.AreEqual(0f, motor.DashCooldownRemaining, "Dash cooldown is cleared on respawn.");
             Assert.AreEqual(0f, player.GetComponent<PlayerBasicAttack>().CooldownRemaining);
-            Assert.AreEqual(motor.extraAirJumps, motor.RemainingAirJumps);
+            Assert.AreEqual(motor.ExtraAirJumps, motor.RemainingAirJumps);
             Assert.True(motor.TryDash().Succeeded, "Dash is available right after respawning.");
             Keys(Key.W); yield return new WaitForSeconds(0.4f); Keys();
             Assert.Greater(player.transform.position.z, 0.5f, "Movement works again after respawning.");

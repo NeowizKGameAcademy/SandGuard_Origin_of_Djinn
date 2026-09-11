@@ -28,9 +28,12 @@ namespace SandGuard.Player
         public event Action SpellPressed;
         public event Action JumpPressed;
         public event Action DashPressed;
+        /// <summary>공격 스킬 키. 0 = Q(Skill1), 1 = E(Skill2), 2 = R(Skill3). 입력 에셋에 해당 액션이 없으면 오지 않는다.</summary>
+        public event Action<int> SkillPressed;
         public event Action<int> SlotSelected;
         public event Action BuildModeToggled;
-        public event Action<int> BuildRotationRequested;
+        /// <summary>인터페이스 호환용. 회전 입력은 기획에 없어 발생하지 않는다.</summary>
+        public event Action<int> BuildRotationRequested { add { } remove { } }
         public event Action CancelPressed;
         public event Action PausePressed;
 
@@ -67,8 +70,8 @@ namespace SandGuard.Player
             if (jump.WasPressedThisFrame()) JumpPressed?.Invoke();
             if (Pressed("Spell")) SpellPressed?.Invoke();
             if (Pressed("Dash")) DashPressed?.Invoke();
+            for (int i = 0; i < 3; i++) if (Pressed("Skill" + (i + 1))) SkillPressed?.Invoke(i);
             if (Pressed("BuildMode")) BuildModeToggled?.Invoke();
-            if (Pressed("Rotate")) BuildRotationRequested?.Invoke(1);
             if (Pressed("Cancel")) CancelPressed?.Invoke();
             for (int i = 0; i < 9; i++) if (Pressed("Slot" + (i + 1))) SlotSelected?.Invoke(i);
         }

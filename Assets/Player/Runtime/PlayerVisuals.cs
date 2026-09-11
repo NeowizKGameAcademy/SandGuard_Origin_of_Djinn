@@ -28,6 +28,12 @@ namespace SandGuard.Player
         public string jumpTrigger = "Jump";
         [Tooltip("공중 추가 점프 트리거. 컨트롤러에 없으면 Jump 트리거를 대신 쓴다")]
         public string doubleJumpTrigger = "DoubleJump";
+        [Tooltip("상승 기류 충전 중 Bool / 충전량 Float / 발사 트리거")]
+        public string chargingParameter = "Charging";
+        public string chargeParameter = "Charge";
+        public string flyTrigger = "Fly";
+        [Tooltip("상승 기류 컴포넌트. 비우면 같은 오브젝트에서 찾는다")]
+        public PlayerUpdraft updraft;
         [Tooltip("공중 수직 속도(위가 양수). 낙하 상태 전환에 쓴다")]
         public string verticalSpeedParameter = "VerticalSpeed";
         [Tooltip("이 속도 이상으로 착지하면 켜지는 Bool. 다시 공중에 뜨면 끈다")]
@@ -40,6 +46,10 @@ namespace SandGuard.Player
         public string moveZParameter = "MoveZ";
         [Min(0f), Tooltip("피격 반응(Damage Reactions) 레이어를 내리는 시간. 반응이 끝나면 0으로 내려 상체가 이동 동작을 따르게 한다")]
         public float reactionBlendTime = 0.1f;
+        [Tooltip("대시 하체 레이어 이름. 대시 중에만 가중치 1")]
+        public string dashLayerName = "Dash Legs";
+        [Min(0f), Tooltip("대시가 끝난 뒤 하체 레이어를 내리는 시간")]
+        public float dashLayerBlendTime = 0.15f;
         public UnityEvent onFired = new UnityEvent();
         public UnityEvent onDamaged = new UnityEvent();
         public UnityEvent onIncapacitated = new UnityEvent();
@@ -48,7 +58,9 @@ namespace SandGuard.Player
         public UnityEvent onHardLanded = new UnityEvent();
         [SerializeField, HideInInspector] GameObject visualInstance;
         Animator animator;
-        float reactionWeight;
+        float reactionWeight, dashLayerWeight;
+        bool awaitingHardLanding, sawHardLanding;
+        float hardLandingEntryWait;
         Transform muzzle;
         public PlayerSpellcasting Spellcasting { get; private set; }
         public Transform FirePoint => muzzle != null ? muzzle : fallbackFirePoint;
@@ -58,13 +70,21 @@ namespace SandGuard.Player
         {
             if (healthSource is IDamageEvents damage) damage.Damaged += OnDamaged;
             if (healthSource is ILifeState life) life.Died += OnDied;
-            if (motor != null) { motor.DashStarted += OnDash; motor.Jumped += OnJump; motor.Landed += OnLanded; }
+            if (motor != null) { motor.DashStarted += OnDash; motor.Jumped += OnJump; motor.Landed += OnLanded; motor.Launched += OnLaunched; motor.Teleported += ClearHardLandingLock; }
+            if (updraft == null) updraft = GetComponent<PlayerUpdraft>();
         }
         void OnDisable()
         {
             if (healthSource is IDamageEvents damage) damage.Damaged -= OnDamaged;
             if (healthSource is ILifeState life) life.Died -= OnDied;
-            if (motor != null) { motor.DashStarted -= OnDash; motor.Jumped -= OnJump; motor.Landed -= OnLanded; }
+            if (motor != null) { motor.DashStarted -= OnDash; motor.Jumped -= OnJump; motor.Landed -= OnLanded; motor.Launched -= OnLaunched; motor.Teleported -= ClearHardLandingLock; }
+            ClearHardLandingLock();
+        }
+        void OnLaunched(float height)
+        {
+            // 발사형 도약은 점프 클립 대신 Fly 자세. 남은 점프 트리거는 지운다.
+            if (HasParameter(jumpTrigger, AnimatorControllerParameterType.Trigger)) animator.ResetTrigger(jumpTrigger);
+            if (HasParameter(flyTrigger, AnimatorControllerParameterType.Trigger)) animator.SetTrigger(flyTrigger);
         }
         void OnDamaged(DamageAppliedInfo info)
         {
@@ -82,6 +102,16 @@ namespace SandGuard.Player
         /// 피격 반응 레이어는 Hit 동작이 재생되는 동안만 켠다. 모션이 없는 Empty 상태라도 가중치가 1이면 마스크 부위(척추·머리·팔)의
         /// 근육 값을 고정해 버려서, 이동 중 상체가 골반과 함께 막대처럼 흔들리는 문제가 생긴다.
         /// </summary>
+        /// <summary>대시 하체 레이어는 대시 동작이 재생되는 동안만 켠다. Empty 상태에서 가중치 1이면 다리가 굳는다(피격 레이어와 같은 이유).</summary>
+        float DashLayerWeight(int layer, bool dead)
+        {
+            bool playing = !dead && motor != null && (motor.IsDashing
+                || animator.GetCurrentAnimatorStateInfo(layer).IsName("Dash") || animator.GetNextAnimatorStateInfo(layer).IsName("Dash"));
+            float target = playing ? 1f : 0f;
+            dashLayerWeight = target > dashLayerWeight || dashLayerBlendTime <= 0f ? target
+                : Mathf.MoveTowards(dashLayerWeight, target, Time.deltaTime / dashLayerBlendTime);
+            return dashLayerWeight;
+        }
         float ReactionWeight(int layer, bool dead)
         {
             var current = animator.GetCurrentAnimatorStateInfo(layer);
@@ -92,6 +122,7 @@ namespace SandGuard.Player
         }
         void OnDied(DeathInfo info)
         {
+            ClearHardLandingLock();
             if (Spellcasting != null) Spellcasting.Cancel();
             if (HasParameter("Dead", AnimatorControllerParameterType.Bool)) animator.SetBool("Dead", true);
             if (HasParameter(deathTrigger, AnimatorControllerParameterType.Trigger)) animator.SetTrigger(deathTrigger);
@@ -112,6 +143,12 @@ namespace SandGuard.Player
             if (HasParameter(jumpTrigger, AnimatorControllerParameterType.Trigger)) animator.ResetTrigger(jumpTrigger);
             if (HasParameter(doubleJumpTrigger, AnimatorControllerParameterType.Trigger)) animator.ResetTrigger(doubleJumpTrigger);
             if (HasParameter(hardLandParameter, AnimatorControllerParameterType.Bool)) animator.SetBool(hardLandParameter, hard);
+            if (hard && animator != null && animator.isActiveAndEnabled
+                && animator.HasState(0, Animator.StringToHash("Base Layer.Hard Landing")))
+            {
+                awaitingHardLanding = true; sawHardLanding = false; hardLandingEntryWait = 0f;
+                motor.SetHardLandingLock(true);
+            }
             onLanded.Invoke();
             if (hard) onHardLanded.Invoke();
         }
@@ -142,11 +179,14 @@ namespace SandGuard.Player
         // PlayerMotor updates at -200; publish before this frame's Animator evaluation.
         void Update()
         {
+            UpdateHardLandingLock();
             if (animator == null || motor == null) return;
             bool dead = healthSource is ILifeState life && life.State != global::LifeState.Alive;
             if (HasParameter("Dead", AnimatorControllerParameterType.Bool)) animator.SetBool("Dead", dead);
             int reactionLayer = animator.GetLayerIndex("Damage Reactions");
             if (reactionLayer >= 0) animator.SetLayerWeight(reactionLayer, ReactionWeight(reactionLayer, dead));
+            int dashLayer = animator.GetLayerIndex(dashLayerName);
+            if (dashLayer >= 0) animator.SetLayerWeight(dashLayer, DashLayerWeight(dashLayer, dead));
             if (dead && Spellcasting != null) Spellcasting.Cancel();
             Vector3 velocity = dead ? Vector3.zero : Vector3.ProjectOnPlane(motor.Velocity, Vector3.up);
             Vector3 localDirection = motor.transform.InverseTransformDirection(velocity.normalized);
@@ -158,9 +198,33 @@ namespace SandGuard.Player
                 animator.SetBool(groundedParameter, motor.IsGrounded);
             if (HasParameter(verticalSpeedParameter, AnimatorControllerParameterType.Float))
                 animator.SetFloat(verticalSpeedParameter, dead ? 0f : motor.VerticalSpeed);
+            bool charging = !dead && updraft != null && updraft.IsCharging;
+            if (HasParameter(chargingParameter, AnimatorControllerParameterType.Bool)) animator.SetBool(chargingParameter, charging);
+            if (HasParameter(chargeParameter, AnimatorControllerParameterType.Float)) animator.SetFloat(chargeParameter, charging ? updraft.Charge : 0f);
             // 공중에 뜨면 강한 착지 표시를 지워 다음 착지에 남지 않게 한다 (대시·시전 중 착지처럼 착지 전환을 거치지 않은 경우 포함).
             if (!motor.IsGrounded && HasParameter(hardLandParameter, AnimatorControllerParameterType.Bool)) animator.SetBool(hardLandParameter, false);
             if (HasParameter(dashParameter, AnimatorControllerParameterType.Bool)) animator.SetBool(dashParameter, motor.IsDashing);
+        }
+
+        void ClearHardLandingLock()
+        {
+            awaitingHardLanding = sawHardLanding = false;
+            if (motor != null) motor.SetHardLandingLock(false);
+        }
+
+        void UpdateHardLandingLock()
+        {
+            if (!awaitingHardLanding) return;
+            if (motor == null || !motor.isActiveAndEnabled || animator == null || !animator.isActiveAndEnabled
+                || (healthSource is ILifeState life && life.State != global::LifeState.Alive))
+            { ClearHardLandingLock(); return; }
+            if (Time.timeScale <= 0f) return;
+            bool playing = animator.GetCurrentAnimatorStateInfo(0).IsName("Hard Landing")
+                || (animator.IsInTransition(0) && animator.GetNextAnimatorStateInfo(0).IsName("Hard Landing"));
+            if (playing) { sawHardLanding = true; return; }
+            hardLandingEntryWait += Time.deltaTime;
+            // Do not strand input if a different controller cannot enter the expected state.
+            if (sawHardLanding || hardLandingEntryWait > .5f) ClearHardLandingLock();
         }
         public void PlayFire()
         {

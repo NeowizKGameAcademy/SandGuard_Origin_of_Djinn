@@ -82,6 +82,7 @@ namespace SandGuard.Player.Tests
             var player = Player(Vector3.zero);
             var motor = player.GetComponent<PlayerMotor>();
             var visuals = player.GetComponent<PlayerVisuals>();
+            player.GetComponent<PlayerEffects>().Apply(new SandGuard.Player.Effects.DoubleJumpEffect()); // 기본값은 공중 점프 0
             float landedSpeed = -1f; int landings = 0, hardLandings = 0;
             motor.Landed += speed => { landedSpeed = speed; landings++; };
             visuals.onHardLanded.AddListener(() => hardLandings++);
@@ -122,7 +123,7 @@ namespace SandGuard.Player.Tests
             Assert.AreEqual(1, landings);
         }
 
-        [UnityTest] public IEnumerator HighFallPlaysHardLandingAndMovementCancelsItLate()
+        [UnityTest] public IEnumerator HighFallLocksMovementUntilHardLandingFinishes()
         {
             Cube(new Vector3(0, -0.5f, 0), new Vector3(60, 1, 60));
             var player = Player(Vector3.zero);
@@ -146,10 +147,27 @@ namespace SandGuard.Player.Tests
             AssertClip(animator, "Hard Landing");
             yield return new WaitForSeconds(0.2f);
             CapturePose(player, "hard-landing");
-            Keys(Key.W); // 이동 입력은 충격 구간이 지난 뒤에만 착지를 끊는다
-            yield return new WaitForSeconds(0.15f);
-            Assert.True(State(animator).IsName("Hard Landing"), "The impact part of a hard landing cannot be skipped.");
-            yield return Until(() => State(animator).IsName("Locomotion"), 2f, animator, seen, "Moving after the impact returns to locomotion early.");
+            Assert.True(motor.HardLandingLocked);
+            Vector3 planted = player.transform.position;
+            Assert.False(motor.TryDash().Succeeded);
+            Assert.False(motor.TryJump());
+            Keys(Key.W);
+            Time.timeScale = 0f;
+            yield return new WaitForSecondsRealtime(.1f);
+            Assert.True(motor.HardLandingLocked, "Pause must not consume the recovery.");
+            Time.timeScale = 1f;
+            float elapsed = 0f, lastNormalized = 0f;
+            while (motor.HardLandingLocked && elapsed < 3f)
+            {
+                if (State(animator).IsName("Hard Landing")) lastNormalized = State(animator).normalizedTime;
+                yield return null; elapsed += Time.deltaTime;
+                if (motor.HardLandingLocked)
+                    Assert.Less(Vector3.ProjectOnPlane(player.transform.position - planted, Vector3.up).magnitude, .001f, "Held movement must not slide during recovery.");
+            }
+            Assert.False(motor.HardLandingLocked);
+            Assert.GreaterOrEqual(lastNormalized, .99f, "The complete landing clip must play before movement unlocks.");
+            yield return new WaitForSeconds(.2f);
+            Assert.Greater(Vector3.ProjectOnPlane(player.transform.position - planted, Vector3.up).magnitude, .05f, "Held movement resumes after recovery.");
             Keys();
         }
 

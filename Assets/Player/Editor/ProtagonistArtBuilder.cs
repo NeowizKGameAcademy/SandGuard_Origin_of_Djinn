@@ -74,6 +74,7 @@ namespace SandGuard.Player.Editor
                 equipment.emissiveMaterialIndex = Array.FindIndex(equipment.lampRenderer.sharedMaterials, m => m.name == "Magic_Inlay_Emission");
                 var grip = lamp.GetComponentsInChildren<Transform>().First(t => t.name == "HandGrip");
                 equipment.handGripOffset = lamp.transform.InverseTransformPoint(grip.position);
+                PlayerLampBuilder.Configure(equipment);
                 PrefabUtility.SaveAsPrefabAsset(root, VisualPath);
             }
             finally { Object.DestroyImmediate(root); }

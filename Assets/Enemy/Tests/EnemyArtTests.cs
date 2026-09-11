@@ -47,11 +47,13 @@ namespace SandGuard.Enemy.Tests
             yield return null;
         }
 
-        [UnityTest] public IEnumerator Swordsman() => Check("Assets/Enemy/Generated/Enemy.prefab", "Swordsman", 1.75f, ("ShortSword", HumanBodyBones.RightHand), ("RoundShield", HumanBodyBones.LeftHand));
-        [UnityTest] public IEnumerator Assassin() => Check("Assets/Enemy/Generated/Enemy_Assassin.prefab", "Assassin", 1.68f, ("AssassinDagger", HumanBodyBones.RightHand), ("AssassinDagger", HumanBodyBones.LeftHand));
-        [UnityTest] public IEnumerator ShieldGuard() => Check("Assets/Enemy/Generated/Enemy_ShieldGuard.prefab", "ShieldGuard", 1.84f, ("ShortSword", HumanBodyBones.RightHand), ("TowerShield", HumanBodyBones.LeftHand));
-        [UnityTest] public IEnumerator HammerBrute() => Check("Assets/Enemy/Generated/Enemy_HammerBrute.prefab", "HammerBrute", 1.94f, ("Warhammer", HumanBodyBones.RightHand));
-        [UnityTest] public IEnumerator Chief() => Check("Assets/Enemy/Generated/Enemy_Chief.prefab", "Chief", 2.04f, ("ChiefScimitar", HumanBodyBones.RightHand), ("ChiefCape", HumanBodyBones.Chest));
+        // World-space renderer reference height of the protagonist; includes the renderer bounds margin.
+        const float HeroReferenceHeight = 2.217f;
+        [UnityTest] public IEnumerator Swordsman() => Check("Assets/Enemy/Generated/Enemy.prefab", "Swordsman", HeroReferenceHeight, ("ShortSword", HumanBodyBones.RightHand), ("RoundShield", HumanBodyBones.LeftHand));
+        [UnityTest] public IEnumerator Assassin() => Check("Assets/Enemy/Generated/Enemy_Assassin.prefab", "Assassin", HeroReferenceHeight, ("AssassinDagger", HumanBodyBones.RightHand), ("AssassinDagger", HumanBodyBones.LeftHand));
+        [UnityTest] public IEnumerator ShieldGuard() => Check("Assets/Enemy/Generated/Enemy_ShieldGuard.prefab", "ShieldGuard", HeroReferenceHeight * 1.5f, ("ShortSword", HumanBodyBones.RightHand), ("TowerShield", HumanBodyBones.LeftHand));
+        [UnityTest] public IEnumerator HammerBrute() => Check("Assets/Enemy/Generated/Enemy_HammerBrute.prefab", "HammerBrute", HeroReferenceHeight * 1.5f, ("Warhammer", HumanBodyBones.RightHand));
+        [UnityTest] public IEnumerator Chief() => Check("Assets/Enemy/Generated/Enemy_Chief.prefab", "Chief", HeroReferenceHeight * 2f, ("ChiefScimitar", HumanBodyBones.RightHand), ("ChiefCape", HumanBodyBones.Chest));
 
         IEnumerator Check(string prefabPath, string name, float height, params (string asset, HumanBodyBones bone)[] gear)
         {
@@ -91,7 +93,16 @@ namespace SandGuard.Enemy.Tests
             Assert.AreEqual("Universal Render Pipeline/Lit", skin.sharedMaterial.shader.name);
             Bounds bounds = skin.bounds;
             Assert.AreEqual(height, bounds.size.y, .25f, name + " height should match the preview height.");
-            Assert.AreEqual(0f, bounds.min.y, .2f, name + " feet should be on the floor.");
+            // Renderer bounds include animation padding, which grows with visual scale.
+            // Check the actual posed mesh sole instead of treating culling bounds as the feet.
+            var posedMesh = new Mesh();
+            try
+            {
+                skin.BakeMesh(posedMesh);
+                float sole = posedMesh.vertices.Min(v => skin.transform.TransformPoint(v).y);
+                Assert.AreEqual(0f, sole, .2f, name + " mesh sole should be on the floor.");
+            }
+            finally { UnityEngine.Object.Destroy(posedMesh); }
 
             var equipmentRoots = enemy.GetComponentsInChildren<Transform>().Where(t => t.name.EndsWith("_Placement")).ToArray();
             Assert.AreEqual(gear.Length, equipmentRoots.Length, name + " equipment count.");

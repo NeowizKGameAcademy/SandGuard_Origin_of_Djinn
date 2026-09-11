@@ -111,6 +111,7 @@ namespace SandGuard.Integration.Editor
 
             var overlay = new GameObject("Test HUD").AddComponent<PlayerAndEnemyOverlay>();
             overlay.playerLife = playerLife; overlay.core = coreTarget;
+            overlay.gameObject.AddComponent<SandGuard.Player.PlayerStarterEffects>(); // 스킬트리 전까지 더블 점프·공중 대시를 켠다
 
             // 건설 슬롯마다 타워 받침대를 놓고 건설 서비스·메뉴를 넣는다 (SandGuard/Facility).
             SandGuard.Facility.Editor.FacilitySetupBuilder.WireIntoScene(scene);

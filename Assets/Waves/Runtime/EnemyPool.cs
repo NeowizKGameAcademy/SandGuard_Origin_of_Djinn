@@ -77,6 +77,7 @@ namespace SandGuard.Waves
         static void Revive(GameObject instance, Vector3 position)
         {
             instance.GetComponent<EnemyHealth>()?.ResetForReuse();
+            instance.GetComponent<EnemyFall>()?.ResetForReuse();
             instance.GetComponent<EnemyMotor>()?.Enable(position);
             instance.GetComponent<EnemyBrain>()?.ResetForReuse();
             instance.GetComponent<EnemyMeleeAttack>()?.ResetForReuse();

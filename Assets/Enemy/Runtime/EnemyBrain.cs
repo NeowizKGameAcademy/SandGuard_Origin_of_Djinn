@@ -53,6 +53,8 @@ namespace SandGuard.Enemy
         public void Think()
         {
             if (State == EnemyBrainState.Dead) return;
+            if (motor != null && motor.IsDetached) // 떨어지는 중·복귀 중: 공중에서 휘두르지 않는다. EnemyFall이 다시 붙이면 다음 판단부터 이어 간다
+            { attack?.Cancel(); selector?.ClearTarget(); State = EnemyBrainState.Idle; return; }
             if (objective == null && EnemyObjective.Current != null) objective = EnemyObjective.Current.transform;
             motor?.Refresh();
             TargetSelection selection = selector != null ? selector.SelectTarget() : default;

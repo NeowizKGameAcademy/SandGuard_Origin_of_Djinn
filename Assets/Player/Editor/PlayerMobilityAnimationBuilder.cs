@@ -23,6 +23,12 @@ namespace SandGuard.Player.Editor
         const int FlipLandingFrame = 27;
         const int LandingContactFrame = 7;      // 발이 닿는 프레임 8, 최저 웅크림 14, 회복 완료 26
         const int HardLandingContactFrame = 1;  // 발이 닿는 프레임 2, 깊은 웅크림 ~44, 회복 완료 56
+        const int DashFirstFrame = 38;          // Pushing에서 오른발이 들려 앞으로 내딛는 구간(38~52). 낮은 자세로 한 발 크게 밀어내는 모양
+        const int DashLastFrame = 52;
+        public const string DashLayerName = "Dash Legs";
+        public const string DashMaskPath = ProtagonistArtBuilder.Art + "/DashLowerBody.mask";
+        const int FlyPoseFirstFrame = 10;       // Jumping Up 웅크림 최저점(10)부터 도약·공중 자세(25)까지: 발사 순간 몸이 펴지며 마지막 자세를 유지한다
+        const int FlyPoseLastFrame = 25;
         const float FallSpeedThreshold = PlayerVisuals.FallingSpeedThreshold;
 
         [MenuItem("SandGuard/Player/Connect Jump and Dash Animations")]
@@ -36,6 +42,13 @@ namespace SandGuard.Player.Editor
             var fallingClip = Import("character-protagonist-mixamo@Falling Idle.fbx", "Falling", "Falling", true, true, -1, -1);
             var landingClip = Import("character-protagonist-mixamo@Falling To Landing.fbx", "Landing", "Landing", false, true, LandingContactFrame, -1);
             var hardLandingClip = Import("character-protagonist-mixamo@Hard Landing.fbx", "HardLanding", "Hard Landing", false, true, HardLandingContactFrame, -1);
+            var crouchClip = Import("character-protagonist-mixamo@Male Crouch Pose.fbx", "CrouchPose", "Crouch Pose", true, true, -1, -1);
+            // 대시: Pushing의 한 발 내딛는 구간을 하체 전용 레이어에서 재생한다. 낮은 자세가 보이도록 높이는 자세에 굽고, 이동은 루트 모션으로 빼낸다.
+            var dashClip = ImportDash();
+            if (File.Exists(Folder + "/AeroDash.fbx")) AssetDatabase.DeleteAsset(Folder + "/AeroDash.fbx"); // 이전 대시 클립
+            // 임시 발사 동작: Mixamo Flying은 수평 비행 자세라 수직 발사에 어색하다. Jumping Up의 웅크림 최저점→공중 자세 구간을 한 번 재생하고
+            // 마지막 자세(팔 위, 다리 뻗음)를 유지한다(반복 없음). 전용 클립을 구하면 여기서 원본 파일과 프레임만 바꾸면 된다.
+            var flyClip = Import("character-protagonist-mixamo@Jumping Up.fbx", "Fly", "Fly", false, false, FlyPoseFirstFrame, FlyPoseLastFrame);
 
             var controller = AssetDatabase.LoadAssetAtPath<AnimatorController>(art + "/Protagonist.controller");
             if (controller == null) throw new InvalidOperationException("Connect Protagonist Art first.");
@@ -43,6 +56,9 @@ namespace SandGuard.Player.Editor
             Parameter(controller, "DoubleJump", AnimatorControllerParameterType.Trigger);
             Parameter(controller, "HardLand", AnimatorControllerParameterType.Bool);
             Parameter(controller, "VerticalSpeed", AnimatorControllerParameterType.Float);
+            Parameter(controller, "Charging", AnimatorControllerParameterType.Bool);
+            Parameter(controller, "Charge", AnimatorControllerParameterType.Float);
+            Parameter(controller, "Fly", AnimatorControllerParameterType.Trigger);
             var machine = controller.layers[0].stateMachine;
             var locomotion = machine.states.First(s => s.state.name == "Locomotion").state;
             var jump = State(machine, "Jump", new Vector3(460, -200));
@@ -50,22 +66,26 @@ namespace SandGuard.Player.Editor
             var falling = State(machine, "Falling", new Vector3(720, -160));
             var landing = State(machine, "Landing", new Vector3(720, 0));
             var hardLanding = State(machine, "Hard Landing", new Vector3(720, 80));
-            var dash = State(machine, "Dash", new Vector3(460, 100));
+            var oldDash = machine.states.FirstOrDefault(s => s.state.name == "Dash").state; // 대시는 하체 레이어로 옮겼다
+            if (oldDash != null) machine.RemoveState(oldDash);
+            var charge = State(machine, "Charge", new Vector3(200, 200));
+            var fly = State(machine, "Fly", new Vector3(460, -280));
             jump.motion = jumpUp; jump.speed = 1f; jump.iKOnFeet = false;
             doubleJump.motion = flip; doubleJump.speed = flip.averageDuration / 0.6f; doubleJump.iKOnFeet = false;
             falling.motion = fallingClip; falling.speed = 1f; falling.iKOnFeet = false;
             landing.motion = landingClip; landing.speed = 1.4f; landing.iKOnFeet = true;
             hardLanding.motion = hardLandingClip; hardLanding.speed = 1.3f; hardLanding.iKOnFeet = true;
-            dash.motion = ProtagonistArtBuilder.Clip("Run"); dash.speed = 1.8f; dash.iKOnFeet = false;
+            // 충전: Charge 0(선 자세)→1(웅크림)로 서서히 낮아진다.
+            charge.motion = ChargeTree(controller, ProtagonistArtBuilder.Clip("Protagonist"), crouchClip); charge.speed = 1f; charge.iKOnFeet = true;
+            fly.motion = flyClip; fly.speed = 1f; fly.iKOnFeet = false;
 
             foreach (var transition in machine.anyStateTransitions.ToArray())
                 if (transition.name.StartsWith(Prefix)) machine.RemoveAnyStateTransition(transition);
-            foreach (var state in new[] { locomotion, jump, doubleJump, falling, landing, hardLanding, dash })
+            foreach (var state in new[] { locomotion, jump, doubleJump, falling, landing, hardLanding, charge, fly })
                 foreach (var transition in state.transitions.ToArray())
                     if (transition.name.StartsWith(Prefix)) state.RemoveTransition(transition);
 
-            var startDash = Configure(machine.AddAnyStateTransition(dash), "Dash", 0.035f);
-            startDash.AddCondition(AnimatorConditionMode.If, 0, "Dashing");
+            ConfigureDashLayer(controller, dashClip);
             var startJump = Configure(machine.AddAnyStateTransition(jump), "Jump", 0.05f);
             startJump.AddCondition(AnimatorConditionMode.If, 0, "Jump");
             startJump.AddCondition(AnimatorConditionMode.IfNot, 0, "Dashing");
@@ -73,6 +93,24 @@ namespace SandGuard.Player.Editor
             startDoubleJump.canTransitionToSelf = true; // extraAirJumps가 2 이상이면 플립을 다시 시작한다
             startDoubleJump.AddCondition(AnimatorConditionMode.If, 0, "DoubleJump");
             startDoubleJump.AddCondition(AnimatorConditionMode.IfNot, 0, "Dashing");
+
+            // 상승 기류: 충전 중 웅크림, 발사하면 Fly, 정점을 지나면 낙하, 닿으면 착지.
+            var startCharge = Configure(machine.AddAnyStateTransition(charge), "Charge", 0.12f);
+            startCharge.AddCondition(AnimatorConditionMode.If, 0, "Charging");
+            startCharge.AddCondition(AnimatorConditionMode.IfNot, 0, "Dashing");
+            var chargeEnd = Configure(charge.AddTransition(locomotion), "Charge End", 0.15f);
+            chargeEnd.AddCondition(AnimatorConditionMode.IfNot, 0, "Charging");
+            chargeEnd.AddCondition(AnimatorConditionMode.If, 0, "Grounded");
+            var startFly = Configure(machine.AddAnyStateTransition(fly), "Fly", 0.12f); // 충전 웅크림 → 도약 웅크림으로 부드럽게 이어진 뒤 클립이 몸을 편다
+            startFly.AddCondition(AnimatorConditionMode.If, 0, "Fly");
+            startFly.AddCondition(AnimatorConditionMode.IfNot, 0, "Dashing");
+            var flyApex = Configure(fly.AddTransition(falling), "Fly Apex", 0.25f);
+            flyApex.AddCondition(AnimatorConditionMode.Less, 0f, "VerticalSpeed");
+            flyApex.AddCondition(AnimatorConditionMode.IfNot, 0, "Grounded");
+            AddLandings(fly, landing, hardLanding);
+            var chargeAirborne = Configure(charge.AddTransition(falling), "Airborne", 0.15f);
+            chargeAirborne.AddCondition(AnimatorConditionMode.IfNot, 0, "Grounded");
+            chargeAirborne.AddCondition(AnimatorConditionMode.Less, -FallSpeedThreshold, "VerticalSpeed");
 
             // 절벽에서 걸어 떨어질 때: 점프 없이 바로 낙하
             var airborne = Configure(locomotion.AddTransition(falling), "Airborne", 0.15f);
@@ -95,14 +133,8 @@ namespace SandGuard.Player.Editor
 
             // 착지: 회복이 끝나면 복귀. 이동 입력이 있으면 충격 구간만 보여 주고 일찍 끊는다. 착지 중 다시 떨어지면 낙하.
             AddRecovery(landing, locomotion, falling, 0.7f, 0.3f, 0.15f);
-            AddRecovery(hardLanding, locomotion, falling, 0.85f, 0.45f, 0.2f);
+            AddRecovery(hardLanding, locomotion, falling, 1f, -1f, 0.15f);
 
-            var dashGround = Configure(dash.AddTransition(locomotion), "Dash Ground", 0.06f);
-            dashGround.AddCondition(AnimatorConditionMode.IfNot, 0, "Dashing");
-            dashGround.AddCondition(AnimatorConditionMode.If, 0, "Grounded");
-            var dashAir = Configure(dash.AddTransition(falling), "Dash Air", 0.06f);
-            dashAir.AddCondition(AnimatorConditionMode.IfNot, 0, "Dashing");
-            dashAir.AddCondition(AnimatorConditionMode.IfNot, 0, "Grounded");
             EditorUtility.SetDirty(controller);
             AssetDatabase.SaveAssets();
             // 예전 점프 클립(Running Forward Flip 전체)은 Flip.fbx가 대신한다.
@@ -110,6 +142,90 @@ namespace SandGuard.Player.Editor
             if (File.Exists(art + "/ManaBoltPose.anim")) PlayerCastingAnimationBuilder.Build();
             Debug.Log("PLAYER_MOBILITY_ANIMATIONS_CONNECTED jumpUp=" + jumpUp.length + "s flip=" + flip.length + "s falling=" + fallingClip.length
                 + "s landing=" + landingClip.length + "s hardLanding=" + hardLandingClip.length + "s");
+        }
+
+        /// <summary>
+        /// 대시 레이어. 마스크는 루트(골반)·척추·양다리라 밀기 자세의 기울임까지 나오고, 팔·머리는 Base Layer의 이동·조준·시전을 그대로 따른다.
+        /// Empty 상태는 모션이 없어 가중치 1이면 다리 근육을 고정해 버리므로(피격 레이어와 같은 문제) PlayerVisuals가 대시 중에만 가중치를 올린다.
+        /// </summary>
+        static void ConfigureDashLayer(AnimatorController controller, AnimationClip dashClip)
+        {
+            var mask = AssetDatabase.LoadAssetAtPath<AvatarMask>(DashMaskPath);
+            if (mask == null) { mask = new AvatarMask { name = "Dash Lower Body" }; AssetDatabase.CreateAsset(mask, DashMaskPath); }
+            for (int i = 0; i < (int)AvatarMaskBodyPart.LastBodyPart; i++) mask.SetHumanoidBodyPartActive((AvatarMaskBodyPart)i, false);
+            // 루트·척추·양다리: 낮게 깔린 밀기 자세가 상체 기울임까지 나온다. 팔·머리는 Base Layer(이동·조준·시전)가 맡는다.
+            foreach (var part in new[] { AvatarMaskBodyPart.Root, AvatarMaskBodyPart.Body, AvatarMaskBodyPart.LeftLeg, AvatarMaskBodyPart.RightLeg })
+                mask.SetHumanoidBodyPartActive(part, true);
+            if (dashClip.name == "Sand Dash")
+                foreach (var part in new[] { AvatarMaskBodyPart.Head, AvatarMaskBodyPart.LeftArm, AvatarMaskBodyPart.RightArm, AvatarMaskBodyPart.LeftFingers, AvatarMaskBodyPart.RightFingers })
+                    mask.SetHumanoidBodyPartActive(part, true);
+            EditorUtility.SetDirty(mask);
+
+            var layers = controller.layers;
+            int index = Array.FindIndex(layers, l => l.name == DashLayerName);
+            if (index < 0) { controller.AddLayer(DashLayerName); layers = controller.layers; index = layers.Length - 1; }
+            layers[index].avatarMask = mask; layers[index].defaultWeight = 0f;
+            layers[index].blendingMode = AnimatorLayerBlendingMode.Override; layers[index].iKPass = false;
+            var machine = layers[index].stateMachine;
+            var empty = State(machine, "Empty", new Vector3(200, 0)); empty.writeDefaultValues = false; empty.motion = null;
+            var dash = State(machine, "Dash", new Vector3(440, 0));
+            dash.motion = dashClip; dash.speed = Mathf.Max(0.1f, dashClip.length) / 0.3f; dash.writeDefaultValues = false; dash.iKOnFeet = false;
+            machine.defaultState = empty;
+            foreach (var transition in machine.anyStateTransitions.ToArray()) if (transition.name.StartsWith(Prefix)) machine.RemoveAnyStateTransition(transition);
+            foreach (var transition in dash.transitions.ToArray()) if (transition.name.StartsWith(Prefix)) dash.RemoveTransition(transition);
+            var start = Configure(machine.AddAnyStateTransition(dash), "Dash", 0.05f);
+            start.AddCondition(AnimatorConditionMode.If, 0, "Dashing");
+            if (controller.parameters.Any(p => p.name == "Dead")) start.AddCondition(AnimatorConditionMode.IfNot, 0, "Dead");
+            var end = Configure(dash.AddTransition(empty), "Dash End", 0.15f); // 낮은 자세를 풀며 달리기 다리로
+            end.AddCondition(AnimatorConditionMode.IfNot, 0, "Dashing");
+            // The authored dash controls the whole pose; casting/hit layers retain priority above it.
+            if (dashClip.name == "Sand Dash" && index > 1)
+            {
+                var ordered = layers.ToList(); var dashLayer = ordered[index]; ordered.RemoveAt(index); ordered.Insert(1, dashLayer);
+                layers = ordered.ToArray();
+            }
+            controller.layers = layers;
+        }
+
+        static AnimationClip ImportDash() => File.Exists(Source + "character-protagonist-sand-dash.fbx")
+            ? Import("character-protagonist-sand-dash.fbx", "SandDash", "Sand Dash", false, true, -1, -1)
+            : Import("character-protagonist-mixamo@Pushing.fbx", "DashLegs", "Push Legs", false, true, DashFirstFrame, DashLastFrame);
+
+        [MenuItem("SandGuard/Player/Connect Authored Sand Dash")]
+        public static void BuildDashOnly()
+        {
+            var controller = AssetDatabase.LoadAssetAtPath<AnimatorController>(ProtagonistArtBuilder.Art + "/Protagonist.controller");
+            ConfigureDashLayer(controller, ImportDash());
+            EditorUtility.SetDirty(controller); AssetDatabase.SaveAssets();
+        }
+
+        [MenuItem("SandGuard/Player/Apply Hard Landing Recovery")]
+        public static void ApplyHardLandingRecovery()
+        {
+            var controller = AssetDatabase.LoadAssetAtPath<AnimatorController>(ProtagonistArtBuilder.Art + "/Protagonist.controller");
+            var machine = controller.layers[0].stateMachine;
+            var hard = machine.states.First(s => s.state.name == "Hard Landing").state;
+            foreach (var transition in hard.transitions.ToArray())
+                if (transition.name.StartsWith(Prefix)) hard.RemoveTransition(transition);
+            AddRecovery(hard, machine.states.First(s => s.state.name == "Locomotion").state,
+                machine.states.First(s => s.state.name == "Falling").state, 1f, -1f, .15f);
+            EditorUtility.SetDirty(controller); AssetDatabase.SaveAssets();
+        }
+
+        /// <summary>Charge 0→1로 선 자세에서 웅크림으로 섞이는 1D 블렌드 트리. 컨트롤러 안에 한 번만 만든다.</summary>
+        static BlendTree ChargeTree(AnimatorController controller, AnimationClip idle, AnimationClip crouch)
+        {
+            const string name = "Player Charge Crouch";
+            var tree = AssetDatabase.LoadAllAssetsAtPath(AssetDatabase.GetAssetPath(controller)).OfType<BlendTree>().FirstOrDefault(t => t.name == name);
+            if (tree == null) { tree = new BlendTree { name = name }; AssetDatabase.AddObjectToAsset(tree, controller); }
+            tree.blendType = BlendTreeType.Simple1D; tree.blendParameter = "Charge"; tree.useAutomaticThresholds = false;
+            tree.children = new[]
+            {
+                new ChildMotion { motion = idle, threshold = 0f, timeScale = 1f },
+                new ChildMotion { motion = crouch, threshold = 1f, timeScale = 1f }
+            };
+            EditorUtility.SetDirty(tree);
+            return tree;
         }
 
         static void AddLandings(AnimatorState from, AnimatorState landing, AnimatorState hardLanding)
@@ -124,8 +240,11 @@ namespace SandGuard.Player.Editor
         static void AddRecovery(AnimatorState state, AnimatorState locomotion, AnimatorState falling, float recoveredAt, float moveCancelAt, float blend)
         {
             Configure(state.AddTransition(locomotion), "Recovered", blend, recoveredAt);
-            var move = Configure(state.AddTransition(locomotion), "Move", blend, moveCancelAt);
-            move.AddCondition(AnimatorConditionMode.Greater, 1f, "Speed");
+            if (moveCancelAt >= 0f)
+            {
+                var move = Configure(state.AddTransition(locomotion), "Move", blend, moveCancelAt);
+                move.AddCondition(AnimatorConditionMode.Greater, 1f, "Speed");
+            }
             var airborne = Configure(state.AddTransition(falling), "Airborne", 0.15f);
             airborne.AddCondition(AnimatorConditionMode.IfNot, 0, "Grounded");
             airborne.AddCondition(AnimatorConditionMode.Less, -FallSpeedThreshold, "VerticalSpeed");
@@ -136,7 +255,7 @@ namespace SandGuard.Player.Editor
         {
             string path = Folder + "/" + file + ".fbx";
             if (!File.Exists(Source + source)) throw new FileNotFoundException("Missing Mixamo source: " + Source + source);
-            File.Copy(Source + source, path, true);
+            if (!PlayerAnimationPackBuilder.SameFile(Source + source, path)) File.Copy(Source + source, path, true); // 같은 파일이면 매핑된 FBX를 덮어쓰지 않는다
             AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceSynchronousImport);
             var importer = (ModelImporter)AssetImporter.GetAtPath(path);
             importer.animationType = ModelImporterAnimationType.Human;
