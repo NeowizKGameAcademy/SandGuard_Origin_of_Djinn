@@ -356,6 +356,7 @@ GameObject:
   - component: {fileID: 8087007938291939131}
   - component: {fileID: 6497633374297665909}
   - component: {fileID: 7329238922625864213}
+  - component: {fileID: 3448926556712515526}
   m_Layer: 0
   m_Name: GraphIntegration
   m_TagString: Untagged
@@ -425,6 +426,7 @@ MonoBehaviour:
   graph: {fileID: 8087007938291939131}
   catalog: {fileID: 0}
   coreReceiver: {fileID: 0}
+  actorFactory: {fileID: 3448926556712515526}
   startAutomatically: 0
   randomSeed: 1234
   maxSpawnsPerFrame: 32
@@ -450,6 +452,21 @@ MonoBehaviour:
   catalog: {fileID: 0}
   director: {fileID: 6497633374297665909}
   createOnStart: 1
+--- !u!114 &3448926556712515526
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4608032317268764644}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c407faa9bcd9bbf604e5f38f2a68078, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: DesertTower.LevelIntegration.SandGuard::DesertTower.LevelIntegration.EnemyPoolActorFactory
+  pool: {fileID: 0}
+  maxActive: 120
+  prewarmPerPrefab: 0
 --- !u!1 &4813531953045734326
 GameObject:
   m_ObjectHideFlags: 0

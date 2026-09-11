@@ -14,14 +14,17 @@ namespace DesertTower.VFX
         CanvasGroup _group;
         float _elapsed;
 
-        void Awake() { _group = GetComponent<CanvasGroup>(); _group.alpha = StartAlpha; }
+        void Awake() => _group = GetComponent<CanvasGroup>();
+
+        // 풀에서 다시 꺼내도 처음부터 재생되도록 활성화될 때마다 되감는다.
+        void OnEnable() { _elapsed = 0f; _group.alpha = StartAlpha; }
 
         void Update()
         {
             _elapsed += Time.unscaledDeltaTime;
             float alpha = _elapsed < Hold ? StartAlpha : StartAlpha * (1f - Mathf.Clamp01((_elapsed - Hold) / Mathf.Max(Duration, 0.0001f)));
             _group.alpha = alpha;
-            if (alpha <= 0f && DestroyWhenDone) Destroy(gameObject);
+            if (alpha <= 0f && DestroyWhenDone) PrefabPool.Release(gameObject);
         }
     }
 }

@@ -79,7 +79,9 @@ namespace SandGuard.Waves
             instance.GetComponent<EnemyHealth>()?.ResetForReuse();
             instance.GetComponent<EnemyFall>()?.ResetForReuse();
             instance.GetComponent<EnemyMotor>()?.Enable(position);
-            instance.GetComponent<EnemyBrain>()?.ResetForReuse();
+            var brain = instance.GetComponent<EnemyBrain>();
+            // 경로 감독(ActorBridge)이 두뇌를 꺼 두고 반납할 수 있으므로 재사용 때 다시 켠다.
+            if (brain != null) { brain.enabled = true; brain.ResetForReuse(); }
             instance.GetComponent<EnemyMeleeAttack>()?.ResetForReuse();
             instance.GetComponent<EnemyVisuals>()?.ResetForReuse();
         }

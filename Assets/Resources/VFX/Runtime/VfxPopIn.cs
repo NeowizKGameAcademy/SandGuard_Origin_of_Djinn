@@ -101,9 +101,9 @@ namespace DesertTower.VFX
         void Spawn(GameObject prefab, float fit)
         {
             if (prefab == null) return;
-            var instance = Instantiate(prefab, transform.position, Quaternion.identity);
+            var instance = PrefabPool.Spawn(prefab, transform.position, Quaternion.identity);
             instance.transform.localScale = Vector3.one * fit;
-            Destroy(instance, EffectLifetime);
+            PrefabPool.Release(instance, EffectLifetime);
         }
     }
 }

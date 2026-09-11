@@ -94,7 +94,7 @@ namespace DesertTower.VFX
             if (HitPrefab != null)
             {
                 Quaternion rotation = OrientToHit && direction.sqrMagnitude > 0.0001f ? Quaternion.LookRotation(-direction.normalized) : Quaternion.identity;
-                Destroy(Instantiate(HitPrefab, point, rotation), HitLifetime);
+                PrefabPool.Release(PrefabPool.Spawn(HitPrefab, point, rotation), HitLifetime);
             }
             if (FlashDuration > 0f && FlashRenderers != null && FlashRenderers.Length > 0)
             {
@@ -106,7 +106,8 @@ namespace DesertTower.VFX
                 if (_flinch != null) { StopCoroutine(_flinch); FlinchTarget.localScale = _flinchBase; }
                 _flinch = StartCoroutine(Flinch());
             }
-            if (ScreenPrefab != null) Destroy(Instantiate(ScreenPrefab), ScreenLifetime);
+            if (ScreenPrefab != null)
+                PrefabPool.Release(PrefabPool.Spawn(ScreenPrefab, ScreenPrefab.transform.position, ScreenPrefab.transform.rotation), ScreenLifetime);
             if (CameraShake > 0f) VfxCameraShake.Shake(CameraShake, CameraShakeDuration);
         }
 
@@ -118,7 +119,7 @@ namespace DesertTower.VFX
             if (DeathPrefab == null) return;
             Bounds bounds = ComputeBounds();
             Vector3 feet = new Vector3(bounds.center.x, bounds.min.y, bounds.center.z);
-            GameObject instance = Instantiate(DeathPrefab, feet, Quaternion.identity);
+            GameObject instance = PrefabPool.Spawn(DeathPrefab, feet, Quaternion.identity);
             if (FitDeathToBounds)
             {
                 var volume = instance.GetComponent<VfxVolume>();
@@ -129,9 +130,9 @@ namespace DesertTower.VFX
                 var tint = instance.GetComponent<VfxTint>();
                 if (tint != null && TryGetRendererColor(out Color color)) tint.Apply(color);
             }
-            if (AttractTarget != null)
-                foreach (var attractor in instance.GetComponentsInChildren<VfxParticleAttractor>()) attractor.Target = AttractTarget;
-            Destroy(instance, DeathLifetime);
+            // 재사용된 개체가 지난 대상을 물고 있지 않도록 비어 있어도 덮어쓴다.
+            foreach (var attractor in instance.GetComponentsInChildren<VfxParticleAttractor>()) attractor.Target = AttractTarget;
+            PrefabPool.Release(instance, DeathLifetime);
         }
 
         IEnumerator Flash()

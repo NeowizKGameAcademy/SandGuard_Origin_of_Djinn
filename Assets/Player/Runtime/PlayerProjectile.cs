@@ -1,9 +1,14 @@
+using DesertTower.VFX;
 using UnityEngine;
 
 namespace SandGuard.Player
 {
     /// <summary>루트가 이동/명중을 담당한다. VisualRoot 자식만 교체하면 외형을 바꿀 수 있다.</summary>
-    public sealed class PlayerProjectile : MonoBehaviour
+    /// <remarks>
+    /// <see cref="PrefabPool"/>에서 대여·반납된다. 명중하면 그 자리에 멈춘 채 잔상만 마저 재생하고
+    /// <see cref="visualTailLifetime"/> 뒤에 풀로 돌아간다. 그동안 다음 발사는 풀의 다른 개체를 쓴다.
+    /// </remarks>
+    public sealed class PlayerProjectile : MonoBehaviour, IPoolable
     {
         [Min(0.1f)] public float speed = 28f;
         [Min(0.001f)] public float radius = 0.08f;
@@ -20,10 +25,41 @@ namespace SandGuard.Player
         float damage, age;
         Vector3 direction;
         bool launched, consumed;
+        float defaultSpeed;
+        Vector3 defaultVisualScale;
+        bool defaultsCaptured;
+        /// <summary>아직 날아가는 중인지. 명중 후 잔상만 남은 개체는 false다.</summary>
+        public bool IsLive => launched && !consumed;
         /// <summary>실제로 피해가 적용된 명중. Launch 전에 구독해야 총구 앞 즉시 명중도 받는다.</summary>
         public event System.Action<PlayerHitInfo> Hit;
         /// <summary>무언가에 닿아 끝났을 때의 착탄점(적·벽 모두). 수명이 다해 사라질 때는 오지 않는다. 광역 스킬(폭발·족쇄)이 여기서 터진다.</summary>
         public event System.Action<Vector3> Impacted;
+
+        void Awake() => CaptureDefaults();
+
+        void CaptureDefaults()
+        {
+            if (defaultsCaptured) return;
+            defaultSpeed = speed;
+            defaultVisualScale = visualRoot != null ? visualRoot.localScale : Vector3.one;
+            defaultsCaptured = true;
+        }
+
+        /// <summary>풀에서 나올 때: 지난 발사의 구독·수명·배율을 전부 지우고 잔상을 되살린다.</summary>
+        void IPoolable.OnRent()
+        {
+            CaptureDefaults();
+            Hit = null; Impacted = null;
+            owner = null; faction = null; damage = 0f; age = 0f;
+            launched = false; consumed = false;
+            speed = defaultSpeed; // 스탯 배율이 재사용마다 겹쳐 쌓이지 않게 기본값에서 다시 시작한다
+            if (visualRoot == null) return;
+            visualRoot.localScale = defaultVisualScale;
+            foreach (var mesh in visualRoot.GetComponentsInChildren<MeshRenderer>(true)) mesh.enabled = true;
+            foreach (var light in visualRoot.GetComponentsInChildren<Light>(true)) light.enabled = true;
+        }
+
+        void IPoolable.OnReturn() { Hit = null; Impacted = null; }
 
         public void Launch(Transform source, string sourceFaction, float amount, Vector3 heading, Vector3 sourceOrigin)
         {
@@ -84,20 +120,20 @@ namespace SandGuard.Player
         void Consume(Vector3 point, bool impact) { if (consumed) return; consumed = true; Finish(point, impact); }
         void Finish(Vector3 point, bool impact)
         {
-            if (impact && impactPrefab != null) Destroy(Instantiate(impactPrefab, point, Quaternion.identity), impactLifetime);
+            if (impact && impactPrefab != null)
+                PrefabPool.Release(PrefabPool.Spawn(impactPrefab, point, Quaternion.identity), impactLifetime);
             if (impact) Impacted?.Invoke(point);
-            if (visualRoot != null && visualRoot != transform && visualRoot.IsChildOf(transform))
+            // 명중 뒤에는 Update가 멈춰 제자리에 서 있으므로 잔상을 떼어내지 않아도 그 자리에서 마저 재생된다.
+            if (visualRoot != null)
             {
-                visualRoot.SetParent(null, true);
-                foreach (var system in visualRoot.GetComponentsInChildren<ParticleSystem>())
+                foreach (var system in visualRoot.GetComponentsInChildren<ParticleSystem>(true))
                     system.Stop(false, system.main.simulationSpace == ParticleSystemSimulationSpace.World
                         ? ParticleSystemStopBehavior.StopEmitting : ParticleSystemStopBehavior.StopEmittingAndClear);
-                foreach (var mesh in visualRoot.GetComponentsInChildren<MeshRenderer>()) mesh.enabled = false;
-                foreach (var light in visualRoot.GetComponentsInChildren<Light>()) light.enabled = false;
-                Destroy(visualRoot.gameObject, visualTailLifetime);
+                foreach (var mesh in visualRoot.GetComponentsInChildren<MeshRenderer>(true)) mesh.enabled = false;
+                foreach (var light in visualRoot.GetComponentsInChildren<Light>(true)) light.enabled = false;
             }
-            gameObject.SetActive(false);
-            Destroy(gameObject);
+            // 잔상이 사라진 뒤 풀로 돌아간다. 그동안의 발사는 풀의 다른 개체가 맡는다.
+            PrefabPool.Release(gameObject, Mathf.Max(0f, visualTailLifetime));
         }
     }
 }

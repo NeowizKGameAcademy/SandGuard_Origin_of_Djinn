@@ -117,7 +117,7 @@ namespace SandGuard.Player.Tests
             bolt.transform.position = new Vector3(0, 1, 2);
             Physics.SyncTransforms();
             bolt.Launch(null, "Ally", 10, Vector3.forward, Vector3.up);
-            Assert.False(bolt.gameObject.activeSelf);
+            Assert.False(bolt.IsLive, "The wall between the body and the muzzle stops the bolt at once.");
             yield return new WaitForSeconds(0.2f);
             Assert.AreEqual(0, target.HitCount);
         }

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using DesertTower.VFX;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
@@ -19,6 +20,7 @@ namespace SandGuard.Player.Tests
         [UnityTearDown] public IEnumerator Cleanup()
         {
             Time.timeScale = 1; Time.captureDeltaTime = previousCapture;
+            if (PrefabPool.Exists) Object.Destroy(PrefabPool.Instance.gameObject);
             foreach (var go in objects) if (go != null) Object.Destroy(go);
             objects.Clear(); Cursor.lockState = CursorLockMode.None; Cursor.visible = true;
             if (groundMaterial != null) Object.Destroy(groundMaterial);
@@ -59,13 +61,15 @@ namespace SandGuard.Player.Tests
             yield return new WaitForSeconds(.25f);
             Assert.IsNull(vfx.ActiveAirflow);
             yield return new WaitForSeconds(.4f);
-            Assert.True(flow == null); Assert.True(ring == null);
+            Assert.IsFalse(flow.activeSelf, "The airflow returns to the pool when the dash ends.");
+            Assert.IsFalse(ring.activeSelf, "The launch ring returns to the pool when its lifetime is up.");
             yield return new WaitForSeconds(motor.DashCooldownRemaining + .05f);
             Assert.True(motor.TryDash().Succeeded);
             var cancelled = Track(vfx.ActiveAirflow);
+            Assert.AreSame(flow, cancelled, "The second dash reuses the pooled airflow.");
             vfx.enabled = false;
             yield return null;
-            Assert.True(cancelled == null);
+            Assert.IsFalse(cancelled.activeSelf, "Disabling the component returns the airflow to the pool at once.");
         }
 
         void Capture(Vector3 center, string name)

@@ -24,9 +24,9 @@ namespace DesertTower.VFX
         {
             if (Prefab == null) return null;
             Transform anchor = Anchor != null ? Anchor : transform;
-            var instance = Instantiate(Prefab, anchor.TransformPoint(LocalOffset), anchor.rotation, ParentToAnchor ? anchor : null);
+            var instance = PrefabPool.Spawn(Prefab, anchor.TransformPoint(LocalOffset), anchor.rotation, ParentToAnchor ? anchor : null);
             instance.transform.localScale = Vector3.Scale(instance.transform.localScale, SpawnScale);
-            Destroy(instance, Lifetime);
+            PrefabPool.Release(instance, Lifetime);
             return instance;
         }
 
@@ -34,9 +34,9 @@ namespace DesertTower.VFX
         {
             if (Prefab == null) return null;
             var rotation = forward.sqrMagnitude > 0.0001f ? Quaternion.LookRotation(forward) : Quaternion.identity;
-            var instance = Instantiate(Prefab, position, rotation);
+            var instance = PrefabPool.Spawn(Prefab, position, rotation);
             instance.transform.localScale = Vector3.Scale(instance.transform.localScale, SpawnScale);
-            Destroy(instance, Lifetime);
+            PrefabPool.Release(instance, Lifetime);
             return instance;
         }
     }

@@ -47,13 +47,15 @@ namespace SandGuard.Enemy
             if (vfxPrefab != null)
             {
                 Transform anchor = feet != null ? feet : transform;
-                vfx = Instantiate(vfxPrefab, anchor.position, Quaternion.identity, transform);
+                vfx = PrefabPool.Spawn(vfxPrefab, anchor.position, Quaternion.identity, transform);
             }
             Changed?.Invoke(true);
         }
 
         /// <summary>남은 시간과 상관없이 지금 푼다.</summary>
-        public void Release()
+        public void Release() => Release(false);
+
+        void Release(bool immediate)
         {
             if (endTime < 0f) return;
             endTime = -1f;
@@ -61,7 +63,9 @@ namespace SandGuard.Enemy
             if (vfx != null)
             {
                 var root = vfx.GetComponent<VfxSandRoot>();
-                if (root != null) root.Release(); else Destroy(vfx, 1f);
+                // 비활성화(적이 풀로 돌아가는 중)에는 사라지는 연출을 돌릴 수 없으므로 바로 거둔다.
+                if (root != null && !immediate) root.Release();
+                else PrefabPool.Release(vfx, immediate ? 0f : 1f);
                 vfx = null;
             }
             Changed?.Invoke(false);
@@ -99,6 +103,6 @@ namespace SandGuard.Enemy
             if (motor != null) motor.SpeedMultiplier = 1f;
         }
 
-        void OnDisable() { Release(); ClearSlow(); }
+        void OnDisable() { Release(true); ClearSlow(); }
     }
 }

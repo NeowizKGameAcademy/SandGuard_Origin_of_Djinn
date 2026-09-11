@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using DesertTower.VFX;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
@@ -36,7 +37,8 @@ namespace SandGuard.Player.Tests
             sun.type = LightType.Directional; sun.intensity = 1.5f;
             sun.transform.rotation = Quaternion.Euler(45, -35, 0);
             Physics.SyncTransforms();
-            var bolt = Track(Object.Instantiate(asset, Vector3.up, Quaternion.identity)).GetComponent<PlayerProjectile>();
+            Track(PrefabPool.Instance.gameObject); // 볼트는 인게임과 같은 경로로 풀에서 꺼낸다
+            var bolt = Track(PrefabPool.Spawn(asset, Vector3.up, Quaternion.identity)).GetComponent<PlayerProjectile>();
             Assert.NotNull(bolt.impactPrefab);
             Assert.NotNull(bolt.visualRoot);
             Assert.IsNull(bolt.visualRoot.Find("BoltVisual"));
@@ -48,22 +50,26 @@ namespace SandGuard.Player.Tests
             yield return new WaitForSeconds(0.08f);
             Assert.NotNull(bolt);
             Capture("flight", new Vector3(0, 1, 4));
-            for (float elapsed = 0f; bolt != null && elapsed < 1f; elapsed += Time.deltaTime) yield return null;
-            Assert.IsTrue(bolt == null);
+            for (float elapsed = 0f; bolt.IsLive && elapsed < 1f; elapsed += Time.deltaTime) yield return null;
+            Assert.IsFalse(bolt.IsLive, "The bolt stops once it hits.");
             Assert.AreEqual(1, target.HitCount); Assert.AreEqual(1, hits);
             var impact = Object.FindObjectsByType<Transform>(FindObjectsSortMode.None)
                 .FirstOrDefault(t => t.name == "VFX_ManaBolt_Impact(Clone)");
             Assert.NotNull(impact); Track(impact.gameObject);
             Assert.Less(Vector3.Distance(impact.position, new Vector3(0, 1, 11.5f)), 0.2f);
-            Assert.IsTrue(tail != null, "The tail should outlive the projectile.");
-            Assert.IsNull(tail.transform.parent);
+            Assert.IsTrue(tail != null, "The tail plays on where the bolt landed.");
+            Assert.AreEqual(bolt.transform, tail.transform.parent, "The pooled bolt keeps its visual for the next shot.");
             Assert.IsTrue(tail.GetComponentsInChildren<Light>().All(l => !l.enabled));
             Assert.IsTrue(tail.GetComponentsInChildren<MeshRenderer>().All(r => !r.enabled));
             Assert.IsTrue(tail.GetComponentsInChildren<ParticleSystem>().All(p => !p.isEmitting));
             yield return new WaitForSeconds(0.06f);
             Capture("impact", new Vector3(0, 1, 11.5f));
             yield return new WaitForSeconds(0.8f);
-            Assert.IsTrue(tail == null, "Detached particle effects must be cleaned up.");
+            Assert.IsFalse(bolt.gameObject.activeSelf, "The spent bolt returns to the pool instead of being destroyed.");
+            var reused = PrefabPool.Spawn(asset, Vector3.up, Quaternion.identity);
+            Assert.AreSame(bolt.gameObject, reused, "The next shot reuses the pooled bolt.");
+            Assert.AreEqual(45f, bolt.speed, "Reuse restores the authored speed instead of stacking stat modifiers.");
+            Assert.IsTrue(tail.GetComponentsInChildren<MeshRenderer>().All(r => r.enabled), "The reused bolt gets its visual back.");
         }
 
         void Capture(string name, Vector3 center)

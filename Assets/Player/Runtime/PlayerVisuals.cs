@@ -179,7 +179,6 @@ namespace SandGuard.Player
         // PlayerMotor updates at -200; publish before this frame's Animator evaluation.
         void Update()
         {
-            UpdateHardLandingLock();
             if (animator == null || motor == null) return;
             bool dead = healthSource is ILifeState life && life.State != global::LifeState.Alive;
             if (HasParameter("Dead", AnimatorControllerParameterType.Bool)) animator.SetBool("Dead", dead);
@@ -206,6 +205,9 @@ namespace SandGuard.Player
             if (HasParameter(dashParameter, AnimatorControllerParameterType.Bool)) animator.SetBool(dashParameter, motor.IsDashing);
         }
 
+        // Check after Animator evaluation so the next input frame can act as soon as the clip ends.
+        void LateUpdate() => UpdateHardLandingLock();
+
         void ClearHardLandingLock()
         {
             awaitingHardLanding = sawHardLanding = false;
@@ -219,9 +221,18 @@ namespace SandGuard.Player
                 || (healthSource is ILifeState life && life.State != global::LifeState.Alive))
             { ClearHardLandingLock(); return; }
             if (Time.timeScale <= 0f) return;
-            bool playing = animator.GetCurrentAnimatorStateInfo(0).IsName("Hard Landing")
-                || (animator.IsInTransition(0) && animator.GetNextAnimatorStateInfo(0).IsName("Hard Landing"));
-            if (playing) { sawHardLanding = true; return; }
+            var current = animator.GetCurrentAnimatorStateInfo(0);
+            bool currentLanding = current.IsName("Hard Landing");
+            bool nextLanding = animator.IsInTransition(0) && animator.GetNextAnimatorStateInfo(0).IsName("Hard Landing");
+            if (currentLanding || nextLanding)
+            {
+                sawHardLanding = true;
+                // The completed clip may remain current during the 0.15s blend to locomotion.
+                // That visual blend must not extend the action lock.
+                var landing = nextLanding ? animator.GetNextAnimatorStateInfo(0) : current;
+                if (landing.normalizedTime >= 1f) ClearHardLandingLock();
+                return;
+            }
             hardLandingEntryWait += Time.deltaTime;
             // Do not strand input if a different controller cannot enter the expected state.
             if (sawHardLanding || hardLandingEntryWait > .5f) ClearHardLandingLock();

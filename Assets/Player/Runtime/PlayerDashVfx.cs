@@ -1,3 +1,4 @@
+using DesertTower.VFX;
 using UnityEngine;
 
 namespace SandGuard.Player
@@ -21,24 +22,24 @@ namespace SandGuard.Player
         void OnDisable()
         {
             motor.DashStarted -= Begin;
-            if (airflow != null) Destroy(airflow);
-            if (launch != null) Destroy(launch);
+            PrefabPool.Release(airflow);
+            PrefabPool.Release(launch);
             airflow = launch = null;
         }
 
         void Begin()
         {
-            if (airflow != null) Destroy(airflow);
-            if (launch != null) Destroy(launch);
+            PrefabPool.Release(airflow);
+            PrefabPool.Release(launch);
             Vector3 direction = motor.DashDirection.sqrMagnitude > .01f ? motor.DashDirection : transform.forward;
             rotation = Quaternion.LookRotation(direction, Vector3.up);
             Vector3 center = transform.position + Vector3.up * bodyHeight;
             if (launchPrefab != null)
             {
-                launch = Instantiate(launchPrefab, center - direction * .3f, rotation);
-                Destroy(launch, .6f);
+                launch = PrefabPool.Spawn(launchPrefab, center - direction * .3f, rotation);
+                PrefabPool.Release(launch, .6f);
             }
-            if (airflowPrefab != null) airflow = Instantiate(airflowPrefab, center, rotation);
+            if (airflowPrefab != null) airflow = PrefabPool.Spawn(airflowPrefab, center, rotation);
         }
 
         void Update()
@@ -48,7 +49,7 @@ namespace SandGuard.Player
             if (motor.enabled && motor.IsDashing) return;
             foreach (var ps in airflow.GetComponentsInChildren<ParticleSystem>())
                 ps.Stop(false, ParticleSystemStopBehavior.StopEmitting);
-            Destroy(airflow, .35f);
+            PrefabPool.Release(airflow, .35f);
             airflow = null;
         }
     }
