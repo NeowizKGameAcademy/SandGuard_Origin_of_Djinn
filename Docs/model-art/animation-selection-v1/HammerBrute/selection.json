@@ -1,0 +1,156 @@
+[
+  {
+    "role": "Idle",
+    "tier": "core",
+    "source": "Great Sword Pack/great sword idle.fbx",
+    "selected_file": "HammerBrute/Idle.fbx",
+    "sha256": "1baf22fb8a3b6d4d5247b3cf14bc60f26450bb24652279ff0c0e4f8bcd6543fe",
+    "duration_seconds": 2.0,
+    "source_frames": [
+      1.0,
+      61.0
+    ],
+    "fps": 30.0,
+    "loop_recommended": true,
+    "hips_delta_blender_xyz": [
+      -9.359791874885559e-08,
+      -3.018416464328766e-06,
+      2.562999725341797e-06
+    ],
+    "hips_horizontal_span": 0.010685521406704958,
+    "notes": "양손 무기 대기. 왼손을 망치 보조 손잡이에 맞출 것.",
+    "retarget_and_equipment_verified": false
+  },
+  {
+    "role": "Move",
+    "tier": "core",
+    "source": "Great Sword Pack/great sword run (2).fbx",
+    "selected_file": "HammerBrute/Move.fbx",
+    "sha256": "7f2df431def3493c5ed4087ea4b74e0e46bb101572c49368e46f83a624bcd320",
+    "duration_seconds": 0.6,
+    "source_frames": [
+      1.0,
+      19.0
+    ],
+    "fps": 30.0,
+    "loop_recommended": true,
+    "hips_delta_blender_xyz": [
+      1.30385160446167e-08,
+      -1.2646116018295288,
+      8.940696716308594e-08
+    ],
+    "hips_horizontal_span": 1.264830551977957,
+    "notes": "전진 달리기. 번호 없는 run은 후진이라 제외.",
+    "retarget_and_equipment_verified": false
+  },
+  {
+    "role": "Attack",
+    "tier": "core",
+    "source": "Great Sword Pack/great sword slash (3).fbx",
+    "selected_file": "HammerBrute/Attack.fbx",
+    "sha256": "224ca2610ab67af65f36fc16798a940037aa47079b1aeb4fac51ca8f5ae3b822",
+    "duration_seconds": 1.8333,
+    "source_frames": [
+      1.0,
+      56.0
+    ],
+    "fps": 30.0,
+    "loop_recommended": false,
+    "hips_delta_blender_xyz": [
+      -2.200249582529068e-08,
+      -5.587935447692871e-09,
+      0.0
+    ],
+    "hips_horizontal_span": 0.3686050467782923,
+    "notes": "상체를 크게 숙이며 양손으로 내려치는 강타 후보. 1.83초. 망치 머리 궤적·왼손 IK 보정 필요.",
+    "retarget_and_equipment_verified": false
+  },
+  {
+    "role": "Death",
+    "tier": "core",
+    "source": "Great Sword Pack/two handed sword death.fbx",
+    "selected_file": "HammerBrute/Death.fbx",
+    "sha256": "80449e39421cbcad391fe951119811b29d4ff70bc2b9c94817e37eb9803df513",
+    "duration_seconds": 2.4,
+    "source_frames": [
+      1.0,
+      73.0
+    ],
+    "fps": 30.0,
+    "loop_recommended": false,
+    "hips_delta_blender_xyz": [
+      -0.0055284746922552586,
+      0.3856240212917328,
+      -0.4030158519744873
+    ],
+    "hips_horizontal_span": 0.40433506395181673,
+    "notes": "양손 무기를 든 뒤로 쓰러짐 후보.",
+    "retarget_and_equipment_verified": false
+  },
+  {
+    "role": "Walk",
+    "tier": "support",
+    "source": "Great Sword Pack/great sword walk.fbx",
+    "selected_file": "HammerBrute/Walk.fbx",
+    "sha256": "ce9f8c19f924dcba8ab1cb718125947d526b37f41302087fe3141deadf33a17f",
+    "duration_seconds": 1.3667,
+    "source_frames": [
+      1.0,
+      42.0
+    ],
+    "fps": 30.0,
+    "loop_recommended": true,
+    "hips_delta_blender_xyz": [
+      2.3283064365386963e-09,
+      -0.7309168577194214,
+      5.960464477539063e-08
+    ],
+    "hips_horizontal_span": 0.7321981100280797,
+    "notes": "느린 접근·순찰용 전진 걷기.",
+    "retarget_and_equipment_verified": false
+  },
+  {
+    "role": "AttackQuick",
+    "tier": "support",
+    "source": "Great Sword Pack/great sword attack.fbx",
+    "selected_file": "HammerBrute/AttackQuick.fbx",
+    "sha256": "db26c12279d354a7dfe0144faba8ee9af21cc25e92866906fd41fc976deee00d",
+    "duration_seconds": 1.2,
+    "source_frames": [
+      1.0,
+      37.0
+    ],
+    "fps": 30.0,
+    "loop_recommended": false,
+    "hips_delta_blender_xyz": [
+      -9.313225746154785e-09,
+      -6.51925802230835e-09,
+      5.960464477539063e-08
+    ],
+    "hips_horizontal_span": 0.0635983298029917,
+    "notes": "1.2초의 짧은 양손 공격 후보. 강타와 구분되는 보조 공격.",
+    "retarget_and_equipment_verified": false
+  },
+  {
+    "role": "Hit",
+    "tier": "support",
+    "source": "Great Sword Pack/great sword impact (3).fbx",
+    "selected_file": "HammerBrute/Hit.fbx",
+    "sha256": "62dcfa7c6830f08d480bedf1336ebf60e4d725a1c36050cb16c5bcf83b673fdc",
+    "duration_seconds": 1.1333,
+    "source_frames": [
+      1.0,
+      35.0
+    ],
+    "fps": 30.0,
+    "loop_recommended": false,
+    "hips_delta_blender_xyz": [
+      -0.0043561458587646484,
+      0.000392732210457325,
+      0.0005873739719390869
+    ],
+    "hips_horizontal_span": 0.04930826859975069,
+    "notes": "양손 무기 피격 후보.",
+    "retarget_and_equipment_verified": false
+  }
+]

@@ -1,0 +1,656 @@
+[Licensing::Module] Trying to connect to existing licensing client channel...
+Built from '6000.2/respin/6000.2.8f1-e4064264ae96' branch; Version is '6000.2.8f1 (c9992ac36c34) revision 13211946'; Using compiler version '194234433'; Build Type 'Release'
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-m" at "2026-09-09T03:13:24.0098187Z"
+OS: 'Windows 11  (10.0.26200) 64bit Core' Language: 'ko' Physical Memory: 32471 MB
+BatchMode: 1, IsHumanControllingUs: 0, StartBugReporterOnCrash: 0, Is64bit: 1
+Date: 2026-09-09T03:13:24Z
+
+COMMAND LINE ARGUMENTS:
+C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Unity.exe
+-batchmode
+-quit
+-projectPath
+C:/course/unity/SandGuard
+-executeMethod
+SandGuard.Enemy.Editor.EnemyArtPreviewBuilder.BuildAndCapture
+-logFile
+C:/course/unity/SandGuard/Docs/model-art/enemy-equipment-v1/preview-build.log
+Successfully changed project path to: C:/course/unity/SandGuard
+C:/course/unity/SandGuard
+[UnityMemory] Configuration Parameters - Can be set up in boot.config
+    "memorysetup-allocator-temp-initial-block-size-main=262144"
+    "memorysetup-allocator-temp-initial-block-size-worker=262144"
+    "memorysetup-bucket-allocator-granularity=16"
+    "memorysetup-bucket-allocator-bucket-count=8"
+    "memorysetup-bucket-allocator-block-size=33554432"
+    "memorysetup-bucket-allocator-block-count=8"
+    "memorysetup-main-allocator-block-size=16777216"
+    "memorysetup-thread-allocator-block-size=16777216"
+    "memorysetup-gfx-main-allocator-block-size=16777216"
+    "memorysetup-gfx-thread-allocator-block-size=16777216"
+    "memorysetup-cache-allocator-block-size=4194304"
+    "memorysetup-typetree-allocator-block-size=2097152"
+    "memorysetup-profiler-bucket-allocator-granularity=16"
+    "memorysetup-profiler-bucket-allocator-bucket-count=8"
+    "memorysetup-profiler-bucket-allocator-block-size=33554432"
+    "memorysetup-profiler-bucket-allocator-block-count=8"
+    "memorysetup-profiler-allocator-block-size=16777216"
+    "memorysetup-profiler-editor-allocator-block-size=1048576"
+    "memorysetup-temp-allocator-size-main=16777216"
+    "memorysetup-job-temp-allocator-block-size=2097152"
+    "memorysetup-job-temp-allocator-block-size-background=1048576"
+    "memorysetup-job-temp-allocator-reduction-small-platforms=262144"
+    "memorysetup-temp-allocator-size-background-worker=32768"
+    "memorysetup-temp-allocator-size-job-worker=262144"
+    "memorysetup-temp-allocator-size-preload-manager=33554432"
+    "memorysetup-temp-allocator-size-nav-mesh-worker=65536"
+    "memorysetup-temp-allocator-size-audio-worker=65536"
+    "memorysetup-temp-allocator-size-cloud-worker=32768"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gfx=262144"
+Player connection [20460]  Target information:
+
+Player connection [20460]  * "[IP] 192.168.1.39 [Port] 55504 [Flags] 2 [Guid] 1896000944 [EditorId] 1896000944 [Version] 1048832 [Id] WindowsEditor(7,DESKTOP-LKQ38HD) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" 
+
+Player connection [20460] Host joined multi-casting on [225.0.0.222:54997]...
+Player connection [20460] Host joined alternative multi-casting on [225.0.0.222:34997]...
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+[Licensing::Client] Code 10 while verifying Licensing Client signature (process Id: 10048, path: "C:/Program Files/Unity Hub/UnityLicensingClient_V1/Unity.Licensing.Client.exe")
+[Licensing::Module] LicensingClient has failed validation; ignoring
+[Licensing::Client] Handshaking with LicensingClient:
+  Version:                 1.18.3+d7ffd15
+  Session Id:              af733b801e114a0abfb21fce2cc940a5
+  Correlation Id:          7c3b9a8be6246d56f6010ffba2e4d3cc
+  External correlation Id: 3944477414400481502
+  Machine Id:              LB3ncWW38BJdHmRzKztJP09Q3ig=
+[Licensing::Module] Successfully connected to LicensingClient on channel: "LicenseClient-m" (connect: 0.00s, validation: 0.00s, handshake: 0.06s)
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-m-notifications" at "2026-09-09T03:13:24.0699998Z"
+[Licensing::Module] Error: Access token is unavailable; failed to update
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: F4-K5YW-SH7J-TNEA-5VZ3-XXXX
+  Product: Unity Personal
+  Type: ULF
+  Expiration: 2026-10-16T04:11:07Z
+[Licensing::Module] License group:
+  Id: 14568940251572-UnityPersXXXX
+  Product: Unity Personal
+  Type: Assigned
+  Expiration: Unlimited
+[Licensing::Client] Successfully updated license, isAsync: True, time: 0.00
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: F4-K5YW-SH7J-TNEA-5VZ3-XXXX
+  Product: Unity Personal
+  Type: ULF
+  Expiration: 2026-10-16T04:11:07Z
+[Licensing::Module] License group:
+  Id: 14568940251572-UnityPersXXXX
+  Product: Unity Personal
+  Type: Assigned
+  Expiration: Unlimited
+[Licensing::Module] Licensing Background thread has ended after 0.07s
+[Package Manager] Connected to IPC stream "Upm-19628" after 0.3 seconds.
+Library Redirect Path: Library/
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+Artifact Garbage Collection - Removed 5 unused hashed content files
+Refreshing native plugins compatible for Editor in 0.95 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Initialize engine version: 6000.2.8f1 (c9992ac36c34)
+[Subsystems] Discovering subsystems at path C:/Program Files/Unity/Hub/Editor/6000.2.8f1/Editor/Data/Resources/UnitySubsystems
+[Subsystems] Discovering subsystems at path C:/course/unity/SandGuard/Assets
+GfxDevice: creating device client; kGfxThreadingModeNonThreaded
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: NVIDIA GeForce RTX 4060 Laptop GPU (ID=0x28a0)
+    Vendor:   NVIDIA
+    VRAM:     7956 MB
+    Driver:   32.0.16.1078
+Initialize mono
+Mono path[0] = 'C:/Program Files/Unity/Hub/Editor/6000.2.8f1/Editor/Data/Managed'
+Mono path[1] = 'C:/Program Files/Unity/Hub/Editor/6000.2.8f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32'
+Mono config path = 'C:/Program Files/Unity/Hub/Editor/6000.2.8f1/Editor/Data/MonoBleedingEdge/etc'
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56628
+Using cacheserver namespaces - metadata:defaultmetadata, artifacts:defaultartifacts
+Using cacheserver namespaces - metadata:defaultmetadata, artifacts:defaultartifacts
+ImportWorker Server TCP listen port: 0
+AcceleratorClientConnectionCallback - disconnected - :0
+Begin MonoManager ReloadAssembly
+Registering precompiled unity dll's ...
+Register platform support module: C:/Program Files/Unity/Hub/Editor/6000.2.8f1/Editor/Data/PlaybackEngines/WebGLSupport/UnityEditor.WebGL.Extensions.dll
+Register platform support module: C:/Program Files/Unity/Hub/Editor/6000.2.8f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: F4-K5YW-SH7J-TNEA-5VZ3-XXXX
+  Product: Unity Personal
+  Type: ULF
+  Expiration: 2026-10-16T04:11:07Z
+[Licensing::Module] License group:
+  Id: 14568940251572-UnityPersXXXX
+  Product: Unity Personal
+  Type: Assigned
+  Expiration: Unlimited
+Register platform support module: C:/Program Files/Unity/Hub/Editor/6000.2.8f1/Editor/Data/PlaybackEngines/AndroidPlayer/UnityEditor.Android.Extensions.dll
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: F4-K5YW-SH7J-TNEA-5VZ3-XXXX
+  Product: Unity Personal
+  Type: ULF
+  Expiration: 2026-10-16T04:11:07Z
+[Licensing::Module] License group:
+  Id: 14568940251572-UnityPersXXXX
+  Product: Unity Personal
+  Type: Assigned
+  Expiration: Unlimited
+Register platform support module: C:/Program Files/Unity/Hub/Editor/6000.2.8f1/Editor/Data/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.dll
+Registered in 0.012443 seconds.
+- Loaded All Assemblies, in  0.415 seconds
+Native extension for iOS target not found
+Native extension for Android target not found
+Android Extension - Scanning For ADB Devices 2313 ms
+Native extension for WindowsStandalone target not found
+Native extension for WebGL target not found
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  2.730 seconds
+Domain Reload Profiling: 3143ms
+	BeginReloadAssembly (139ms)
+		ExecutionOrderSort (0ms)
+		DisableScriptedObjects (0ms)
+		BackupInstance (0ms)
+		ReleaseScriptingObjects (0ms)
+		CreateAndSetChildDomain (1ms)
+	RebuildCommonClasses (34ms)
+	RebuildNativeTypeToScriptingClass (11ms)
+	initialDomainReloadingComplete (58ms)
+	LoadAllAssembliesAndSetupDomain (171ms)
+		LoadAssemblies (135ms)
+		RebuildTransferFunctionScriptingTraits (0ms)
+		AnalyzeDomain (167ms)
+			TypeCache.Refresh (165ms)
+				TypeCache.ScanAssembly (151ms)
+			BuildScriptInfoCaches (0ms)
+			ResolveRequiredComponents (1ms)
+	FinalizeReload (2731ms)
+		ReleaseScriptCaches (0ms)
+		RebuildScriptCaches (0ms)
+		SetupLoadedEditorAssemblies (2690ms)
+			LogAssemblyErrors (0ms)
+			InitializePlatformSupportModulesInManaged (2468ms)
+			SetLoadedEditorAssemblies (4ms)
+			BeforeProcessingInitializeOnLoad (55ms)
+			ProcessInitializeOnLoadAttributes (109ms)
+			ProcessInitializeOnLoadMethodAttributes (54ms)
+			AfterProcessingInitializeOnLoad (0ms)
+			EditorAssembliesLoaded (0ms)
+		ExecutionOrderSort2 (0ms)
+		AwakeInstancesAfterBackupRestoration (0ms)
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: F4-K5YW-SH7J-TNEA-5VZ3-XXXX
+  Product: Unity Personal
+  Type: ULF
+  Expiration: 2026-10-16T04:13:27Z
+[Licensing::Module] License group:
+  Id: 14568940251572-UnityPersXXXX
+  Product: Unity Personal
+  Type: Assigned
+  Expiration: Unlimited
+Application.AssetDatabase Initial Refresh Start
+Package Manager log level set to [2]
+[Package Manager] Restoring resolved packages state from cache
+[Licensing::Client] Successfully resolved entitlement details
+[Package Manager] Registered 58 packages:
+  Packages from [https://packages.unity.com]:
+    com.unity.ai.navigation@2.0.9 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.ai.navigation@5218e4bf7edc)
+    com.unity.collab-proxy@2.9.3 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.collab-proxy@ab839cc7d2ad)
+    com.unity.ide.rider@3.0.38 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.ide.rider@1f60b3138684)
+    com.unity.ide.visualstudio@2.0.23 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.ide.visualstudio@198cdf337d13)
+    com.unity.inputsystem@1.14.2 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.inputsystem@be6c4fd0abf5)
+    com.unity.pipeline@0.6.0-exp.1 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.pipeline@9bb4172c603c)
+    com.unity.timeline@1.8.9 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.timeline@6b9e48457ddb)
+    com.unity.visualscripting@1.9.7 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.visualscripting@6279e2b7c485)
+    com.unity.nuget.mono-cecil@1.11.6 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.nuget.mono-cecil@ecb9724e46ff)
+    com.unity.nuget.newtonsoft-json@3.2.1 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.nuget.newtonsoft-json@74deb55db2a0)
+    com.unity.searcher@4.9.3 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.searcher@1e17ce91558d)
+    com.unity.burst@1.8.25 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.burst@1df634d836b8)
+    com.unity.mathematics@1.3.2 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.mathematics@8017b507cc74)
+    com.unity.collections@2.5.7 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.collections@d49facba0036)
+    com.unity.test-framework.performance@3.2.0 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.test-framework.performance@0840f58e4562)
+  Built-in packages:
+    com.unity.multiplayer.center@1.0.0 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.multiplayer.center@f3fb577b3546)
+    com.unity.render-pipelines.universal@17.2.0 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.render-pipelines.universal@cc5029882822)
+    com.unity.test-framework@1.6.0 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.test-framework@d97b7cd61ded)
+    com.unity.ugui@2.0.0 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.ugui@8d7885e629a4)
+    com.unity.modules.accessibility@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.accessibility)
+    com.unity.modules.ai@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.ai)
+    com.unity.modules.androidjni@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.androidjni)
+    com.unity.modules.animation@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.animation)
+    com.unity.modules.assetbundle@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.assetbundle)
+    com.unity.modules.audio@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.audio)
+    com.unity.modules.cloth@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.cloth)
+    com.unity.modules.director@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.director)
+    com.unity.modules.imageconversion@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.imageconversion)
+    com.unity.modules.imgui@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.imgui)
+    com.unity.modules.jsonserialize@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.jsonserialize)
+    com.unity.modules.particlesystem@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.particlesystem)
+    com.unity.modules.physics@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.physics)
+    com.unity.modules.physics2d@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.physics2d)
+    com.unity.modules.screencapture@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.screencapture)
+    com.unity.modules.terrain@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.terrain)
+    com.unity.modules.terrainphysics@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.terrainphysics)
+    com.unity.modules.tilemap@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.tilemap)
+    com.unity.modules.ui@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.ui)
+    com.unity.modules.uielements@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.uielements)
+    com.unity.modules.umbra@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.umbra)
+    com.unity.modules.unityanalytics@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.unityanalytics)
+    com.unity.modules.unitywebrequest@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.unitywebrequest)
+    com.unity.modules.unitywebrequestassetbundle@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.unitywebrequestassetbundle)
+    com.unity.modules.unitywebrequestaudio@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.unitywebrequestaudio)
+    com.unity.modules.unitywebrequesttexture@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.unitywebrequesttexture)
+    com.unity.modules.unitywebrequestwww@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.unitywebrequestwww)
+    com.unity.modules.vehicles@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.vehicles)
+    com.unity.modules.video@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.video)
+    com.unity.modules.vr@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.vr)
+    com.unity.modules.wind@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.wind)
+    com.unity.modules.xr@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.xr)
+    com.unity.modules.subsystems@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.subsystems)
+    com.unity.modules.hierarchycore@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.hierarchycore)
+    com.unity.ext.nunit@2.0.5 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.ext.nunit@031a54704bff)
+    com.unity.render-pipelines.core@17.2.0 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.render-pipelines.core@60896ea171dc)
+    com.unity.shadergraph@17.2.0 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.shadergraph@2c9221ffedf4)
+    com.unity.render-pipelines.universal-config@17.0.3 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.render-pipelines.universal-config@8dc1aab4af1d)
+    com.unity.rendering.light-transport@1.0.1 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.rendering.light-transport@2c9279f90d7c)
+[Subsystems] No new subsystems found in resolved package list.
+[Package Manager] Done registering packages in 0.07 seconds
+[ScriptCompilation] Requested script compilation because: Assetdatabase observed changes in script compilation related files
+Duplicate assembly 'System.Runtime.CompilerServices.Unsafe.dll' with different versions detected, using 'Packages/com.unity.collections/Unity.Collections.Tests/System.Runtime.CompilerServices.Unsafe/System.Runtime.CompilerServices.Unsafe.dll, AssemblyName=System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a' and ignoring 'Packages/com.unity.pipeline/Runtime/Plugins/CodeAnalysis/System.Runtime.CompilerServices.Unsafe.dll, AssemblyName=System.Runtime.CompilerServices.Unsafe, Version=4.0.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a'.Starting: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\bee_backend.exe --ipc --defer-dag-verification --dagfile="Library/Bee/1900b0aE.dag" --continue-on-failure --profile="Library/Bee/backend1.traceevents" ScriptAssemblies
+WorkingDir: C:/course/unity/SandGuard
+DisplayProgressbar: Compiling Scripts
+ExitCode: 0 Duration: 5s17ms
+[ 834/1091  0s] ILPP-Configuration Library/ilpp-configuration.nevergeneratedoutput
+[1063/1091  2s] Csc Library/Bee/artifacts/1900b0aE.dag/SandGuard.Enemy.Runtime.dll (+2 others)
+[1067/1091  0s] ILPostProcess Library/Bee/artifacts/1900b0aE.dag/post-processed/SandGuard.Enemy.Runtime.dll (+pdb)
+Processing assembly Library/Bee/artifacts/1900b0aE.dag/SandGuard.Enemy.Runtime.dll, with 133 defines and 285 references
+
+processors: Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+
+running Unity.Jobs.CodeGen.JobsILPostProcessor
+
+running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+
+running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+[1068/1091  0s] ILPostProcess Library/Bee/artifacts/1900b0aE.dag/post-processed/SandGuard.PlayerAndEnemy.Runtime.dll (+pdb)
+Processing assembly Library/Bee/artifacts/1900b0aE.dag/SandGuard.PlayerAndEnemy.Runtime.dll, with 133 defines and 287 references
+
+processors: Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+
+running Unity.Jobs.CodeGen.JobsILPostProcessor
+
+running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+
+running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+[1069/1091  0s] ILPostProcess Library/Bee/artifacts/1900b0aE.dag/post-processed/SandGuard.PlayerAndEnemy.Tests.dll (+pdb)
+Processing assembly Library/Bee/artifacts/1900b0aE.dag/SandGuard.PlayerAndEnemy.Tests.dll, with 133 defines and 260 references
+
+processors: Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+
+running Unity.Jobs.CodeGen.JobsILPostProcessor
+
+running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+
+running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+[1070/1091  0s] ILPostProcess Library/Bee/artifacts/1900b0aE.dag/post-processed/SandGuard.Enemy.Tests.dll (+pdb)
+Processing assembly Library/Bee/artifacts/1900b0aE.dag/SandGuard.Enemy.Tests.dll, with 133 defines and 259 references
+
+processors: Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+
+running Unity.Jobs.CodeGen.JobsILPostProcessor
+
+running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+
+running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+[1074/1091  0s] CopyFiles Library/ScriptAssemblies/SandGuard.Enemy.Runtime.pdb
+[1078/1091  0s] Csc Library/Bee/artifacts/1900b0aE.dag/SandGuard.Enemy.Editor.dll (+2 others)
+[1079/1091  0s] CopyFiles Library/ScriptAssemblies/SandGuard.Enemy.Runtime.dll
+[1080/1091  0s] Csc Library/Bee/artifacts/1900b0aE.dag/SandGuard.PlayerAndEnemy.Editor.dll (+2 others)
+[1081/1091  0s] ILPostProcess Library/Bee/artifacts/1900b0aE.dag/post-processed/SandGuard.Enemy.Editor.dll (+pdb)
+Processing assembly Library/Bee/artifacts/1900b0aE.dag/SandGuard.Enemy.Editor.dll, with 131 defines and 293 references
+
+processors: Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+
+running Unity.Jobs.CodeGen.JobsILPostProcessor
+
+running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+
+running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+[1082/1091  0s] CopyFiles Library/ScriptAssemblies/SandGuard.Enemy.Editor.pdb
+[1083/1091  0s] ILPostProcess Library/Bee/artifacts/1900b0aE.dag/post-processed/SandGuard.PlayerAndEnemy.Editor.dll (+pdb)
+Processing assembly Library/Bee/artifacts/1900b0aE.dag/SandGuard.PlayerAndEnemy.Editor.dll, with 131 defines and 300 references
+
+processors: Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+
+running Unity.Jobs.CodeGen.JobsILPostProcessor
+
+running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+
+running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+[1084/1091  0s] CopyFiles Library/ScriptAssemblies/SandGuard.PlayerAndEnemy.Editor.pdb
+[1085/1091  0s] CopyFiles Library/ScriptAssemblies/SandGuard.PlayerAndEnemy.Editor.dll
+[1086/1091  0s] CopyFiles Library/ScriptAssemblies/SandGuard.Enemy.Editor.dll
+[1087/1091  0s] Csc Library/Bee/artifacts/1900b0aE.dag/Assembly-CSharp-Editor.dll (+2 others)
+[1088/1091  0s] ILPostProcess Library/Bee/artifacts/1900b0aE.dag/post-processed/Assembly-CSharp-Editor.dll (+pdb)
+Processing assembly Library/Bee/artifacts/1900b0aE.dag/Assembly-CSharp-Editor.dll, with 131 defines and 360 references
+
+processors: Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+
+running Unity.Jobs.CodeGen.JobsILPostProcessor
+
+running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+
+running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+[1089/1091  0s] CopyFiles Library/ScriptAssemblies/Assembly-CSharp-Editor.pdb
+[1090/1091  0s] CopyFiles Library/ScriptAssemblies/Assembly-CSharp-Editor.dll
+*** Tundra build success (4.97 seconds), 20 items updated, 1091 evaluated
+AssetDatabase: script compilation time: 5.531876s
+Begin MonoManager ReloadAssembly
+Duplicate assembly 'System.Runtime.CompilerServices.Unsafe.dll' with different versions detected, using 'Packages/com.unity.collections/Unity.Collections.Tests/System.Runtime.CompilerServices.Unsafe/System.Runtime.CompilerServices.Unsafe.dll, AssemblyName=System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a' and ignoring 'Packages/com.unity.pipeline/Runtime/Plugins/CodeAnalysis/System.Runtime.CompilerServices.Unsafe.dll, AssemblyName=System.Runtime.CompilerServices.Unsafe, Version=4.0.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a'.- Loaded All Assemblies, in  2.111 seconds
+Refreshing native plugins compatible for Editor in 3.17 ms, found 3 plugins.
+Native extension for iOS target not found
+Native extension for Android target not found
+Native extension for WindowsStandalone target not found
+Native extension for WebGL target not found
+Duplicate assembly 'System.Runtime.CompilerServices.Unsafe.dll' with different versions detected, using 'Packages/com.unity.collections/Unity.Collections.Tests/System.Runtime.CompilerServices.Unsafe/System.Runtime.CompilerServices.Unsafe.dll, AssemblyName=System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a' and ignoring 'Packages/com.unity.pipeline/Runtime/Plugins/CodeAnalysis/System.Runtime.CompilerServices.Unsafe.dll, AssemblyName=System.Runtime.CompilerServices.Unsafe, Version=4.0.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a'.Start HTTP server: port:7800
+WriteToProjectRoot failed: Access to the path "C:\course\unity\SandGuard\Library\Pipeline\.unity-pipeline-port" is denied.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:LogError (object)
+Unity.Pipeline.Models.InstanceDescriptor:WriteToProjectRootLocked (Unity.Pipeline.Models.InstanceDescriptor) (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Models/InstanceDescriptor.cs:196)
+Unity.Pipeline.Models.InstanceDescriptor:WriteToProjectRoot (Unity.Pipeline.Models.InstanceDescriptor) (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Models/InstanceDescriptor.cs:174)
+Unity.Pipeline.Editor.EditorPipelineServer:CreateInstanceDescriptor () (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Editor/EditorPipelineServer.cs:284)
+Unity.Pipeline.BasePipelineServer:Start (int) (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Common/BasePipelineServer.cs:301)
+Unity.Pipeline.Editor.PipelineServerStartup:StartServer () (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Editor/EditorPipelineStartup.cs:212)
+Unity.Pipeline.Editor.PipelineServerStartup:.cctor () (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Editor/EditorPipelineStartup.cs:65)
+System.Runtime.CompilerServices.RuntimeHelpers:RunClassConstructor (System.RuntimeTypeHandle)
+UnityEditor.EditorAssemblies:ProcessInitializeOnLoadAttributes (System.Type[])
+
+(Filename: ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Models/InstanceDescriptor.cs Line: 196)
+
+Descriptor: C:\course\unity\SandGuard, PID: 19628
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:LogError (object)
+Unity.Pipeline.Models.InstanceDescriptor:WriteToProjectRootLocked (Unity.Pipeline.Models.InstanceDescriptor) (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Models/InstanceDescriptor.cs:197)
+Unity.Pipeline.Models.InstanceDescriptor:WriteToProjectRoot (Unity.Pipeline.Models.InstanceDescriptor) (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Models/InstanceDescriptor.cs:174)
+Unity.Pipeline.Editor.EditorPipelineServer:CreateInstanceDescriptor () (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Editor/EditorPipelineServer.cs:284)
+Unity.Pipeline.BasePipelineServer:Start (int) (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Common/BasePipelineServer.cs:301)
+Unity.Pipeline.Editor.PipelineServerStartup:StartServer () (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Editor/EditorPipelineStartup.cs:212)
+Unity.Pipeline.Editor.PipelineServerStartup:.cctor () (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Editor/EditorPipelineStartup.cs:65)
+System.Runtime.CompilerServices.RuntimeHelpers:RunClassConstructor (System.RuntimeTypeHandle)
+UnityEditor.EditorAssemblies:ProcessInitializeOnLoadAttributes (System.Type[])
+
+(Filename: ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Models/InstanceDescriptor.cs Line: 197)
+
+Failed to start Pipeline Server: Access to the path "C:\course\unity\SandGuard\Library\Pipeline\.unity-pipeline-port" is denied.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:LogError (object)
+Unity.Pipeline.Editor.PipelineServerStartup:StartServer () (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Editor/EditorPipelineStartup.cs:226)
+Unity.Pipeline.Editor.PipelineServerStartup:.cctor () (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Editor/EditorPipelineStartup.cs:65)
+System.Runtime.CompilerServices.RuntimeHelpers:RunClassConstructor (System.RuntimeTypeHandle)
+UnityEditor.EditorAssemblies:ProcessInitializeOnLoadAttributes (System.Type[])
+
+(Filename: ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Editor/EditorPipelineStartup.cs Line: 226)
+
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  3.663 seconds
+Domain Reload Profiling: 5768ms
+	BeginReloadAssembly (295ms)
+		ExecutionOrderSort (0ms)
+		DisableScriptedObjects (11ms)
+		BackupInstance (0ms)
+		ReleaseScriptingObjects (0ms)
+		CreateAndSetChildDomain (148ms)
+	RebuildCommonClasses (34ms)
+	RebuildNativeTypeToScriptingClass (11ms)
+	initialDomainReloadingComplete (37ms)
+	LoadAllAssembliesAndSetupDomain (1727ms)
+		LoadAssemblies (1478ms)
+		RebuildTransferFunctionScriptingTraits (0ms)
+		AnalyzeDomain (345ms)
+			TypeCache.Refresh (274ms)
+				TypeCache.ScanAssembly (256ms)
+			BuildScriptInfoCaches (54ms)
+			ResolveRequiredComponents (11ms)
+	FinalizeReload (3663ms)
+		ReleaseScriptCaches (0ms)
+		RebuildScriptCaches (0ms)
+		SetupLoadedEditorAssemblies (3440ms)
+			LogAssemblyErrors (0ms)
+			InitializePlatformSupportModulesInManaged (65ms)
+			SetLoadedEditorAssemblies (3ms)
+			BeforeProcessingInitializeOnLoad (145ms)
+			ProcessInitializeOnLoadAttributes (3162ms)
+			ProcessInitializeOnLoadMethodAttributes (59ms)
+			AfterProcessingInitializeOnLoad (6ms)
+			EditorAssembliesLoaded (0ms)
+		ExecutionOrderSort2 (0ms)
+		AwakeInstancesAfterBackupRestoration (9ms)
+Refreshing native plugins compatible for Editor in 1.74 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=ece5d6b268ae8d94bb4524351fe7892c): Total: 12.255 seconds - Initiated by InitialRefreshV2(ForceSynchronousImport)
+	Summary:
+		Imports: total=0 (actual=0, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=4151 ms
+		Asset DB Callback time: managed=325 ms, native=76 ms
+		Scripting: domain reloads=1, domain reload time=2111 ms, compile time=5534 ms, other=56 ms
+		Project Asset Count: scripts=1471, non-scripts=3250
+		Asset File Changes: new=0, changed=2, moved=0, deleted=0
+		Scan Filter Count: 0
+	InvokeCustomDependenciesCallbacks: 0.001ms
+	InvokePackagesCallback: 72.332ms
+	ApplyChangesToAssetFolders: 0.679ms
+	Scan: 112.663ms
+	OnSourceAssetsModified: 0.881ms
+	CategorizeAssetsWithTransientArtifact: 53.766ms
+	ProcessAssetsWithTransientArtifactChanges: 93.155ms
+	CategorizeAssets: 52.072ms
+	ImportOutOfDateAssets: 3680.528ms (-1858.897ms without children)
+		CompileScripts: 5533.592ms
+		ReloadNativeAssets: 0.030ms
+		UnloadImportedAssets: 3.855ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 1.220ms
+		InitializingProgressBar: 0.001ms
+		PostProcessAllAssetNotificationsAddChangedAssets: 0.001ms
+		OnDemandSchedulerStart: 0.727ms
+	PostProcessAllAssets: 327.505ms
+	Hotreload: 3.635ms
+	GatherAllCurrentPrimaryArtifactRevisions: 0.002ms
+	UnloadStreamsBegin: 1.783ms
+	PersistCurrentRevisions: 0.199ms
+	UnloadStreamsEnd: 0.003ms
+	GenerateScriptTypeHashes: 3.001ms
+	Untracked: 7856.168ms
+
+Application.AssetDatabase Initial Refresh End
+Launched and connected shader compiler UnityShaderCompiler.exe after 0.01 seconds
+Scanning for USB devices : 2.827ms
+Initializing Unity extensions:
+[MODES] ModeService[none].Initialize
+[MODES] ModeService[none].LoadModes
+[MODES] Loading mode Default (0) for mode-current-id-DesertTower
+Unloading 16 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 6657 unused Assets / (4.9 MB). Loaded Objects now: 7386.
+Memory consumption went from 206.3 MB to 201.4 MB.
+Total: 14.041900 ms (FindLiveObjects: 1.218500 ms CreateObjectMapping: 1.225600 ms MarkObjects: 9.016900 ms  DeleteObjects: 2.253100 ms)
+
+Asset Pipeline Refresh (id=6ac2220eee0839840a053cbc959be5a4): Total: 0.054 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+Start importing Assets/Enemy/Art/Characters/Swordsman/Swordsman_BaseColor.png using Guid(b25a898d488ee484cbea8b140fbf435b) (TextureImporter) -> (artifact id: '8b1a3d9c0013a76ce31665183eab2680') in 0.1883331 seconds
+Refreshing native plugins compatible for Editor in 0.99 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=e38b90aed64a2d245a76979f5c6db14a): Total: 0.224 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/Enemy/Art/Characters/Swordsman/Swordsman_Body.fbx using Guid(e71739ffae46db547bc87ae83bef9a30) (FBXImporter) -> (artifact id: 'aa9417c38203c7e8ad0f92e90082bf56') in 0.0498798 seconds
+Refreshing native plugins compatible for Editor in 0.92 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=93057206994fb6047823c821fc1b6de8): Total: 0.086 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Asset Pipeline Refresh (id=666bb9c34a0681c488fdd8bf3e448bd1): Total: 0.022 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/Enemy/Art/Characters/Assassin/Assassin_BaseColor.png using Guid(b4bbfb9379205124e899382018ae771d) (TextureImporter) -> (artifact id: '0983d4eee2b00f9a0d121ce76d6f1a11') in 0.1847085 seconds
+Refreshing native plugins compatible for Editor in 0.80 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=a690777ced4700e4cb8afd0cd40a4abe): Total: 0.205 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/Enemy/Art/Characters/Assassin/Assassin_Body.fbx using Guid(ee9a2efcd608a0d458b9bda3a6eaa8a3) (FBXImporter) -> (artifact id: 'c34ed07e5913bdbb5855658918aae9c0') in 0.0496055 seconds
+Refreshing native plugins compatible for Editor in 1.07 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=16c1c19aa0244664a94155b0a6417c23): Total: 0.068 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/Enemy/Art/Characters/Assassin/Assassin_PreviewVisual.prefab using Guid(79da42e48cd92404a85b7f1d176da666) (PrefabImporter) -> (artifact id: '85d959273d2187a31c49fa35ae0e83de') in 0.0047731 seconds
+Refreshing native plugins compatible for Editor in 0.86 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=cb742bd5ae21a074a877211915e0db5d): Total: 0.047 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/Enemy/Art/Characters/ShieldGuard/ShieldGuard_BaseColor.png using Guid(a1025a2c202c9134c8da976099e31fc0) (TextureImporter) -> (artifact id: 'e28fb9b2d7e0de1ba01e25eaf372daeb') in 0.1771507 seconds
+Refreshing native plugins compatible for Editor in 0.88 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=334b90046541e1249b578473510140b1): Total: 0.195 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/Enemy/Art/Characters/ShieldGuard/ShieldGuard_Body.fbx using Guid(27893daa74a9e904a9da0a6c6b9e1afc) (FBXImporter) -> (artifact id: '7e7a207755d97d5db1f56db526083c51') in 0.0383536 seconds
+Refreshing native plugins compatible for Editor in 1.33 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=991fc49d770026542b3a67366e897f1d): Total: 0.058 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Asset Pipeline Refresh (id=c6e70fedfe169a04b98c33f0451230c1): Total: 0.013 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/Enemy/Art/Characters/HammerBrute/HammerBrute_BaseColor.png using Guid(9fd6bcd656ad9cb4f85f1e2f34ffc70f) (TextureImporter) -> (artifact id: '7009a7a6259a863d7015f5bd632c9976') in 0.1708956 seconds
+Refreshing native plugins compatible for Editor in 0.99 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=c56e24b561042c9499fec8edd2278b3b): Total: 0.190 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/Enemy/Art/Characters/HammerBrute/HammerBrute_Body.fbx using Guid(c31ebb24f2fc1a84cba1c036b92a58a8) (FBXImporter) -> (artifact id: 'c2ee5b40dbb0acc0e99e2aa265d54c4b') in 0.0350236 seconds
+Refreshing native plugins compatible for Editor in 0.94 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=a9728a7ff035cf24fbbe06628d1a3c78): Total: 0.056 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Asset Pipeline Refresh (id=dfffa3f1088926340ad0075670a2484e): Total: 0.011 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/Enemy/Art/Characters/Chief/Chief_BaseColor.png using Guid(295fa6d73b2e397489e98ab217a1b572) (TextureImporter) -> (artifact id: 'bdc9d4bd5bed7ab3c296709aea646fb5') in 0.178363 seconds
+Refreshing native plugins compatible for Editor in 1.02 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=60bf50550bd7efc40811bf2f2804fe64): Total: 0.194 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/Enemy/Art/Characters/Chief/Chief_Body.fbx using Guid(ffffb48523497f04fbe30b8b723cded4) (FBXImporter) -> (artifact id: '1367c7934947391a1359c8ff1dab21cc') in 0.0365643 seconds
+Refreshing native plugins compatible for Editor in 1.04 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=311a4a6d25f9a03428c4724922ba0a6b): Total: 0.055 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/Enemy/Art/Characters/Chief/Chief_PreviewVisual.prefab using Guid(607b76b7851838a478587c0872145e15) (PrefabImporter) -> (artifact id: 'a52f027682ad499cf0b4554a99f1e868') in 0.0045264 seconds
+Refreshing native plugins compatible for Editor in 1.25 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=6170c73dc0cc09e46a7a634b274b0283): Total: 0.053 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Unloading 0 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 409 unused Assets / (70.4 KB). Loaded Objects now: 7408.
+Memory consumption went from 211.0 MB to 210.9 MB.
+Total: 8.045000 ms (FindLiveObjects: 0.451100 ms CreateObjectMapping: 0.398900 ms MarkObjects: 6.846200 ms  DeleteObjects: 0.347200 ms)
+
+Start importing Assets/Enemy/Art/Characters/PreviewTrim.mat using Guid(a0adced74eb1a804f93ed4d86aea40b0) (NativeFormatImporter) -> (artifact id: 'f4c4b06c750edbb87408eb010464c071') in 0.0025025 seconds
+Start importing Assets/Enemy/Art/Characters/Chief/Chief.mat using Guid(f2fef969932becc4ca57b37e2ee4226e) (NativeFormatImporter) -> (artifact id: '7833d93ff74e8389647aa929fe15d550') in 0.002972 seconds
+Start importing Assets/Enemy/Art/Characters/PreviewGround.mat using Guid(77b2476623a306a488b5cabb1b8e5e5c) (NativeFormatImporter) -> (artifact id: 'ca8729594c0eae524397c8e72a86ea58') in 0.0020022 seconds
+Start importing Assets/Enemy/Art/Characters/Swordsman/Swordsman.mat using Guid(985d2dc00083e9144ba4b34c990c94fd) (NativeFormatImporter) -> (artifact id: '0e5d96bdd95531358c65f578ed72821c') in 0.0022008 seconds
+Start importing Assets/Enemy/Art/Characters/Assassin/Assassin.mat using Guid(e8b18beda494f444998594512c912a2b) (NativeFormatImporter) -> (artifact id: '5a5c72077ad4650bc9180c61b920252e') in 0.0022323 seconds
+Start importing Assets/Enemy/Art/Characters/ShieldGuard/ShieldGuard.mat using Guid(fee5cd695a41d8044a156dd80357d70b) (NativeFormatImporter) -> (artifact id: '3d267f3dcd15230f2fd3c0ecddb2ac6b') in 0.0018242 seconds
+Start importing Assets/Enemy/Art/Characters/HammerBrute/HammerBrute.mat using Guid(ef6bff1d603026a449c7df02723dc6eb) (NativeFormatImporter) -> (artifact id: 'de1a9c6611b15c5114321f4022fcb34a') in 0.0019527 seconds
+Refreshing native plugins compatible for Editor in 0.89 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=d8eb8e6ccf1d5434fb5516bf4556bdfe): Total: 0.047 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/Enemy/Generated/EnemyArtPreview.unity using Guid(59b6d8775861a524b8cc7a3f8a25c2a8) (DefaultImporter) -> (artifact id: '78f2aab4de52d7dde4cf76359f95bb59') in 0.0010771 seconds
+Refreshing native plugins compatible for Editor in 1.03 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=1f885fb63e61a834fb6bfebd018af08c): Total: 0.044 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+ENEMY_ART_PREVIEW_COMPLETE
+Swordsman: height=1.750m floor=0.00000m, +Z forward, static body, 2 equipment renderers
+Assassin: height=1.680m floor=0.00000m, +Z forward, static body, 2 equipment renderers
+ShieldGuard: height=1.840m floor=0.00000m, +Z forward, static body, 2 equipment renderers
+HammerBrute: height=1.940m floor=0.00000m, +Z forward, static body, 1 equipment renderers
+Chief: height=2.040m floor=0.00000m, +Z forward, static body, 2 equipment renderers
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+SandGuard.Enemy.Editor.EnemyArtPreviewBuilder:Build () (at Assets/Enemy/Editor/EnemyArtPreviewBuilder.cs:36)
+SandGuard.Enemy.Editor.EnemyArtPreviewBuilder:BuildAndCapture () (at Assets/Enemy/Editor/EnemyArtPreviewBuilder.cs:256)
+
+(Filename: Assets/Enemy/Editor/EnemyArtPreviewBuilder.cs Line: 36)
+
+Opening scene 'Assets/Enemy/Generated/EnemyArtPreview.unity'
+Unloading 12 Unused Serialized files (Serialized files now loaded: 0)
+Loaded scene 'Assets/Enemy/Generated/EnemyArtPreview.unity'
+	Deserialize:            2.759 ms
+	Integration:            366.947 ms
+	Integration of assets:  0.003 ms
+	Thread Wait Time:       0.013 ms
+	Total Operation Time:   369.723 ms
+Unloading 551 unused Assets / (12.5 MB). Loaded Objects now: 8048.
+Memory consumption went from 241.4 MB to 228.9 MB.
+Total: 8.814900 ms (FindLiveObjects: 0.527300 ms CreateObjectMapping: 0.285100 ms MarkObjects: 7.586000 ms  DeleteObjects: 0.415000 ms)
+
+Camera Preview Camera does not contain an additional camera data component. Open the Game Object in the inspector to add additional camera data.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:LogWarning (object)
+UnityEngine.Rendering.DebugUI/CameraSelector:get_cameras () (at ./Library/PackageCache/com.unity.render-pipelines.core@60896ea171dc/Runtime/Debugging/DebugUI.Fields.cs:578)
+UnityEngine.Rendering.DebugUI/CameraSelector:<.ctor>b__0_0 () (at ./Library/PackageCache/com.unity.render-pipelines.core@60896ea171dc/Runtime/Debugging/DebugUI.Fields.cs:542)
+UnityEngine.Rendering.DebugDisplaySettingsVolume/SettingsPanel:.ctor (UnityEngine.Rendering.DebugDisplaySettingsVolume) (at ./Library/PackageCache/com.unity.render-pipelines.core@60896ea171dc/Runtime/Debugging/DebugDisplaySettingsVolumes.cs:701)
+UnityEngine.Rendering.DebugDisplaySettingsVolume:CreatePanel () (at ./Library/PackageCache/com.unity.render-pipelines.core@60896ea171dc/Runtime/Debugging/DebugDisplaySettingsVolumes.cs:763)
+UnityEngine.Rendering.DebugDisplaySettingsUI/<>c__DisplayClass3_0:<RegisterDebug>b__0 (UnityEngine.Rendering.IDebugDisplaySettingsData) (at ./Library/PackageCache/com.unity.render-pipelines.core@60896ea171dc/Runtime/Debugging/DebugDisplaySettingsUI.cs:47)
+UnityEngine.Rendering.DebugDisplaySettings`1<UnityEngine.Rendering.Universal.UniversalRenderPipelineDebugDisplaySettings>:ForEach (System.Action`1<UnityEngine.Rendering.IDebugDisplaySettingsData>) (at ./Library/PackageCache/com.unity.render-pipelines.core@60896ea171dc/Runtime/Debugging/DebugDisplaySettings.cs:132)
+UnityEngine.Rendering.DebugDisplaySettingsUI:RegisterDebug (UnityEngine.Rendering.IDebugDisplaySettings) (at ./Library/PackageCache/com.unity.render-pipelines.core@60896ea171dc/Runtime/Debugging/DebugDisplaySettingsUI.cs:66)
+UnityEngine.Rendering.Universal.UniversalRenderPipeline:.ctor (UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset) (at ./Library/PackageCache/com.unity.render-pipelines.universal@cc5029882822/Runtime/UniversalRenderPipeline.cs:281)
+UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset:CreatePipeline () (at ./Library/PackageCache/com.unity.render-pipelines.universal@cc5029882822/Runtime/Data/UniversalRenderPipelineAsset.cs:800)
+UnityEngine.Rendering.RenderPipelineAsset:InternalCreatePipeline ()
+UnityEngine.Rendering.RenderPipelineManager:TryPrepareRenderPipeline (UnityEngine.Rendering.RenderPipelineAsset)
+UnityEngine.Rendering.RenderPipelineManager:DoRenderLoop_Internal (UnityEngine.Rendering.RenderPipelineAsset,intptr,UnityEngine.Object,Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle)
+UnityEngine.Camera:Render ()
+SandGuard.Enemy.Editor.EnemyArtPreviewBuilder:SaveImage (UnityEngine.Camera,string) (at Assets/Enemy/Editor/EnemyArtPreviewBuilder.cs:264)
+SandGuard.Enemy.Editor.EnemyArtPreviewBuilder:Capture () (at Assets/Enemy/Editor/EnemyArtPreviewBuilder.cs:236)
+SandGuard.Enemy.Editor.EnemyArtPreviewBuilder:BuildAndCapture () (at Assets/Enemy/Editor/EnemyArtPreviewBuilder.cs:256)
+
+(Filename: ./Library/PackageCache/com.unity.render-pipelines.core@60896ea171dc/Runtime/Debugging/DebugUI.Fields.cs Line: 578)
+
+ENEMY_ART_PREVIEW_CAPTURED
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+SandGuard.Enemy.Editor.EnemyArtPreviewBuilder:Capture () (at Assets/Enemy/Editor/EnemyArtPreviewBuilder.cs:253)
+SandGuard.Enemy.Editor.EnemyArtPreviewBuilder:BuildAndCapture () (at Assets/Enemy/Editor/EnemyArtPreviewBuilder.cs:256)
+
+(Filename: Assets/Enemy/Editor/EnemyArtPreviewBuilder.cs Line: 253)
+
+Batchmode quit successfully invoked - shutting down!
+Killing ADB server in 0.0798967 seconds.
+[Physics::Module] Cleanup current backend.
+[Physics::Module] Id: 0xf2b8ea05
+Input System module state changed to: ShutdownInProgress.
+Input System polling thread exited.
+Input System module state changed to: Shutdown.
+[Licensing::IpcConnector] LicenseClient-m-notifications channel disconnected successfully.
+[Licensing::IpcConnector] LicenseClient-m channel disconnected successfully.
+AcceleratorClientConnectionCallback - disconnected - :0
+Cleanup mono
+Exiting batchmode successfully now!
+Exiting without the bug reporter. Application will terminate with return code 0

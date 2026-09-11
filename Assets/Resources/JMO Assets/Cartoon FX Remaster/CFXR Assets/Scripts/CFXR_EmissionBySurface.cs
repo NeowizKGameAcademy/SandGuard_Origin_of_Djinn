@@ -20,7 +20,9 @@ namespace CartoonFX
 #if UNITY_EDITOR
         void OnValidate()
         {
-            this.hideFlags = HideFlags.DontSaveInBuild;
+            // Resources prefabs must not contain persistent DontSaveInBuild objects.
+            // This component has no player-side behaviour; keep its serialized reference valid.
+            this.hideFlags = HideFlags.None;
             CalculateAndUpdateEmission();
         }
 

@@ -1,0 +1,107 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cda2ba6ab5df9c249b01d99e290ae1b5, type: 3}
+  m_Name: CanyonBanditWaves
+  m_EditorClassIdentifier: DesertTower.Levels.Runtime::DesertTower.Levels.WaveSet
+  waves:
+  - label: "Wave 1 \u2014 \uAC80\uBCD1"
+    preparationSeconds: 10
+    groups:
+    - spawnId: 669fd1761e5342dcb7985133c6d11a6d
+      targetId: c44756c477fe482ab68ed9a04d2372a6
+      routeId: c982609ee92c4acfbc8bbac7c8cfa504
+      element: {fileID: 11400000, guid: abf67824eb2f5db49adeb65ba07b43e3, type: 2}
+      count: 4
+      delay: 0
+      interval: 2
+  - label: "Wave 2 \u2014 \uAC80\uBCD1\xB7\uC554\uC0B4\uC790"
+    preparationSeconds: 15
+    groups:
+    - spawnId: 669fd1761e5342dcb7985133c6d11a6d
+      targetId: c44756c477fe482ab68ed9a04d2372a6
+      routeId: c982609ee92c4acfbc8bbac7c8cfa504
+      element: {fileID: 11400000, guid: abf67824eb2f5db49adeb65ba07b43e3, type: 2}
+      count: 4
+      delay: 0
+      interval: 1.5
+    - spawnId: 669fd1761e5342dcb7985133c6d11a6d
+      targetId: c44756c477fe482ab68ed9a04d2372a6
+      routeId: c982609ee92c4acfbc8bbac7c8cfa504
+      element: {fileID: 11400000, guid: d787cc5442214b04f84c5d286058fc2f, type: 2}
+      count: 3
+      delay: 4
+      interval: 1.5
+  - label: "Wave 3 \u2014 \uBC29\uD328\uBCD1 \uD569\uB958"
+    preparationSeconds: 15
+    groups:
+    - spawnId: 669fd1761e5342dcb7985133c6d11a6d
+      targetId: c44756c477fe482ab68ed9a04d2372a6
+      routeId: c982609ee92c4acfbc8bbac7c8cfa504
+      element: {fileID: 11400000, guid: 75ee48e2fb1334a4bac81a825679e504, type: 2}
+      count: 3
+      delay: 0
+      interval: 2
+    - spawnId: 669fd1761e5342dcb7985133c6d11a6d
+      targetId: c44756c477fe482ab68ed9a04d2372a6
+      routeId: c982609ee92c4acfbc8bbac7c8cfa504
+      element: {fileID: 11400000, guid: abf67824eb2f5db49adeb65ba07b43e3, type: 2}
+      count: 4
+      delay: 2
+      interval: 1.5
+  - label: "Wave 4 \u2014 \uCCA0\uAC70\uAFBC"
+    preparationSeconds: 15
+    groups:
+    - spawnId: 669fd1761e5342dcb7985133c6d11a6d
+      targetId: c44756c477fe482ab68ed9a04d2372a6
+      routeId: c982609ee92c4acfbc8bbac7c8cfa504
+      element: {fileID: 11400000, guid: 8c2a884cee84167428ce3aeb2bb9a131, type: 2}
+      count: 2
+      delay: 0
+      interval: 3
+    - spawnId: 669fd1761e5342dcb7985133c6d11a6d
+      targetId: c44756c477fe482ab68ed9a04d2372a6
+      routeId: c982609ee92c4acfbc8bbac7c8cfa504
+      element: {fileID: 11400000, guid: 75ee48e2fb1334a4bac81a825679e504, type: 2}
+      count: 3
+      delay: 3
+      interval: 2
+    - spawnId: 669fd1761e5342dcb7985133c6d11a6d
+      targetId: c44756c477fe482ab68ed9a04d2372a6
+      routeId: c982609ee92c4acfbc8bbac7c8cfa504
+      element: {fileID: 11400000, guid: d787cc5442214b04f84c5d286058fc2f, type: 2}
+      count: 4
+      delay: 6
+      interval: 1
+  - label: "Wave 5 \u2014 \uC6B0\uB450\uBA38\uB9AC"
+    preparationSeconds: 20
+    groups:
+    - spawnId: 669fd1761e5342dcb7985133c6d11a6d
+      targetId: c44756c477fe482ab68ed9a04d2372a6
+      routeId: c982609ee92c4acfbc8bbac7c8cfa504
+      element: {fileID: 11400000, guid: 037622c36f1dc0b4281b23e3fcbc8bad, type: 2}
+      count: 1
+      delay: 0
+      interval: 1
+    - spawnId: 669fd1761e5342dcb7985133c6d11a6d
+      targetId: c44756c477fe482ab68ed9a04d2372a6
+      routeId: c982609ee92c4acfbc8bbac7c8cfa504
+      element: {fileID: 11400000, guid: abf67824eb2f5db49adeb65ba07b43e3, type: 2}
+      count: 4
+      delay: 2
+      interval: 1.5
+    - spawnId: 669fd1761e5342dcb7985133c6d11a6d
+      targetId: c44756c477fe482ab68ed9a04d2372a6
+      routeId: c982609ee92c4acfbc8bbac7c8cfa504
+      element: {fileID: 11400000, guid: 8c2a884cee84167428ce3aeb2bb9a131, type: 2}
+      count: 2
+      delay: 5
+      interval: 3

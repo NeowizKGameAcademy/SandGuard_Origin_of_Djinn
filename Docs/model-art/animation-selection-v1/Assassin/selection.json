@@ -1,0 +1,156 @@
+[
+  {
+    "role": "Idle",
+    "tier": "core",
+    "source": "Knife Idle.fbx",
+    "selected_file": "Assassin/Idle.fbx",
+    "sha256": "3b838080390b27819837050b07d6ace353af1c55e709bc96f4882300d712c665",
+    "duration_seconds": 4.4667,
+    "source_frames": [
+      1.0,
+      135.0
+    ],
+    "fps": 30.0,
+    "loop_recommended": true,
+    "hips_delta_blender_xyz": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "hips_horizontal_span": 0.034193165137206556,
+    "notes": "단검 대기 후보. 왼손에도 단검을 유지하므로 손가락·칼끝 방향 보정 필요.",
+    "retarget_and_equipment_verified": false
+  },
+  {
+    "role": "Move",
+    "tier": "core",
+    "source": "Ninja Run.fbx",
+    "selected_file": "Assassin/Move.fbx",
+    "sha256": "6aa5f3eaa7b7f6b60b1b59b63a668af759f9af5455c786460a81a4f0f3b00d76",
+    "duration_seconds": 0.6333,
+    "source_frames": [
+      1.0,
+      20.0
+    ],
+    "fps": 30.0,
+    "loop_recommended": true,
+    "hips_delta_blender_xyz": [
+      -8.381903171539307e-09,
+      2.421438694000244e-08,
+      -8.940696716308594e-08
+    ],
+    "hips_horizontal_span": 0.03785851933830955,
+    "notes": "몸을 낮추고 팔을 뒤로 뺀 제자리 달리기. 쌍단검 간섭 확인 필요.",
+    "retarget_and_equipment_verified": false
+  },
+  {
+    "role": "Attack",
+    "tier": "core",
+    "source": "Double Dagger Stab.fbx",
+    "selected_file": "Assassin/Attack.fbx",
+    "sha256": "5728e7f159f8cce1dec24030368de2bd757830864f266168ba7ef0d1b9d874bc",
+    "duration_seconds": 3.0667,
+    "source_frames": [
+      1.0,
+      93.0
+    ],
+    "fps": 30.0,
+    "loop_recommended": false,
+    "hips_delta_blender_xyz": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "hips_horizontal_span": 0.09809953551773602,
+    "notes": "쌍단검 공격 원본. 3.07초이므로 짧은 공격 구간 편집 또는 긴 콤보로 구성 필요. 현재 1.2초 간격에 그대로 연결하지 않음.",
+    "retarget_and_equipment_verified": false
+  },
+  {
+    "role": "Death",
+    "tier": "core",
+    "source": "Pro Magic Pack/Standing React Death Left.fbx",
+    "selected_file": "Assassin/Death.fbx",
+    "sha256": "b9e04454054e7d2e67b94f6f9c945717bd4cec8136585cc609b94988614273e6",
+    "duration_seconds": 3.6,
+    "source_frames": [
+      1.0,
+      109.0
+    ],
+    "fps": 30.0,
+    "loop_recommended": false,
+    "hips_delta_blender_xyz": [
+      0.41798731684684753,
+      0.05988346040248871,
+      -0.36938825249671936
+    ],
+    "hips_horizontal_span": 0.534175369160769,
+    "notes": "방패 동작이 없는 옆으로 쓰러지는 공용 후보. 단검과 바닥 간섭 확인 필요.",
+    "retarget_and_equipment_verified": false
+  },
+  {
+    "role": "Sneak",
+    "tier": "support",
+    "source": "Sneaking Forward.fbx",
+    "selected_file": "Assassin/Sneak.fbx",
+    "sha256": "4ddfcaf2d5c3dce021d431fd2b6d73aa1ff9e2b8a0841f2c8695cbb4229377cb",
+    "duration_seconds": 1.6667,
+    "source_frames": [
+      1.0,
+      51.0
+    ],
+    "fps": 30.0,
+    "loop_recommended": true,
+    "hips_delta_blender_xyz": [
+      1.862645149230957e-09,
+      -1.7884796857833862,
+      2.682209014892578e-07
+    ],
+    "hips_horizontal_span": 1.7885329777490226,
+    "notes": "잠입·느린 접근에만 사용. 추격 기본 이동은 Ninja Run.",
+    "retarget_and_equipment_verified": false
+  },
+  {
+    "role": "AttackQuick",
+    "tier": "support",
+    "source": "Stabbing (1).fbx",
+    "selected_file": "Assassin/AttackQuick.fbx",
+    "sha256": "6d4f51972b900788e299fc4442ceeb440f1469146b7c3da1acd51e6e5d06f572",
+    "duration_seconds": 2.1333,
+    "source_frames": [
+      1.0,
+      65.0
+    ],
+    "fps": 30.0,
+    "loop_recommended": false,
+    "hips_delta_blender_xyz": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "hips_horizontal_span": 0.05028577411536554,
+    "notes": "오른손 찌르기 보조 후보. 왼손 단검은 유지. 이 클립도 2.13초라 구간 편집 필요.",
+    "retarget_and_equipment_verified": false
+  },
+  {
+    "role": "Hit",
+    "tier": "support",
+    "source": "Pro Magic Pack/Standing React Small From Front.fbx",
+    "selected_file": "Assassin/Hit.fbx",
+    "sha256": "4301e7a39e2f659ed78288a6098611eaf685755a89391289249a485b882214ac",
+    "duration_seconds": 1.2,
+    "source_frames": [
+      1.0,
+      37.0
+    ],
+    "fps": 30.0,
+    "loop_recommended": false,
+    "hips_delta_blender_xyz": [
+      -2.7939677238464355e-08,
+      2.1653249859809875e-07,
+      -1.4901161193847656e-07
+    ],
+    "hips_horizontal_span": 0.01195007816484258,
+    "notes": "방패 없는 정면 피격 공용 후보.",
+    "retarget_and_equipment_verified": false
+  }
+]

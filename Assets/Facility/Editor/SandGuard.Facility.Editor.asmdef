@@ -1,0 +1,9 @@
+{
+  "name": "SandGuard.Facility.Editor",
+  "rootNamespace": "SandGuard.Facility.Editor",
+  "references": [
+    "SandGuard.Facility.Runtime", "DesertTower.Levels.Runtime", "DesertTower.VFX.Runtime",
+    "DesertTower.Gameplay.Abstractions", "SandGuard.Player.Runtime", "UnityEngine.UI"
+  ],
+  "includePlatforms": ["Editor"]
+}

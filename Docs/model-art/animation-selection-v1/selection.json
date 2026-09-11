@@ -1,0 +1,891 @@
+{
+  "version": 1,
+  "date": "2026-09-09",
+  "scope": "Reviewed source shortlist; not imported or wired into Unity. Timing/loop/root settings are recommendations, not applied.",
+  "validation": "213 source animations imported and sampled at 31 times in Blender. Major attack/idle/guard candidates compared with six-pose skeleton sheets. Equipment and target-character retargeting not validated.",
+  "characters": {
+    "Swordsman": {
+      "label": "검병 · 짧은 검 + 원형 방패",
+      "clips": [
+        {
+          "role": "Idle",
+          "tier": "core",
+          "source": "Pro Sword and Shield Pack/sword and shield idle (4).fbx",
+          "selected_file": "Swordsman/Idle.fbx",
+          "sha256": "5f7294d543abbb0fbd639c42783ac0214af8e9f1f3c8aad1da06204ae86bfeb5",
+          "duration_seconds": 2.5333,
+          "source_frames": [
+            1.0,
+            77.0
+          ],
+          "fps": 30.0,
+          "loop_recommended": true,
+          "hips_delta_blender_xyz": [
+            2.6193447411060333e-06,
+            -1.6281846910715103e-05,
+            1.1920928955078125e-07
+          ],
+          "hips_horizontal_span": 0.0036901907033467284,
+          "notes": "짧고 안정적인 무장 대기. 긴 몸풀기 idle 대신 선택.",
+          "retarget_and_equipment_verified": false
+        },
+        {
+          "role": "Move",
+          "tier": "core",
+          "source": "Pro Sword and Shield Pack/sword and shield run.fbx",
+          "selected_file": "Swordsman/Move.fbx",
+          "sha256": "bf1646dd1160a204a91fe686508630f5c55fd0b2638e470b697b77ce3d1a415a",
+          "duration_seconds": 0.7,
+          "source_frames": [
+            1.0,
+            22.0
+          ],
+          "fps": 30.0,
+          "loop_recommended": true,
+          "hips_delta_blender_xyz": [
+            2.555013634264469e-05,
+            -1.400551438331604,
+            1.1920928955078125e-07
+          ],
+          "hips_horizontal_span": 1.4006421094650696,
+          "notes": "전진 달리기. 이동 속도에 맞춰 재생 속도 조정.",
+          "retarget_and_equipment_verified": false
+        },
+        {
+          "role": "Attack",
+          "tier": "core",
+          "source": "Pro Sword and Shield Pack/sword and shield attack (4).fbx",
+          "selected_file": "Swordsman/Attack.fbx",
+          "sha256": "7ed00d36a57d86c41002db67ce48f33d3491a27c0b3936436b4a9386b9494131",
+          "duration_seconds": 1.0,
+          "source_frames": [
+            1.0,
+            31.0
+          ],
+          "fps": 30.0,
+          "loop_recommended": false,
+          "hips_delta_blender_xyz": [
+            0.006007752381265163,
+            -0.018471885472536087,
+            0.0005422532558441162
+          ],
+          "hips_horizontal_span": 0.049939952624848426,
+          "notes": "전진량이 작은 1초 검 공격. 기본 공격 후보.",
+          "retarget_and_equipment_verified": false
+        },
+        {
+          "role": "Death",
+          "tier": "core",
+          "source": "Pro Sword and Shield Pack/sword and shield death.fbx",
+          "selected_file": "Swordsman/Death.fbx",
+          "sha256": "80e6fc35713313e98c0d298ee82b57200bd29a874ef2c8590b692f24451c458e",
+          "duration_seconds": 2.3,
+          "source_frames": [
+            1.0,
+            70.0
+          ],
+          "fps": 30.0,
+          "loop_recommended": false,
+          "hips_delta_blender_xyz": [
+            0.02017717994749546,
+            0.5754939913749695,
+            -0.3412347435951233
+          ],
+          "hips_horizontal_span": 0.5792257749798915,
+          "notes": "뒤로 쓰러지는 검·방패 자세.",
+          "retarget_and_equipment_verified": false
+        },
+        {
+          "role": "Walk",
+          "tier": "support",
+          "source": "Pro Sword and Shield Pack/sword and shield walk.fbx",
+          "selected_file": "Swordsman/Walk.fbx",
+          "sha256": "334b7c659ab29210387b30d8c76d6a426af0524bb4c57c723b43b1250a4fea5b",
+          "duration_seconds": 1.0667,
+          "source_frames": [
+            1.0,
+            33.0
+          ],
+          "fps": 30.0,
+          "loop_recommended": true,
+          "hips_delta_blender_xyz": [
+            0.0007443421054631472,
+            -0.7740687131881714,
+            -0.0057010650634765625
+          ],
+          "hips_horizontal_span": 0.7744795409421086,
+          "notes": "순찰용 전진 걷기.",
+          "retarget_and_equipment_verified": false
+        },
+        {
+          "role": "Hit",
+          "tier": "support",
+          "source": "Pro Sword and Shield Pack/sword and shield impact (3).fbx",
+          "selected_file": "Swordsman/Hit.fbx",
+          "sha256": "d8938ccca57c2118806f89ae2cbf78c76c24425ac627a44a32df1df284736c3f",
+          "duration_seconds": 0.7,
+          "source_frames": [
+            1.0,
+            22.0
+          ],
+          "fps": 30.0,
+          "loop_recommended": false,
+          "hips_delta_blender_xyz": [
+            -1.7560087144374847e-06,
+            4.536937922239304e-06,
+            2.9802322387695312e-08
+          ],
+          "hips_horizontal_span": 0.06519233984175117,
+          "notes": "짧은 피격 후보. 전신 반응 연결은 별도.",
+          "retarget_and_equipment_verified": false
+        },
+        {
+          "role": "GuardStart",
+          "tier": "support",
+          "source": "Pro Sword and Shield Pack/sword and shield block.fbx",
+          "selected_file": "Swordsman/GuardStart.fbx",
+          "sha256": "00976a2f750dbd27f0e79d84876e71b984b9800c3ac42ade5a48e7749e36b968",
+          "duration_seconds": 0.4667,
+          "source_frames": [
+            1.0,
+            15.0
+          ],
+          "fps": 30.0,
+          "loop_recommended": false,
+          "hips_delta_blender_xyz": [
+            -0.015421953983604908,
+            -0.1112869381904602,
+            -0.055203020572662354
+          ],
+          "hips_horizontal_span": 0.11244527009873068,
+          "notes": "방패를 앞으로 드는 진입 동작.",
+          "retarget_and_equipment_verified": false
+        },
+        {
+          "role": "GuardHold",
+          "tier": "support",
+          "source": "Pro Sword and Shield Pack/sword and shield block idle.fbx",
+          "selected_file": "Swordsman/GuardHold.fbx",
+          "sha256": "388db354c91941667cd0530c1912a4c84e88f25fd6c5ea235182df5a44abd0df",
+          "duration_seconds": 1.4,
+          "source_frames": [
+            1.0,
+            43.0
+          ],
+          "fps": 30.0,
+          "loop_recommended": true,
+          "hips_delta_blender_xyz": [
+            -1.7834827303886414e-07,
+            -5.140900611877441e-07,
+            -7.450580596923828e-07
+          ],
+          "hips_horizontal_span": 0.0030202786407390082,
+          "notes": "방패를 든 자세 유지.",
+          "retarget_and_equipment_verified": false
+        },
+        {
+          "role": "GuardEnd",
+          "tier": "support",
+          "source": "Pro Sword and Shield Pack/sword and shield block (2).fbx",
+          "selected_file": "Swordsman/GuardEnd.fbx",
+          "sha256": "2f150ea31208df83614bd72f9142bb5acdd4f80e5a4b14545221a79693ef89ed",
+          "duration_seconds": 0.5,
+          "source_frames": [
+            1.0,
+            16.0
+          ],
+          "fps": 30.0,
+          "loop_recommended": false,
+          "hips_delta_blender_xyz": [
+            -0.005003044381737709,
+            0.12544018030166626,
+            0.06387805938720703
+          ],
+          "hips_horizontal_span": 0.1263246980419774,
+          "notes": "방패를 내리고 전투 대기로 복귀. 피격 반응으로 쓰지 않음.",
+          "retarget_and_equipment_verified": false
+        }
+      ]
+    },
+    "Assassin": {
+      "label": "암살자 · 쌍단검",
+      "clips": [
+        {
+          "role": "Idle",
+          "tier": "core",
+          "source": "Knife Idle.fbx",
+          "selected_file": "Assassin/Idle.fbx",
+          "sha256": "3b838080390b27819837050b07d6ace353af1c55e709bc96f4882300d712c665",
+          "duration_seconds": 4.4667,
+          "source_frames": [
+            1.0,
+            135.0
+          ],
+          "fps": 30.0,
+          "loop_recommended": true,
+          "hips_delta_blender_xyz": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "hips_horizontal_span": 0.034193165137206556,
+          "notes": "단검 대기 후보. 왼손에도 단검을 유지하므로 손가락·칼끝 방향 보정 필요.",
+          "retarget_and_equipment_verified": false
+        },
+        {
+          "role": "Move",
+          "tier": "core",
+          "source": "Ninja Run.fbx",
+          "selected_file": "Assassin/Move.fbx",
+          "sha256": "6aa5f3eaa7b7f6b60b1b59b63a668af759f9af5455c786460a81a4f0f3b00d76",
+          "duration_seconds": 0.6333,
+          "source_frames": [
+            1.0,
+            20.0
+          ],
+          "fps": 30.0,
+          "loop_recommended": true,
+          "hips_delta_blender_xyz": [
+            -8.381903171539307e-09,
+            2.421438694000244e-08,
+            -8.940696716308594e-08
+          ],
+          "hips_horizontal_span": 0.03785851933830955,
+          "notes": "몸을 낮추고 팔을 뒤로 뺀 제자리 달리기. 쌍단검 간섭 확인 필요.",
+          "retarget_and_equipment_verified": false
+        },
+        {
+          "role": "Attack",
+          "tier": "core",
+          "source": "Double Dagger Stab.fbx",
+          "selected_file": "Assassin/Attack.fbx",
+          "sha256": "5728e7f159f8cce1dec24030368de2bd757830864f266168ba7ef0d1b9d874bc",
+          "duration_seconds": 3.0667,
+          "source_frames": [
+            1.0,
+            93.0
+          ],
+          "fps": 30.0,
+          "loop_recommended": false,
+          "hips_delta_blender_xyz": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "hips_horizontal_span": 0.09809953551773602,
+          "notes": "쌍단검 공격 원본. 3.07초이므로 짧은 공격 구간 편집 또는 긴 콤보로 구성 필요. 현재 1.2초 간격에 그대로 연결하지 않음.",
+          "retarget_and_equipment_verified": false
+        },
+        {
+          "role": "Death",
+          "tier": "core",
+          "source": "Pro Magic Pack/Standing React Death Left.fbx",
+          "selected_file": "Assassin/Death.fbx",
+          "sha256": "b9e04454054e7d2e67b94f6f9c945717bd4cec8136585cc609b94988614273e6",
+          "duration_seconds": 3.6,
+          "source_frames": [
+            1.0,
+            109.0
+          ],
+          "fps": 30.0,
+          "loop_recommended": false,
+          "hips_delta_blender_xyz": [
+            0.41798731684684753,
+            0.05988346040248871,
+            -0.36938825249671936
+          ],
+          "hips_horizontal_span": 0.534175369160769,
+          "notes": "방패 동작이 없는 옆으로 쓰러지는 공용 후보. 단검과 바닥 간섭 확인 필요.",
+          "retarget_and_equipment_verified": false
+        },
+        {
+          "role": "Sneak",
+          "tier": "support",
+          "source": "Sneaking Forward.fbx",
+          "selected_file": "Assassin/Sneak.fbx",
+          "sha256": "4ddfcaf2d5c3dce021d431fd2b6d73aa1ff9e2b8a0841f2c8695cbb4229377cb",
+          "duration_seconds": 1.6667,
+          "source_frames": [
+            1.0,
+            51.0
+          ],
+          "fps": 30.0,
+          "loop_recommended": true,
+          "hips_delta_blender_xyz": [
+            1.862645149230957e-09,
+            -1.7884796857833862,
+            2.682209014892578e-07
+          ],
+          "hips_horizontal_span": 1.7885329777490226,
+          "notes": "잠입·느린 접근에만 사용. 추격 기본 이동은 Ninja Run.",
+          "retarget_and_equipment_verified": false
+        },
+        {
+          "role": "AttackQuick",
+          "tier": "support",
+          "source": "Stabbing (1).fbx",
+          "selected_file": "Assassin/AttackQuick.fbx",
+          "sha256": "6d4f51972b900788e299fc4442ceeb440f1469146b7c3da1acd51e6e5d06f572",
+          "duration_seconds": 2.1333,
+          "source_frames": [
+            1.0,
+            65.0
+          ],
+          "fps": 30.0,
+          "loop_recommended": false,
+          "hips_delta_blender_xyz": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "hips_horizontal_span": 0.05028577411536554,
+          "notes": "오른손 찌르기 보조 후보. 왼손 단검은 유지. 이 클립도 2.13초라 구간 편집 필요.",
+          "retarget_and_equipment_verified": false
+        },
+        {
+          "role": "Hit",
+          "tier": "support",
+          "source": "Pro Magic Pack/Standing React Small From Front.fbx",
+          "selected_file": "Assassin/Hit.fbx",
+          "sha256": "4301e7a39e2f659ed78288a6098611eaf685755a89391289249a485b882214ac",
+          "duration_seconds": 1.2,
+          "source_frames": [
+            1.0,
+            37.0
+          ],
+          "fps": 30.0,
+          "loop_recommended": false,
+          "hips_delta_blender_xyz": [
+            -2.7939677238464355e-08,
+            2.1653249859809875e-07,
+            -1.4901161193847656e-07
+          ],
+          "hips_horizontal_span": 0.01195007816484258,
+          "notes": "방패 없는 정면 피격 공용 후보.",
+          "retarget_and_equipment_verified": false
+        }
+      ]
+    },
+    "ShieldGuard": {
+      "label": "방패병 · 짧은 검 + 타워 방패",
+      "clips": [
+        {
+          "role": "Idle",
+          "tier": "core",
+          "source": "Pro Sword and Shield Pack/sword and shield block idle.fbx",
+          "selected_file": "ShieldGuard/Idle.fbx",
+          "sha256": "388db354c91941667cd0530c1912a4c84e88f25fd6c5ea235182df5a44abd0df",
+          "duration_seconds": 1.4,
+          "source_frames": [
+            1.0,
+            43.0
+          ],
+          "fps": 30.0,
+          "loop_recommended": true,
+          "hips_delta_blender_xyz": [
+            -1.7834827303886414e-07,
+            -5.140900611877441e-07,
+            -7.450580596923828e-07
+          ],
+          "hips_horizontal_span": 0.0030202786407390082,
+          "notes": "방패를 앞에 세운 경계 자세로 검병과 구분.",
+          "retarget_and_equipment_verified": false
+        },
+        {
+          "role": "Move",
+          "tier": "core",
+          "source": "Pro Sword and Shield Pack/sword and shield walk.fbx",
+          "selected_file": "ShieldGuard/Move.fbx",
+          "sha256": "334b7c659ab29210387b30d8c76d6a426af0524bb4c57c723b43b1250a4fea5b",
+          "duration_seconds": 1.0667,
+          "source_frames": [
+            1.0,
+            33.0
+          ],
+          "fps": 30.0,
+          "loop_recommended": true,
+          "hips_delta_blender_xyz": [
+            0.0007443421054631472,
+            -0.7740687131881714,
+            -0.0057010650634765625
+          ],
+          "hips_horizontal_span": 0.7744795409421086,
+          "notes": "무거운 전진 걷기. 현재 공통 3.5m/s를 그대로 쓸 경우 발 미끄러짐 조정 필요.",
+          "retarget_and_equipment_verified": false
+        },
+        {
+          "role": "Attack",
+          "tier": "core",
+          "source": "Pro Sword and Shield Pack/sword and shield attack (4).fbx",
+          "selected_file": "ShieldGuard/Attack.fbx",
+          "sha256": "7ed00d36a57d86c41002db67ce48f33d3491a27c0b3936436b4a9386b9494131",
+          "duration_seconds": 1.0,
+          "source_frames": [
+            1.0,
+            31.0
+          ],
+          "fps": 30.0,
+          "loop_recommended": false,
+          "hips_delta_blender_xyz": [
+            0.006007752381265163,
+            -0.018471885472536087,
+            0.0005422532558441162
+          ],
+          "hips_horizontal_span": 0.049939952624848426,
+          "notes": "큰 도약 없는 짧은 검 공격. 타워 방패와 오른팔 궤적 간섭 확인 필요.",
+          "retarget_and_equipment_verified": false
+        },
+        {
+          "role": "Death",
+          "tier": "core",
+          "source": "Pro Sword and Shield Pack/sword and shield death.fbx",
+          "selected_file": "ShieldGuard/Death.fbx",
+          "sha256": "80e6fc35713313e98c0d298ee82b57200bd29a874ef2c8590b692f24451c458e",
+          "duration_seconds": 2.3,
+          "source_frames": [
+            1.0,
+            70.0
+          ],
+          "fps": 30.0,
+          "loop_recommended": false,
+          "hips_delta_blender_xyz": [
+            0.02017717994749546,
+            0.5754939913749695,
+            -0.3412347435951233
+          ],
+          "hips_horizontal_span": 0.5792257749798915,
+          "notes": "뒤로 쓰러짐. 큰 방패의 몸·바닥 간섭 확인 필요.",
+          "retarget_and_equipment_verified": false
+        },
+        {
+          "role": "Run",
+          "tier": "support",
+          "source": "Pro Sword and Shield Pack/sword and shield run.fbx",
+          "selected_file": "ShieldGuard/Run.fbx",
+          "sha256": "bf1646dd1160a204a91fe686508630f5c55fd0b2638e470b697b77ce3d1a415a",
+          "duration_seconds": 0.7,
+          "source_frames": [
+            1.0,
+            22.0
+          ],
+          "fps": 30.0,
+          "loop_recommended": true,
+          "hips_delta_blender_xyz": [
+            2.555013634264469e-05,
+            -1.400551438331604,
+            1.1920928955078125e-07
+          ],
+          "hips_horizontal_span": 1.4006421094650696,
+          "notes": "빠른 추격이 필요할 때 걷기 대신 사용.",
+          "retarget_and_equipment_verified": false
+        },
+        {
+          "role": "Hit",
+          "tier": "support",
+          "source": "Pro Sword and Shield Pack/sword and shield impact (3).fbx",
+          "selected_file": "ShieldGuard/Hit.fbx",
+          "sha256": "d8938ccca57c2118806f89ae2cbf78c76c24425ac627a44a32df1df284736c3f",
+          "duration_seconds": 0.7,
+          "source_frames": [
+            1.0,
+            22.0
+          ],
+          "fps": 30.0,
+          "loop_recommended": false,
+          "hips_delta_blender_xyz": [
+            -1.7560087144374847e-06,
+            4.536937922239304e-06,
+            2.9802322387695312e-08
+          ],
+          "hips_horizontal_span": 0.06519233984175117,
+          "notes": "피격 후보. 방패 방어 성공 반응과 구분.",
+          "retarget_and_equipment_verified": false
+        },
+        {
+          "role": "GuardStart",
+          "tier": "support",
+          "source": "Pro Sword and Shield Pack/sword and shield block.fbx",
+          "selected_file": "ShieldGuard/GuardStart.fbx",
+          "sha256": "00976a2f750dbd27f0e79d84876e71b984b9800c3ac42ade5a48e7749e36b968",
+          "duration_seconds": 0.4667,
+          "source_frames": [
+            1.0,
+            15.0
+          ],
+          "fps": 30.0,
+          "loop_recommended": false,
+          "hips_delta_blender_xyz": [
+            -0.015421953983604908,
+            -0.1112869381904602,
+            -0.055203020572662354
+          ],
+          "hips_horizontal_span": 0.11244527009873068,
+          "notes": "공격 후 방패를 다시 드는 전환 후보.",
+          "retarget_and_equipment_verified": false
+        },
+        {
+          "role": "GuardEnd",
+          "tier": "support",
+          "source": "Pro Sword and Shield Pack/sword and shield block (2).fbx",
+          "selected_file": "ShieldGuard/GuardEnd.fbx",
+          "sha256": "2f150ea31208df83614bd72f9142bb5acdd4f80e5a4b14545221a79693ef89ed",
+          "duration_seconds": 0.5,
+          "source_frames": [
+            1.0,
+            16.0
+          ],
+          "fps": 30.0,
+          "loop_recommended": false,
+          "hips_delta_blender_xyz": [
+            -0.005003044381737709,
+            0.12544018030166626,
+            0.06387805938720703
+          ],
+          "hips_horizontal_span": 0.1263246980419774,
+          "notes": "방패 자세에서 공격 준비 자세로 복귀.",
+          "retarget_and_equipment_verified": false
+        }
+      ]
+    },
+    "HammerBrute": {
+      "label": "망치병 · 양손 대형 망치",
+      "clips": [
+        {
+          "role": "Idle",
+          "tier": "core",
+          "source": "Great Sword Pack/great sword idle.fbx",
+          "selected_file": "HammerBrute/Idle.fbx",
+          "sha256": "1baf22fb8a3b6d4d5247b3cf14bc60f26450bb24652279ff0c0e4f8bcd6543fe",
+          "duration_seconds": 2.0,
+          "source_frames": [
+            1.0,
+            61.0
+          ],
+          "fps": 30.0,
+          "loop_recommended": true,
+          "hips_delta_blender_xyz": [
+            -9.359791874885559e-08,
+            -3.018416464328766e-06,
+            2.562999725341797e-06
+          ],
+          "hips_horizontal_span": 0.010685521406704958,
+          "notes": "양손 무기 대기. 왼손을 망치 보조 손잡이에 맞출 것.",
+          "retarget_and_equipment_verified": false
+        },
+        {
+          "role": "Move",
+          "tier": "core",
+          "source": "Great Sword Pack/great sword run (2).fbx",
+          "selected_file": "HammerBrute/Move.fbx",
+          "sha256": "7f2df431def3493c5ed4087ea4b74e0e46bb101572c49368e46f83a624bcd320",
+          "duration_seconds": 0.6,
+          "source_frames": [
+            1.0,
+            19.0
+          ],
+          "fps": 30.0,
+          "loop_recommended": true,
+          "hips_delta_blender_xyz": [
+            1.30385160446167e-08,
+            -1.2646116018295288,
+            8.940696716308594e-08
+          ],
+          "hips_horizontal_span": 1.264830551977957,
+          "notes": "전진 달리기. 번호 없는 run은 후진이라 제외.",
+          "retarget_and_equipment_verified": false
+        },
+        {
+          "role": "Attack",
+          "tier": "core",
+          "source": "Great Sword Pack/great sword slash (3).fbx",
+          "selected_file": "HammerBrute/Attack.fbx",
+          "sha256": "224ca2610ab67af65f36fc16798a940037aa47079b1aeb4fac51ca8f5ae3b822",
+          "duration_seconds": 1.8333,
+          "source_frames": [
+            1.0,
+            56.0
+          ],
+          "fps": 30.0,
+          "loop_recommended": false,
+          "hips_delta_blender_xyz": [
+            -2.200249582529068e-08,
+            -5.587935447692871e-09,
+            0.0
+          ],
+          "hips_horizontal_span": 0.3686050467782923,
+          "notes": "상체를 크게 숙이며 양손으로 내려치는 강타 후보. 1.83초. 망치 머리 궤적·왼손 IK 보정 필요.",
+          "retarget_and_equipment_verified": false
+        },
+        {
+          "role": "Death",
+          "tier": "core",
+          "source": "Great Sword Pack/two handed sword death.fbx",
+          "selected_file": "HammerBrute/Death.fbx",
+          "sha256": "80449e39421cbcad391fe951119811b29d4ff70bc2b9c94817e37eb9803df513",
+          "duration_seconds": 2.4,
+          "source_frames": [
+            1.0,
+            73.0
+          ],
+          "fps": 30.0,
+          "loop_recommended": false,
+          "hips_delta_blender_xyz": [
+            -0.0055284746922552586,
+            0.3856240212917328,
+            -0.4030158519744873
+          ],
+          "hips_horizontal_span": 0.40433506395181673,
+          "notes": "양손 무기를 든 뒤로 쓰러짐 후보.",
+          "retarget_and_equipment_verified": false
+        },
+        {
+          "role": "Walk",
+          "tier": "support",
+          "source": "Great Sword Pack/great sword walk.fbx",
+          "selected_file": "HammerBrute/Walk.fbx",
+          "sha256": "ce9f8c19f924dcba8ab1cb718125947d526b37f41302087fe3141deadf33a17f",
+          "duration_seconds": 1.3667,
+          "source_frames": [
+            1.0,
+            42.0
+          ],
+          "fps": 30.0,
+          "loop_recommended": true,
+          "hips_delta_blender_xyz": [
+            2.3283064365386963e-09,
+            -0.7309168577194214,
+            5.960464477539063e-08
+          ],
+          "hips_horizontal_span": 0.7321981100280797,
+          "notes": "느린 접근·순찰용 전진 걷기.",
+          "retarget_and_equipment_verified": false
+        },
+        {
+          "role": "AttackQuick",
+          "tier": "support",
+          "source": "Great Sword Pack/great sword attack.fbx",
+          "selected_file": "HammerBrute/AttackQuick.fbx",
+          "sha256": "db26c12279d354a7dfe0144faba8ee9af21cc25e92866906fd41fc976deee00d",
+          "duration_seconds": 1.2,
+          "source_frames": [
+            1.0,
+            37.0
+          ],
+          "fps": 30.0,
+          "loop_recommended": false,
+          "hips_delta_blender_xyz": [
+            -9.313225746154785e-09,
+            -6.51925802230835e-09,
+            5.960464477539063e-08
+          ],
+          "hips_horizontal_span": 0.0635983298029917,
+          "notes": "1.2초의 짧은 양손 공격 후보. 강타와 구분되는 보조 공격.",
+          "retarget_and_equipment_verified": false
+        },
+        {
+          "role": "Hit",
+          "tier": "support",
+          "source": "Great Sword Pack/great sword impact (3).fbx",
+          "selected_file": "HammerBrute/Hit.fbx",
+          "sha256": "62dcfa7c6830f08d480bedf1336ebf60e4d725a1c36050cb16c5bcf83b673fdc",
+          "duration_seconds": 1.1333,
+          "source_frames": [
+            1.0,
+            35.0
+          ],
+          "fps": 30.0,
+          "loop_recommended": false,
+          "hips_delta_blender_xyz": [
+            -0.0043561458587646484,
+            0.000392732210457325,
+            0.0005873739719390869
+          ],
+          "hips_horizontal_span": 0.04930826859975069,
+          "notes": "양손 무기 피격 후보.",
+          "retarget_and_equipment_verified": false
+        }
+      ]
+    },
+    "Chief": {
+      "label": "우두머리 · 한손 곡도 + 망토, 방패 없음",
+      "clips": [
+        {
+          "role": "Idle",
+          "tier": "core",
+          "source": "Pro Sword and Shield Pack/sword and shield idle (4).fbx",
+          "selected_file": "Chief/Idle.fbx",
+          "sha256": "5f7294d543abbb0fbd639c42783ac0214af8e9f1f3c8aad1da06204ae86bfeb5",
+          "duration_seconds": 2.5333,
+          "source_frames": [
+            1.0,
+            77.0
+          ],
+          "fps": 30.0,
+          "loop_recommended": true,
+          "hips_delta_blender_xyz": [
+            2.6193447411060333e-06,
+            -1.6281846910715103e-05,
+            1.1920928955078125e-07
+          ],
+          "hips_horizontal_span": 0.0036901907033467284,
+          "notes": "안정적인 전투 대기 원본 후보. 방패를 드는 왼팔 자세를 빈손 경계 자세로 수정해야 함.",
+          "retarget_and_equipment_verified": false
+        },
+        {
+          "role": "Move",
+          "tier": "core",
+          "source": "Pro Sword and Shield Pack/sword and shield walk.fbx",
+          "selected_file": "Chief/Move.fbx",
+          "sha256": "334b7c659ab29210387b30d8c76d6a426af0524bb4c57c723b43b1250a4fea5b",
+          "duration_seconds": 1.0667,
+          "source_frames": [
+            1.0,
+            33.0
+          ],
+          "fps": 30.0,
+          "loop_recommended": true,
+          "hips_delta_blender_xyz": [
+            0.0007443421054631472,
+            -0.7740687131881714,
+            -0.0057010650634765625
+          ],
+          "hips_horizontal_span": 0.7744795409421086,
+          "notes": "천천히 접근하는 후보. 왼팔 자세 수정 및 이동 속도 조정 필요.",
+          "retarget_and_equipment_verified": false
+        },
+        {
+          "role": "Attack",
+          "tier": "core",
+          "source": "Pro Sword and Shield Pack/sword and shield slash.fbx",
+          "selected_file": "Chief/Attack.fbx",
+          "sha256": "4b65b9010f2f5a3262baa9d07026cab2d948a3d72e20ce0b6d53eeb62df47cff",
+          "duration_seconds": 1.5,
+          "source_frames": [
+            1.0,
+            46.0
+          ],
+          "fps": 30.0,
+          "loop_recommended": false,
+          "hips_delta_blender_xyz": [
+            -2.0954757928848267e-09,
+            -3.259629011154175e-09,
+            -2.9802322387695312e-08
+          ],
+          "hips_horizontal_span": 0.23807156398867568,
+          "notes": "제자리 한손 베기 후보. 왼팔 방패 자세를 빈손 균형 자세로 수정해야 함. 1.5초.",
+          "retarget_and_equipment_verified": false
+        },
+        {
+          "role": "Death",
+          "tier": "core",
+          "source": "Pro Magic Pack/Standing React Death Backward.fbx",
+          "selected_file": "Chief/Death.fbx",
+          "sha256": "ab543f02dbf3162fc4973e76b479e77b77ee75b4fdc40bf3956865b3e437ce3a",
+          "duration_seconds": 3.6333,
+          "source_frames": [
+            1.0,
+            110.0
+          ],
+          "fps": 30.0,
+          "loop_recommended": false,
+          "hips_delta_blender_xyz": [
+            -0.0761374905705452,
+            0.40250876545906067,
+            -0.36789706349372864
+          ],
+          "hips_horizontal_span": 0.45847529031009393,
+          "notes": "방패 없는 뒤로 쓰러지는 공용 후보. 망토 눌림·바닥 간섭 보정 필요.",
+          "retarget_and_equipment_verified": false
+        },
+        {
+          "role": "AttackAlt",
+          "tier": "support",
+          "source": "Pro Sword and Shield Pack/sword and shield slash (3).fbx",
+          "selected_file": "Chief/AttackAlt.fbx",
+          "sha256": "e619db59a18f6b8677d438c8524ff1bb26bfa595091d86d9015796ed261f2e14",
+          "duration_seconds": 1.5667,
+          "source_frames": [
+            1.0,
+            48.0
+          ],
+          "fps": 30.0,
+          "loop_recommended": false,
+          "hips_delta_blender_xyz": [
+            -0.0008053053170442581,
+            -0.0030921988654881716,
+            -0.006823509931564331
+          ],
+          "hips_horizontal_span": 0.25846618155095524,
+          "notes": "제자리 다른 베기 후보. 왼팔 자세 보정 후 패턴 확장에 사용.",
+          "retarget_and_equipment_verified": false
+        },
+        {
+          "role": "Kick",
+          "tier": "support",
+          "source": "Pro Sword and Shield Pack/sword and shield kick.fbx",
+          "selected_file": "Chief/Kick.fbx",
+          "sha256": "a9d4d901f2aee67f2ba932e8a9358d287c2ec65c603a61cc8c3d7a8f4c69622c",
+          "duration_seconds": 1.2,
+          "source_frames": [
+            1.0,
+            37.0
+          ],
+          "fps": 30.0,
+          "loop_recommended": false,
+          "hips_delta_blender_xyz": [
+            -5.122274160385132e-09,
+            4.190951585769653e-09,
+            -8.940696716308594e-08
+          ],
+          "hips_horizontal_span": 0.2915322100973088,
+          "notes": "근접 밀어내기 후보. 별도 판정·공격 패턴과 왼팔 보정 필요.",
+          "retarget_and_equipment_verified": false
+        },
+        {
+          "role": "Hit",
+          "tier": "support",
+          "source": "Pro Magic Pack/Standing React Small From Front.fbx",
+          "selected_file": "Chief/Hit.fbx",
+          "sha256": "4301e7a39e2f659ed78288a6098611eaf685755a89391289249a485b882214ac",
+          "duration_seconds": 1.2,
+          "source_frames": [
+            1.0,
+            37.0
+          ],
+          "fps": 30.0,
+          "loop_recommended": false,
+          "hips_delta_blender_xyz": [
+            -2.7939677238464355e-08,
+            2.1653249859809875e-07,
+            -1.4901161193847656e-07
+          ],
+          "hips_horizontal_span": 0.01195007816484258,
+          "notes": "방패 없는 정면 피격 공용 후보.",
+          "retarget_and_equipment_verified": false
+        },
+        {
+          "role": "Run",
+          "tier": "support",
+          "source": "Pro Sword and Shield Pack/sword and shield run.fbx",
+          "selected_file": "Chief/Run.fbx",
+          "sha256": "bf1646dd1160a204a91fe686508630f5c55fd0b2638e470b697b77ce3d1a415a",
+          "duration_seconds": 0.7,
+          "source_frames": [
+            1.0,
+            22.0
+          ],
+          "fps": 30.0,
+          "loop_recommended": true,
+          "hips_delta_blender_xyz": [
+            2.555013634264469e-05,
+            -1.400551438331604,
+            1.1920928955078125e-07
+          ],
+          "hips_horizontal_span": 1.4006421094650696,
+          "notes": "추격용 예비 후보. 왼팔 방패 자세 보정 필요.",
+          "retarget_and_equipment_verified": false
+        }
+      ]
+    }
+  }
+}

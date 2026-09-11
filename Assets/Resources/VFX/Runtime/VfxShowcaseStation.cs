@@ -3,7 +3,7 @@ using UnityEngine;
 namespace DesertTower.VFX
 {
     /// <summary>
-    /// One exhibit in the VFX showcase scene (Assets/VFX/Scenes/VFX_Showcase.unity). Spawns its prefab at
+    /// One exhibit in the VFX showcase scene (Assets/Resources/VFX/Scenes/VFX_Showcase.unity). Spawns its prefab at
     /// this transform and keeps it going in play mode: one-shots respawn on a timer, the projectile flies a
     /// track and lands its impact, the core sweeps its stability, the enemy death gets a random tint.
     /// Play-mode only — everything that needs scripts (attractor, spin, flicker, scale-in) runs here.

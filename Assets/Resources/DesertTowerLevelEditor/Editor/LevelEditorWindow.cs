@@ -17,6 +17,8 @@ namespace DesertTower.Levels.Editor
         [SerializeField] LevelElementDefinition definition;
         [SerializeField] GameObject prefab;
         [SerializeField] Material material;
+        [SerializeField] Material surface;
+        [SerializeField] float surfaceTiling=6;
         [SerializeField] Vector3 blockSize=new Vector3(8,1,8);
         [SerializeField] float roadWidth=6, yaw, surfaceOffset=.03f;
         [SerializeField] bool snap=true;
@@ -104,6 +106,15 @@ namespace DesertTower.Levels.Editor
                 }
             }
             EditorGUILayout.Space(12);
+            surface=(Material)EditorGUILayout.ObjectField("지형 표면 재질",surface,typeof(Material),false);
+            surfaceTiling=EditorGUILayout.Slider("표면 타일 크기 (m)",surfaceTiling,1,32);
+            using(new EditorGUILayout.HorizontalScope())
+            {
+                using(new EditorGUI.DisabledScope(!surface)) if(GUILayout.Button("표면 재질 칠하기")) ApplyTerrainSurface();
+                if(GUILayout.Button("지형 셰이더 복구")) RepairTerrainMaterial();
+            }
+            EditorGUILayout.HelpBox("Terrain에는 Material을 끌어다 놓을 수 없습니다. 재질을 Terrain Layer로 옮겨 등록하면 Terrain 인스펙터의 Paint Texture 브러시로 칠할 수 있습니다.",MessageType.Info);
+            EditorGUILayout.Space(12);
             Heading("02  바닥 · 벽 · 단상","충돌 가능한 블록으로 공간과 카메라 여유를 먼저 확인합니다.");
             blockSize=EditorGUILayout.Vector3Field("폭 / 높이 / 길이 (m)",blockSize);
             material=(Material)EditorGUILayout.ObjectField("표면 재질",material,typeof(Material),false);
@@ -124,6 +135,27 @@ namespace DesertTower.Levels.Editor
             Heading("04  구조물 · 절벽 자산","블렌더 등에서 만든 프리팹을 지면에 반복 배치할 수 있습니다.");
             prefab=(GameObject)EditorGUILayout.ObjectField("배치할 프리팹",prefab,typeof(GameObject),false);
             using(new EditorGUI.DisabledScope(!prefab)) if(GUILayout.Button("프리팹 클릭 배치")) SetMode(ToolMode.Prefab);
+        }
+
+        Terrain ActiveTerrain()
+        {
+            var terrain=root ? root.GetComponentInChildren<Terrain>() : null;
+            if(!terrain) status="레벨 안에 Terrain이 없습니다. 먼저 만들어 주세요.";
+            return terrain;
+        }
+        void ApplyTerrainSurface()
+        {
+            var terrain=ActiveTerrain(); if(!terrain) return;
+            var layer=LevelAuthoring.PaintSurface(terrain,surface,surfaceTiling);
+            Selection.activeGameObject=terrain.gameObject; EditorGUIUtility.PingObject(layer);
+            int count=terrain.terrainData.terrainLayers.Length;
+            status=count<=1 ? $"'{surface.name}' 을(를) 지형 전체에 깔았습니다."
+                : $"'{surface.name}' 을(를) {count}번째 Terrain Layer로 등록했습니다. Terrain 인스펙터의 Paint Texture 브러시로 칠하세요.";
+        }
+        void RepairTerrainMaterial()
+        {
+            var terrain=ActiveTerrain(); if(!terrain) return;
+            status=LevelAuthoring.RepairTerrainMaterial(terrain) ? "Terrain 재질을 URP 지형 셰이더로 되돌렸습니다." : "Terrain 재질은 이미 지형 셰이더입니다.";
         }
 
         void MarkerPanel()

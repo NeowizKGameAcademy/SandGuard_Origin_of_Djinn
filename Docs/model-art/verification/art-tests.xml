@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-08 08:57:30Z" end-time="2026-09-08 08:57:33Z" duration="3.111191">
+  <test-suite type="TestSuite" id="1052" name="DesertTower" fullname="DesertTower" runstate="Runnable" testcasecount="31" result="Passed" start-time="2026-09-08 08:57:30Z" end-time="2026-09-08 08:57:33Z" duration="3.111191" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1038" name="SandGuard.Player.Tests.dll" fullname="C:/course/unity/SandGuard/Library/ScriptAssemblies/SandGuard.Player.Tests.dll" runstate="Runnable" testcasecount="23" result="Passed" start-time="2026-09-08 08:57:30Z" end-time="2026-09-08 08:57:33Z" duration="3.103316" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="29356" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1039" name="SandGuard" fullname="SandGuard" runstate="Runnable" testcasecount="23" result="Passed" start-time="2026-09-08 08:57:30Z" end-time="2026-09-08 08:57:33Z" duration="3.102186" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1040" name="Player" fullname="SandGuard.Player" runstate="Runnable" testcasecount="23" result="Passed" start-time="2026-09-08 08:57:30Z" end-time="2026-09-08 08:57:33Z" duration="3.101390" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1041" name="Tests" fullname="SandGuard.Player.Tests" runstate="Runnable" testcasecount="23" result="Passed" start-time="2026-09-08 08:57:30Z" end-time="2026-09-08 08:57:33Z" duration="3.100529" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1036" name="ProtagonistArtTests" fullname="SandGuard.Player.Tests.ProtagonistArtTests" classname="SandGuard.Player.Tests.ProtagonistArtTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-09-08 08:57:30Z" end-time="2026-09-08 08:57:33Z" duration="3.099077" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1037" name="TexturedPlayerMovesAndLampChangesAttachmentAndLight" fullname="SandGuard.Player.Tests.ProtagonistArtTests.TexturedPlayerMovesAndLampChangesAttachmentAndLight" methodname="TexturedPlayerMovesAndLampChangesAttachmentAndLight" classname="SandGuard.Player.Tests.ProtagonistArtTests" runstate="Runnable" seed="362404454" result="Passed" start-time="2026-09-08 08:57:30Z" end-time="2026-09-08 08:57:33Z" duration="3.087797" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[ART_RUNTIME_BOUNDS Center: (-0.01, 0.92, 0.08), Extents: (0.52, 1.06, 0.62) modelScale=(1.00, 1.00, 1.00) skinScale=(100.00, 100.00, 100.00)
+Camera PlayerCamera does not contain an additional camera data component. Open the Game Object in the inspector to add additional camera data.
+Camera Art Verification Camera does not contain an additional camera data component. Open the Game Object in the inspector to add additional camera data.
+Saving results to: C:/Users/m/AppData/LocalLow/DefaultCompany/DesertTower\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
