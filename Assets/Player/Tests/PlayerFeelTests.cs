@@ -193,6 +193,49 @@ namespace SandGuard.Player.Tests
             Assert.Less(Vector3.Distance(rig.Pivot, rig.target.position), 0.05f, "The pivot must settle on the player after stopping.");
         }
 
+        [UnityTest] public IEnumerator DownhillSnapPreservesLocomotionVelocityAndResetsIt()
+        {
+            var slope = Cube(new Vector3(0, 0, 10), new Vector3(8, .2f, 30));
+            slope.transform.rotation = Quaternion.Euler(35f, 0, 0);
+            Physics.SyncTransforms();
+            var player = Player(new Vector3(0, 8, 0));
+            var motor = player.GetComponent<PlayerMotor>();
+            var controller = player.GetComponent<CharacterController>();
+            yield return new WaitForSeconds(.8f);
+            Assert.True(motor.IsGrounded);
+            motor.moveSpeed = 10f;
+            // Force the explicit ground snap rather than the controller's automatic step-down.
+            float originalStepOffset = controller.stepOffset;
+            controller.stepOffset = 0f;
+            motor.groundStickSpeed = 0f;
+            motor.gravity = .01f;
+            Keys(Key.W);
+            yield return new WaitForSeconds(.3f); // Allow acceleration regardless of batch-mode frame rate.
+            int correctedFrames = 0;
+            for (int i = 0; i < 35; i++)
+            {
+                yield return null;
+                if (!motor.IsGrounded) continue;
+                Assert.Greater(motor.Velocity.z, 8f, "Ground snap must not erase horizontal locomotion speed.");
+                if (controller.velocity.z < motor.Velocity.z * .5f) correctedFrames++;
+            }
+            Assert.Greater(correctedFrames, 0, "The test must exercise a second, downward Move call.");
+            controller.stepOffset = originalStepOffset;
+            motor.Teleport(new Vector3(0, 8, 0));
+            Assert.AreEqual(Vector3.zero, motor.Velocity, "Teleport must not publish a velocity spike.");
+            motor.MovementEnabled = false;
+            yield return null;
+            Assert.AreEqual(Vector3.zero, motor.Velocity);
+            motor.MovementEnabled = true;
+            Time.timeScale = 0f;
+            yield return null;
+            Assert.AreEqual(Vector3.zero, motor.Velocity, "Paused frames must have finite, zero velocity.");
+            Time.timeScale = 1f;
+            motor.enabled = false;
+            Assert.AreEqual(Vector3.zero, motor.Velocity);
+            Keys();
+        }
+
         [UnityTest] public IEnumerator SnapsToGroundWhenWalkingDownASlope()
         {
             Cube(new Vector3(0, -0.5f, 0), new Vector3(60, 1, 60));
@@ -208,6 +251,76 @@ namespace SandGuard.Player.Tests
             for (float t = 0f; t < 1.2f; t += Time.deltaTime) { if (!motor.IsGrounded) airborneFrames++; yield return null; }
             Keys();
             Assert.LessOrEqual(airborneFrames, 2, "Walking down a gentle slope must not flicker the grounded state.");
+        }
+
+        [UnityTest] public IEnumerator CaptureCrouchSprintDash()
+        {
+            Assert.AreNotEqual(UnityEngine.Rendering.GraphicsDeviceType.Null, SystemInfo.graphicsDeviceType);
+            float previousCapture = Time.captureDeltaTime;
+            var floor = Cube(new Vector3(0, -.5f, 0), new Vector3(100, 1, 100));
+            var material = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+            material.SetColor("_BaseColor", new Color(.28f, .25f, .20f));
+            floor.GetComponent<Renderer>().sharedMaterial = material;
+            var light = Track(new GameObject("Dash capture light")).AddComponent<Light>();
+            light.type = LightType.Directional; light.intensity = 2f;
+            light.transform.rotation = Quaternion.Euler(40, -35, 0);
+            var player = Player(Vector3.zero);
+            var motor = player.GetComponent<PlayerMotor>();
+            var cameras = new Camera[2];
+            var offsets = new[] { new Vector3(5, 1, 0), new Vector3(4, 1.3f, 4) };
+            var folders = new[] { "side", "three-quarter" };
+            var rt = new RenderTexture(1280, 720, 24);
+            var texture = new Texture2D(1280, 720, TextureFormat.RGB24, false);
+            var oldRT = RenderTexture.active;
+            try
+            {
+                Time.captureDeltaTime = 1f / 60f;
+                for (int j = 0; j < 2; j++)
+                {
+                    cameras[j] = Track(new GameObject("Dash capture " + folders[j])).AddComponent<Camera>();
+                    cameras[j].enabled = false;
+                    cameras[j].orthographic = true; cameras[j].orthographicSize = 1.55f;
+                    cameras[j].nearClipPlane = .01f; cameras[j].farClipPlane = 100f;
+                    cameras[j].clearFlags = CameraClearFlags.SolidColor;
+                    cameras[j].backgroundColor = new Color(.16f, .18f, .21f);
+                    System.IO.Directory.CreateDirectory("Logs/dash-crouch-review/" + folders[j]);
+                }
+                yield return new WaitForSeconds(.4f);
+                Keys(Key.W); yield return new WaitForSeconds(.3f);
+                var animator = player.GetComponentInChildren<Animator>();
+                int layer = animator.GetLayerIndex("Dash Legs");
+                Assert.GreaterOrEqual(layer, 0);
+                bool observedClip = false;
+                float dashStart = 0f;
+                for (int i = 0; i < 96; i++)
+                {
+                    if (i == 24) { dashStart = player.transform.position.z; Assert.True(motor.TryDash().Succeeded); }
+                    if (i == 70) Keys();
+                    yield return null;
+                    if (i >= 28 && i < 40)
+                        foreach (var info in animator.GetCurrentAnimatorClipInfo(layer))
+                            if (info.clip.name == "Crouch Sprint Dash" && info.weight > .5f) observedClip = true;
+                    if (i == 43) Assert.Greater(player.transform.position.z - dashStart, motor.DashDistance * .85f);
+                    for (int j = 0; j < 2; j++)
+                    {
+                        Vector3 center = player.transform.position + Vector3.up * .85f;
+                        cameras[j].transform.position = center + offsets[j]; cameras[j].transform.LookAt(center);
+                        cameras[j].targetTexture = rt; cameras[j].Render(); RenderTexture.active = rt;
+                        texture.ReadPixels(new Rect(0, 0, 1280, 720), 0, 0); texture.Apply();
+                        System.IO.File.WriteAllBytes($"Logs/dash-crouch-review/{folders[j]}/frame-{i:000}.png", texture.EncodeToPNG());
+                    }
+                }
+                Assert.True(observedClip, "The actual dash layer must play the newly imported crop.");
+                Assert.False(motor.IsDashing);
+                Assert.Less(animator.GetLayerWeight(layer), .01f, "Dash must blend back out after release.");
+                Assert.False(animator.applyRootMotion);
+            }
+            finally
+            {
+                Time.captureDeltaTime = previousCapture; RenderTexture.active = oldRT;
+                foreach (var camera in cameras) if (camera != null) camera.targetTexture = null;
+                rt.Release(); Object.Destroy(rt); Object.Destroy(texture); Object.Destroy(material); Keys();
+            }
         }
     }
 }

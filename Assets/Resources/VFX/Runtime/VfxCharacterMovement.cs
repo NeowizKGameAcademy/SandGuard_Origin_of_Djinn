@@ -42,7 +42,7 @@ namespace DesertTower.VFX
         void Spawn(GameObject prefab)
         {
             if (prefab == null) return;
-            Destroy(Instantiate(prefab, transform.position + FeetOffset, Quaternion.identity), Lifetime);
+            PrefabPool.Release(PrefabPool.Spawn(prefab, transform.position + FeetOffset, Quaternion.identity), Lifetime);
         }
     }
 }

@@ -358,7 +358,7 @@ namespace DesertTower.VFX.Editor
 
         // ---- Footstep sand (loop, rate over distance) ------------------------
 
-        /// <summary>#24 발밑 먼지 트레일: 움직인 거리마다 모래 알갱이와 작은 먼지를 남긴다. 발 위치에 자식으로 붙이고 VfxFootstepDust가 켜고 끈다.</summary>
+        /// <summary>#24 발밑 먼지 트레일: 움직인 거리마다 작은 먼지를 남긴다. 발 위치에 자식으로 붙이고 VfxFootstepDust가 켜고 끈다.</summary>
         static void BuildFootstepSand()
         {
             var s = GetShared();
@@ -383,24 +383,6 @@ namespace DesertTower.VFX.Editor
             RandomTile(puffs, 2, 2);
             UseBillboard(pr, s.Smoke);
             pr.sortingFudge = 5f;
-
-            var grains = AddSystem(Child(root, "Grains"), out var gr, loop: true);
-            var gm = grains.main;
-            gm.duration = 1f;
-            gm.startLifetime = new ParticleSystem.MinMaxCurve(0.3f, 0.5f);
-            gm.startSpeed = new ParticleSystem.MinMaxCurve(0.8f, 1.6f);
-            gm.startSize = new ParticleSystem.MinMaxCurve(0.035f, 0.065f);
-            gm.startColor = Beige * 0.7f;
-            gm.gravityModifier = 0.8f;
-            gm.maxParticles = 40;
-            RandomRotation3D(gm);
-            Rate(grains, perSecond: 0f, perUnit: 4f);
-            ConeShape(grains, 50f, 0.1f);
-            grains.transform.localRotation = Quaternion.Euler(-90f, 0f, 0f);
-            Tumble(grains);
-            Size(grains, HoldThenDrop(0.6f));
-            ColorRamp(grains, Color.white, Beige * 0.8f, BeigeDark, 0.5f);
-            UseMesh(gr, s.Cube, s.CubeWhite);
 
             SavePrefab(root, FootstepSandPath);
         }

@@ -165,7 +165,16 @@ namespace SandGuard.Player.Tests
                     Assert.Less(Vector3.ProjectOnPlane(player.transform.position - planted, Vector3.up).magnitude, .001f, "Held movement must not slide during recovery.");
             }
             Assert.False(motor.HardLandingLocked);
-            Assert.GreaterOrEqual(lastNormalized, .99f, "The complete landing clip must play before movement unlocks.");
+            if (State(animator).IsName("Hard Landing")) lastNormalized = State(animator).normalizedTime;
+            Assert.GreaterOrEqual(lastNormalized, 1f, "The complete landing clip must play before movement unlocks.");
+            Assert.True(State(animator).IsName("Hard Landing") && animator.IsInTransition(0)
+                && animator.GetNextAnimatorStateInfo(0).IsName("Locomotion"),
+                "Unlock at clip completion, while the 0.15s recovery blend is still active.");
+            Vector3 unlockedAt = player.transform.position;
+            yield return new WaitForSeconds(.05f);
+            Assert.Greater(Vector3.ProjectOnPlane(player.transform.position - unlockedAt, Vector3.up).magnitude, .001f,
+                "Movement input must work during the visual recovery blend.");
+            Assert.True(motor.TryDash().Succeeded, "Dash must be available before the recovery blend ends.");
             yield return new WaitForSeconds(.2f);
             Assert.Greater(Vector3.ProjectOnPlane(player.transform.position - planted, Vector3.up).magnitude, .05f, "Held movement resumes after recovery.");
             Keys();

@@ -22,7 +22,7 @@ namespace SandGuard.Player
         [Tooltip("스킬 ③ 상승 기류가 UpdraftEffect로 켠다. 꺼져 있으면 Space를 오래 눌러도 아무 일도 없다")]
         public bool unlocked;
         [Header("충전")]
-        [Min(0f), Tooltip("접지 상태에서 Space를 이만큼 누르고 있으면 충전이 시작된다. 그 전에 놓으면 점프(탭)")] public float holdToCharge = 0.15f;
+        [Min(0f), Tooltip("접지 상태에서 Space를 이만큼 누르고 있으면 충전이 시작된다. 그 전에 놓으면 점프(탭)")] public float holdToCharge = 0.3f;
         [Min(0.05f), Tooltip("충전이 가득 차는 시간")] public float chargeTime = 0.8f;
         [Header("도약")]
         [Min(0.1f), Tooltip("충전 0일 때 높이")] public float minHeight = 4f;

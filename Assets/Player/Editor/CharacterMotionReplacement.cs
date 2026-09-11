@@ -53,6 +53,60 @@ namespace SandGuard.Player.Editor
         static AnimationClip Clip(string path) => AssetDatabase.LoadAllAssetsAtPath(path).OfType<AnimationClip>()
             .First(c => !c.name.StartsWith("__preview__"));
 
+        [MenuItem("SandGuard/Animation Library/Update Player Running Advanced")]
+        public static void UpdatePlayerRunningAdvanced()
+        {
+            string source = FindSource("protagonist", "Running advanced");
+            const string staged = Library + "/Player/Running advanced.fbx";
+            string target = ProtagonistArtBuilder.Art + "/Run.fbx";
+            File.Copy(source, staged, true);
+            AssetDatabase.ImportAsset(staged, ImportAssetOptions.ForceSynchronousImport);
+            var fresh = (ModelImporter)AssetImporter.GetAtPath(staged);
+            fresh.animationType = ModelImporterAnimationType.Human;
+            fresh.avatarSetup = ModelImporterAvatarSetup.CreateFromThisModel;
+            fresh.materialImportMode = ModelImporterMaterialImportMode.None;
+            fresh.animationCompression = ModelImporterAnimationCompression.Off;
+            fresh.SaveAndReimport();
+            var sourceAvatar = AssetDatabase.LoadAllAssetsAtPath(staged).OfType<Avatar>().First();
+            if (!sourceAvatar.isValid || !sourceAvatar.isHuman || !Clip(staged).humanMotion)
+                throw new InvalidOperationException("Invalid Running advanced humanoid source");
+            var importer = (ModelImporter)AssetImporter.GetAtPath(target);
+            var settings = importer.clipAnimations[0];
+            string guid = AssetDatabase.AssetPathToGUID(target);
+            File.Copy(source, target, true);
+            AssetDatabase.ImportAsset(target, ImportAssetOptions.ForceSynchronousImport);
+            importer = (ModelImporter)AssetImporter.GetAtPath(target);
+            // Keep the established player reference rotations and the new source's bone lengths.
+            var description = fresh.humanDescription;
+            var common = ((ModelImporter)AssetImporter.GetAtPath(Library + "/Player/Standing Run Forward.fbx"))
+                .humanDescription.skeleton.ToDictionary(b => b.name, b => b.rotation);
+            var skeleton = description.skeleton;
+            for (int i = 0; i < skeleton.Length; i++)
+                if (common.TryGetValue(skeleton[i].name, out var rotation)) skeleton[i].rotation = rotation;
+            description.skeleton = skeleton;
+            importer.avatarSetup = ModelImporterAvatarSetup.CreateFromThisModel;
+            importer.sourceAvatar = null;
+            importer.humanDescription = description;
+            var range = fresh.defaultClipAnimations[0];
+            settings.takeName = range.takeName;
+            settings.firstFrame = range.firstFrame; settings.lastFrame = range.lastFrame;
+            settings.loopTime = settings.loopPose = true;
+            settings.lockRootPositionXZ = false;
+            importer.clipAnimations = new[] { settings };
+            importer.SaveAndReimport();
+            var clip = Clip(target);
+            var controller = AssetDatabase.LoadAssetAtPath<AnimatorController>(ProtagonistArtBuilder.Art + "/Protagonist.controller");
+            var tree = AssetDatabase.LoadAllAssetsAtPath(AssetDatabase.GetAssetPath(controller)).OfType<BlendTree>()
+                .Single(t => t.name == "Player Run Directions");
+            if (AssetDatabase.AssetPathToGUID(target) != guid || !clip.humanMotion || !clip.isLooping
+                || tree.children.First(c => c.position == Vector2.up).motion != clip
+                || Mathf.Abs(clip.length - Clip(staged).length) > .001f)
+                throw new InvalidOperationException("Running advanced import or locomotion link failed");
+            Directory.CreateDirectory("Logs");
+            File.WriteAllText("Logs/player-running-advanced.txt", $"PASS: {source} -> {target}\nGUID preserved: {guid}\nHumanoid/loop/forward blend link valid. Full clip: {clip.length:F3}s ({range.firstFrame}..{range.lastFrame})\n");
+            Debug.Log("PLAYER_RUNNING_ADVANCED_COMPLETE");
+        }
+
         [MenuItem("SandGuard/Animation Library/Verify HammerBrute Walk Range")]
         public static void ValidateHammerWalkRange()
         {
@@ -239,7 +293,7 @@ namespace SandGuard.Player.Editor
                 jobs.Add(new Job { character = who, folder = folder, name = motion, target = target, body = body,
                     source = FindSource(folder, motion), library = Library + "/" + who + "/" + motion + ".fbx" });
             }
-            foreach (var pair in new[] { ("Idle", "Protagonist"), ("Walk", "Walk"), ("Running", "Run"),
+            foreach (var pair in new[] { ("Idle", "Protagonist"), ("Walk", "Walk"), ("Running advanced", "Run"),
                 ("Running Forward Flip", "Jump"), ("Jumping", "CastingJump") })
                 Add("Player", "protagonist", pair.Item1, player + "/" + pair.Item2 + ".fbx", player + "/Protagonist.fbx");
             foreach (string gait in new[] { "Walk", "Run" })

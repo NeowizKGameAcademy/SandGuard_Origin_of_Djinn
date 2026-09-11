@@ -1,6 +1,7 @@
 #if UNITY_EDITOR
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using SandGuard.Player.Effects;
 using UnityEditor;
@@ -85,7 +86,8 @@ namespace SandGuard.Player.Tests
             Assert.True(result.Succeeded, "Burst cast: " + result.Failure);
             yield return new WaitForSeconds(0.5f);
         }
-        int Bolts => Object.FindObjectsByType<PlayerProjectile>(FindObjectsSortMode.None).Length;
+        /// <summary>날아가는 중인 볼트만 센다. 명중 뒤 잔상을 재생하며 풀로 돌아가는 개체는 빼고 센다.</summary>
+        int Bolts => Object.FindObjectsByType<PlayerProjectile>(FindObjectsSortMode.None).Count(bolt => bolt.IsLive);
 
         [Test] public void AttackSkillsAttachAndDetachSymmetrically()
         {

@@ -3,7 +3,7 @@ using UnityEngine;
 namespace DesertTower.VFX
 {
     /// <summary>Visual only. Spawn at the target's feet; the status system owns the root duration.</summary>
-    public sealed class VfxSandRoot : MonoBehaviour
+    public sealed class VfxSandRoot : MonoBehaviour, IPoolable
     {
         ParticleSystem[] systems;
         bool releasing;
@@ -12,11 +12,18 @@ namespace DesertTower.VFX
         Vector3 massScale;
         Transform leftCoil, rightCoil, leftFoot, rightFoot;
 
-        void Awake()
+        void Awake() => Bind();
+
+        /// <summary>풀에서 다른 적에게 다시 붙을 수 있으므로 대여할 때마다 발 본을 다시 찾는다.</summary>
+        void IPoolable.OnRent() => Bind();
+        void IPoolable.OnReturn() { releasing = false; leftFoot = rightFoot = null; }
+
+        void Bind()
         {
             systems = GetComponentsInChildren<ParticleSystem>(true);
             mass = transform.Find("BindingMass");
-            if (mass != null) massScale = mass.localScale;
+            if (mass != null && massScale == Vector3.zero) massScale = mass.localScale;
+            leftCoil = rightCoil = leftFoot = rightFoot = null;
             var animator = GetComponentInParent<Animator>();
             if (animator == null && transform.parent != null) animator = transform.parent.GetComponentInChildren<Animator>();
             if (mass != null && animator != null && animator.isHuman)
@@ -60,7 +67,7 @@ namespace DesertTower.VFX
             if (!releasing) return;
             remaining -= Time.deltaTime;
             if (mass != null) mass.localScale = Vector3.Scale(massScale, new Vector3(1f, Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((remaining - .2f) / .8f)), 1f));
-            if (remaining <= 0f) Destroy(gameObject);
+            if (remaining <= 0f) PrefabPool.Release(gameObject);
         }
 
         void OnDisable()

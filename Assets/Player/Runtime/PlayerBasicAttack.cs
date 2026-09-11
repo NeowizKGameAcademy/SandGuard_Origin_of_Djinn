@@ -203,7 +203,7 @@ namespace SandGuard.Player
 
         PlayerProjectile FireBolt(Vector3 muzzle, Vector3 direction, Vector3 origin, Action<Vector3> onImpact)
         {
-            PlayerProjectile projectile = Instantiate(projectilePrefab, muzzle, Quaternion.LookRotation(direction));
+            PlayerProjectile projectile = PrefabPool.Spawn(projectilePrefab, muzzle, Quaternion.LookRotation(direction));
             if (stats != null) projectile.speed = stats.Evaluate(PlayerStat.ProjectileSpeed, projectile.speed);
             float scale = BoltScale;
             if (projectile.visualRoot != null && Mathf.Abs(scale - 1f) > 0.001f) projectile.visualRoot.localScale *= scale;
@@ -236,12 +236,14 @@ namespace SandGuard.Player
             LastBeam = new PlayerBeamShot(visualStart, direction, end, enemyPoints.Count, landed);
             if (beamPrefab != null)
             {
-                var beam = Instantiate(beamPrefab, visualStart, Quaternion.LookRotation(direction));
+                var beam = PrefabPool.Spawn(beamPrefab, visualStart, Quaternion.LookRotation(direction));
                 var driver = beam.GetComponentInChildren<VfxBeam>();
                 if (driver != null) driver.SetLength(Mathf.Max(0.05f, LastBeam.Length));
-                Destroy(beam, skillVfxLifetime);
+                PrefabPool.Release(beam, skillVfxLifetime);
             }
-            if (beamHitPrefab != null) foreach (var point in enemyPoints) Destroy(Instantiate(beamHitPrefab, point, Quaternion.identity), skillVfxLifetime);
+            if (beamHitPrefab != null)
+                foreach (var point in enemyPoints)
+                    PrefabPool.Release(PrefabPool.Spawn(beamHitPrefab, point, Quaternion.identity), skillVfxLifetime);
             BeamFired?.Invoke(LastBeam);
             if (BurstPerPierce) foreach (var point in enemyPoints) Detonate(point);
         }
@@ -303,9 +305,10 @@ namespace SandGuard.Player
             }
             if (burstPrefab != null)
             {
-                var vfx = Instantiate(burstPrefab, center, Quaternion.identity);
+                var vfx = PrefabPool.Spawn(burstPrefab, center, Quaternion.identity);
+                // 풀이 대여할 때 원본 크기로 되돌리므로 배율이 재사용마다 겹쳐 쌓이지 않는다.
                 vfx.transform.localScale *= radius / burstVfxRadius; // 반경을 키우면 연출도 같이 커진다
-                Destroy(vfx, skillVfxLifetime);
+                PrefabPool.Release(vfx, skillVfxLifetime);
             }
             if (cameraRig != null && burstCameraKick > 0f) cameraRig.Kick(burstCameraKick, burstCameraKickDuration);
             Burst?.Invoke(center);

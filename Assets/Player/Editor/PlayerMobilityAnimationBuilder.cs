@@ -74,7 +74,7 @@ namespace SandGuard.Player.Editor
             doubleJump.motion = flip; doubleJump.speed = flip.averageDuration / 0.6f; doubleJump.iKOnFeet = false;
             falling.motion = fallingClip; falling.speed = 1f; falling.iKOnFeet = false;
             landing.motion = landingClip; landing.speed = 1.4f; landing.iKOnFeet = true;
-            hardLanding.motion = hardLandingClip; hardLanding.speed = 1.3f; hardLanding.iKOnFeet = true;
+            hardLanding.motion = hardLandingClip; hardLanding.speed = 2f; hardLanding.iKOnFeet = true;
             // 충전: Charge 0(선 자세)→1(웅크림)로 서서히 낮아진다.
             charge.motion = ChargeTree(controller, ProtagonistArtBuilder.Clip("Protagonist"), crouchClip); charge.speed = 1f; charge.iKOnFeet = true;
             fly.motion = flyClip; fly.speed = 1f; fly.iKOnFeet = false;
@@ -156,7 +156,7 @@ namespace SandGuard.Player.Editor
             // 루트·척추·양다리: 낮게 깔린 밀기 자세가 상체 기울임까지 나온다. 팔·머리는 Base Layer(이동·조준·시전)가 맡는다.
             foreach (var part in new[] { AvatarMaskBodyPart.Root, AvatarMaskBodyPart.Body, AvatarMaskBodyPart.LeftLeg, AvatarMaskBodyPart.RightLeg })
                 mask.SetHumanoidBodyPartActive(part, true);
-            if (dashClip.name == "Sand Dash")
+            if (dashClip.name == "Sand Dash" || dashClip.name == "Crouch Sprint Dash")
                 foreach (var part in new[] { AvatarMaskBodyPart.Head, AvatarMaskBodyPart.LeftArm, AvatarMaskBodyPart.RightArm, AvatarMaskBodyPart.LeftFingers, AvatarMaskBodyPart.RightFingers })
                     mask.SetHumanoidBodyPartActive(part, true);
             EditorUtility.SetDirty(mask);
@@ -173,13 +173,13 @@ namespace SandGuard.Player.Editor
             machine.defaultState = empty;
             foreach (var transition in machine.anyStateTransitions.ToArray()) if (transition.name.StartsWith(Prefix)) machine.RemoveAnyStateTransition(transition);
             foreach (var transition in dash.transitions.ToArray()) if (transition.name.StartsWith(Prefix)) dash.RemoveTransition(transition);
-            var start = Configure(machine.AddAnyStateTransition(dash), "Dash", 0.05f);
+            var start = Configure(machine.AddAnyStateTransition(dash), "Dash", 0.1f);
             start.AddCondition(AnimatorConditionMode.If, 0, "Dashing");
             if (controller.parameters.Any(p => p.name == "Dead")) start.AddCondition(AnimatorConditionMode.IfNot, 0, "Dead");
             var end = Configure(dash.AddTransition(empty), "Dash End", 0.15f); // 낮은 자세를 풀며 달리기 다리로
             end.AddCondition(AnimatorConditionMode.IfNot, 0, "Dashing");
             // The authored dash controls the whole pose; casting/hit layers retain priority above it.
-            if (dashClip.name == "Sand Dash" && index > 1)
+            if ((dashClip.name == "Sand Dash" || dashClip.name == "Crouch Sprint Dash") && index > 1)
             {
                 var ordered = layers.ToList(); var dashLayer = ordered[index]; ordered.RemoveAt(index); ordered.Insert(1, dashLayer);
                 layers = ordered.ToArray();
@@ -187,7 +187,10 @@ namespace SandGuard.Player.Editor
             controller.layers = layers;
         }
 
-        static AnimationClip ImportDash() => File.Exists(Source + "character-protagonist-sand-dash.fbx")
+        // 30 fps source: skip the initial crouched hold and keep the push-off through the first running step.
+        static AnimationClip ImportDash() => File.Exists(Source + "character-protagonist-mixamo@Crouched To Sprinting.fbx")
+            ? Import("character-protagonist-mixamo@Crouched To Sprinting.fbx", "CrouchSprintDash", "Crouch Sprint Dash", false, true, 3, 15)
+            : File.Exists(Source + "character-protagonist-sand-dash.fbx")
             ? Import("character-protagonist-sand-dash.fbx", "SandDash", "Sand Dash", false, true, -1, -1)
             : Import("character-protagonist-mixamo@Pushing.fbx", "DashLegs", "Push Legs", false, true, DashFirstFrame, DashLastFrame);
 
@@ -265,6 +268,18 @@ namespace SandGuard.Player.Editor
             importer.materialImportMode = ModelImporterMaterialImportMode.None;
             importer.animationCompression = ModelImporterAnimationCompression.Off;
             importer.SaveAndReimport();
+            if (file == "CrouchSprintDash")
+            {
+                var description = importer.humanDescription;
+                var common = ((ModelImporter)AssetImporter.GetAtPath("Assets/MotionLibrary/CharacterDownloads/Player/Standing Run Forward.fbx"))
+                    .humanDescription.skeleton.ToDictionary(b => b.name, b => b.rotation);
+                var skeleton = description.skeleton;
+                for (int i = 0; i < skeleton.Length; i++)
+                    if (common.TryGetValue(skeleton[i].name, out var rotation)) skeleton[i].rotation = rotation;
+                description.skeleton = skeleton;
+                importer.humanDescription = description;
+                importer.SaveAndReimport();
+            }
             var clips = importer.defaultClipAnimations;
             if (clips.Length == 0) throw new InvalidOperationException("No animation in " + source);
             var clip = clips[0]; clip.name = clipName; clip.loopTime = loop; clip.loopPose = loop;

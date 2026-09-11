@@ -14,6 +14,8 @@ namespace DesertTower.LevelIntegration
         public PrefabCatalog catalog;
         [Tooltip("ILevelCoreReceiver 구현 컴포넌트")]
         public MonoBehaviour coreReceiver;
+        [Tooltip("IActorFactory 구현 컴포넌트(예: EnemyPoolActorFactory). 비우면 같은 오브젝트에서 찾고, 없으면 Instantiate/Destroy를 쓴다")]
+        public MonoBehaviour actorFactory;
         public bool startAutomatically;
         public int randomSeed = 1234;
         [Min(1)] public int maxSpawnsPerFrame = 32;
@@ -37,11 +39,20 @@ namespace DesertTower.LevelIntegration
             public float damage;
             public bool arrived;
         }
+        enum SpawnOutcome { Spawned, Deferred, Failed }
         readonly List<Schedule> schedules = new List<Schedule>();
         readonly List<Walker> actors = new List<Walker>();
         System.Random random;
         float elapsed;
         ILevelCoreReceiver Core => coreReceiver as ILevelCoreReceiver;
+        IActorFactory Factory => actorFactory as IActorFactory;
+
+        void Awake()
+        {
+            if (actorFactory == null)
+                foreach (var component in GetComponents<MonoBehaviour>())
+                    if (component is IActorFactory) { actorFactory = component; break; }
+        }
 
         void Start() { if (startAutomatically) Begin(); }
         void OnDisable() { StopRun(); }
@@ -115,7 +126,10 @@ namespace DesertTower.LevelIntegration
             foreach (var schedule in schedules)
                 while (budget > 0 && schedule.emitted < schedule.group.count && elapsed >= schedule.next)
                 {
-                    if (!Spawn(schedule.group)) return;
+                    SpawnOutcome outcome = Spawn(schedule.group);
+                    if (outcome == SpawnOutcome.Failed) return;
+                    // 풀이 가득 찼다. 예정 시각을 그대로 두어 다음 프레임에 이어서 낸다.
+                    if (outcome == SpawnOutcome.Deferred) break;
                     budget--; schedule.emitted++; schedule.next += schedule.group.interval;
                 }
             elapsed += Time.deltaTime;
@@ -136,19 +150,29 @@ namespace DesertTower.LevelIntegration
             if (actors.Count == 0 && schedules.TrueForAll(s => s.emitted == s.group.count))
             { onWaveCleared.Invoke(); if (State == RunState.Running) NextWave(); }
         }
-        bool Spawn(SpawnGroup group)
+        SpawnOutcome Spawn(SpawnGroup group)
         {
-            if (!graph.level.TryResolveSpawnGroup(group, out var binding, out var error)) { Fail(error); return false; }
+            if (!graph.level.TryResolveSpawnGroup(group, out var binding, out var error)) { Fail(error); return SpawnOutcome.Failed; }
             var entry = catalog.Find(group.element.gameKey);
-            if (entry == null || !entry.prefab) { Fail("적 프리팹이 사라졌습니다."); return false; }
+            if (entry == null || !entry.prefab) { Fail("적 프리팹이 사라졌습니다."); return SpawnOutcome.Failed; }
             // Exact marker position avoids NavMesh sampling onto an adjacent floor.
-            var instance = Instantiate(entry.prefab, binding.Spawn.transform.position, binding.Spawn.transform.rotation);
+            Vector3 position = binding.Spawn.transform.position;
+            Quaternion rotation = binding.Spawn.transform.rotation;
+            GameObject instance = Factory != null
+                ? Factory.Spawn(entry.prefab, position, rotation)
+                : Instantiate(entry.prefab, position, rotation);
+            if (instance == null) return SpawnOutcome.Deferred; // 풀의 동시 활성 상한
             var actor = instance.GetComponent<ActorBridge>();
-            if (!actor || !actor.Prepare(out error)) { Destroy(instance); Fail(error ?? "ActorBridge 누락"); return false; }
+            if (!actor || !actor.Prepare(out error)) { Despawn(instance); Fail(error ?? "ActorBridge 누락"); return SpawnOutcome.Failed; }
             var walker = new Walker { actor = actor, damage = entry.coreDamage };
             if (binding.SuggestedRoute) walker.legacy = new Queue<Vector3>(binding.SuggestedRoute.WorldPoints());
             else { walker.next = graph.Find(binding.Spawn); walker.goal = graph.Find(binding.Target); }
-            actors.Add(walker); TotalSpawned++; return true;
+            actors.Add(walker); TotalSpawned++; return SpawnOutcome.Spawned;
+        }
+
+        void Despawn(GameObject instance)
+        {
+            if (Factory != null) Factory.Despawn(instance); else Destroy(instance);
         }
         bool Advance(Walker w)
         {

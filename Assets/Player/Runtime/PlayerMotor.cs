@@ -111,7 +111,9 @@ namespace SandGuard.Player
         }
         public bool IsGrounded { get; private set; }
         public int RemainingAirJumps { get; private set; }
-        public Vector3 Velocity => controller != null ? controller.velocity : Vector3.zero;
+        // Include both the movement and ground-snap Move calls in the published velocity.
+        public Vector3 Velocity => frameVelocity;
+        Vector3 frameVelocity;
         CharacterController controller;
         Vector3 horizontalVelocity, spawnPosition;
         Vector2 localVelocity; // 카메라 기준 (x 우, y 전). 시점을 돌려도 몸이 흐르지 않도록 로컬로 보관한다.
@@ -141,6 +143,7 @@ namespace SandGuard.Player
         void OnEnable() { if (Input != null) { Input.JumpPressed += QueueJump; Input.DashPressed += QueueDash; } }
         void OnDisable()
         {
+            frameVelocity = Vector3.zero;
             if (Input != null) { Input.JumpPressed -= QueueJump; Input.DashPressed -= QueueDash; }
             jumpBufferTimer = 0f; coyoteTimer = 0f; dashRemaining = 0f;
         }
@@ -273,6 +276,7 @@ namespace SandGuard.Player
 
         void Update()
         {
+            frameVelocity = Vector3.zero;
             DashCooldownRemaining = Mathf.Max(0f, DashCooldownRemaining - Time.deltaTime);
             faceCameraTimer = Mathf.Max(0f, faceCameraTimer - Time.deltaTime);
             if (!Alive || !MovementEnabled || input == null || !input.AcceptsInput || !controller.enabled)
@@ -282,6 +286,7 @@ namespace SandGuard.Player
                 return;
             }
             float dt = Time.deltaTime;
+            if (dt <= 0f) return;
             bool wasGrounded = IsGrounded;
             float impactSpeed = 0f; bool impactCaptured = false; // 이번 프레임에 공중→접지가 되었을 때의 낙하 속도
             IsGrounded = controller.isGrounded && verticalVelocity <= 0f;
@@ -336,6 +341,7 @@ namespace SandGuard.Player
                 else { localVelocity = Vector2.zero; horizontalVelocity = Vector3.zero; }
             }
             // CharacterController's automatic step-down must not lower a horizontal dash either.
+            Vector3 movementStart = transform.position;
             float savedStepOffset = controller.stepOffset;
             CollisionFlags flags;
             try
@@ -347,6 +353,7 @@ namespace SandGuard.Player
             if ((flags & CollisionFlags.Above) != 0 && verticalVelocity > 0f) verticalVelocity = 0f;
             IsGrounded = (flags & CollisionFlags.Below) != 0 && verticalVelocity <= 0f;
             if (!IsGrounded && wasGrounded && !jumpedThisFrame && verticalVelocity <= 0f && TrySnapToGround(dashingThisFrame)) IsGrounded = true;
+            frameVelocity = (transform.position - movementStart) / dt;
             if (IsGrounded) { if (!wasGrounded && !impactCaptured) impactSpeed = -verticalVelocity; Land(); }
             if (dashingThisFrame) verticalVelocity = 0f; // Land's downward stick speed resumes only after the dash.
             if (IsGrounded && !wasGrounded) Landed?.Invoke(Mathf.Max(0f, impactSpeed));
@@ -391,6 +398,7 @@ namespace SandGuard.Player
 
         public void Teleport(Vector3 position)
         {
+            frameVelocity = Vector3.zero;
             bool wasEnabled = controller.enabled;
             controller.enabled = false;
             transform.position = position;
