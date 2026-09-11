@@ -121,14 +121,6 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
-    - m_Name: Rotate
-      m_Type: 1
-      m_ExpectedControlType: 
-      m_Id: d83b3d0b-861f-4af1-9c4e-27ce04697d7a
-      m_Processors: 
-      m_Interactions: 
-      m_SingletonActionBindings: []
-      m_Flags: 0
     - m_Name: Slot1
       m_Type: 1
       m_ExpectedControlType: 
@@ -197,6 +189,30 @@ MonoBehaviour:
       m_Type: 1
       m_ExpectedControlType: 
       m_Id: edbee0ff-707e-47e7-9521-cf978048498e
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    - m_Name: Skill1
+      m_Type: 1
+      m_ExpectedControlType: 
+      m_Id: ed547f93-9ac8-4e5f-b5d5-56ffdf42d51d
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    - m_Name: Skill2
+      m_Type: 1
+      m_ExpectedControlType: 
+      m_Id: 1e5108af-6cc3-484b-9b25-e51560e014f0
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    - m_Name: Skill3
+      m_Type: 1
+      m_ExpectedControlType: 
+      m_Id: 3f4cb591-c1bb-42eb-99de-0e56612c1d47
       m_Processors: 
       m_Interactions: 
       m_SingletonActionBindings: []
@@ -515,14 +531,6 @@ MonoBehaviour:
       m_Action: BuildMode
       m_Flags: 0
     - m_Name: 
-      m_Id: 2bf12880-6175-45a2-9e1b-49161d36436a
-      m_Path: <Keyboard>/r
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Rotate
-      m_Flags: 0
-    - m_Name: 
       m_Id: 4d119d0d-0397-45c3-a7c4-0f3f8600d837
       m_Path: <Keyboard>/1
       m_Interactions: 
@@ -601,6 +609,30 @@ MonoBehaviour:
       m_Processors: 
       m_Groups: 
       m_Action: Dash
+      m_Flags: 0
+    - m_Name: 
+      m_Id: 28066363-91b7-4d98-9770-4f107c4c3285
+      m_Path: <Keyboard>/q
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Skill1
+      m_Flags: 0
+    - m_Name: 
+      m_Id: f09ee283-2d14-4b43-bf0f-c23556b8b50d
+      m_Path: <Keyboard>/e
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Skill2
+      m_Flags: 0
+    - m_Name: 
+      m_Id: 26ae119c-44de-4fea-b5cb-26198c5dd0b7
+      m_Path: <Keyboard>/r
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Skill3
       m_Flags: 0
   - m_Name: UI
     m_Id: 272f6d14-89ba-496f-b7ff-215263d3219f

@@ -16,11 +16,30 @@ namespace SandGuard.Enemy.Tests
     /// <summary>Mixamo 리깅 몸체·클립·장비가 Enemy 프리팹에서 실제로 움직이는지 확인하고 렌더를 저장한다.</summary>
     public sealed class EnemyArtTests
     {
-        const string Captures = "Docs/model-art/enemy-combat-art-v1/captures";
+        static readonly string Captures = Environment.GetEnvironmentVariable("SANDGUARD_ART_TEST_CAPTURES")
+            ?? "Docs/model-art/enemy-combat-art-v1/captures";
         readonly List<GameObject> objects = new List<GameObject>();
         GameObject Track(GameObject value) { objects.Add(value); return value; }
 
         [SetUp] public void Setup() { Time.timeScale = 1f; }
+
+        [UnityTest] public IEnumerator HammerSwingPlaysFullTakeBeforeReturning()
+        {
+            const string art = "Assets/Enemy/Art/Characters/HammerBrute/HammerBrute";
+            var clip = AssetDatabase.LoadAllAssetsAtPath(art + "_Attack.fbx").OfType<AnimationClip>()
+                .First(c => !c.name.StartsWith("__preview__"));
+            Assert.AreEqual(5.2f, clip.length, .001f, "Use the complete downloaded Heavy Weapon Swing take.");
+            Assert.False(clip.isLooping);
+            var visual = Track(UnityEngine.Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(art + "_CombatVisual.prefab")));
+            var animator = visual.GetComponentInChildren<Animator>();
+            yield return null;
+            animator.Play("Attack", 0, .92f); animator.Update(0f);
+            animator.Update(.02f);
+            Assert.True(animator.GetCurrentAnimatorStateInfo(0).IsName("Attack"));
+            Assert.False(animator.IsInTransition(0), "Do not cut the final ten percent of the swing.");
+            animator.Update(.3f); animator.Update(.1f);
+            Assert.True(animator.GetCurrentAnimatorStateInfo(0).IsName("Locomotion"), "Return after completing the swing.");
+        }
         [UnityTearDown] public IEnumerator Cleanup()
         {
             foreach (var value in objects) if (value != null) UnityEngine.Object.Destroy(value);
@@ -28,11 +47,13 @@ namespace SandGuard.Enemy.Tests
             yield return null;
         }
 
-        [UnityTest] public IEnumerator Swordsman() => Check("Assets/Enemy/Generated/Enemy.prefab", "Swordsman", 1.75f, ("ShortSword", HumanBodyBones.RightHand), ("RoundShield", HumanBodyBones.LeftHand));
-        [UnityTest] public IEnumerator Assassin() => Check("Assets/Enemy/Generated/Enemy_Assassin.prefab", "Assassin", 1.68f, ("AssassinDagger", HumanBodyBones.RightHand), ("AssassinDagger", HumanBodyBones.LeftHand));
-        [UnityTest] public IEnumerator ShieldGuard() => Check("Assets/Enemy/Generated/Enemy_ShieldGuard.prefab", "ShieldGuard", 1.84f, ("ShortSword", HumanBodyBones.RightHand), ("TowerShield", HumanBodyBones.LeftHand));
-        [UnityTest] public IEnumerator HammerBrute() => Check("Assets/Enemy/Generated/Enemy_HammerBrute.prefab", "HammerBrute", 1.94f, ("Warhammer", HumanBodyBones.RightHand));
-        [UnityTest] public IEnumerator Chief() => Check("Assets/Enemy/Generated/Enemy_Chief.prefab", "Chief", 2.04f, ("ChiefScimitar", HumanBodyBones.RightHand), ("ChiefCape", HumanBodyBones.Chest));
+        // World-space renderer reference height of the protagonist; includes the renderer bounds margin.
+        const float HeroReferenceHeight = 2.217f;
+        [UnityTest] public IEnumerator Swordsman() => Check("Assets/Enemy/Generated/Enemy.prefab", "Swordsman", HeroReferenceHeight, ("ShortSword", HumanBodyBones.RightHand), ("RoundShield", HumanBodyBones.LeftHand));
+        [UnityTest] public IEnumerator Assassin() => Check("Assets/Enemy/Generated/Enemy_Assassin.prefab", "Assassin", HeroReferenceHeight, ("AssassinDagger", HumanBodyBones.RightHand), ("AssassinDagger", HumanBodyBones.LeftHand));
+        [UnityTest] public IEnumerator ShieldGuard() => Check("Assets/Enemy/Generated/Enemy_ShieldGuard.prefab", "ShieldGuard", HeroReferenceHeight * 1.5f, ("ShortSword", HumanBodyBones.RightHand), ("TowerShield", HumanBodyBones.LeftHand));
+        [UnityTest] public IEnumerator HammerBrute() => Check("Assets/Enemy/Generated/Enemy_HammerBrute.prefab", "HammerBrute", HeroReferenceHeight * 1.5f, ("Warhammer", HumanBodyBones.RightHand));
+        [UnityTest] public IEnumerator Chief() => Check("Assets/Enemy/Generated/Enemy_Chief.prefab", "Chief", HeroReferenceHeight * 2f, ("ChiefScimitar", HumanBodyBones.RightHand), ("ChiefCape", HumanBodyBones.Chest));
 
         IEnumerator Check(string prefabPath, string name, float height, params (string asset, HumanBodyBones bone)[] gear)
         {
@@ -72,7 +93,16 @@ namespace SandGuard.Enemy.Tests
             Assert.AreEqual("Universal Render Pipeline/Lit", skin.sharedMaterial.shader.name);
             Bounds bounds = skin.bounds;
             Assert.AreEqual(height, bounds.size.y, .25f, name + " height should match the preview height.");
-            Assert.AreEqual(0f, bounds.min.y, .2f, name + " feet should be on the floor.");
+            // Renderer bounds include animation padding, which grows with visual scale.
+            // Check the actual posed mesh sole instead of treating culling bounds as the feet.
+            var posedMesh = new Mesh();
+            try
+            {
+                skin.BakeMesh(posedMesh);
+                float sole = posedMesh.vertices.Min(v => skin.transform.TransformPoint(v).y);
+                Assert.AreEqual(0f, sole, .2f, name + " mesh sole should be on the floor.");
+            }
+            finally { UnityEngine.Object.Destroy(posedMesh); }
 
             var equipmentRoots = enemy.GetComponentsInChildren<Transform>().Where(t => t.name.EndsWith("_Placement")).ToArray();
             Assert.AreEqual(gear.Length, equipmentRoots.Length, name + " equipment count.");

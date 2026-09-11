@@ -15,6 +15,8 @@ namespace DesertTower.VFX
         public float Lifetime = 2f;
         [Tooltip("이 속도 이상으로 위로 튀면 점프로 본다")]
         public float JumpVelocity = 1.5f;
+        [Tooltip("이 속도보다 빠르게 튀면 점프로 보지 않는다. 상승 기류 발사(14m/s 이상)는 전용 이펙트가 맡는다")]
+        public float MaxJumpVelocity = float.PositiveInfinity;
         [Tooltip("이 속도 이상으로 떨어지다 땅에 닿아야 착지 먼지가 난다")]
         public float MinLandSpeed = 2f;
         public Vector3 FeetOffset;
@@ -29,8 +31,9 @@ namespace DesertTower.VFX
         {
             bool grounded = _controller.isGrounded;
             float vertical = _controller.velocity.y;
-            if (_wasGrounded && !grounded && vertical > JumpVelocity) Spawn(JumpPrefab);
-            else if (!_wasGrounded && !grounded && vertical > JumpVelocity && vertical - _lastVerticalSpeed > JumpVelocity) Spawn(AirJumpPrefab);
+            bool jumpSpeed = vertical > JumpVelocity && vertical <= MaxJumpVelocity;
+            if (_wasGrounded && !grounded && jumpSpeed) Spawn(JumpPrefab);
+            else if (!_wasGrounded && !grounded && jumpSpeed && vertical - _lastVerticalSpeed > JumpVelocity) Spawn(AirJumpPrefab);
             if (!_wasGrounded && grounded && -_lastVerticalSpeed >= MinLandSpeed) Spawn(LandPrefab);
             _wasGrounded = grounded;
             _lastVerticalSpeed = vertical;

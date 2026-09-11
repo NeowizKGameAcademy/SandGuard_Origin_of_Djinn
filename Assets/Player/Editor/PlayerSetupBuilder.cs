@@ -30,7 +30,6 @@ namespace SandGuard.Player.Editor
                 AddButton(playerMap, "Dash", "<Keyboard>/leftShift");
                 AddButton(playerMap, "Spell", "<Mouse>/rightButton");
                 AddButton(playerMap, "BuildMode", "<Keyboard>/b");
-                AddButton(playerMap, "Rotate", "<Keyboard>/r");
                 for (int i = 1; i <= 9; i++) AddButton(playerMap, "Slot" + i, "<Keyboard>/" + i);
                 AssetDatabase.CreateAsset(input, Root + "/PlayerInput.asset");
             }
@@ -43,7 +42,7 @@ namespace SandGuard.Player.Editor
                 visual = PrefabUtility.SaveAsPrefabAsset(root, Root + "/PlayerVisual.prefab");
                 Object.DestroyImmediate(root);
             }
-            var projectile = AssetDatabase.LoadAssetAtPath<PlayerProjectile>(Root + "/PlayerBolt.prefab");
+            var projectile = AssetDatabase.LoadAssetAtPath<GameObject>(Root + "/PlayerBolt.prefab")?.GetComponent<PlayerProjectile>();
             if (projectile == null)
             {
                 GameObject root = new GameObject("PlayerBolt");
@@ -73,7 +72,9 @@ namespace SandGuard.Player.Editor
                 var camera = cameraObject.AddComponent<Camera>(); camera.nearClipPlane = 0.1f; camera.fieldOfView = 60f;
                 cameraObject.AddComponent<AudioListener>();
                 var rig = cameraObject.AddComponent<PlayerCameraRig>(); rig.input = reader; rig.target = cameraTarget; rig.owner = root.transform;
+                rig.distance = PlayerFeelTuning.CameraDistance; rig.shoulderOffset = PlayerFeelTuning.CameraShoulderOffset;
                 motor.view = camera.transform;
+                PlayerFeelTuning.ConnectCrosshair(root);
                 var aimer = root.AddComponent<PlayerAimer>(); aimer.viewCamera = camera; aimer.owner = root.transform;
                 var attack = root.AddComponent<PlayerBasicAttack>();
                 attack.input = reader; attack.aimer = aimer; attack.visuals = visuals; attack.projectilePrefab = projectile; attack.shotOrigin = hitPoint; attack.motor = motor;
@@ -95,6 +96,7 @@ namespace SandGuard.Player.Editor
                 GameObject player = (GameObject)PrefabUtility.InstantiatePrefab(prefab, scene);
                 player.transform.position = new Vector3(0, 0.1f, -6);
                 var overlay = new GameObject("Test HUD").AddComponent<PlayerDemoOverlay>(); overlay.motor = player.GetComponent<PlayerMotor>();
+                overlay.gameObject.AddComponent<PlayerStarterEffects>(); // 스킬트리 전까지 더블 점프·공중 대시를 테스트 씬에서 켠다
                 Primitive("Ground", PrimitiveType.Cube, null, new Vector3(0, -0.5f, 2), new Vector3(24, 1, 28), ground, true);
                 Primitive("Wall - blocks projectiles", PrimitiveType.Cube, null, new Vector3(-3, 1.5f, 3), new Vector3(4, 3, 0.5f), obstacle, true);
                 Primitive("Camera obstruction", PrimitiveType.Cube, null, new Vector3(5, 2, -6), new Vector3(0.5f, 4, 8), obstacle, true);
@@ -138,6 +140,13 @@ namespace SandGuard.Player.Editor
                 if (attack.lifeSource == null) attack.lifeSource = health;
                 var visuals = root.GetComponent<PlayerVisuals>();
                 if (visuals.healthSource == null) visuals.healthSource = health;
+                PlayerFeelTuning.ConnectCrosshair(root);
+                PlayerFeelTuning.ConnectRespawner(root);
+                PlayerFeelTuning.ConnectStats(root);
+                PlayerFeelTuning.ConnectEffects(root);
+                PlayerFeelTuning.ConnectUpdraft(root);
+                PlayerFeelTuning.ConnectDashCameraFeel(root);
+                PlayerFeelTuning.ConnectSkillCaster(root);
                 PrefabUtility.SaveAsPrefabAsset(root, path);
             }
             finally { PrefabUtility.UnloadPrefabContents(root); }
@@ -146,6 +155,11 @@ namespace SandGuard.Player.Editor
             {
                 var map = input.FindActionMap("Player", true);
                 AddButton(map, "Dash", "<Keyboard>/leftShift");
+                var rotate = map.FindAction("Rotate"); // 기획에 없는 옛 액션(R). 사막 폭풍이 R을 쓰므로 지운다
+                if (rotate != null) rotate.RemoveAction();
+                AddButton(map, "Skill1", "<Keyboard>/q"); // 모래 폭발
+                AddButton(map, "Skill2", "<Keyboard>/e"); // 모래 소용돌이
+                AddButton(map, "Skill3", "<Keyboard>/r"); // 사막 폭풍
                 var dash = map.FindAction("Dash", true);
                 bool hasGamepad = false;
                 foreach (var binding in dash.bindings) if (binding.path == "<Gamepad>/leftStickPress") hasGamepad = true;

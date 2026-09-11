@@ -32,12 +32,13 @@ namespace SandGuard.Player.Tests
             Object.Destroy(settings); Cursor.lockState = CursorLockMode.None; Cursor.visible = true;
             yield return null;
         }
-        [UnityTest] public IEnumerator TexturedPlayerMovesAndLampChangesAttachmentAndLight()
+        [UnityTest] public IEnumerator TexturedPlayerMovesAndLampStaysOnBeltWithLight()
         {
             var floor = Track(GameObject.CreatePrimitive(PrimitiveType.Cube));
             floor.transform.position = new Vector3(0, -0.5f, 0); floor.transform.localScale = new Vector3(50, 1, 50);
             var floorMat = new Material(Shader.Find("Universal Render Pipeline/Lit")); floorMat.color = new Color(.26f,.23f,.18f);
             floor.GetComponent<Renderer>().material = floorMat;
+            Physics.SyncTransforms(); // 바닥 콜라이더가 자리 잡기 전에 플레이어가 떨어져 착지 동작이 나오지 않게 한다
             var sun = Track(new GameObject("Verification Sun")).AddComponent<Light>();
             sun.type = LightType.Directional; sun.intensity = 2; sun.transform.rotation = Quaternion.Euler(40,-35,0);
             RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
@@ -89,12 +90,13 @@ namespace SandGuard.Player.Tests
             Assert.AreSame(lamp.beltSocket, lamp.lamp.parent);
             lamp.SetHeld(true); lamp.SetGlowing(true);
             yield return new WaitForSeconds(.6f);
-            Assert.AreSame(originalLamp,lamp.lamp); Assert.AreSame(lamp.handSocket,lamp.lamp.parent);
+            Assert.AreSame(originalLamp,lamp.lamp); Assert.AreSame(lamp.beltSocket,lamp.lamp.parent);
+            Assert.False(lamp.IsHeld);
             Assert.Less(Vector3.Distance(beltScale,lamp.lamp.lossyScale),.001f,"Attachment changes must preserve the lamp's size.");
             Assert.True(lamp.lampLight.enabled);
             var block = new MaterialPropertyBlock(); lamp.lampRenderer.GetPropertyBlock(block,lamp.emissiveMaterialIndex);
             Assert.Greater(block.GetColor("_EmissionColor").maxColorComponent,1f);
-            Capture(player,"lamp-hand-lit");
+            Capture(player,"lamp-belt-lit");
             lamp.SetHeld(false); lamp.SetGlowing(false);
             Assert.AreSame(lamp.beltSocket,lamp.lamp.parent); Assert.False(lamp.lampLight.enabled);
             lamp.lampRenderer.GetPropertyBlock(block,lamp.emissiveMaterialIndex);
@@ -114,6 +116,8 @@ namespace SandGuard.Player.Tests
             var player = Track(Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Player/Generated/Player.prefab")));
             player.GetComponent<PlayerInputReader>().captureCursor = false;
             var motor = player.GetComponent<PlayerMotor>();
+            var effects = player.GetComponent<PlayerEffects>(); // 기본값은 공중 점프·공중 대시 0
+            effects.Apply(new SandGuard.Player.Effects.DoubleJumpEffect()); effects.Apply(new SandGuard.Player.Effects.AirDashEffect());
             int jumps = 0;
             motor.Jumped += () => jumps++;
             yield return new WaitForSeconds(.4f);
@@ -127,14 +131,16 @@ namespace SandGuard.Player.Tests
             Assert.AreEqual(1, jumps);
             Assert.False(motor.IsGrounded);
             Assert.True(animator.GetCurrentAnimatorStateInfo(0).IsName("Jump"));
-            AssertClip(animator, "Jump");
-            float firstJumpTime = animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
+            AssertClip(animator, "Jump Up");
+            Assert.False(motor.LastJumpWasAirJump);
             InputSystem.QueueStateEvent(keyboard, new KeyboardState());
             yield return null;
             InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.Space));
             yield return new WaitForSeconds(.08f);
             Assert.AreEqual(2, jumps);
-            Assert.Less(animator.GetCurrentAnimatorStateInfo(0).normalizedTime, firstJumpTime, "Air jump restarts the animation.");
+            Assert.True(motor.LastJumpWasAirJump);
+            Assert.True(animator.GetCurrentAnimatorStateInfo(0).IsName("Double Jump"), "Air jump plays the flip.");
+            AssertClip(animator, "Flip");
             InputSystem.QueueStateEvent(keyboard, new KeyboardState());
             yield return null;
             InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.Space));
@@ -144,22 +150,37 @@ namespace SandGuard.Player.Tests
             Assert.True(motor.TryDash().Succeeded);
             yield return new WaitForSeconds(.07f);
             Assert.True(motor.IsDashing);
-            Assert.True(animator.GetCurrentAnimatorStateInfo(0).IsName("Dash"));
-            AssertClip(animator, "Run");
+            int dashLayer = animator.GetLayerIndex("Dash Legs");
+            Assert.GreaterOrEqual(dashLayer, 0, "The dash lives on its own lower-body layer.");
+            Assert.True(animator.GetCurrentAnimatorStateInfo(dashLayer).IsName("Dash"));
+            Assert.AreEqual(1f, animator.GetLayerWeight(dashLayer), "Dashing raises the leg layer.");
+            Assert.True(System.Array.Exists(animator.GetCurrentAnimatorClipInfo(dashLayer), c => c.clip.name == "Push Legs" && c.weight > .8f), "Legs play the push clip.");
             Assert.False(motor.TryDash().Succeeded);
-            yield return new WaitForSeconds(.23f);
+            yield return new WaitForSeconds(motor.dashDuration);
             Assert.False(motor.IsDashing);
             Assert.False(motor.IsGrounded);
-            Assert.True(animator.GetCurrentAnimatorStateInfo(0).IsName("Jump"));
+            // 하체 레이어가 대시를 맡으므로 Base Layer는 공중 동작(플립 → 낙하)을 그대로 이어 간다.
+            for (float t = 0f; t < .6f && !animator.GetCurrentAnimatorStateInfo(0).IsName("Falling"); t += Time.deltaTime) yield return null;
+            Assert.True(animator.GetCurrentAnimatorStateInfo(0).IsName("Falling"), "An air dash ends in the falling pose.");
+            AssertClip(animator, "Falling");
             InputSystem.QueueStateEvent(keyboard, new KeyboardState());
-            yield return new WaitForSeconds(1.2f);
+            bool sawLanding = false;
+            for (float t = 0f; t < 2.5f && !(motor.IsGrounded && animator.GetCurrentAnimatorStateInfo(0).IsName("Locomotion")); t += Time.deltaTime)
+            {
+                if (animator.GetCurrentAnimatorStateInfo(0).IsName("Landing")) sawLanding = true;
+                yield return null;
+            }
             Assert.True(motor.IsGrounded);
+            Assert.True(sawLanding, "Touching down plays the landing before locomotion resumes.");
             Assert.True(animator.GetCurrentAnimatorStateInfo(0).IsName("Locomotion"));
             Assert.True(motor.TryDash().Succeeded);
             yield return new WaitForSeconds(.07f);
-            Assert.True(animator.GetCurrentAnimatorStateInfo(0).IsName("Dash"));
-            yield return new WaitForSeconds(.35f);
+            Assert.True(animator.GetCurrentAnimatorStateInfo(dashLayer).IsName("Dash"));
+            Assert.True(animator.GetCurrentAnimatorStateInfo(0).IsName("Locomotion"), "The base layer keeps running under the dash legs.");
+            yield return new WaitForSeconds(motor.dashDuration + .3f);
             Assert.True(animator.GetCurrentAnimatorStateInfo(0).IsName("Locomotion"));
+            Assert.True(animator.GetCurrentAnimatorStateInfo(dashLayer).IsName("Empty"));
+            Assert.AreEqual(0f, animator.GetLayerWeight(dashLayer), "After the dash the leg layer drops to 0 so the legs run again.");
             Assert.False(animator.applyRootMotion);
             Assert.Less(Vector3.Distance(modelOrigin, animator.transform.localPosition), .01f);
 
@@ -172,6 +193,47 @@ namespace SandGuard.Player.Tests
             Assert.True(motor.TryDash().Succeeded);
             yield return new WaitForSeconds(.07f);
             Capture(player, "dash");
+        }
+
+        /// <summary>회귀 검사: 피격 레이어가 항상 1이면 Empty 상태라도 척추·머리 근육이 고정되어 상체가 골반과 함께 막대처럼 흔들린다.</summary>
+        [UnityTest] public IEnumerator SpineAnimatesWhileRunningAndReactionLayerRisesOnlyForHits()
+        {
+            var floor = Track(GameObject.CreatePrimitive(PrimitiveType.Cube));
+            floor.transform.position = new Vector3(0, -.5f, 0); floor.transform.localScale = new Vector3(200, 1, 200);
+            Physics.SyncTransforms();
+            var player = Track(Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Player/Generated/Player.prefab")));
+            player.GetComponent<PlayerInputReader>().captureCursor = false;
+            var health = player.GetComponent<PlayerHealth>();
+            yield return new WaitForSeconds(.4f);
+            var animator = player.GetComponentInChildren<Animator>();
+            int reaction = animator.GetLayerIndex("Damage Reactions");
+            Assert.GreaterOrEqual(reaction, 0);
+            Assert.AreEqual(0f, animator.GetLayerWeight(reaction), "The reaction layer stays off while nothing hits the player.");
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.W));
+            yield return new WaitForSeconds(.8f);
+            var hips = animator.GetBoneTransform(HumanBodyBones.Hips);
+            var chest = animator.GetBoneTransform(HumanBodyBones.UpperChest) ?? animator.GetBoneTransform(HumanBodyBones.Chest);
+            var head = animator.GetBoneTransform(HumanBodyBones.Head);
+            float chestRange = 0f, headRange = 0f;
+            Quaternion chestFirst = Quaternion.Inverse(hips.rotation) * chest.rotation, headFirst = Quaternion.Inverse(hips.rotation) * head.rotation;
+            for (float t = 0f; t < .7f; t += Time.deltaTime)
+            {
+                chestRange = Mathf.Max(chestRange, Quaternion.Angle(chestFirst, Quaternion.Inverse(hips.rotation) * chest.rotation));
+                headRange = Mathf.Max(headRange, Quaternion.Angle(headFirst, Quaternion.Inverse(hips.rotation) * head.rotation));
+                Assert.AreEqual(0f, animator.GetLayerWeight(reaction), "Running must not raise the reaction layer.");
+                yield return null;
+            }
+            Assert.Greater(chestRange, 5f, "The chest must keep moving relative to the pelvis while running (spine not frozen).");
+            Assert.Greater(headRange, 3f, "The head must keep moving relative to the pelvis while running.");
+            health.TakeDamage(new DamageInfo(10f, "Enemy"));
+            yield return null;
+            Assert.AreEqual(1f, animator.GetLayerWeight(reaction), "A hit raises the reaction layer immediately.");
+            yield return new WaitForSeconds(.1f);
+            Assert.True(animator.GetCurrentAnimatorStateInfo(reaction).IsName("Hit"));
+            yield return new WaitForSeconds(1.2f);
+            Assert.True(animator.GetCurrentAnimatorStateInfo(reaction).IsName("Empty"));
+            Assert.AreEqual(0f, animator.GetLayerWeight(reaction), "After the reaction ends the layer drops back to 0.");
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState());
         }
 
         static void AssertClip(Animator animator, string name)

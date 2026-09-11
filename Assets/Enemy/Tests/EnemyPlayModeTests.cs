@@ -50,9 +50,9 @@ namespace SandGuard.Enemy.Tests
             core.gameObject.AddComponent<EnemyObjective>();
             return core;
         }
-        GameObject Enemy(Vector3 position)
+        GameObject Enemy(Vector3 position, string prefab = "Enemy")
         {
-            var asset = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Enemy/Generated/Enemy.prefab");
+            var asset = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Enemy/Generated/" + prefab + ".prefab");
             Assert.NotNull(asset, "Run SandGuard/Enemy/Create Missing Demo Assets first.");
             var value = Track(UnityEngine.Object.Instantiate(asset, position, Quaternion.identity));
             value.name = "Enemy";
@@ -110,6 +110,50 @@ namespace SandGuard.Enemy.Tests
             yield return Until(() => dummy.HitCount > 0, 15f, "Enemy must attack a hostile target inside detection range.");
             Assert.AreEqual(30f, friend.CurrentHealth, "Same-faction targets must never be attacked.");
             Assert.AreSame(dummy, enemy.GetComponent<EnemyBrain>().CurrentTarget);
+        }
+
+        [UnityTest] public IEnumerator ChiefStopsAtRangeForAttackableTargets() => StopsAtRange("Enemy_Chief", 3f);
+        [UnityTest] public IEnumerator HammerBruteStopsAtRangeForAttackableTargets() => StopsAtRange("Enemy_HammerBrute", 2.3f);
+
+        IEnumerator StopsAtRange(string prefab, float expectedRange)
+        {
+            Time.timeScale = 1f;
+            Bake(new Vector3(12, 1, 30));
+            foreach (var kind in new[] { CombatTargetKind.Player, CombatTargetKind.Minion, CombatTargetKind.Tower, CombatTargetKind.Core, CombatTargetKind.Wall })
+            {
+                bool blocking = kind == CombatTargetKind.Wall;
+                var target = Target(kind.ToString(), kind, new Vector3(0, 1.5f, 10), new Vector3(blocking ? 12f : 1f, 3, .5f), 1000f);
+                yield return new WaitForSeconds(.7f); // Allow the obstacle to carve before calculating the route.
+                var enemy = Enemy(new Vector3(0, 0, 4), prefab);
+                var brain = enemy.GetComponent<EnemyBrain>();
+                brain.objective = target.transform;
+                brain.despawnOnArrival = false;
+                var attack = enemy.GetComponent<EnemyMeleeAttack>();
+                var motor = enemy.GetComponent<EnemyMotor>();
+                Assert.AreEqual(expectedRange, attack.range, .001f);
+                yield return Until(() => attack.IsAttacking, 8f, prefab + " must start attacking " + kind);
+                Assert.AreSame(target, brain.CurrentTarget);
+                Assert.False(motor.HasDestination, "All target kinds must stop movement when attackable.");
+                var collider = target.GetComponent<Collider>();
+                float gap = Vector3.Distance(attack.Origin, collider.ClosestPoint(attack.Origin));
+                Assert.Greater(gap, expectedRange - .9f, "Do not walk up against " + kind + " before attacking.");
+                Assert.LessOrEqual(gap, expectedRange + .01f);
+                Assert.Greater(EnemyMotor.Planar(enemy.transform.position, collider.ClosestPoint(enemy.transform.position)), 1f);
+                yield return Until(() => target.HitCount > 0, 4f, "The attack must deal damage from the stopping distance.");
+                enemy.SetActive(false); target.gameObject.SetActive(false);
+                yield return new WaitForSeconds(.7f);
+            }
+        }
+
+        [UnityTest] public IEnumerator WalksAroundDestructibleWallWhenRouteIsOpen()
+        {
+            Bake(new Vector3(16, 1, 30));
+            var wall = Target("Detour wall", CombatTargetKind.Wall, new Vector3(-2, 1.5f, 8), new Vector3(10, 3, .5f), 1000f);
+            var core = Core(new Vector3(0, 1, 18));
+            yield return new WaitForSeconds(.7f);
+            var enemy = Enemy(Vector3.zero, "Enemy_Chief");
+            yield return Until(() => core.HitCount > 0, 25f, "Enemy must follow the open route to the core.");
+            Assert.AreEqual(0, wall.HitCount, "A bypassable wall must not become a blocking target.");
         }
 
         [UnityTest] public IEnumerator DiesOnceAndIsRemovedAfterDelay()

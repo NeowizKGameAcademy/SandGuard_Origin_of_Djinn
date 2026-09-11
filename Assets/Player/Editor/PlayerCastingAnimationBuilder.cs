@@ -40,7 +40,8 @@ namespace SandGuard.Player.Editor
             var mask = AssetDatabase.LoadAssetAtPath<AvatarMask>(Art + "/CastingUpperBody.mask");
             if (mask == null) { mask = new AvatarMask { name = "Casting Upper Body" }; AssetDatabase.CreateAsset(mask, Art + "/CastingUpperBody.mask"); }
             for (int i = 0; i < (int)AvatarMaskBodyPart.LastBodyPart; i++) mask.SetHumanoidBodyPartActive((AvatarMaskBodyPart)i, false);
-            foreach (var part in new[] { AvatarMaskBodyPart.Body, AvatarMaskBodyPart.RightArm, AvatarMaskBodyPart.RightFingers, AvatarMaskBodyPart.RightHandIK })
+            // Body(척추·가슴)는 넣지 않는다: 시전 프레임이 척추를 고정하면 이동 중 상체가 걷지 않는다. 손 위치는 IK가 어깨 기준으로 매 프레임 잡으므로 조준은 유지된다.
+            foreach (var part in new[] { AvatarMaskBodyPart.RightArm, AvatarMaskBodyPart.RightFingers, AvatarMaskBodyPart.RightHandIK })
                 mask.SetHumanoidBodyPartActive(part, true);
             EditorUtility.SetDirty(mask);
             if (!controller.parameters.Any(p => p.name == "Casting")) controller.AddParameter("Casting", AnimatorControllerParameterType.Bool);
@@ -133,7 +134,8 @@ namespace SandGuard.Player.Editor
             foreach (var transition in machine.anyStateTransitions.ToArray())
             {
                 if (transition.name.StartsWith("Hand Casting: ")) machine.RemoveAnyStateTransition(transition);
-                else if (transition.name == "Player Mobility: Jump" && !transition.conditions.Any(c => c.parameter == "Casting"))
+                else if ((transition.name == "Player Mobility: Jump" || transition.name == "Player Mobility: Double Jump")
+                    && !transition.conditions.Any(c => c.parameter == "Casting"))
                     transition.AddCondition(AnimatorConditionMode.IfNot, 0, "Casting");
             }
             foreach (var t in air.transitions.ToArray()) if (t.name.StartsWith("Hand Casting: ")) air.RemoveTransition(t);
@@ -141,11 +143,28 @@ namespace SandGuard.Player.Editor
             enter.AddCondition(AnimatorConditionMode.If, 0, "Casting");
             enter.AddCondition(AnimatorConditionMode.IfNot, 0, "Grounded");
             enter.AddCondition(AnimatorConditionMode.IfNot, 0, "Dashing");
-            var jump = Transition(machine.AddAnyStateTransition(air), "Air Jump"); jump.canTransitionToSelf = true;
-            jump.AddCondition(AnimatorConditionMode.If, 0, "Casting");
-            jump.AddCondition(AnimatorConditionMode.If, 0, "Jump");
-            jump.AddCondition(AnimatorConditionMode.IfNot, 0, "Dashing");
-            var land = Transition(air.AddTransition(machine.states.First(s => s.state.name == "Locomotion").state), "Land");
+            // 시전 중에는 점프·2단 점프 트리거를 여기서 소비해 착지 후 엉뚱한 점프 동작이 남지 않게 한다.
+            foreach (string trigger in new[] { "Jump", "DoubleJump" })
+            {
+                if (!controller.parameters.Any(p => p.name == trigger)) continue;
+                var jump = Transition(machine.AddAnyStateTransition(air), trigger == "Jump" ? "Air Jump" : "Air Double Jump");
+                jump.canTransitionToSelf = true;
+                jump.AddCondition(AnimatorConditionMode.If, 0, "Casting");
+                jump.AddCondition(AnimatorConditionMode.If, 0, trigger);
+                jump.AddCondition(AnimatorConditionMode.IfNot, 0, "Dashing");
+            }
+            // 착지 상태가 있으면 시전 중 착지도 같은 착지(강한 착지 우선) 동작을 쓴다.
+            var hardLandingState = machine.states.FirstOrDefault(s => s.state.name == "Hard Landing").state;
+            if (hardLandingState != null && controller.parameters.Any(p => p.name == "HardLand"))
+            {
+                var hardLand = Transition(air.AddTransition(hardLandingState), "Hard Land");
+                hardLand.AddCondition(AnimatorConditionMode.If, 0, "Grounded");
+                hardLand.AddCondition(AnimatorConditionMode.If, 0, "HardLand");
+                hardLand.AddCondition(AnimatorConditionMode.IfNot, 0, "Dashing");
+            }
+            var landingState = machine.states.FirstOrDefault(s => s.state.name == "Landing").state
+                ?? machine.states.First(s => s.state.name == "Locomotion").state;
+            var land = Transition(air.AddTransition(landingState), "Land");
             land.AddCondition(AnimatorConditionMode.If, 0, "Grounded");
             land.AddCondition(AnimatorConditionMode.IfNot, 0, "Dashing");
         }

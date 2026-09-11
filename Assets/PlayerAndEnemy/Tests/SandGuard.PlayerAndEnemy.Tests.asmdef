@@ -1,6 +1,6 @@
 {
   "name": "SandGuard.PlayerAndEnemy.Tests",
   "rootNamespace": "SandGuard.Integration.Tests",
-  "references": ["SandGuard.PlayerAndEnemy.Runtime", "SandGuard.Player.Runtime", "SandGuard.Enemy.Runtime", "DesertTower.Combat.Runtime", "DesertTower.Gameplay.Abstractions", "Unity.InputSystem"],
+  "references": ["SandGuard.PlayerAndEnemy.Runtime", "SandGuard.Player.Runtime", "SandGuard.Enemy.Runtime", "SandGuard.Waves.Runtime", "DesertTower.Combat.Runtime", "DesertTower.Gameplay.Abstractions", "Unity.InputSystem"],
   "optionalUnityReferences": ["TestAssemblies"]
 }

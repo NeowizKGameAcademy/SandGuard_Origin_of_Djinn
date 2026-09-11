@@ -12,11 +12,18 @@ namespace SandGuard.Player
         [Tooltip("자체 종료하는 효과 또는 아래 수명으로 정리할 효과")]
         public GameObject impactPrefab;
         [Min(0.1f)] public float impactLifetime = 2f;
+        [Tooltip("명중 후 새 방출을 멈추고 남아 있는 월드 공간 잔상만 마저 재생한다")]
+        public Transform visualRoot;
+        [Min(0f)] public float visualTailLifetime = 0.6f;
         Transform owner;
         string faction;
         float damage, age;
         Vector3 direction;
         bool launched, consumed;
+        /// <summary>실제로 피해가 적용된 명중. Launch 전에 구독해야 총구 앞 즉시 명중도 받는다.</summary>
+        public event System.Action<PlayerHitInfo> Hit;
+        /// <summary>무언가에 닿아 끝났을 때의 착탄점(적·벽 모두). 수명이 다해 사라질 때는 오지 않는다. 광역 스킬(폭발·족쇄)이 여기서 터진다.</summary>
+        public event System.Action<Vector3> Impacted;
 
         public void Launch(Transform source, string sourceFaction, float amount, Vector3 heading, Vector3 sourceOrigin)
         {
@@ -69,6 +76,8 @@ namespace SandGuard.Player
                 var result = receiver.TakeDamage(new DamageInfo(damage, faction,
                     causeId: "player.basic", hitPosition: point, hitDirection: direction));
                 if (result.Status == DamageStatus.InvalidRequest) Debug.LogWarning("기본 투사체의 피해 요청이 거부되었습니다.", this);
+                if (result.WasApplied && result.AppliedDamage > 0f)
+                    Hit?.Invoke(new PlayerHitInfo(target, receiver, result.AppliedDamage, result.WasKilled, point, direction, "player.basic"));
             }
             Finish(point, true);
         }
@@ -76,6 +85,17 @@ namespace SandGuard.Player
         void Finish(Vector3 point, bool impact)
         {
             if (impact && impactPrefab != null) Destroy(Instantiate(impactPrefab, point, Quaternion.identity), impactLifetime);
+            if (impact) Impacted?.Invoke(point);
+            if (visualRoot != null && visualRoot != transform && visualRoot.IsChildOf(transform))
+            {
+                visualRoot.SetParent(null, true);
+                foreach (var system in visualRoot.GetComponentsInChildren<ParticleSystem>())
+                    system.Stop(false, system.main.simulationSpace == ParticleSystemSimulationSpace.World
+                        ? ParticleSystemStopBehavior.StopEmitting : ParticleSystemStopBehavior.StopEmittingAndClear);
+                foreach (var mesh in visualRoot.GetComponentsInChildren<MeshRenderer>()) mesh.enabled = false;
+                foreach (var light in visualRoot.GetComponentsInChildren<Light>()) light.enabled = false;
+                Destroy(visualRoot.gameObject, visualTailLifetime);
+            }
             gameObject.SetActive(false);
             Destroy(gameObject);
         }

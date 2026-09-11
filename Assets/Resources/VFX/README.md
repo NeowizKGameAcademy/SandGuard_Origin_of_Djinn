@@ -31,8 +31,11 @@ Unity.exe -batchmode -projectPath . -executeMethod DesertTower.VFX.Editor.VfxBat
 | `VFX_FlameCobra_Breath` | #17 | 코브라 입, 로컬 +Z가 분사 방향 | 루프. 공격 시작/끝에 Play/Stop |
 | `VFX_Fire_Impact` | #17 | 화염 착탄점 | 없음 |
 | `VFX_Burning_Loop` | #17 | 불붙은 적 발밑 | 2초 원샷. 라이트는 남으니 3초 뒤 Destroy |
-| `VFX_Pierce_Beam` | #3 | 시전자, 로컬 +Z가 발사 방향 | `VfxBeam.SetLength(사거리)`. 통과한 적마다 `VFX_ManaBolt_Impact` |
-| `VFX_Sand_Burst` | #4 | 착탄점(바닥) | 없음 (셰이크·히트스톱은 피드백 스크립트 이후) |
+| `VFX_Pierce_Beam` | #3 | 시전자, 로컬 +Z가 발사 방향 | `PlayerBasicAttack.beamPrefab` (관통탄). 총구에 놓고 자식 `VfxBeam.SetLength`를 실제 도달 거리로. 꿰뚫은 적마다 `beamHitPrefab` = `VFX_ManaBolt_Impact` |
+| `VFX_Sand_Burst` | #4 | 착탄점(바닥) | `PlayerBasicAttack.burstPrefab` (모래 폭발·폭발 관통탄). 카메라 킥은 `PlayerCameraRig.Kick`. 히트스톱 없음 |
+| `VFX_Sand_Root` | 모래 족쇄 | 적 발밑, 적의 자식으로 | `EnemyRestraint.vfxPrefab`. 묶일 때 생성, 풀릴 때 `VfxSandRoot.Release` |
+| `VFX_Sand_Vortex` | ⑮ 모래 소용돌이 | 지면 중심, 반경 1m 기준 루프 | `PlayerSkillCaster.vortexPrefab`. 지역 오브젝트의 자식으로 두고 실제 반경으로 스케일(Hierarchy). 끝나면 방출만 멈춘다 |
+| `VFX_Sand_Storm` | ⑯ 사막 폭풍 | 지면 중심, 반경 1m 기준 루프 | `PlayerSkillCaster.stormPrefab`. 위와 같다 |
 | `VFX_LevelUp` | #7 | 플레이어 발밑 | 없음 |
 | `VFX_Mana_Charge` | #10 | 코어 바닥 | 루프. `VfxParticleAttractor.Target = 램프`. 충전 완료 시 Stop 후 램프에 `VFX_Mana_Charge_Complete` |
 | `VFX_Mana_Charge_Complete` | #10 | 램프 | 없음 |
@@ -52,6 +55,9 @@ Unity.exe -batchmode -projectPath . -executeMethod DesertTower.VFX.Editor.VfxBat
 | `VFX_AirJump_Ring` | #6 | 공중의 발 위치 | `VfxCharacterMovement.AirJumpPrefab` |
 | `VFX_Footstep_Sand` | #24 | 발 위치에 자식으로 | 루프. Rate over Distance. 붙어 있는 `VfxFootstepDust`가 속도·접지로 켜고 끈다 |
 | `VFX_Wall_Hit` | — | 적중점, +Z가 표면 법선 | `VfxHitReaction.HitPrefab` (벽·타워·코어) |
+| `VFX_Updraft_Launch` | ③ 상승 기류 | 플레이어 발밑 | `VfxOneShot.Fire()` ← `PlayerUpdraft.onLaunched` (Player.prefab의 `UpdraftVfx` 자식). 링 3.4m 두 겹 + 파편 + 큰 먼지 + 위로 솟는 모래 기둥. `VfxCharacterMovement.MaxJumpVelocity`=12로 발사 때 점프 먼지는 안 낸다 |
+| `VFX_Updraft_Charge` | ③ 상승 기류 | 몸 중심(허리 높이)에 자식으로 | 루프. `VfxChargeLoop`: `Begin()` ← `PlayerUpdraft.onChargeStarted`, `SetIntensity(충전량)` ← `onCharging`, `End()` ← `onChargeCancelled`/`onLaunched`. 몸을 도는 모래 줄기 + 빨려드는 알갱이 + 발밑 잔먼지, 세기에 따라 방출·속도·크기 증가 |
+| `VFX_Updraft_Lens` | ③ 상승 기류 | 몸 중심(허리 높이)에 자식으로 | `VfxRefractionBubble`: `Begin` ← `onChargeStarted`, `SetIntensity` ← `onCharging`, `End` ← `onChargeCancelled`, `Pulse` ← `onLaunched`. `Shaders/VFX_ScreenRefraction`(URP Opaque Texture 굴절) 구체가 충전으로 부풀고 발사 때 2.8m로 터지며 사라진다 |
 | `VFX_Wall_Destroy` | — | 경계 상자 바닥 중심 | `VfxHitReaction.DeathPrefab` + `FitDeathToBounds` → `VfxVolume.Fit(bounds)`가 벽 크기로 늘린다 |
 
 ## 전투 연결 컴포넌트 (`Runtime/`)
@@ -64,7 +70,9 @@ Unity.exe -batchmode -projectPath . -executeMethod DesertTower.VFX.Editor.VfxBat
 | `VfxFootstepDust` | 발자국 루프의 방출을 수평 속도·접지 레이캐스트로 켜고 끔 |
 | `VfxOneShot` | UnityEvent용 1회 스폰기 (`Fire()`), 기준 Transform의 위치·방향 사용 |
 | `VfxVolume` | 부피형 이펙트를 경계 상자 크기에 맞추고 파편 수를 부피 비율로 늘림 |
-| `VfxAfterimage` | 대시 잔상. `Play(대시 시간)`마다 메시 스냅샷을 틸 실루엣으로 남김 (대시 구현 시 호출) |
+| `VfxAfterimage` | 대시 잔상. `Play(대시 시간)`마다 메시 스냅샷을 틸 실루엣으로 남김. 플레이어 대시에서는 뺐다(눈이 아픔). 필요하면 UnityEvent에 다시 꽂는다 |
+| `VfxChargeLoop` | 충전형 루프 제어기. `Begin`/`SetIntensity(0~1)`/`End`로 방출량·속도·크기 배수를 올리고 내린다 (미리보기용 Play On Awake는 시작 시 멈춤) |
+| `VfxRefractionBubble` | 볼록 렌즈 구체 제어기. `Begin`/`SetIntensity`/`End`/`Pulse`. 대기 중엔 렌더러를 꺼 둔다. 셰이더 `_Strength`는 MaterialPropertyBlock |
 | `VfxFadeOut` | CanvasGroup 페이드 후 제거 (비네트) |
 
 `DesertTower > VFX > Wire Combat VFX Into Demo Assets`가 위 컴포넌트를 `Assets/Enemy/Generated/Enemy.prefab`, `Assets/Player/Generated/Player.prefab`, `EnemyTest.unity`의 표적에 꽂는다. 여러 번 실행해도 안전하다. 데모 프리팹을 다시 생성했으면 다시 실행한다.

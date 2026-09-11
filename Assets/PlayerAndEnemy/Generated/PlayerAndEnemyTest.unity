@@ -235,6 +235,50 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4248249}
   m_Mesh: {fileID: 4300000, guid: ccabb6dab22ae424ca65af7debb0c701, type: 2}
+--- !u!1 &18152406
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 18152408}
+  - component: {fileID: 18152407}
+  m_Layer: 0
+  m_Name: Enemy Pool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &18152407
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 18152406}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: faac8b6b9c6394145b6bbb7bfc1bab3e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SandGuard.Waves.Runtime::SandGuard.Waves.EnemyPool
+--- !u!4 &18152408
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 18152406}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &38431335
 GameObject:
   m_ObjectHideFlags: 0
@@ -1584,7 +1628,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: DesertTower.Levels.Runtime::DesertTower.Levels.LevelRoot
   levelName: "\uC228\uACA8\uC9C4 \uD611\uACE1\uC758 \uD53C\uB77C\uBBF8\uB4DC"
   gridSize: 1
-  waves: {fileID: 11400000, guid: 6f5372e968aacb24eae7b3f1c8eb9e83, type: 2}
+  waves: {fileID: 11400000, guid: 45e38a5bc211e8644900a434547afa50, type: 2}
   lastBakeUtc: 2026-09-08 03:16:32Z
 --- !u!4 &187803311
 Transform:
@@ -1620,6 +1664,118 @@ Transform:
   - {fileID: 1473520788}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &208925697
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 208925701}
+  - component: {fileID: 208925700}
+  - component: {fileID: 208925699}
+  - component: {fileID: 208925698}
+  m_Layer: 0
+  m_Name: Quad
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!64 &208925698
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 208925697}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!23 &208925699
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 208925697}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: dde04967357d4e644bc9d250263f6a33, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &208925700
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 208925697}
+  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &208925701
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 208925697}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 0.1390846, z: -0, w: 0.9902805}
+  m_LocalPosition: {x: 51.6, y: 7.79, z: 71.62}
+  m_LocalScale: {x: 21.121475, y: 18.232267, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 15.99, z: 0}
 --- !u!1 &242799896
 GameObject:
   m_ObjectHideFlags: 0
@@ -3207,6 +3363,7 @@ GameObject:
   m_Component:
   - component: {fileID: 416792849}
   - component: {fileID: 416792848}
+  - component: {fileID: 416792860}
   m_Layer: 0
   m_Name: Test HUD
   m_TagString: Untagged
@@ -3227,7 +3384,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: SandGuard.PlayerAndEnemy.Runtime::SandGuard.Integration.PlayerAndEnemyOverlay
   playerLife: {fileID: 1025031198}
-  spawner: {fileID: 839823246}
+  waves: {fileID: 0}
   core: {fileID: 1839023030}
   showCrosshair: 1
 --- !u!4 &416792849
@@ -3245,6 +3402,28 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &416792860
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 416792847}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51339e2b9b2a5f097de0057c04ccb189, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SandGuard.Player.Runtime::SandGuard.Player.PlayerStarterEffects
+  target: {fileID: 0}
+  doubleJump: 1
+  airDash: 1
+  manaOnHit: 0
+  updraft: 1
+  condensedBolt: 0
+  pierceBeam: 0
+  sandBurst: 0
+  sandShackle: 0
+  explosivePierce: 1
 --- !u!1 &428085685
 GameObject:
   m_ObjectHideFlags: 0
@@ -5940,60 +6119,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 824149561}
   m_Mesh: {fileID: 4300000, guid: 9d5e14871146c8f4bb0f0a959f65113b, type: 2}
---- !u!1 &839823245
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 839823247}
-  - component: {fileID: 839823246}
-  m_Layer: 0
-  m_Name: Enemy Spawner
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &839823246
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 839823245}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed011b509f8fc414aadb8f12c2bdb7ec, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: SandGuard.PlayerAndEnemy.Runtime::SandGuard.Integration.EnemyStreamSpawner
-  enemyPrefab: {fileID: 658155196757490767, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
-  spawnPoints:
-  - {fileID: 337140042}
-  spawnRadius: 2
-  initialCount: 3
-  autoSpawn: 1
-  interval: 8
-  perWave: 2
-  maxAlive: 8
-  objective: {fileID: 1839023031}
---- !u!4 &839823247
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 839823245}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &851661393
 GameObject:
   m_ObjectHideFlags: 0
@@ -9771,6 +9896,62 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1369362143}
   m_Mesh: {fileID: 4300000, guid: 22178d35f209bc64c90c37af57b19ddd, type: 2}
+--- !u!1 &1381867848
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1381867850}
+  - component: {fileID: 1381867849}
+  m_Layer: 0
+  m_Name: Wave Director
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1381867849
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1381867848}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78b12de77409fda408b5cc71037689a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SandGuard.Waves.Runtime::SandGuard.Waves.WaveDirector
+  level: {fileID: 187803310}
+  catalog: {fileID: 11400000, guid: 8633a1821048fd646a0b08795537257e, type: 2}
+  pool: {fileID: 18152407}
+  objective: {fileID: 0}
+  autoStart: 1
+  loopWaves: 0
+  spawnSampleRadius: 2
+  maxAliveEnemies: 100
+  maxActiveEnemies: 120
+  maxSpawnsPerFrame: 2
+  prewarmPool: 1
+  prewarmPerFrame: 2
+--- !u!4 &1381867850
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1381867848}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1382241186
 GameObject:
   m_ObjectHideFlags: 0
@@ -14566,7 +14747,9 @@ SceneRoots:
   - {fileID: 1519350983}
   - {fileID: 1839023031}
   - {fileID: 1025031197}
-  - {fileID: 839823247}
   - {fileID: 416792849}
   - {fileID: 431807182}
   - {fileID: 388577745}
+  - {fileID: 18152408}
+  - {fileID: 1381867850}
+  - {fileID: 208925701}

@@ -19,7 +19,7 @@ namespace SandGuard.Enemy
         public float removeDelay = 1.5f;
         public UnityEvent onDied = new UnityEvent();
 
-        readonly Guid entityId = Guid.NewGuid();
+        Guid entityId = Guid.NewGuid();
         Collider[] colliders;
         Coroutine removal;
 
@@ -42,6 +42,8 @@ namespace SandGuard.Enemy
         /// <summary>적은 부활하지 않으므로 알리지 않는다.</summary>
         public event Action<Guid> Revived { add { } remove { } }
         public event Action<Guid> Despawned;
+        /// <summary>풀이 지정하면 제거 시 파괴 대신 이것을 부른다. 비어 있으면 Destroy한다.</summary>
+        public Action<EnemyHealth> ReleaseHandler { get; set; }
 
         void Awake()
         {
@@ -96,7 +98,17 @@ namespace SandGuard.Enemy
             SetCombatEnabled(false);
             StateChanged?.Invoke(new LifeStateChangedInfo(entityId, previous, LifeState.Removed));
             Despawned?.Invoke(entityId);
-            Destroy(gameObject);
+            if (ReleaseHandler != null) ReleaseHandler(this); else Destroy(gameObject);
+        }
+
+        /// <summary>풀 재사용: 새 ID로 다시 살아난다. 알림은 내지 않는다.</summary>
+        public void ResetForReuse()
+        {
+            if (removal != null) { StopCoroutine(removal); removal = null; }
+            entityId = Guid.NewGuid();
+            State = LifeState.Alive;
+            CurrentHealth = maxHealth;
+            SetCombatEnabled(true);
         }
 
         void SetCombatEnabled(bool value)

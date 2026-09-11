@@ -48,6 +48,8 @@ namespace DesertTower.VFX.Editor
                 reaction.FlinchTarget = root.transform.Find("VisualRoot");
                 reaction.TintDeathWithRenderer = true;
                 reaction.FlashRenderers = null; // 자식 렌더러 자동 수집 (교체된 외형도 포함)
+                var restraint = root.GetComponent<EnemyRestraint>(); // 모래 족쇄 → 발목을 감는 모래
+                if (restraint != null) restraint.vfxPrefab = Load(SandRootVfxBuilder.Path);
                 EnsureFootsteps(root);
                 PrefabUtility.SaveAsPrefabAsset(root, EnemyPrefabPath);
             }
@@ -82,15 +84,92 @@ namespace DesertTower.VFX.Editor
                 reaction.FlinchTarget = null;
                 reaction.FlashRenderers = null;
 
-                var afterimage = Ensure<VfxAfterimage>(root); // 대시 시작 → 0.25초 동안 잔상
-                afterimage.Material = AssetDatabase.LoadAssetAtPath<Material>(VfxBuildKit.MatMeshAdditivePath);
-                if (visuals != null && !HasListener(visuals.onDashStarted, afterimage))
-                    UnityEventTools.AddFloatPersistentListener(visuals.onDashStarted, new UnityAction<float>(afterimage.Play), 0.25f);
+                // 대시 잔상(틸 실루엣)은 눈이 아파서 뺐다. 예전 프리팹에 남아 있으면 리스너와 컴포넌트를 걷어낸다.
+                var afterimage = root.GetComponent<VfxAfterimage>();
+                if (afterimage != null)
+                {
+                    if (visuals != null) RemoveListeners(visuals.onDashStarted, afterimage);
+                    Object.DestroyImmediate(afterimage, true);
+                }
+
+                var attack = root.GetComponent<PlayerBasicAttack>(); // 공격 마법 스킬: 관통 빔, 꿰뚫은 적 착탄, 모래 폭발
+                if (attack != null)
+                {
+                    attack.beamPrefab = Load(BeamVfxBuilder.PierceBeamPath);
+                    attack.beamHitPrefab = Load(ImpactVfxBuilder.ManaBoltImpactPath);
+                    attack.burstPrefab = Load(ImpactVfxBuilder.SandBurstPath);
+                }
+                var caster = root.GetComponent<PlayerSkillCaster>(); // E 모래 소용돌이, R 사막 폭풍 지역 연출
+                if (caster != null)
+                {
+                    caster.vortexPrefab = Load(SandZoneVfxBuilder.VortexPath);
+                    caster.stormPrefab = Load(SandZoneVfxBuilder.StormPath);
+                }
 
                 var kick = Ensure<VfxCameraKick>(root); // 발사 → 아주 약한 카메라 킥
                 kick.Strength = 0.02f; kick.Duration = 0.08f;
                 if (visuals != null && !HasListener(visuals.onFired, kick))
                     UnityEventTools.AddPersistentListener(visuals.onFired, new UnityAction(kick.Kick));
+
+                var updraft = root.GetComponent<PlayerUpdraft>(); // 상승 기류 발사 → 발밑 충격파·모래먼지
+                if (updraft != null)
+                {
+                    var anchor = root.transform.Find("UpdraftVfx");
+                    if (anchor == null)
+                    {
+                        anchor = new GameObject("UpdraftVfx").transform;
+                        anchor.SetParent(root.transform, false);
+                        anchor.localPosition = new Vector3(0f, 0.02f, 0f);
+                    }
+                    var launch = Ensure<VfxOneShot>(anchor.gameObject);
+                    launch.Prefab = Load(UpdraftVfxBuilder.LaunchPath);
+                    launch.Anchor = anchor; launch.ParentToAnchor = false; launch.Lifetime = 2.5f; launch.SpawnScale = Vector3.one;
+                    if (!HasListener(updraft.onLaunched, launch))
+                        UnityEventTools.AddPersistentListener(updraft.onLaunched, new UnityAction(launch.Fire));
+                    movement.MaxJumpVelocity = 12f; // 발사(14m/s 이상)는 점프 먼지를 내지 않는다
+
+                    // 충전 기류: 몸 중심에 자식으로 두고 충전 시작/세기/끝을 꽂는다.
+                    var chargePrefab = Load(UpdraftVfxBuilder.ChargePath);
+                    if (chargePrefab != null)
+                    {
+                        var chargeInstance = root.transform.Find("UpdraftCharge");
+                        if (chargeInstance == null)
+                        {
+                            chargeInstance = ((GameObject)PrefabUtility.InstantiatePrefab(chargePrefab, root.transform)).transform;
+                            chargeInstance.name = "UpdraftCharge";
+                            chargeInstance.localPosition = new Vector3(0f, 0.95f, 0f);
+                        }
+                        var loop = chargeInstance.GetComponent<VfxChargeLoop>();
+                        if (loop != null)
+                        {
+                            if (!HasListener(updraft.onChargeStarted, loop)) UnityEventTools.AddPersistentListener(updraft.onChargeStarted, new UnityAction(loop.Begin));
+                            if (!HasListener(updraft.onCharging, loop)) UnityEventTools.AddPersistentListener(updraft.onCharging, new UnityAction<float>(loop.SetIntensity));
+                            if (!HasListener(updraft.onChargeCancelled, loop)) UnityEventTools.AddPersistentListener(updraft.onChargeCancelled, new UnityAction(loop.End));
+                            if (!HasListener(updraft.onLaunched, loop)) UnityEventTools.AddPersistentListener(updraft.onLaunched, new UnityAction(loop.End));
+                        }
+                    }
+
+                    // 볼록 렌즈: 몸 중심의 굴절 구체. 충전으로 부풀고 발사 때 펄스.
+                    var lensPrefab = Load(UpdraftVfxBuilder.LensPath);
+                    if (lensPrefab != null)
+                    {
+                        var lensInstance = root.transform.Find("UpdraftLens");
+                        if (lensInstance == null)
+                        {
+                            lensInstance = ((GameObject)PrefabUtility.InstantiatePrefab(lensPrefab, root.transform)).transform;
+                            lensInstance.name = "UpdraftLens";
+                            lensInstance.localPosition = new Vector3(0f, 0.95f, 0f);
+                        }
+                        var bubble = lensInstance.GetComponent<VfxRefractionBubble>();
+                        if (bubble != null)
+                        {
+                            if (!HasListener(updraft.onChargeStarted, bubble)) UnityEventTools.AddPersistentListener(updraft.onChargeStarted, new UnityAction(bubble.Begin));
+                            if (!HasListener(updraft.onCharging, bubble)) UnityEventTools.AddPersistentListener(updraft.onCharging, new UnityAction<float>(bubble.SetIntensity));
+                            if (!HasListener(updraft.onChargeCancelled, bubble)) UnityEventTools.AddPersistentListener(updraft.onChargeCancelled, new UnityAction(bubble.End));
+                            if (!HasListener(updraft.onLaunched, bubble)) UnityEventTools.AddPersistentListener(updraft.onLaunched, new UnityAction(bubble.Pulse));
+                        }
+                    }
+                }
 
                 EnsureFootsteps(root);
                 PrefabUtility.SaveAsPrefabAsset(root, PlayerPrefabPath);
@@ -146,7 +225,13 @@ namespace DesertTower.VFX.Editor
             return value != null ? value : go.AddComponent<T>();
         }
 
-        static bool HasListener(UnityEvent unityEvent, Object target)
+        static void RemoveListeners(UnityEventBase unityEvent, Object target)
+        {
+            for (int i = unityEvent.GetPersistentEventCount() - 1; i >= 0; i--)
+                if (unityEvent.GetPersistentTarget(i) == target) UnityEventTools.RemovePersistentListener(unityEvent, i);
+        }
+
+        static bool HasListener(UnityEventBase unityEvent, Object target)
         {
             for (int i = 0; i < unityEvent.GetPersistentEventCount(); i++)
                 if (unityEvent.GetPersistentTarget(i) == target) return true;

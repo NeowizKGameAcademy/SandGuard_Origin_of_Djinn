@@ -75,6 +75,7 @@ namespace SandGuard.Player.Tests
         {
             Cube(new Vector3(0, -0.5f, 0), new Vector3(20, 1, 20));
             var motor = Player().GetComponent<PlayerMotor>();
+            motor.GetComponent<PlayerEffects>().Apply(new SandGuard.Player.Effects.DoubleJumpEffect()); // 기본값은 공중 점프 0
             yield return new WaitForSeconds(0.15f);
             Assert.True(motor.IsGrounded);
             Keys(Key.Space); yield return null; yield return null;
@@ -219,17 +220,73 @@ namespace SandGuard.Player.Tests
             Assert.AreEqual(90, mana.CurrentMana);
             Assert.True(observedCompleteState);
             Assert.AreEqual(ActionFailure.Cooldown, motor.TryDash().Failure);
-            yield return new WaitForSeconds(0.25f);
+            yield return new WaitForSeconds(motor.dashDuration + 0.05f);
             Assert.Greater(player.transform.position.z, 0.5f);
             Assert.Less(player.transform.position.z, 1.7f);
             Assert.False(motor.IsDashing);
             Assert.AreEqual(90, mana.CurrentMana);
         }
 
+        [UnityTest] public IEnumerator DashAcrossLedgeHoldsHeightThenFallsAndLands()
+        {
+            Cube(new Vector3(0, -0.5f, -1), new Vector3(10, 1, 4)); // Edge at z=1.
+            Cube(new Vector3(0, -0.75f, 6), new Vector3(10, 1, 10)); // Lower by 0.25m: inside normal snap distance.
+            var player = Player();
+            var motor = player.GetComponent<PlayerMotor>();
+            yield return new WaitForSeconds(0.3f);
+            Assert.True(motor.IsGrounded);
+            Assert.AreEqual(0, motor.AirDashes);
+            motor.dashDuration = 0.4f;
+            float height = player.transform.position.y;
+            float stepOffset = player.GetComponent<CharacterController>().stepOffset;
+            int landings = 0; motor.Landed += _ => landings++;
+            Assert.True(motor.TryDash().Succeeded);
+            for (float t = 0f; motor.IsDashing && t < 1f; t += Time.deltaTime)
+            {
+                yield return null;
+                Assert.AreEqual(height, player.transform.position.y, 0.005f, "Neither gravity nor ground snapping may lower the dash, including its last frame.");
+            }
+            Assert.False(motor.IsDashing);
+            Assert.Greater(player.transform.position.z, 3.5f);
+            Assert.AreEqual(0f, motor.VerticalSpeed);
+            Assert.AreEqual(0, landings);
+            Assert.AreEqual(stepOffset, player.GetComponent<CharacterController>().stepOffset);
+            yield return new WaitForSeconds(0.4f);
+            Assert.Less(player.transform.position.y, height - 0.15f);
+            Assert.True(motor.IsGrounded);
+            Assert.AreEqual(1, landings);
+        }
+
+        [UnityTest] public IEnumerator FallingDashDiscardsFallSpeedAndResumesFromRest()
+        {
+            Cube(new Vector3(0, -0.5f, 0), new Vector3(30, 1, 30));
+            var player = Player();
+            var motor = player.GetComponent<PlayerMotor>();
+            yield return new WaitForSeconds(0.3f);
+            player.GetComponent<PlayerEffects>().Apply(new SandGuard.Player.Effects.AirDashEffect());
+            motor.Teleport(new Vector3(0, 5, 0));
+            yield return new WaitForSeconds(0.2f);
+            Assert.Less(motor.VerticalSpeed, -3f);
+            float height = player.transform.position.y;
+            Assert.True(motor.TryDash().Succeeded);
+            Assert.AreEqual(0f, motor.VerticalSpeed);
+            for (float t = 0f; motor.IsDashing && t < 1f; t += Time.deltaTime)
+            {
+                yield return null;
+                Assert.AreEqual(height, player.transform.position.y, 0.005f);
+            }
+            Assert.False(motor.IsDashing);
+            Assert.AreEqual(0f, motor.VerticalSpeed);
+            yield return null;
+            Assert.Less(motor.VerticalSpeed, 0f);
+            Assert.AreEqual(-motor.gravity * Time.deltaTime, motor.VerticalSpeed, 0.05f, "The old falling speed must not return after the dash.");
+        }
+
         [UnityTest] public IEnumerator InsufficientAvailableManaLeavesDashUnchanged()
         {
             var player = Player();
             var motor = player.GetComponent<PlayerMotor>();
+            player.GetComponent<PlayerEffects>().Apply(new SandGuard.Player.Effects.AirDashEffect()); // 바닥 없는 씬이라 공중 대시가 필요하다
             IManaWallet mana = player.GetComponent<PlayerManaWallet>();
             Assert.True(mana.TryReserve(95, out var reservation));
             Assert.AreEqual(ActionFailure.InsufficientMana, motor.TryDash().Failure);
@@ -245,6 +302,7 @@ namespace SandGuard.Player.Tests
         {
             var player = Player();
             var motor = player.GetComponent<PlayerMotor>();
+            player.GetComponent<PlayerEffects>().Apply(new SandGuard.Player.Effects.AirDashEffect()); // 바닥 없는 씬이라 공중 대시가 필요하다
             Assert.True(motor.TryDash().Succeeded);
             Time.timeScale = 0f;
             var position = player.transform.position;
@@ -259,11 +317,12 @@ namespace SandGuard.Player.Tests
         {
             var player = Player();
             var motor = player.GetComponent<PlayerMotor>();
+            player.GetComponent<PlayerEffects>().Apply(new SandGuard.Player.Effects.AirDashEffect()); // 기본값은 공중 대시 0
             motor.Teleport(new Vector3(0, 4, 0));
             Keys(Key.D); yield return null; yield return null;
             int airJumps = motor.RemainingAirJumps;
             Assert.True(motor.TryDash().Succeeded);
-            yield return new WaitForSeconds(0.25f);
+            yield return new WaitForSeconds(motor.dashDuration + 0.05f);
             Assert.Greater(player.transform.position.x, 3f);
             Assert.AreEqual(airJumps, motor.RemainingAirJumps);
         }
@@ -274,6 +333,8 @@ namespace SandGuard.Player.Tests
             var health = player.GetComponent<PlayerHealth>();
             var motor = player.GetComponent<PlayerMotor>();
             var attack = player.GetComponent<PlayerBasicAttack>();
+            player.GetComponent<PlayerRespawner>().enabled = false; // 부활 없이 사망 상태의 잠금만 본다
+            player.GetComponent<PlayerEffects>().Apply(new SandGuard.Player.Effects.AirDashEffect()); // 바닥 없는 씬이라 공중 대시가 필요하다
             int deaths = 0, hits = 0;
             health.Died += _ => deaths++;
             health.Damaged += _ => hits++;

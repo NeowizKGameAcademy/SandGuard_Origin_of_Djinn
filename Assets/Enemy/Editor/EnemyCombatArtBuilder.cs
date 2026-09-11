@@ -29,6 +29,8 @@ namespace SandGuard.Enemy.Editor
         {
             public string Name, BodyFolder, RigFile, AttackClip = "Attack";
             public float Height, MoveSpeed = 3.5f, AttackSpeed = 1f, Windup, Interval = 1.2f;
+            public float? MoveTimeScale;
+            public float? AttackRange;
             public (string asset, HumanBodyBones bone, float scale)[] Gear;
         }
 
@@ -41,9 +43,9 @@ namespace SandGuard.Enemy.Editor
                 Gear = new[] { ("AssassinDagger", HumanBodyBones.RightHand, .63f), ("AssassinDagger", HumanBodyBones.LeftHand, .63f) } },
             new Spec { Name = "ShieldGuard", BodyFolder = "bandit-shielder", Height = 1.84f, MoveSpeed = 2f, Windup = .5f,
                 Gear = new[] { ("ShortSword", HumanBodyBones.RightHand, .72f), ("TowerShield", HumanBodyBones.LeftHand, 1f) } },
-            new Spec { Name = "HammerBrute", BodyFolder = "bandit-hammerer", Height = 1.94f, Windup = .93f, Interval = 1.9f,
+            new Spec { Name = "HammerBrute", BodyFolder = "bandit-hammerer", Height = 1.94f, MoveTimeScale = 1f, AttackRange = 2.3f, AttackSpeed = 2.836364f, Windup = .93f, Interval = 1.9f,
                 Gear = new[] { ("Warhammer", HumanBodyBones.RightHand, 1f) } },
-            new Spec { Name = "Chief", BodyFolder = "bandit-leader", Height = 2.04f, MoveSpeed = 2.2f, Windup = .6f, Interval = 1.6f,
+            new Spec { Name = "Chief", BodyFolder = "bandit-leader", Height = 2.04f, MoveSpeed = 2.2f, AttackRange = 3f, Windup = .6f, Interval = 1.6f,
                 Gear = new[] { ("ChiefScimitar", HumanBodyBones.RightHand, 1f), ("ChiefCape", HumanBodyBones.Chest, 2.04f / 1.8f) } },
         };
 
@@ -66,16 +68,17 @@ namespace SandGuard.Enemy.Editor
         static void BuildCharacter(Spec spec, List<string> report)
         {
             string folder = Art + "/" + spec.Name, docs = "Docs/model-art/" + spec.BodyFolder;
-            string rigSource = spec.RigFile ?? Directory.GetFiles(docs, "*@*.fbx", SearchOption.AllDirectories).Single();
+            string existingRig = folder + "/" + spec.Name + "_Rig.fbx";
+            string rigSource = File.Exists(existingRig) ? existingRig : spec.RigFile ?? DownloadedMotion(spec, "Idle");
             string textureSource = Directory.GetFiles(docs, "*.jpg", SearchOption.AllDirectories).First(p => p.Replace('\\', '/').Contains(".fbm/"));
             string rig = folder + "/" + spec.Name + "_Rig.fbx", texture = folder + "/" + spec.Name + "_BaseColor.jpg";
-            File.Copy(rigSource, rig, true);
+            if (rigSource != rig) File.Copy(rigSource, rig, true);
             File.Copy(textureSource, texture, true);
             var clips = new Dictionary<string, string>();
             foreach (var (role, file) in new[] { ("Idle", "Idle"), ("Move", "Move"), ("Attack", spec.AttackClip), ("Death", "Death") })
             {
                 string target = folder + "/" + spec.Name + "_" + role + ".fbx";
-                File.Copy(Selection + "/" + spec.Name + "/" + file + ".fbx", target, true);
+                File.Copy(DownloadedMotion(spec, role), target, true);
                 clips[role] = target;
             }
             AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
@@ -109,7 +112,8 @@ namespace SandGuard.Enemy.Editor
                 animator.applyRootMotion = false; animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
                 animator.Rebind(); animator.Update(0f);
                 float stride = Stride(clips["Move"], animator);
-                float timeScale = stride < .2f ? 1f : Mathf.Clamp(spec.MoveSpeed / stride, .5f, 2.5f);
+                // 실측 보폭으로 발걸음이 너무 느려지는 클립은 캐릭터별 재생 배속을 우선한다.
+                float timeScale = spec.MoveTimeScale ?? (stride < .2f ? 1f : Mathf.Clamp(spec.MoveSpeed / stride, .5f, 2.5f));
                 animator.runtimeAnimatorController = Controller(spec, folder, clips, timeScale);
                 root.AddComponent<EnemyVisualBindings>().animator = animator;
 
@@ -139,6 +143,22 @@ namespace SandGuard.Enemy.Editor
                 return BoundsOf(instance).size.y;
             }
             finally { Object.DestroyImmediate(instance); }
+        }
+
+        static string DownloadedMotion(Spec spec, string role)
+        {
+            string[] names = spec.Name switch
+            {
+                "Swordsman" => new[] { "Sword And Shield Idle", "Sword And Shield Run", "Sword And Shield Slash", "Sword And Shield Death" },
+                "Assassin" => new[] { "Knife Idle", "Run", "Standing Torch Melee Attack Stab", "Standing React Death Left" },
+                "ShieldGuard" => new[] { "Sword And Shield Block Idle", "Sword And Shield Walk", "Sword And Shield Slash", "Sword And Shield Death" },
+                "HammerBrute" => new[] { "Great Sword Idle", "Great Sword Walk", "Heavy Weapon Swing", "Two Handed Sword Death" },
+                "Chief" => new[] { "Sword And Shield Idle", "Sword And Shield Walk", "Sword And Shield Slash", "Standing React Death Backward" },
+                _ => throw new InvalidOperationException(spec.Name)
+            };
+            string name = names[Array.IndexOf(new[] { "Idle", "Move", "Attack", "Death" }, role)];
+            return Directory.GetFiles("Docs/model-art/" + spec.BodyFolder, "*.fbx")
+                .Single(p => Path.GetFileNameWithoutExtension(p).Split('@').Last().Equals(name, StringComparison.OrdinalIgnoreCase));
         }
 
         static void ImportBody(string path, float scale, Material material)
@@ -216,6 +236,7 @@ namespace SandGuard.Enemy.Editor
             var toAttack = locomotion.AddTransition(attack); toAttack.hasExitTime = false; toAttack.duration = .1f;
             toAttack.AddCondition(AnimatorConditionMode.If, 0f, "Attack");
             var back = attack.AddTransition(locomotion); back.hasExitTime = true; back.exitTime = .9f; back.duration = .15f;
+            if (spec.Name == "HammerBrute") { back.exitTime = 1f; back.duration = .05f; }
             var die = machine.AddAnyStateTransition(dead); die.hasExitTime = false; die.duration = .1f; die.canTransitionToSelf = false;
             die.AddCondition(AnimatorConditionMode.If, 0f, "Die");
             EditorUtility.SetDirty(result);
@@ -275,6 +296,7 @@ namespace SandGuard.Enemy.Editor
             anchorLocal = anchor.position; // world
             model.transform.position += socket.position - anchorLocal;
             if (Vector3.Distance(anchor.position, socket.position) > .002f) throw new InvalidOperationException(asset + " grip offset " + Vector3.Distance(anchor.position, socket.position));
+            if (asset == "ChiefCape") wrapper.localPosition = new Vector3(0f, -.065f, .03f);
             report.Add("  " + owner + " " + asset + " -> " + bone.name + " scale " + scale + " gripAt " + socket.position.ToString("F2"));
         }
 
@@ -344,9 +366,12 @@ namespace SandGuard.Enemy.Editor
                 visuals.visualPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(visualPath);
                 visuals.localPosition = Vector3.zero; visuals.localEulerAngles = Vector3.zero; visuals.localScale = Vector3.one;
                 var attack = root.GetComponent<EnemyMeleeAttack>(); attack.windup = spec.Windup; attack.interval = spec.Interval;
+                // 캐릭터별 지정 사거리를 적용하고, 미지정 시 기본 프리팹(Swordsman)을 따른다.
+                attack.range = spec.AttackRange ?? AssetDatabase.LoadAssetAtPath<GameObject>(BasePrefab).GetComponent<EnemyMeleeAttack>().range;
                 root.GetComponent<EnemyMotor>().moveSpeed = spec.MoveSpeed;
                 root.GetComponent<UnityEngine.AI.NavMeshAgent>().speed = spec.MoveSpeed;
                 root.GetComponent<EnemyHealth>().removeDelay = deathLength + .3f;
+                EnemyScaleBuilder.Configure(root, spec.Name);
                 visuals.RebuildVisual();
                 PrefabUtility.SaveAsPrefabAsset(root, prefabPath);
             }

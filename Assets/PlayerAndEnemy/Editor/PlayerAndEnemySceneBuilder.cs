@@ -106,15 +106,12 @@ namespace SandGuard.Integration.Editor
             var playerLife = player.GetComponent<ICombatTarget>() as MonoBehaviour;
             if (playerLife == null) { var combat = player.AddComponent<PlayerCombatTarget>(); combat.maxHealth = 100f; playerLife = combat; }
 
-            // 적 공급기
-            var spawner = new GameObject("Enemy Spawner").AddComponent<EnemyStreamSpawner>();
-            spawner.enemyPrefab = enemyPrefab;
-            spawner.spawnPoints = spawnPoints.ToArray();
-            spawner.objective = core.transform;
-            spawner.initialCount = 3; spawner.interval = 8f; spawner.perWave = 2; spawner.maxAlive = 8;
+            // 웨이브: LevelRoot.waves(협곡 도적 웨이브)를 WaveDirector가 실행하고 적은 EnemyPool에서 꺼낸다 (SandGuard/Waves).
+            SandGuard.Waves.Editor.WaveSetupBuilder.WireIntoScene(scene);
 
             var overlay = new GameObject("Test HUD").AddComponent<PlayerAndEnemyOverlay>();
-            overlay.playerLife = playerLife; overlay.spawner = spawner; overlay.core = coreTarget;
+            overlay.playerLife = playerLife; overlay.core = coreTarget;
+            overlay.gameObject.AddComponent<SandGuard.Player.PlayerStarterEffects>(); // 스킬트리 전까지 더블 점프·공중 대시를 켠다
 
             // 건설 슬롯마다 타워 받침대를 놓고 건설 서비스·메뉴를 넣는다 (SandGuard/Facility).
             SandGuard.Facility.Editor.FacilitySetupBuilder.WireIntoScene(scene);
