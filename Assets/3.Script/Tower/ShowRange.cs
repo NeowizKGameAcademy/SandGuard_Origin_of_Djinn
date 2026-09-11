@@ -5,19 +5,19 @@ using UnityEngine;
 public class ShowRange : MonoBehaviour
 {
     [Header("Components")]
-    [SerializeField] private FindEnemy findEnemy;
-
-    private Vector3 Scale;
+    [SerializeField] private DetectRange detectRange;
+    [SerializeField] private Renderer renderer;
 
     private void Awake()
     {
-        findEnemy = GetComponentInParent<FindEnemy>();
+        detectRange = transform.parent.GetComponentInChildren<DetectRange>();
+        TryGetComponent(out renderer);
     }
 
     // Update is called once per frame
     void Update()
     {
-        Scale = new Vector3(findEnemy.range * 2, 0.01f, findEnemy.range * 2);
-        transform.localScale = Scale;
+        renderer.material.SetFloat("_Progress", detectRange.range * 0.01f);
+        renderer.material.SetFloat("_RingWidth", detectRange.range * 0.01f);
     }
 }
