@@ -61,10 +61,16 @@ namespace SandGuard.Enemy.Editor
                 selector.self = health; selector.motor = motor; selector.attack = attack;
                 var brain = root.AddComponent<EnemyBrain>();
                 brain.health = health; brain.motor = motor; brain.selector = selector; brain.attack = attack;
+                var restraint = root.AddComponent<EnemyRestraint>();
+                restraint.motor = motor; restraint.health = health;
+                var fall = root.AddComponent<EnemyFall>();
+                fall.motor = motor; fall.health = health;
                 visuals.RebuildVisual();
                 prefab = PrefabUtility.SaveAsPrefabAsset(root, Root + "/Enemy.prefab");
                 Object.DestroyImmediate(root);
             }
+            EnsureRestraint(Root + "/Enemy.prefab"); // 변형 프리팹(Chief 등)은 원본에서 상속받는다
+            EnsureFall(Root + "/Enemy.prefab");
 
             if (!File.Exists(Root + "/EnemyTest.unity"))
             {
@@ -129,6 +135,38 @@ namespace SandGuard.Enemy.Editor
             obstacle.carving = true; obstacle.shape = NavMeshObstacleShape.Box; obstacle.size = Vector3.one;
             return value;
         }
+        /// <summary>이미 만들어진 적 프리팹에 속박(모래 족쇄) 컴포넌트가 없으면 붙인다. 여러 번 실행해도 안전하다.</summary>
+        public static void EnsureRestraint(string prefabPath)
+        {
+            if (AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath) == null) return;
+            var root = PrefabUtility.LoadPrefabContents(prefabPath);
+            try
+            {
+                var restraint = root.GetComponent<EnemyRestraint>();
+                if (restraint == null) restraint = root.AddComponent<EnemyRestraint>();
+                restraint.motor = root.GetComponent<EnemyMotor>();
+                restraint.health = root.GetComponent<EnemyHealth>();
+                PrefabUtility.SaveAsPrefabAsset(root, prefabPath);
+            }
+            finally { PrefabUtility.UnloadPrefabContents(root); }
+        }
+
+        /// <summary>이미 만들어진 적 프리팹에 낙하(낙사·NavMesh 복귀) 컴포넌트가 없으면 붙인다. 여러 번 실행해도 안전하다.</summary>
+        public static void EnsureFall(string prefabPath)
+        {
+            if (AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath) == null) return;
+            var root = PrefabUtility.LoadPrefabContents(prefabPath);
+            try
+            {
+                var fall = root.GetComponent<EnemyFall>();
+                if (fall == null) fall = root.AddComponent<EnemyFall>();
+                fall.motor = root.GetComponent<EnemyMotor>();
+                fall.health = root.GetComponent<EnemyHealth>();
+                PrefabUtility.SaveAsPrefabAsset(root, prefabPath);
+            }
+            finally { PrefabUtility.UnloadPrefabContents(root); }
+        }
+
         static Transform Child(Transform parent, string name, Vector3 position)
         { var value = new GameObject(name).transform; value.SetParent(parent, false); value.localPosition = position; return value; }
         static GameObject Primitive(string name, PrimitiveType type, Transform parent, Vector3 position, Vector3 scale, Material material, bool collider)

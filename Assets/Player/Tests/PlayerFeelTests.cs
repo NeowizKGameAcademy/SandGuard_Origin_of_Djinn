@@ -79,7 +79,7 @@ namespace SandGuard.Player.Tests
             Keys(Key.Space); yield return null; Keys();
             yield return new WaitForSeconds(0.2f);
             Assert.False(motor.IsGrounded, "Buffered jump must fire on landing.");
-            Assert.AreEqual(motor.extraAirJumps, motor.RemainingAirJumps, "A buffered ground jump must not consume an air jump.");
+            Assert.AreEqual(motor.ExtraAirJumps, motor.RemainingAirJumps, "A buffered ground jump must not consume an air jump.");
             yield return new WaitForSeconds(1.2f);
             Assert.True(motor.IsGrounded);
             // 모서리에서 떨어진 직후의 점프는 지상 점프로 친다.
@@ -91,7 +91,7 @@ namespace SandGuard.Player.Tests
             Keys(Key.D, Key.Space); yield return null; yield return null;
             Keys();
             Assert.False(motor.IsGrounded);
-            Assert.AreEqual(motor.extraAirJumps, motor.RemainingAirJumps, "Coyote jump must count as a ground jump.");
+            Assert.AreEqual(motor.ExtraAirJumps, motor.RemainingAirJumps, "Coyote jump must count as a ground jump.");
         }
 
         [UnityTest] public IEnumerator HoldingJumpGoesHigherThanTapping()
@@ -110,6 +110,36 @@ namespace SandGuard.Player.Tests
             Keys();
             Assert.Greater(holdPeak, tapPeak + 0.3f, "Holding jump must reach clearly higher than a tap.");
             Assert.Greater(holdPeak, motor.jumpHeight * 0.85f);
+        }
+
+        /// <summary>대시는 등속이 아니라 빠르게 붙었다가 끝에서 풀린다. 총 거리는 그대로다.</summary>
+        [UnityTest] public IEnumerator DashAcceleratesQuicklyAndDeceleratesBeforeItEnds()
+        {
+            Cube(new Vector3(0, -0.5f, 0), new Vector3(60, 1, 60));
+            var player = Player(Vector3.zero);
+            var motor = player.GetComponent<PlayerMotor>();
+            yield return new WaitForSeconds(0.3f);
+            Assert.AreEqual(0f, motor.DashProgress(0f), 0.0001f); Assert.AreEqual(1f, motor.DashProgress(1f), 0.0001f);
+            Assert.Less(motor.DashProgress(0.08f), 0.08f, "The first 8% of the dash covers less than 8% of the distance (ramp-up).");
+            Assert.Greater(motor.DashProgress(0.5f), 0.55f, "By the middle well over half the distance is done (fast peak).");
+            Assert.Greater(motor.DashProgress(0.8f), 0.85f, "The last 20% of the dash covers under 15% of the distance (ease-out).");
+            Vector3 start = player.transform.position; Vector3 previous = start;
+            var speeds = new List<float>();
+            Assert.True(motor.TryDash().Succeeded);
+            while (motor.IsDashing)
+            {
+                yield return null;
+                speeds.Add(Vector3.Distance(player.transform.position, previous) / Time.deltaTime);
+                previous = player.transform.position;
+            }
+            float travelled = Vector3.Distance(start, player.transform.position);
+            Assert.That(travelled, Is.InRange(motor.DashDistance - 0.3f, motor.DashDistance + 0.3f), "The profile keeps the total distance.");
+            Assert.GreaterOrEqual(speeds.Count, 4, "Enough frames to see the shape.");
+            float peak = 0f; int peakIndex = 0;
+            for (int i = 0; i < speeds.Count; i++) if (speeds[i] > peak) { peak = speeds[i]; peakIndex = i; }
+            Assert.Greater(peak, motor.DashDistance / motor.dashDuration * 1.15f, "Peak speed is well above the average (constant) speed.");
+            Assert.Less(peakIndex, speeds.Count / 2, "The peak comes in the first half.");
+            Assert.Less(speeds[speeds.Count - 1], peak * 0.6f, "The dash is clearly slowing down when it ends.");
         }
 
         [UnityTest] public IEnumerator DashKeepsMovingAfterItEndsInsteadOfStopping()

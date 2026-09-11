@@ -20,13 +20,16 @@ namespace SandGuard.Facility
         [Tooltip("시설 프리팹의 VfxPopIn에 완료 이펙트가 없을 때 쓰는 기본값(VFX_Build_Complete)")]
         public GameObject buildCompleteVfx;
         [Min(0.5f)] public float vfxLifetime = 3f;
-        [Tooltip("현재 단계. 준비·전투 모두 슬롯 건설을 허용한다")]
+        [Tooltip("게임 단계 제공자(IGameStateReader, 예: WaveDirector). 비우면 씬에서 찾고, 없으면 아래 phase를 쓴다")]
+        public MonoBehaviour gameStateSource;
+        [Tooltip("제공자가 없을 때의 단계. 준비·전투 모두 슬롯 건설을 허용한다")]
         public GamePhase phase = GamePhase.Preparation;
         public bool paused;
         public event Action Changed;
         public event Action<FacilityAnchor, FacilityViewData> Built;
-        public GamePhase Phase => phase;
-        public bool IsPaused => paused;
+        IGameStateReader Source => gameStateSource as IGameStateReader;
+        public GamePhase Phase => Source != null ? Source.Phase : phase;
+        public bool IsPaused => Source != null ? Source.IsPaused : paused;
         public IBuildSlotQuery Slots => registry;
         BuildSlotRegistry registry;
         IPlacementValidator validator;
@@ -36,6 +39,9 @@ namespace SandGuard.Facility
         {
             if (level == null) level = FindFirstObjectByType<LevelRoot>();
             if (level == null) { Debug.LogError("FacilityBuildService: LevelRoot가 없습니다.", this); enabled = false; return; }
+            if (gameStateSource == null)
+                foreach (var candidate in FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None))
+                    if (candidate != this && candidate is IGameStateReader) { gameStateSource = candidate; break; }
             registry = new BuildSlotRegistry(level);
             validator = new CompositePlacementValidator(new IPlacementRule[] { new PlacementPhaseRule(this), new SlotPlacementRule(registry) });
             foreach (var anchor in FindObjectsByType<FacilityAnchor>(FindObjectsSortMode.None)) Register(anchor);

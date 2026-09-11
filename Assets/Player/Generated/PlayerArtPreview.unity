@@ -367,6 +367,7 @@ GameObject:
   m_Component:
   - component: {fileID: 773578022}
   - component: {fileID: 773578021}
+  - component: {fileID: 773578030}
   m_Layer: 0
   m_Name: Test HUD
   m_TagString: Untagged
@@ -1662,3 +1663,19 @@ SceneRoots:
   - {fileID: 1738014198}
   - {fileID: 1694914731}
   - {fileID: 1457199619}
+--- !u!114 &773578030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 773578020}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51339e2b9b2a5f097de0057c04ccb189, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: SandGuard.Player.Runtime::SandGuard.Player.PlayerStarterEffects
+  target: {fileID: 0}
+  doubleJump: 1
+  airDash: 1
+  manaOnHit: 0

@@ -29,11 +29,85 @@ namespace SandGuard.Enemy
             && Planar(Position, PathEndPosition) <= arrivalDistance;
         public bool IsOnNavMesh => agent != null && agent.enabled && agent.isOnNavMesh;
         public Vector3 Velocity => agent != null && agent.enabled ? agent.velocity : Vector3.zero;
+        bool restrained;
+        float displacedUntil, speedMultiplier = 1f;
+        bool Held => restrained || Time.time < displacedUntil;
+        /// <summary>속박(모래 족쇄). 목적지·경로 상태는 그대로 계산하되 에이전트만 제자리에 세운다. 두뇌의 판단 흐름은 바뀌지 않는다.</summary>
+        public bool Restrained
+        {
+            get => restrained;
+            set
+            {
+                restrained = value;
+                if (IsOnNavMesh && HasDestination) agent.isStopped = Held;
+            }
+        }
+        /// <summary>이동 속도 배수(둔화). 1이 기본. 에이전트 속도에 바로 반영된다.</summary>
+        public float SpeedMultiplier
+        {
+            get => speedMultiplier;
+            set
+            {
+                speedMultiplier = Mathf.Max(0f, value);
+                if (agent != null) agent.speed = moveSpeed * speedMultiplier;
+            }
+        }
+        /// <summary>낙하 담당(<see cref="EnemyFall"/>). 있으면 가장자리 너머로 밀릴 때 절벽 판정을 맡기고, NavMesh 밖의 밀림도 넘긴다.</summary>
+        public EnemyFall Fall { get; set; }
+        /// <summary>낙하를 위해 에이전트를 떼어 낸 상태. 죽어서 끈 것과 구분한다.</summary>
+        public bool IsDetached { get; private set; }
+        /// <summary>외부 힘에 밀린다(소용돌이). 이번 프레임 자기 이동은 멈추고 delta만큼 NavMesh 위에서 옮긴다. 가장자리 너머가 절벽이면 떨어진다. NavMesh 밖이면 그냥 옮긴다.</summary>
+        public void Displace(Vector3 delta)
+        {
+            if (!IsOnNavMesh)
+            {
+                if (Fall != null && Fall.IsOffMesh) Fall.Push(delta); else transform.position += delta;
+                return;
+            }
+            Vector3 planar = delta; planar.y = 0f;
+            if (Fall != null && planar.sqrMagnitude > 1e-8f)
+            {
+                // 가장자리에 막히기 직전에 미리 본다. 절벽이면 EnemyFall이 에이전트를 떼고 밀림을 이어받는다.
+                float lookahead = Mathf.Max(planar.magnitude, 0.15f);
+                if (agent.Raycast(transform.position + planar.normalized * lookahead, out NavMeshHit edge) && Fall.TryLeaveLedge(edge.position, delta)) return;
+            }
+            displacedUntil = Time.time + 0.1f; // 밀림이 이어지는 동안은 자기 걸음을 멈춘다. 끊기면 Update가 다시 걷게 한다
+            if (HasDestination) agent.isStopped = true;
+            agent.Move(delta);
+        }
+        /// <summary>낙하를 위해 에이전트를 떼어 낸다. 위치는 부르는 쪽(<see cref="EnemyFall"/>)이 직접 옮긴다.</summary>
+        public void Detach()
+        {
+            if (IsDetached) return;
+            Stop();
+            if (agent != null) agent.enabled = false;
+            IsDetached = true;
+        }
+        /// <summary>떼어 낸 에이전트를 지정한 NavMesh 지점에 다시 붙인다. 속박·둔화는 그대로 둔다. NavMesh에 올라서지 못하면 false.</summary>
+        public bool Reattach(Vector3 position)
+        {
+            if (agent == null) agent = GetComponent<NavMeshAgent>();
+            agent.enabled = true;
+            agent.Warp(position);
+            HasDestination = false; PathState = MovementPathState.None; destination = position; PathEndPosition = position;
+            if (!agent.isOnNavMesh) { agent.enabled = false; return false; }
+            IsDetached = false;
+            agent.isStopped = Held;
+            return true;
+        }
+        void Update()
+        {
+            if (displacedUntil > 0f && Time.time >= displacedUntil)
+            {
+                displacedUntil = 0f;
+                if (IsOnNavMesh && HasDestination && !restrained) agent.isStopped = false;
+            }
+        }
 
         void Awake()
         {
             agent = GetComponent<NavMeshAgent>();
-            agent.speed = moveSpeed;
+            agent.speed = moveSpeed * speedMultiplier;
             agent.autoBraking = true;
             agent.autoRepath = true;
             PathEndPosition = transform.position;
@@ -48,7 +122,7 @@ namespace SandGuard.Enemy
             scratch ??= new NavMeshPath();
             if (!agent.CalculatePath(hit.position, scratch) || scratch.status == NavMeshPathStatus.PathInvalid || scratch.corners.Length == 0) return false;
             if (!agent.SetPath(scratch)) return false;
-            agent.isStopped = false;
+            agent.isStopped = Held;
             destination = hit.position;
             HasDestination = true;
             Apply(scratch.status, scratch.corners);
@@ -84,6 +158,19 @@ namespace SandGuard.Enemy
         {
             Stop();
             if (agent != null) agent.enabled = false;
+        }
+
+        /// <summary>풀 재사용: 지정 위치에 다시 세우고 이동을 켠다.</summary>
+        public void Enable(Vector3 position)
+        {
+            if (agent == null) agent = GetComponent<NavMeshAgent>();
+            agent.enabled = true;
+            if (NavMesh.SamplePosition(position, out NavMeshHit hit, sampleRadius, NavMesh.AllAreas)) position = hit.position;
+            agent.Warp(position);
+            IsDetached = false;
+            restrained = false; displacedUntil = 0f; SpeedMultiplier = 1f; // 풀 재사용: 상태이상은 새 개체로 넘기지 않는다
+            if (agent.isOnNavMesh) agent.isStopped = false;
+            HasDestination = false; PathState = MovementPathState.None; destination = position; PathEndPosition = position;
         }
 
         void Apply(NavMeshPathStatus status, Vector3[] corners)
