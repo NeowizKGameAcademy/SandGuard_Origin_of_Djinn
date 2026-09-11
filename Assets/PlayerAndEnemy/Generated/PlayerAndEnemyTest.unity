@@ -3417,13 +3417,15 @@ MonoBehaviour:
   target: {fileID: 0}
   doubleJump: 1
   airDash: 1
-  manaOnHit: 0
+  manaOnHit: 1
   updraft: 1
-  condensedBolt: 0
-  pierceBeam: 0
-  sandBurst: 0
-  sandShackle: 0
+  condensedBolt: 1
+  pierceBeam: 1
+  sandBurst: 1
+  sandShackle: 1
   explosivePierce: 1
+  sandVortex: 1
+  sandStorm: 1
 --- !u!1 &428085685
 GameObject:
   m_ObjectHideFlags: 0
