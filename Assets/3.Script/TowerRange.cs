@@ -2,7 +2,18 @@ using UnityEngine;
 
 public class TowerRange : MonoBehaviour
 {
-    [SerializeField] private GameObject ownerTower;
+    public enum RangeType
+    {
+        Detect,
+        Damage,
+        Effect
+    }
 
-    public GameObject OwnerTower => ownerTower;
+    [SerializeField] private RangeType rangeType;
+    [SerializeField] private TowerController ownerTower;
+
+    public RangeType Type => rangeType;
+    public TowerController OwnerTower => ownerTower;
+
+    
 }

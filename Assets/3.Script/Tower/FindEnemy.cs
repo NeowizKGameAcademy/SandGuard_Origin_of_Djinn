@@ -5,10 +5,9 @@ using UnityEngine;
 public class FindEnemy : MonoBehaviour
 {
     [Header("Auto Aim")]
-    [SerializeField] private float Auto_Aim_Range = 20f;
+    [SerializeField] private DetectRange Range;
+    private float Auto_Aim_Range;
     [SerializeField] private float SearchTime = 0.2f;
-
-    [SerializeField] private GameObject Range;
 
     private float Auto_Aim_Distance;
     private float SearchTimer;
@@ -19,10 +18,16 @@ public class FindEnemy : MonoBehaviour
     public Transform target => Target_Transform;
     public float range => Auto_Aim_Range;
 
+    private void OnEnable()
+    {
+        TryGetComponent(out Range);
+        Auto_Aim_Range = Range.range;
+    }
+
     private void Update()
     {
-        Auto_Aim_Range = Mathf.Clamp(Auto_Aim_Range, 0f, 50f);
-        SetRange();
+        Auto_Aim_Range = Range.range;
+        
 
         Auto_Aim_Distance = Auto_Aim_Range * Auto_Aim_Range;
 
@@ -78,13 +83,5 @@ public class FindEnemy : MonoBehaviour
         }
 
         Target_Transform = Closest_Target;
-    }
-
-    private void SetRange()
-    {
-        if (Range == null)
-            return;
-
-        Range.transform.localScale = new Vector3(Auto_Aim_Range * 2, Range.transform.localScale.y, Auto_Aim_Range * 2);
     }
 }
