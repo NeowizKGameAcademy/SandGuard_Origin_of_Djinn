@@ -50,7 +50,7 @@ TextureImporter:
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
-  spriteGenerateFallbackPhysicsShape: 0
+  spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
   spriteTessellationDetail: -1
@@ -136,7 +136,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Title_Logo
+      name: MianScene_UI_0
       rect:
         serializedVersion: 2
         x: 24
@@ -151,14 +151,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 40deabab530954441a1c9960f9c82120
-      internalID: 1397823907
+      spriteID: 040080c9f4bd04d46b7692a3ea80c799
+      internalID: -841618593
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: GameStart1
+      name: MianScene_UI_1
       rect:
         serializedVersion: 2
         x: 676
@@ -173,8 +173,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 073f739a35aa20c48b03db321ad9b2bf
-      internalID: -317428846
+      spriteID: f17f6859c55ee7945a138ec9f330f4b9
+      internalID: 1117779153
       vertices: []
       indices: 
       edges: []
@@ -195,8 +195,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: d703f0f6a209d584d835ce9460f9ff3f
-      internalID: -2080237932
+      spriteID: d99821e0699dcd047a4ad50a8008d3fb
+      internalID: 909301052
       vertices: []
       indices: 
       edges: []
@@ -217,14 +217,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2d2cfb2ed211b2747a181a47ca0bb11e
-      internalID: 1689543776
+      spriteID: a1d405b21010ea544a6605b1c2637bac
+      internalID: -346460837
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: GameStart2
+      name: MianScene_UI_4
       rect:
         serializedVersion: 2
         x: 677
@@ -239,8 +239,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ee0bd811cb51ac442a1f6dcbf3fec806
-      internalID: 925875519
+      spriteID: 10b6ec0f87b5fee4d8e1542a99307ff5
+      internalID: -1255020587
       vertices: []
       indices: 
       edges: []
@@ -261,8 +261,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ede7693a3d8e3bb49a23d0df436b8d0a
-      internalID: -732488084
+      spriteID: 690cc6f05b0dafc4fb9562bb7602f307
+      internalID: 276537271
       vertices: []
       indices: 
       edges: []
@@ -283,8 +283,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: eb6ce803b86a59944a10c005416823e7
-      internalID: -1524500195
+      spriteID: fd6569d80b1b7b34095a33f7ea40dd37
+      internalID: -962561787
       vertices: []
       indices: 
       edges: []
@@ -305,8 +305,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 33d4dbb617d58944c9f206d7b091685d
-      internalID: 1065975041
+      spriteID: 48d8944f51f1c9c41b40ddd429da6959
+      internalID: 1282003966
       vertices: []
       indices: 
       edges: []
@@ -327,20 +327,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2eaf3d18fefa4504088835e21b3dc4fc
-      internalID: -1471047316
+      spriteID: 498c715fbd46d664eb4b540895d19e48
+      internalID: 1282705104
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: GameStart3
+      name: MianScene_UI_9
       rect:
         serializedVersion: 2
-        x: 673
-        y: 496
+        x: 672
+        y: 504
         width: 441
-        height: 104
+        height: 204
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -349,8 +349,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2ed2a86c62d8d5b44b7875dad9af4364
-      internalID: -1576138075
+      spriteID: 119a0dad090b88242b1eb56ebef91792
+      internalID: 1850414580
       vertices: []
       indices: 
       edges: []
@@ -371,8 +371,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 6ac9cecaf51ed154584b0e8108bc7743
-      internalID: 16890520
+      spriteID: b4212ddd6b9a45943ad58c5e6a054a8a
+      internalID: 744034152
       vertices: []
       indices: 
       edges: []
@@ -393,14 +393,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e975b0837c6a7484fb2966ba326d20d6
-      internalID: 1833103465
+      spriteID: f1dc48daaf7afe748a2bdffb05ae27a4
+      internalID: 1881164553
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: GameStart4
+      name: MianScene_UI_12
       rect:
         serializedVersion: 2
         x: 677
@@ -415,8 +415,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f565c4389377ef349ad58cf13537efe6
-      internalID: -1383633252
+      spriteID: 72bad5d9ebea2ee4fa19a22acf607ade
+      internalID: 1357482154
       vertices: []
       indices: 
       edges: []
@@ -437,8 +437,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a1a955d05bbc0564992d99c515d89520
-      internalID: -1095633557
+      spriteID: a395507a22240ce4493ef21ca8fdb905
+      internalID: -1570721602
       vertices: []
       indices: 
       edges: []
@@ -459,8 +459,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: bc15d5daadb1da54b98da45f1533a6a6
-      internalID: -90681133
+      spriteID: d46cd93b05d36a8478b12eda770e7368
+      internalID: 1389653261
       vertices: []
       indices: 
       edges: []
@@ -481,8 +481,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: cb4500e27a61d2c4da4a7ede2b20781b
-      internalID: -204824408
+      spriteID: 3c481cd3fc9df9047bceca638c4f032e
+      internalID: 1402564731
       vertices: []
       indices: 
       edges: []
@@ -503,8 +503,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b8880f2d0a17dee4dadd7aa5277d8914
-      internalID: 159066244
+      spriteID: e7a1591071b74d0479a5bb5221d33f78
+      internalID: -1433393232
       vertices: []
       indices: 
       edges: []
@@ -525,8 +525,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 20b0c5d9af7538f4db98c564eead45dd
-      internalID: -342524585
+      spriteID: 291e81e8e7f364b4eb8ad8a995cdfcec
+      internalID: -543520981
       vertices: []
       indices: 
       edges: []
@@ -547,8 +547,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e523371f76e9f4b4cb1b6c18d40d3e87
-      internalID: 662796560
+      spriteID: 5688e3c4a94f03b4288df330a2a8bd35
+      internalID: 472855923
       vertices: []
       indices: 
       edges: []
@@ -569,14 +569,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 799b4825a8075ac448f2a981d29b41e9
-      internalID: 369713080
+      spriteID: bdf8b714e6279cd44b1282d8665146ac
+      internalID: -553418605
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MainScenePannel
+      name: MianScene_UI_20
       rect:
         serializedVersion: 2
         x: 55
@@ -591,8 +591,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 9d85991e477fca14a9ffb360ac33b429
-      internalID: -835677007
+      spriteID: e25516c5a7733834fb70d30cfb9bbbcb
+      internalID: -1858874728
       vertices: []
       indices: 
       edges: []
@@ -613,8 +613,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 236390a2bd21f4e4d9705ce9d81cee77
-      internalID: -1179271027
+      spriteID: dff226edebd21ba40ae00a116aa8eee9
+      internalID: 1988372729
       vertices: []
       indices: 
       edges: []
@@ -635,8 +635,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 4b3bac444a5273140a75af0f8e8186b4
-      internalID: 2146980680
+      spriteID: 1ed3303f55a338d4caad83c830066ca3
+      internalID: -113095577
       vertices: []
       indices: 
       edges: []
@@ -657,8 +657,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: eaab5bab3cb0e3c43a0361211d03047d
-      internalID: 939442523
+      spriteID: 2eea66b225ba39f4abdf777518314cab
+      internalID: -998227061
       vertices: []
       indices: 
       edges: []
@@ -679,8 +679,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 43bbc614176ae5445be13df2352d7202
-      internalID: 2110373063
+      spriteID: 0f503509d7b36a341be2a85998db5fc2
+      internalID: 328091761
       vertices: []
       indices: 
       edges: []
@@ -701,14 +701,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b46760e599fa7154dbf9514251db8e13
-      internalID: 942884242
+      spriteID: c2afa75cdded2da4f9cd04731f702ca4
+      internalID: -699265221
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Cursor
+      name: MianScene_UI_26
       rect:
         serializedVersion: 2
         x: 1089
@@ -723,8 +723,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2b876d1dc540e45489101d466b91d38d
-      internalID: -1680910664
+      spriteID: 32c8827e8ca61724b8fc2b415584673c
+      internalID: 540600829
       vertices: []
       indices: 
       edges: []
@@ -745,8 +745,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 56f30f333a3615440a343e0b963ee7fd
-      internalID: -1575514341
+      spriteID: d6df85a83e0bb7249bb54e07742fd904
+      internalID: 831357528
       vertices: []
       indices: 
       edges: []
@@ -767,8 +767,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3f3538bc8d4686b4ab7c6ee29d96c9df
-      internalID: -1763031300
+      spriteID: 30413c855d11a2945bd222865a29d2ed
+      internalID: 1929096790
       vertices: []
       indices: 
       edges: []
@@ -789,8 +789,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3f44354ebfc6f0e42afcfc81b556aad3
-      internalID: 132342109
+      spriteID: aac08738a15140e4ea703eb1a8e6c34b
+      internalID: 1286948852
       vertices: []
       indices: 
       edges: []
@@ -811,8 +811,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e287931a83bf5f74cbdc88125630f7a8
-      internalID: -320316601
+      spriteID: bce4a5fe1af2edc45ab41b273bc0bb88
+      internalID: -975715932
       vertices: []
       indices: 
       edges: []
@@ -833,8 +833,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 185c24523934b05438aec910fe18dc36
-      internalID: 1563608750
+      spriteID: ead1708d43bb3364d919ac9443038539
+      internalID: 1263019023
       vertices: []
       indices: 
       edges: []
@@ -855,8 +855,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3b97e96d3d4a01b469d59d5f283baf8d
-      internalID: -1302799368
+      spriteID: 7912f749bc9d97f468a939932723e21e
+      internalID: 1051230684
       vertices: []
       indices: 
       edges: []
@@ -877,8 +877,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a1bac74a665436d4083374ee05bfee7e
-      internalID: -1284909180
+      spriteID: daaa1c3c2c637b0409e7d170ece4e56f
+      internalID: 1802150877
       vertices: []
       indices: 
       edges: []
@@ -899,8 +899,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a4bf6f540235d7941850c3c6cd37a73c
-      internalID: -687387165
+      spriteID: ea78340054e3ea34f81d92008b41f6c0
+      internalID: 1366761120
       vertices: []
       indices: 
       edges: []
@@ -909,7 +909,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 19748f9c572e96b47b89833e38cf049f
+    spriteID: 089ec5612e538884290ab633b2cfce06
     internalID: 0
     vertices: []
     indices: 
@@ -921,42 +921,41 @@ TextureImporter:
       - key: SpriteEditor.SliceSettings
         value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      0: -317428846
-      Cursor: -1680910664
-      GameStart1: -317428846
-      GameStart2: 925875519
-      GameStart3: -1576138075
-      GameStart4: -1383633252
-      MainScenePannel: -835677007
-      MianScene_UI_10: 16890520
-      MianScene_UI_11: 1833103465
-      MianScene_UI_14: -90681133
-      MianScene_UI_15: -204824408
-      MianScene_UI_16: 159066244
-      MianScene_UI_17: -342524585
-      MianScene_UI_18: 662796560
-      MianScene_UI_19: 369713080
-      MianScene_UI_2: -2080237932
-      MianScene_UI_21: -1179271027
-      MianScene_UI_22: 2146980680
-      MianScene_UI_23: 939442523
-      MianScene_UI_24: 2110373063
-      MianScene_UI_25: 942884242
-      MianScene_UI_27: -1575514341
-      MianScene_UI_28: -1763031300
-      MianScene_UI_29: 132342109
-      MianScene_UI_3: 1689543776
-      MianScene_UI_30: -320316601
-      MianScene_UI_31: 1563608750
-      MianScene_UI_32: -1302799368
-      MianScene_UI_33: -1284909180
-      MianScene_UI_34: -687387165
-      MianScene_UI_5: -732488084
-      MianScene_UI_6: -1524500195
-      MianScene_UI_7: 1065975041
-      MianScene_UI_8: -1471047316
-      Selected: -1095633557
-      Title_Logo: 1397823907
+      MianScene_UI_0: -841618593
+      MianScene_UI_1: 1117779153
+      MianScene_UI_10: 744034152
+      MianScene_UI_11: 1881164553
+      MianScene_UI_12: 1357482154
+      MianScene_UI_14: 1389653261
+      MianScene_UI_15: 1402564731
+      MianScene_UI_16: -1433393232
+      MianScene_UI_17: -543520981
+      MianScene_UI_18: 472855923
+      MianScene_UI_19: -553418605
+      MianScene_UI_2: 909301052
+      MianScene_UI_20: -1858874728
+      MianScene_UI_21: 1988372729
+      MianScene_UI_22: -113095577
+      MianScene_UI_23: -998227061
+      MianScene_UI_24: 328091761
+      MianScene_UI_25: -699265221
+      MianScene_UI_26: 540600829
+      MianScene_UI_27: 831357528
+      MianScene_UI_28: 1929096790
+      MianScene_UI_29: 1286948852
+      MianScene_UI_3: -346460837
+      MianScene_UI_30: -975715932
+      MianScene_UI_31: 1263019023
+      MianScene_UI_32: 1051230684
+      MianScene_UI_33: 1802150877
+      MianScene_UI_34: 1366761120
+      MianScene_UI_4: -1255020587
+      MianScene_UI_5: 276537271
+      MianScene_UI_6: -962561787
+      MianScene_UI_7: 1282003966
+      MianScene_UI_8: 1282705104
+      MianScene_UI_9: 1850414580
+      Selected: -1570721602
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
