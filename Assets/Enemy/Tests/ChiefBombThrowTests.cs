@@ -74,6 +74,36 @@ namespace SandGuard.Enemy.Tests
             Assert.Null(skill.HeldBomb); Assert.False(skill.IsCasting);
             Assert.AreEqual(0, Object.FindObjectsByType<ChiefBombProp>(FindObjectsSortMode.None).Length);
         }
+        [UnityTest] public IEnumerator BombRequestsDisableOnlyForSurvivingHostileTowersOnce()
+        {
+            var requests = new System.Collections.Generic.List<TowerDisableRequest>();
+            CombatEffectSignals.TowerDisableRequested += requests.Add;
+            void Explode(float duration = 5f, float amount = 1f)
+            {
+                var prop = Object.Instantiate(skill.bombPrefab, targetObject.transform.position, Quaternion.identity);
+                var bomb = prop.gameObject.AddComponent<ChiefBombProjectile>();
+                bomb.Launch(Vector3.zero, chief.GetComponent<EnemyHealth>(), 10, amount, 2.5f, ~0, duration);
+                bomb.Detonate(); bomb.Detonate(); // 중복 폭발/충돌체 모두 한 요청만 전달
+            }
+            try
+            {
+                target.kind = CombatTargetKind.Tower;
+                Explode(3f);
+                Assert.AreEqual(1, requests.Count);
+                Assert.AreEqual(target.EntityId, requests[0].TargetEntityId);
+                Assert.AreEqual(3f, requests[0].Duration);
+                Assert.AreEqual(chief.GetComponent<EnemyHealth>().EntityId, requests[0].Cause.SourceEntityId);
+                Assert.AreEqual("chief.bomb", requests[0].Cause.CauseId);
+                Explode(0f); Assert.AreEqual(1, requests.Count);
+                target.factionId = "Enemy"; Explode(); Assert.AreEqual(1, requests.Count);
+                target.factionId = "Ally"; target.kind = CombatTargetKind.Player;
+                Explode(); Assert.AreEqual(1, requests.Count);
+                target.kind = CombatTargetKind.Tower; Explode(5f, 100000);
+                Assert.AreEqual(1, requests.Count, "Destroyed towers receive no disable request");
+            }
+            finally { CombatEffectSignals.TowerDisableRequested -= requests.Add; }
+            yield return null;
+        }
         [UnityTest] public IEnumerator BrainUsesShieldThenBombAndExplosionIgnoresFriendlies()
         {
             var shield = chief.GetComponent<ChiefGoldenShieldSkill>(); shield.summonDuration = .1f;

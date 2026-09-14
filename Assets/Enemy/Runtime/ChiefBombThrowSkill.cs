@@ -13,6 +13,8 @@ namespace SandGuard.Enemy
         [Min(.05f)] public float fuseAfterLanding = .35f;
         [Min(0f)] public float damage = 20f;
         [Min(.1f)] public float blastRadius = 2.5f;
+        [Min(0f), Tooltip("타워 정지 요청 시간. 실제 정지와 VFX는 타워 시스템에서 처리한다. 0이면 요청하지 않는다.")]
+        public float towerDisableDuration = 5f;
         public LayerMask damageMask = ~0;
         public Vector3 handOffset = new Vector3(0f, -.05f, .05f);
         public bool IsCasting { get; private set; }
@@ -78,7 +80,7 @@ namespace SandGuard.Enemy
             float time = Mathf.Max(.1f, flightTime);
             Vector3 velocity = (aimPoint - held.transform.position - .5f * Physics.gravity * time * time) / time;
             var projectile = held.GetComponent<ChiefBombProjectile>() ?? held.gameObject.AddComponent<ChiefBombProjectile>();
-            projectile.Launch(velocity, health, time + fuseAfterLanding, damage, blastRadius, damageMask);
+            projectile.Launch(velocity, health, time + fuseAfterLanding, damage, blastRadius, damageMask, towerDisableDuration);
             held = null; ThrowCount++;
         }
         void Update()

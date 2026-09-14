@@ -13,14 +13,16 @@ namespace SandGuard.Enemy
         string faction;
         Guid source;
         float remaining, damage, radius;
+        float towerDisableDuration;
         LayerMask mask;
         bool armed, detonated;
         public bool IsArmed => armed;
-        public void Launch(Vector3 velocity, EnemyHealth owner, float fuse, float amount, float blastRadius, LayerMask hitMask)
+        public void Launch(Vector3 velocity, EnemyHealth owner, float fuse, float amount, float blastRadius, LayerMask hitMask, float disableDuration = 5f)
         {
             prop = GetComponent<ChiefBombProp>();
             faction = owner.FactionId; source = owner.EntityId;
             remaining = Mathf.Max(.05f, fuse); damage = amount; radius = blastRadius; mask = hitMask;
+            towerDisableDuration = float.IsNaN(disableDuration) || float.IsInfinity(disableDuration) ? 0f : Mathf.Max(0f, disableDuration);
             armed = true; detonated = false;
             prop.Release(velocity);
             if (prop.hitCollider)
@@ -48,7 +50,11 @@ namespace SandGuard.Enemy
                 Vector3 point = collider.ClosestPoint(center);
                 Vector3 direction = point - center;
                 if (direction.sqrMagnitude < .0001f) direction = Vector3.up;
-                receiver.TakeDamage(new DamageInfo(damage, faction, source, "chief.bomb", point, direction.normalized));
+                var cause = new DamageInfo(damage, faction, source, "chief.bomb", point, direction.normalized);
+                var result = receiver.TakeDamage(cause);
+                if (towerDisableDuration > 0f && result.WasApplied && target != null &&
+                    target.Kind == CombatTargetKind.Tower && target.IsTargetable)
+                    CombatEffectSignals.RequestTowerDisable(new TowerDisableRequest(target.EntityId, towerDisableDuration, cause));
             }
             if (prop.explosionPrefab)
                 PrefabPool.Release(PrefabPool.Spawn(prop.explosionPrefab, center, Quaternion.identity), 4f);
