@@ -922,7 +922,7 @@ MonoBehaviour:
   - {fileID: 403835436}
   - {fileID: 1293378189}
   Current_Waypoint: 0
-  MoveSpeed: 10
+  MoveSpeed: 30
   Cur_MoveSpeed: 5
 --- !u!1001 &875915586
 PrefabInstance:
@@ -1497,6 +1497,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
+  - {fileID: 2100000, guid: a9ae31e869215d645840712457e4841a, type: 2}
   - {fileID: 2100000, guid: 42b0adce523aeef42a7751edbd2b2ec4, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -1931,6 +1932,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
+  - {fileID: 2100000, guid: a9ae31e869215d645840712457e4841a, type: 2}
   - {fileID: 2100000, guid: 42b0adce523aeef42a7751edbd2b2ec4, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -7508,7 +7510,7 @@ Transform:
   m_GameObject: {fileID: 6177825408849532342}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0, z: -20}
+  m_LocalPosition: {x: 0, y: -0, z: -25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
