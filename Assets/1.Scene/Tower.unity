@@ -166,7 +166,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RangeController
   type: 1
   DetectRange: {fileID: 463416117}
-  SlowRatio: 0.1
+  SlowRatio: 0.5
 --- !u!135 &9420923
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -922,7 +922,7 @@ MonoBehaviour:
   - {fileID: 403835436}
   - {fileID: 1293378189}
   Current_Waypoint: 0
-  MoveSpeed: 30
+  MoveSpeed: 10
   Cur_MoveSpeed: 5
 --- !u!1001 &875915586
 PrefabInstance:
@@ -1678,7 +1678,6 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: a9ae31e869215d645840712457e4841a, type: 2}
-  - {fileID: 2100000, guid: 42b0adce523aeef42a7751edbd2b2ec4, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2113,7 +2112,6 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: a9ae31e869215d645840712457e4841a, type: 2}
-  - {fileID: 2100000, guid: 42b0adce523aeef42a7751edbd2b2ec4, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2429,7 +2427,7 @@ Light:
   serializedVersion: 11
   m_Type: 2
   m_Color: {r: 1, g: 0.5411765, b: 0.16470589, a: 1}
-  m_Intensity: 3
+  m_Intensity: 0
   m_Range: 4
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -2880,6 +2878,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5807982885909576529}
   - component: {fileID: 7015632898795098258}
+  - component: {fileID: 7015632898795098259}
   m_Layer: 0
   m_Name: Fire Point
   m_TagString: Untagged
@@ -3489,7 +3488,7 @@ ParticleSystem:
         m_RotationOrder: 4
     randomizeRotationDirection: 0
     gravitySource: 0
-    maxNumParticles: 40
+    maxNumParticles: 0
     customEmitterVelocity: {x: 0, y: 0, z: 0}
     size3D: 0
     rotation3D: 1
@@ -7761,6 +7760,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FirePointAim
   findEnemy: {fileID: 2126015744}
+--- !u!114 &7015632898795098259
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6161676275690271579}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b41426d179a81d14ab3361e1d88ccf0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FireOnOff
+  detectRange: {fileID: 2126015742}
+  Flames: {fileID: 8668613561892976206}
+  Cubes: {fileID: 6479900457406626050}
+  Embers: {fileID: 8665228133888194822}
+  towerLight: {fileID: 4162646963602274451}
+  ChangeTime: 0.5
 --- !u!1 &7027910299492873003
 GameObject:
   m_ObjectHideFlags: 0
@@ -7790,6 +7807,7 @@ GameObject:
   - component: {fileID: 2032710632856568368}
   - component: {fileID: 3810763065489718138}
   - component: {fileID: 416361896301715438}
+  - component: {fileID: 7098672414704095500}
   m_Layer: 0
   m_Name: Mesh
   m_TagString: Untagged
@@ -7797,6 +7815,24 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &7098672414704095500
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7098672414704095499}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f076b6f6d31ff644e9a3afdb04e79f4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TowerOnOff
+  detectRange: {fileID: 463416117}
+  meshRenderer: {fileID: 416361896301715438}
+  materials:
+  - {fileID: 2100000, guid: a9ae31e869215d645840712457e4841a, type: 2}
+  - {fileID: 2100000, guid: 42b0adce523aeef42a7751edbd2b2ec4, type: 2}
+  ChangeTime: 0.5
 --- !u!4 &7562271793717966565
 Transform:
   m_ObjectHideFlags: 0
@@ -8539,7 +8575,7 @@ ParticleSystem:
         m_RotationOrder: 4
     randomizeRotationDirection: 0
     gravitySource: 0
-    maxNumParticles: 100
+    maxNumParticles: 0
     customEmitterVelocity: {x: 0, y: 0, z: 0}
     size3D: 0
     rotation3D: 0
@@ -13262,7 +13298,7 @@ ParticleSystem:
         m_RotationOrder: 4
     randomizeRotationDirection: 0
     gravitySource: 0
-    maxNumParticles: 150
+    maxNumParticles: 0
     customEmitterVelocity: {x: 0, y: 0, z: 0}
     size3D: 0
     rotation3D: 0
@@ -17443,6 +17479,7 @@ GameObject:
   - component: {fileID: 443420083851294068}
   - component: {fileID: 3382334625142066238}
   - component: {fileID: 2293965306243836074}
+  - component: {fileID: 8687856315581916752}
   m_Layer: 0
   m_Name: Mesh
   m_TagString: Untagged
@@ -17450,6 +17487,24 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &8687856315581916752
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8687856315581916751}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f076b6f6d31ff644e9a3afdb04e79f4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TowerOnOff
+  detectRange: {fileID: 2126015742}
+  meshRenderer: {fileID: 2293965306243836074}
+  materials:
+  - {fileID: 2100000, guid: a9ae31e869215d645840712457e4841a, type: 2}
+  - {fileID: 2100000, guid: 42b0adce523aeef42a7751edbd2b2ec4, type: 2}
+  ChangeTime: 0.5
 --- !u!1 &8730992267149489293
 GameObject:
   m_ObjectHideFlags: 0
