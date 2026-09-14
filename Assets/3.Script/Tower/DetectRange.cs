@@ -1,26 +1,45 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class DetectRange : MonoBehaviour
 {
     [SerializeField] private float Range = 20f;
+    [SerializeField] private SphereCollider Detect_Range;
 
     public float range => Range;
 
-    [SerializeField] private GameObject Detect_Range_OBJ;
+    private void Awake()
+    {
+        TryGetComponent(out Detect_Range);
+    }
 
     private void Update()
     {
         Range = Mathf.Clamp(Range, 0f, 50f);
+
         SetRange();
     }
 
     private void SetRange()
     {
-        if (Detect_Range_OBJ == null)
+        if (Detect_Range == null)
             return;
 
-        Detect_Range_OBJ.transform.localScale = new Vector3(Range * 2, Detect_Range_OBJ.transform.localScale.y, Range * 2);
+        Detect_Range.radius = Range;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.TryGetComponent(out EnemyState enemyState))
+        {
+            enemyState.Detected(this, true);
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.TryGetComponent(out EnemyState enemyState))
+        {
+            enemyState.Detected(this, false);
+        }
     }
 }
