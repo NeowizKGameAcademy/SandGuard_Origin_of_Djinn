@@ -13,9 +13,9 @@ public class RotateTower : MonoBehaviour
 
     private Quaternion Last_Rotation;
 
-    private void Awake()
+    private void OnEnable()
     {
-        TryGetComponent(out findEnemy);
+        findEnemy = GetComponentInChildren<FindEnemy>();
         TryGetComponent(out rigidbody);
 
         Last_Rotation = rigidbody.rotation;

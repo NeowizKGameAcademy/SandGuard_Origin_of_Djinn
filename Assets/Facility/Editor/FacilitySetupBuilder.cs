@@ -42,11 +42,20 @@ namespace SandGuard.Facility.Editor
         /// </summary>
         const float CombatBodyMargin = .2f;
 
-        /// <summary>팀원 타워에서 체력을 받는 본체(받침 위 코브라). 받침은 부서지지 않는다.</summary>
-        public const string TeamTowerBodyName = "Tower (Cobra)";
+        /// <summary>담당자 타워 씬. 본체(Tower (Cobra) / Tower (Obelisk))는 아직 프리팹이 아니라 이 씬의 받침 아래에만 있다.</summary>
+        public const string TeamTowerScenePath = "Assets/1.Scene/Tower.unity";
+        /// <summary>받침 아래 본체 이름의 앞부분. "Tower (Cobra)", "Tower (Obelisk)".</summary>
+        public const string TeamTowerBodyPrefix = "Tower (";
+        /// <summary>받침 충돌체의 최소 높이. 받침 모델이 낮아도 플레이어(키 2m)가 올라서거나 넘지 못하게 한다.</summary>
+        const float BaseBlockMinHeight = 2.2f;
         const string FacilityHitVfxPath = "Assets/Resources/VFX/Prefabs/VFX_Facility_Hit.prefab";
         const string CobraDestructionVfxPath = "Assets/Resources/VFX/Prefabs/VFX_Cobra_Destruction.prefab";
+        const string DisabledLoopVfxPath = "Assets/Resources/VFX/Prefabs/VFX_Facility_Disabled_Loop.prefab";
 
+        /// <summary>
+        /// 담당자 타워에 게임 연결용 컴포넌트를 붙인다. 담당자 코드는 바꾸지 않고 컴포넌트만 추가한다(패치 문서 참고).
+        /// 받침(프리팹과 씬): 통과 막기. 본체(씬): 체력·판정 상자·정지 수신. 코브라 본체만: 피격·파괴·정지 VFX.
+        /// </summary>
         [MenuItem("SandGuard/Facility/Add Combat Health To Towers")]
         public static void AddCombatHealthToTowers()
         {
@@ -55,51 +64,78 @@ namespace SandGuard.Facility.Editor
                 EnsureCombatTarget(root, BaseModelWidth + CombatBodyMargin, root.transform);
                 EnsureHitVfx(root);
             });
-            Patch(TeamTowerPrefabPath, root =>
+            Patch(TeamTowerPrefabPath, root => BlockTower(root));
+
+            var scene = EditorSceneManager.OpenScene(TeamTowerScenePath, OpenSceneMode.Single);
+            int bodies = 0;
+            foreach (var root in scene.GetRootGameObjects())
             {
-                // 예전에는 루트(받침 포함)에 붙였다. 본체만 부서지도록 본체로 옮긴다.
-                foreach (var old in root.GetComponents<FacilityHealth>()) Object.DestroyImmediate(old);
-                var body = root.transform.Find(TeamTowerBodyName);
-                if (body == null) { Debug.LogError(TeamTowerPrefabPath + ": 본체 '" + TeamTowerBodyName + "'가 없습니다."); return; }
-                Bounds whole = MeshBounds(root, root.transform);
-                var baseMesh = root.transform.Find("Mesh");
-                Bounds footing = baseMesh != null ? MeshBounds(baseMesh.gameObject, root.transform) : whole;
-                BlockTower(root, footing, whole);
-                // 본체 판정은 받침 충돌체보다 넓게 잡는다. 면이 겹치면 적의 시야 레이가 받침에 먼저 맞아 공격하지 못한다.
-                foreach (var old in body.GetComponents<BoxCollider>()) if (!old.isTrigger) Object.DestroyImmediate(old);
-                float footprint = Mathf.Max(footing.size.x, footing.size.z) + CombatBodyMargin;
-                var health = EnsureCombatTarget(body.gameObject, footprint, root.transform);
-                // 본체 판정 상자가 받침 충돌체와 겹친다. 동적 Rigidbody면 물리가 서로 밀어내므로 kinematic으로 둔다.
-                // RotateTower는 MoveRotation으로 돌리고 충돌·트리거 이벤트를 쓰지 않아 동작은 같다.
-                var turret = body.GetComponent<Rigidbody>();
-                if (turret != null) turret.isKinematic = true;
-                health.removal = FacilityHealth.RemovalMode.Deactivate; // 받침의 ShowRange가 본체의 DetectRange를 계속 참조한다
-                EnsureHitVfx(body.gameObject);
-                var destruction = body.GetComponent<VfxDestructionOnDeath>(); if (destruction == null) destruction = body.gameObject.AddComponent<VfxDestructionOnDeath>();
-                destruction.Prefab = AssetDatabase.LoadAssetAtPath<GameObject>(CobraDestructionVfxPath);
-                destruction.Lifetime = 3f;
-            });
+                if (root.name != "Tower Base") continue;
+                // 받침 프리팹 인스턴스라면 위에서 프리팹에 붙인 것을 그대로 받는다.
+                if (!PrefabUtility.IsPartOfPrefabInstance(root)) BlockTower(root);
+                foreach (Transform child in root.transform)
+                    if (child.name.StartsWith(TeamTowerBodyPrefix)) { SetUpTeamTowerBody(root, child); bodies++; }
+            }
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene);
             AssetDatabase.SaveAssets();
-            Debug.Log("FACILITY_COMBAT_READY");
+            Debug.Log("FACILITY_COMBAT_READY bodies=" + bodies);
+        }
+
+        /// <summary>
+        /// 본체: 체력(적의 공격 대상), 판정 상자, 정지 요청 수신. 코브라만 피격·파괴·정지 VFX(다른 타워용 VFX는 아직 없음).
+        /// </summary>
+        static void SetUpTeamTowerBody(GameObject root, Transform body)
+        {
+            // 판정 상자는 받침 충돌체보다 넓게 잡는다. 면이 겹치면 적의 시야 레이가 받침에 먼저 맞아 공격하지 못한다.
+            Bounds footing = BaseFooting(root);
+            float footprint = Mathf.Max(footing.size.x, footing.size.z) + CombatBodyMargin;
+            var health = EnsureCombatTarget(body.gameObject, footprint, root.transform);
+            health.removal = FacilityHealth.RemovalMode.Deactivate; // 받침의 ShowRange가 본체의 DetectRange를 계속 참조한다
+            string kind = body.name.Substring(TeamTowerBodyPrefix.Length).TrimEnd(')').Trim().ToLowerInvariant();
+            health.definitionId = "tower." + kind;
+
+            var receiverType = System.Type.GetType("TowerDisableReceiver, Assembly-CSharp");
+            Component receiver = null;
+            if (receiverType == null) Debug.LogWarning("TowerDisableReceiver 타입을 찾지 못했습니다.");
+            else { receiver = body.GetComponent(receiverType); if (receiver == null) receiver = body.gameObject.AddComponent(receiverType); }
+
+            if (kind != "cobra") return;
+            EnsureHitVfx(body.gameObject);
+            var destruction = body.GetComponent<VfxDestructionOnDeath>(); if (destruction == null) destruction = body.gameObject.AddComponent<VfxDestructionOnDeath>();
+            destruction.Prefab = AssetDatabase.LoadAssetAtPath<GameObject>(CobraDestructionVfxPath);
+            destruction.Lifetime = 3f;
+            if (receiver != null)
+            {
+                var serialized = new SerializedObject(receiver);
+                serialized.FindProperty("Disabled_Vfx").objectReferenceValue = AssetDatabase.LoadAssetAtPath<GameObject>(DisabledLoopVfxPath);
+                serialized.ApplyModifiedPropertiesWithoutUndo();
+            }
+        }
+
+        static Bounds BaseFooting(GameObject root)
+        {
+            var baseMesh = root.transform.Find("Mesh");
+            return baseMesh != null ? MeshBounds(baseMesh.gameObject, root.transform) : MeshBounds(root, root.transform);
         }
 
         /// <summary>
         /// 본체가 부서져도 남는 받침을 통과하지 못하게 한다. 플레이어(CharacterController)는 받침 충돌체에,
-        /// 적(NavMeshAgent는 충돌체를 무시한다)은 받침·본체 높이를 덮는 NavMesh 장애물(깎기)에 막힌다.
+        /// 적(NavMeshAgent는 충돌체를 무시한다)은 같은 크기의 NavMesh 장애물(깎기)에 막힌다.
         /// </summary>
-        static void BlockTower(GameObject root, Bounds footing, Bounds whole)
+        static void BlockTower(GameObject root)
         {
+            Bounds footing = BaseFooting(root);
+            float height = Mathf.Max(footing.size.y, BaseBlockMinHeight);
+            var center = new Vector3(footing.center.x, footing.min.y + height * .5f, footing.center.z);
+            var size = new Vector3(footing.size.x, height, footing.size.z);
             var solid = root.GetComponent<BoxCollider>();
             if (solid == null) solid = root.AddComponent<BoxCollider>();
-            // 높이는 타워 전체로 잡는다. 받침이 낮아도 계단처럼 올라서거나 넘지 못한다.
-            solid.isTrigger = false;
-            solid.center = new Vector3(footing.center.x, whole.center.y, footing.center.z);
-            solid.size = new Vector3(footing.size.x, whole.size.y, footing.size.z);
+            solid.isTrigger = false; solid.center = center; solid.size = size;
             var obstacle = root.GetComponent<UnityEngine.AI.NavMeshObstacle>();
             if (obstacle == null) obstacle = root.AddComponent<UnityEngine.AI.NavMeshObstacle>();
             obstacle.shape = UnityEngine.AI.NavMeshObstacleShape.Box;
-            obstacle.center = new Vector3(footing.center.x, whole.center.y, footing.center.z);
-            obstacle.size = new Vector3(footing.size.x, whole.size.y, footing.size.z);
+            obstacle.center = center; obstacle.size = size;
             obstacle.carving = true; obstacle.carveOnlyStationary = true;
         }
 

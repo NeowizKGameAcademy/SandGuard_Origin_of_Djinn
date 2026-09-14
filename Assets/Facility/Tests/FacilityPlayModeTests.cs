@@ -162,39 +162,6 @@ namespace SandGuard.Facility.Tests
             Assert.True(service.TryBuild(PlacementRequest.AtSlot("cobra", "slot-test")).Outcome.Succeeded, "The slot can be built again.");
         }
 
-        [UnityTest] public IEnumerator TeamTowerBodyBreaksWithVfxWhileTheBaseStays()
-        {
-            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/2.Model/Prefabs/Tower Base.prefab");
-            Assert.NotNull(prefab);
-            var tower = Track(Object.Instantiate(prefab, new Vector3(0f, 0f, 0f), Quaternion.identity));
-            yield return null;
-            Assert.True(tower.GetComponent<FacilityHealth>() == null, "The base itself has no health.");
-            var body = tower.transform.Find("Tower (Cobra)");
-            Assert.NotNull(body);
-            var health = body.GetComponent<FacilityHealth>();
-            Assert.NotNull(health, "Run SandGuard/Facility/Add Combat Health To Towers first.");
-            var bodyCollider = body.GetComponents<Collider>();
-            Assert.True(System.Array.Exists(bodyCollider, c => !c.isTrigger && c.enabled), "The body has a solid hitbox for enemies.");
-            var baseMesh = tower.transform.Find("Mesh").GetComponent<Renderer>();
-            Assert.True(baseMesh.enabled);
-
-            Assert.True(health.TakeDamage(new DamageInfo(10f, "Enemy", hitPosition: body.position + Vector3.up * 2f, hitDirection: Vector3.forward)).WasApplied);
-            Assert.NotNull(GameObject.Find("VFX_Facility_Hit(Clone)"), "Hits play the facility hit VFX.");
-
-            Assert.True(health.TakeDamage(new DamageInfo(10000f, "Enemy")).WasKilled);
-            var destruction = GameObject.Find("VFX_Cobra_Destruction(Clone)");
-            Assert.NotNull(destruction, "Death plays the cobra destruction VFX.");
-            Assert.Less(Vector3.Distance(destruction.transform.position, body.position), .001f, "The VFX lines up with the body root.");
-            foreach (var renderer in body.GetComponentsInChildren<Renderer>()) Assert.False(renderer.enabled, "The original body is hidden at once: " + renderer.name);
-            Assert.True(baseMesh.enabled, "The base keeps rendering.");
-
-            yield return new WaitForSeconds(health.removeDelay + .3f);
-            Assert.False(body.gameObject.activeSelf, "The broken body is removed.");
-            Assert.True(tower.activeInHierarchy && baseMesh.enabled, "The base stays after the body breaks.");
-            Assert.True(destruction.activeInHierarchy, "Debris stays after the body is gone.");
-            yield return new WaitForSeconds(.5f); // 받침 스크립트(ShowRange 등)가 본체가 꺼진 뒤에도 오류 없이 돈다
-        }
-
         void Capture(Vector3 focus, string name)
         {
             if (SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Null) return;
