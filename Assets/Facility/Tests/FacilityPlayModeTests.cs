@@ -43,7 +43,7 @@ namespace SandGuard.Facility.Tests
             var slotObject = new GameObject("BuildSlot_Test"); slotObject.transform.SetParent(level.transform, false);
             var slot = slotObject.AddComponent<LevelBuildSlot>();
             slot.id = "slot-test"; slot.occupancySurfaceId = "test"; slot.allowedFacilityIds = new List<string> { "cobra" }; slot.footprint = new Vector2(1.4f, 1.4f);
-            var anchorPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Facility/Generated/TowerAnchor.prefab");
+            var anchorPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Facility/Generated/Towers/TowerBaseAnchor.prefab");
             var servicePrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Facility/Generated/FacilityBuildService.prefab");
             var menuPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Facility/Generated/FacilityBuildMenu.prefab");
             Assert.NotNull(anchorPrefab, "Run SandGuard/Facility/Create Missing Assets first.");
@@ -103,7 +103,7 @@ namespace SandGuard.Facility.Tests
             Assert.Greater(maxScale, 1.02f, "The reveal punches the scale above 1.");
             Assert.AreEqual(1f, tower.localScale.x, .01f, "The punch must settle at the prefab scale.");
             yield return new WaitForSeconds(.5f);
-            Assert.AreEqual(1.4f, anchor.GetComponentInChildren<Renderer>().bounds.size.x, .15f, "Base width should match the slot footprint.");
+            Assert.AreEqual(1.4f, anchor.transform.Find("Mesh").GetComponent<Renderer>().bounds.size.x, .15f, "Base width should match the slot footprint.");
             Capture(anchor.transform.position, "complete");
 
             var again = service.TryBuild(PlacementRequest.AtSlot("cobra", "slot-test"));
@@ -121,7 +121,7 @@ namespace SandGuard.Facility.Tests
             var slotObject = new GameObject("BuildSlot_Test"); slotObject.transform.SetParent(level.transform, false);
             var slot = slotObject.AddComponent<LevelBuildSlot>();
             slot.id = "slot-test"; slot.occupancySurfaceId = "test"; slot.allowedFacilityIds = new List<string> { "cobra" }; slot.footprint = new Vector2(1.4f, 1.4f);
-            var anchor = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Facility/Generated/TowerAnchor.prefab"), slotObject.transform).GetComponent<FacilityAnchor>();
+            var anchor = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Facility/Generated/Towers/TowerBaseAnchor.prefab"), slotObject.transform).GetComponent<FacilityAnchor>();
             anchor.transform.localScale = Vector3.one * (1.4f / 4f);
             var service = Track(Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Facility/Generated/FacilityBuildService.prefab"))).GetComponent<FacilityBuildService>();
             yield return null;
@@ -155,11 +155,130 @@ namespace SandGuard.Facility.Tests
             Assert.True(kill.WasKilled);
             Assert.False(target.IsTargetable);
             yield return new WaitForSeconds(health.removeDelay + .3f);
-            Assert.True(health == null, "A destroyed tower is removed.");
+            Assert.False(health.gameObject.activeSelf, "A broken tower body is switched off (the owner's base keeps reading it).");
             Assert.True(anchor != null && anchor.gameObject.activeInHierarchy, "Only the body breaks; the base (anchor) stays.");
             Assert.False(anchor.IsOccupied, "Destroying the tower frees the anchor.");
             Assert.True(service.Slots.TryGetSlot("slot-test", out var state) && !state.OccupantId.HasValue, "Destroying the tower frees the slot.");
             Assert.True(service.TryBuild(PlacementRequest.AtSlot("cobra", "slot-test")).Outcome.Succeeded, "The slot can be built again.");
+        }
+
+        // ---- 담당자 타워 설치·수리 ----
+
+        /// <summary>바닥, 레벨, 받침 앵커 여러 개(슬롯 크기 4 = 원본 크기), 선택적으로 마나 지갑, 건설 서비스.</summary>
+        FacilityBuildService TowerLevel(int slots, bool withWallet, out FacilityAnchor[] anchors, out SandGuard.Player.PlayerManaWallet wallet)
+        {
+            var ground = Track(GameObject.CreatePrimitive(PrimitiveType.Cube));
+            ground.transform.position = new Vector3(0, -.5f, 0); ground.transform.localScale = new Vector3(60, 1, 60);
+            wallet = withWallet ? Track(new GameObject("Wallet")).AddComponent<SandGuard.Player.PlayerManaWallet>() : null;
+            var level = Track(new GameObject("Level")).AddComponent<LevelRoot>();
+            var anchorPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Facility/Generated/Towers/TowerBaseAnchor.prefab");
+            Assert.NotNull(anchorPrefab, "Run SandGuard/Facility/Create Tower Build Assets (from Tower.unity) first.");
+            anchors = new FacilityAnchor[slots];
+            for (int i = 0; i < slots; i++)
+            {
+                var slotObject = new GameObject("BuildSlot_" + i); slotObject.transform.SetParent(level.transform, false);
+                slotObject.transform.position = new Vector3(i * 10f, 0f, 0f);
+                var slot = slotObject.AddComponent<LevelBuildSlot>();
+                slot.id = "slot-" + i; slot.occupancySurfaceId = "test"; slot.footprint = new Vector2(4f, 4f);
+                slot.allowedFacilityIds = new List<string> { "cobra", "obelisk" };
+                anchors[i] = Object.Instantiate(anchorPrefab, slotObject.transform).GetComponent<FacilityAnchor>();
+            }
+            return Track(Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Facility/Generated/FacilityBuildService.prefab"))).GetComponent<FacilityBuildService>();
+        }
+
+        [UnityTest] public IEnumerator BuildingATowerSpendsManaAndFailsCleanlyWithoutEnough()
+        {
+            var service = TowerLevel(3, true, out var anchors, out var wallet);
+            yield return null;
+            Assert.AreEqual(100, wallet.CurrentMana);
+            Assert.AreEqual(40, service.catalog.Find("cobra").manaCost, "Designed cobra cost.");
+            Assert.AreEqual(55, service.catalog.Find("obelisk").manaCost, "Temporary obelisk cost.");
+            Assert.False(anchors[0].transform.Find("Range Circle").gameObject.activeSelf, "The range circle stays off on an empty base (ShowRange needs a body).");
+
+            var cobra = service.TryBuild(PlacementRequest.AtSlot("cobra", "slot-0"));
+            Assert.True(cobra.Outcome.Succeeded, "Cobra build failed: " + cobra.Outcome.Failure);
+            Assert.AreEqual(60, wallet.CurrentMana, "Building spends the cobra cost.");
+            Assert.NotNull(anchors[0].transform.Find("cobra"), "The cobra body is spawned on the base.");
+            Assert.NotNull(anchors[0].transform.Find("cobra").GetComponent<FacilityHealth>(), "The body keeps its combat health.");
+            Assert.True(anchors[0].transform.Find("Range Circle").gameObject.activeSelf, "The range circle turns on with the body.");
+
+            Assert.True(service.TryBuild(PlacementRequest.AtSlot("obelisk", "slot-1")).Outcome.Succeeded);
+            Assert.AreEqual(5, wallet.CurrentMana);
+
+            var broke = service.TryBuild(PlacementRequest.AtSlot("cobra", "slot-2"));
+            Assert.False(broke.Outcome.Succeeded);
+            Assert.AreEqual(ActionFailure.InsufficientMana, broke.Outcome.Failure);
+            Assert.AreEqual(5, wallet.CurrentMana, "A failed build leaves mana untouched.");
+            Assert.False(anchors[2].IsOccupied);
+            Assert.True(anchors[2].GetComponentInChildren<FacilityInstance>(true) == null, "No body is left behind.");
+            Assert.True(service.Slots.TryGetSlot("slot-2", out var state) && !state.OccupantId.HasValue, "The slot stays free.");
+        }
+
+        [UnityTest] public IEnumerator RepairingADamagedTowerCostsManaAndTheMenuSwitchesToRepair()
+        {
+            var service = TowerLevel(1, true, out var anchors, out var wallet);
+            var menu = Track(Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Facility/Generated/FacilityBuildMenu.prefab"))).GetComponent<FacilityBuildMenu>();
+            var player = Track(new GameObject("Dummy Player")).transform;
+            player.position = new Vector3(0f, 0f, 20f);
+            menu.player = player;
+            yield return null;
+
+            Assert.True(service.TryBuild(PlacementRequest.AtSlot("cobra", "slot-0")).Outcome.Succeeded);
+            var facility = anchors[0].Occupant;
+            var health = facility.Health;
+            Assert.AreEqual(ActionFailure.NoChange, service.GetRepairQuote(facility.EntityId).Availability.Failure, "A full-health tower needs no repair.");
+
+            player.position = new Vector3(0f, 0f, 2.5f);
+            yield return new WaitForSeconds(.2f);
+            Assert.False(menu.IsOpen, "A healthy tower does not open a menu.");
+
+            health.TakeDamage(new DamageInfo(75f, "Enemy"));
+            var quote = service.GetRepairQuote(facility.EntityId);
+            Assert.True(quote.Availability.Succeeded);
+            Assert.AreEqual(10, quote.ManaAmount, "Cost = 40 × half health lost × 0.5.");
+            Assert.AreEqual(75f, quote.HealthToRestore, .01f);
+            yield return new WaitForSeconds(.2f);
+            Assert.True(menu.IsOpen, "A damaged tower opens the repair menu.");
+            Assert.AreEqual(FacilityBuildMenu.MenuMode.Repair, menu.Mode);
+
+            int manaBefore = wallet.CurrentMana;
+            int repaired = 0; service.Repaired += (f, amount, cost) => repaired++;
+            menu.Select(0);
+            Assert.True(menu.LastRepairResult.Succeeded, "Repair failed: " + menu.LastRepairResult.Failure);
+            Assert.AreEqual(health.MaxHealth, health.CurrentHealth, "Repair restores full health at once.");
+            Assert.AreEqual(manaBefore - 10, wallet.CurrentMana);
+            Assert.AreEqual(1, repaired);
+            yield return new WaitForSeconds(.2f);
+            Assert.False(menu.IsOpen, "The menu closes once the tower is whole.");
+
+            health.TakeDamage(new DamageInfo(150f - 1f, "Enemy"));
+            wallet.TrySpend(wallet.CurrentMana - 3);
+            Assert.AreEqual(ActionFailure.InsufficientMana, service.TryRepair(facility.EntityId).Failure);
+            Assert.AreEqual(1f, health.CurrentHealth, .01f, "A failed repair changes nothing.");
+            Assert.AreEqual(3, wallet.CurrentMana);
+        }
+
+        [UnityTest] public IEnumerator ABrokenTowerFreesItsBaseAndRebuildingReplacesTheBrokenBody()
+        {
+            var service = TowerLevel(1, false, out var anchors, out _);
+            yield return null;
+            Assert.True(service.TryBuild(PlacementRequest.AtSlot("cobra", "slot-0")).Outcome.Succeeded);
+            var broken = anchors[0].Occupant;
+            var brokenId = broken.EntityId;
+            broken.Health.TakeDamage(new DamageInfo(100000f, "Enemy"));
+            Assert.AreEqual(ActionFailure.NotAlive, service.GetRepairQuote(brokenId).Availability.Failure, "A dying tower cannot be repaired.");
+            yield return new WaitForSeconds(broken.Health.removeDelay + .3f);
+            Assert.False(anchors[0].IsOccupied, "Breaking frees the base.");
+            Assert.False(broken.gameObject.activeSelf, "The broken body is switched off, not destroyed (the base still reads it).");
+            Assert.False(anchors[0].transform.Find("Range Circle").gameObject.activeSelf, "The range circle turns off with the body.");
+            Assert.AreEqual(ActionFailure.NotFound, service.GetRepairQuote(brokenId).Availability.Failure, "Broken towers are rebuilt, not repaired.");
+
+            var rebuilt = service.TryBuild(PlacementRequest.AtSlot("obelisk", "slot-0"));
+            Assert.True(rebuilt.Outcome.Succeeded, "Rebuild failed: " + rebuilt.Outcome.Failure);
+            yield return null;
+            Assert.True(broken == null, "Rebuilding removes the old broken body.");
+            Assert.NotNull(anchors[0].transform.Find("obelisk"));
+            Assert.True(anchors[0].transform.Find("Range Circle").gameObject.activeSelf);
         }
 
         void Capture(Vector3 focus, string name)

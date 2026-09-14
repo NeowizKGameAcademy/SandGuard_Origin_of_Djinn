@@ -13,7 +13,7 @@ namespace SandGuard.Facility
     /// 받침 위 본체에 붙인다. 받침은 파괴되지 않고 남는다.
     /// </remarks>
     [DisallowMultipleComponent]
-    public sealed class FacilityHealth : MonoBehaviour, ICombatTarget, IDamageable, IHealth, ILifeState, IDamageEvents
+    public sealed class FacilityHealth : MonoBehaviour, ICombatTarget, IDamageable, IHealth, ILifeState, IDamageEvents, IRepairable
     {
         public enum RemovalMode { Destroy, Deactivate }
 
@@ -73,6 +73,17 @@ namespace SandGuard.Facility
             if (!string.IsNullOrEmpty(definition)) definitionId = definition;
             maxHealth = Mathf.Max(1f, health);
             CurrentHealth = maxHealth;
+        }
+
+        /// <summary>살아 있는 시설의 체력을 최대치까지 회복하고 실제 회복량을 돌려준다. 비용·가능 여부는 부르는 서비스가 확인한다.</summary>
+        public float Repair(float amount)
+        {
+            if (State != LifeState.Alive || !(amount > 0f)) return 0f;
+            float previous = CurrentHealth;
+            CurrentHealth = Mathf.Min(maxHealth, previous + amount);
+            float applied = CurrentHealth - previous;
+            if (applied > 0f) HealthChanged?.Invoke(new HealthChangedInfo(entityId, previous, CurrentHealth, maxHealth, maxHealth));
+            return applied;
         }
 
         public DamageResult TakeDamage(DamageInfo damage)

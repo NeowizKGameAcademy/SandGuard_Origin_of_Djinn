@@ -285,20 +285,105 @@ namespace SandGuard.Facility.Editor
             if (AssetDatabase.LoadAssetAtPath<GameObject>(AnchorPrefabPath) == null || AssetDatabase.LoadAssetAtPath<GameObject>(MenuPrefabPath) == null) Build();
         }
 
+        // ---- 담당자 타워로 짓기 ----
+
+        /// <summary>건설용 타워 에셋 폴더. 담당자 파일은 건드리지 않고 여기에 복제·변형만 둔다.</summary>
+        public const string TowersFolder = Generated + "/Towers";
+        /// <summary>담당자 받침(Tower Base.prefab)의 프리팹 변형 + FacilityAnchor. 슬롯마다 이것을 놓는다.</summary>
+        public const string TowerBaseAnchorPath = TowersFolder + "/TowerBaseAnchor.prefab";
+        public const string ObeliskId = "obelisk";
+        public static string TowerBodyPath(string kind) => TowersFolder + "/Tower_" + kind + ".prefab";
+
+        /// <summary>
+        /// 건설 흐름에 담당자 타워를 쓴다.
+        /// ① Tower.unity의 본체(Tower (Cobra), Tower (Obelisk))를 복제해 임시 프리팹으로 저장한다. 담당자가 공식 프리팹을 만들면 카탈로그 경로만 바꾼다.
+        /// ② 받침 앵커 = Tower Base.prefab의 변형 + FacilityAnchor. 사거리 원은 본체가 있을 때만 켠다(본체 없이 켜면 ShowRange가 오류).
+        /// ③ 카탈로그: 화염 코브라 40, 모래시계 오벨리스크 55(임시 비용).
+        /// Tower.unity와 Tower Base.prefab은 저장하지 않는다.
+        /// </summary>
+        [MenuItem("SandGuard/Facility/Create Tower Build Assets (from Tower.unity)")]
+        public static void CreateTowerBuildAssets()
+        {
+            Directory.CreateDirectory(TowersFolder);
+            AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+            var scene = EditorSceneManager.OpenScene(TeamTowerScenePath, OpenSceneMode.Single);
+            var saved = new List<string>();
+            foreach (var root in scene.GetRootGameObjects())
+            {
+                if (root.name != "Tower Base") continue;
+                foreach (Transform child in root.transform)
+                {
+                    if (!child.name.StartsWith(TeamTowerBodyPrefix)) continue;
+                    string kind = child.name.Substring(TeamTowerBodyPrefix.Length).TrimEnd(')').Trim();
+                    var copy = Object.Instantiate(child.gameObject);
+                    try
+                    {
+                        copy.name = child.name;
+                        copy.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+                        copy.transform.localScale = Vector3.one;
+                        // 건설 연출("짠" 등장). 서비스가 Play()를 부르므로 켜질 때 자동 재생은 끈다.
+                        var popIn = copy.GetComponent<VfxPopIn>(); if (popIn == null) popIn = copy.AddComponent<VfxPopIn>();
+                        popIn.PoofPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(BuildPoofVfxPath);
+                        popIn.RevealPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(BuildCompleteVfxPath);
+                        popIn.PlayOnEnable = false;
+                        PrefabUtility.SaveAsPrefabAsset(copy, TowerBodyPath(kind));
+                        saved.Add(kind);
+                    }
+                    finally { Object.DestroyImmediate(copy); }
+                }
+            }
+
+            var baseInstance = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(TeamTowerPrefabPath));
+            try
+            {
+                baseInstance.name = "TowerBaseAnchor";
+                var anchor = baseInstance.GetComponent<FacilityAnchor>();
+                if (anchor == null) anchor = baseInstance.AddComponent<FacilityAnchor>();
+                anchor.menuHeight = 2.6f;
+                var circle = baseInstance.transform.Find("Range Circle");
+                anchor.onlyWhenOccupied = circle != null ? new[] { circle.gameObject } : new GameObject[0];
+                PrefabUtility.SaveAsPrefabAsset(baseInstance, TowerBaseAnchorPath);
+            }
+            finally { Object.DestroyImmediate(baseInstance); }
+
+            var catalog = AssetDatabase.LoadAssetAtPath<FacilityCatalog>(CatalogPath);
+            if (catalog == null) { catalog = ScriptableObject.CreateInstance<FacilityCatalog>(); AssetDatabase.CreateAsset(catalog, CatalogPath); }
+            Upsert(catalog, 0, CobraId, "화염 코브라", TowerBodyPath("Cobra"), 40, Art + "/UI/UI_Icon_Cobra.png");
+            Upsert(catalog, 1, ObeliskId, "모래시계 오벨리스크", TowerBodyPath("Obelisk"), 55, Art + "/UI/UI_Icon_Crystal.png");
+            EditorUtility.SetDirty(catalog);
+            AssetDatabase.SaveAssets();
+            Debug.Log("FACILITY_TOWER_ASSETS_READY bodies=" + string.Join(",", saved));
+        }
+
+        static void Upsert(FacilityCatalog catalog, int index, string id, string displayName, string prefabPath, int cost, string iconPath)
+        {
+            var definition = catalog.Find(id);
+            if (definition == null) { definition = new FacilityDefinition { id = id }; catalog.facilities.Insert(Mathf.Min(index, catalog.facilities.Count), definition); }
+            definition.displayName = displayName;
+            definition.prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+            definition.manaCost = cost;
+            definition.maxHealth = 150f;
+            var icon = AssetDatabase.LoadAssetAtPath<Sprite>(iconPath);
+            if (icon != null) definition.icon = icon;
+            if (definition.prefab == null) Debug.LogWarning("타워 본체 프리팹이 없습니다: " + prefabPath);
+        }
+
         /// <summary>레벨의 모든 건설 슬롯에 받침대를 놓고 서비스·메뉴를 씬에 넣는다. 슬롯의 허용 목록이 비어 있으면 코브라를 넣는다.</summary>
         public static int WireIntoScene(Scene scene)
         {
             EnsureAssets();
             LevelRoot level = Object.FindFirstObjectByType<LevelRoot>();
             if (level == null) { Debug.LogWarning("FacilitySetupBuilder: LevelRoot가 없어 받침대를 놓지 않았습니다."); return 0; }
-            var anchorPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(AnchorPrefabPath);
+            var anchorPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(TowerBaseAnchorPath);
+            if (anchorPrefab == null) anchorPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(AnchorPrefabPath);
             int count = 0;
             foreach (var slot in level.BuildSlots)
             {
-                if (slot.allowedFacilityIds.Count == 0) slot.allowedFacilityIds.Add(CobraId);
+                // 허용 목록이 비었거나 예전 기본값(코브라만)이면 건설 가능한 타워를 모두 허용한다. 기획자가 정한 목록은 그대로 둔다.
+                bool automatic = slot.allowedFacilityIds.Count == 0 || (slot.allowedFacilityIds.Count == 1 && slot.allowedFacilityIds[0] == CobraId);
+                if (automatic) { slot.allowedFacilityIds.Clear(); slot.allowedFacilityIds.Add(CobraId); slot.allowedFacilityIds.Add(ObeliskId); }
                 EditorUtility.SetDirty(slot);
-                var previous = slot.transform.Find("TowerAnchor");
-                if (previous != null) Object.DestroyImmediate(previous.gameObject);
+                foreach (var previous in slot.GetComponentsInChildren<FacilityAnchor>(true)) Object.DestroyImmediate(previous.gameObject);
                 var anchor = (GameObject)PrefabUtility.InstantiatePrefab(anchorPrefab, scene);
                 anchor.transform.SetParent(slot.transform, false);
                 anchor.transform.localPosition = Vector3.zero; anchor.transform.localRotation = Quaternion.identity;

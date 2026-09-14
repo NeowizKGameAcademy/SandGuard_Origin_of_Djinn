@@ -34,13 +34,14 @@ namespace DesertTower.VFX
         bool targetCaptured;
         Coroutine routine;
         MaterialPropertyBlock block;
+        Renderer[] hidden;
 
         void OnEnable() { if (PlayOnEnable) Play(); }
         void OnDisable() { if (routine != null) StopCoroutine(routine); Restore(); }
 
         public void Play()
         {
-            if (routine != null) StopCoroutine(routine);
+            if (routine != null) { StopCoroutine(routine); Restore(); }
             if (!targetCaptured) { target = transform.localScale; targetCaptured = true; }
             routine = StartCoroutine(Run());
         }
@@ -48,7 +49,8 @@ namespace DesertTower.VFX
         IEnumerator Run()
         {
             IsPlaying = true;
-            var renderers = GetComponentsInChildren<Renderer>(true);
+            // 원래 꺼져 있던 렌더러(디버그용 범위 메시 등)는 연출 대상에서 뺀다. 드러낼 때 다시 켜지지 않게.
+            var renderers = hidden = System.Array.FindAll(GetComponentsInChildren<Renderer>(true), r => r.enabled);
             float fit = 1f;
             if (FitEffectsToBounds && renderers.Length > 0)
             {
@@ -93,8 +95,11 @@ namespace DesertTower.VFX
         void Restore()
         {
             if (targetCaptured) transform.localScale = target;
-            foreach (var renderer in GetComponentsInChildren<Renderer>(true))
-            { if (renderer != null) { renderer.enabled = true; renderer.SetPropertyBlock(null); } }
+            // 연출이 숨긴 렌더러만 되돌린다. 처음부터 꺼져 있던 렌더러는 그대로 둔다.
+            if (hidden != null)
+                foreach (var renderer in hidden)
+                { if (renderer != null) { renderer.enabled = true; renderer.SetPropertyBlock(null); } }
+            hidden = null; // 한 번만 되돌린다. 이후 다른 연출(파괴 등)이 숨긴 렌더러를 켜지 않게.
             IsPlaying = false;
         }
 
