@@ -1,87 +1,97 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class FindEnemy : MonoBehaviour
 {
     [Header("Auto Aim")]
-    [SerializeField] private DetectRange Range;
-    private float Auto_Aim_Range;
-    [SerializeField] private float SearchTime = 0.2f;
+    [SerializeField] private DetectRange detectRange;
+    [SerializeField] private float searchTime = 0.2f;
 
-    private float Auto_Aim_Distance;
-    private float SearchTimer;
+    private float autoAimRange;
+    private float autoAimDistance;
+    private float searchTimer;
 
-    private Transform Target_Transform;
+    private Transform targetTransform;
 
-    //Properties
-    public Transform target => Target_Transform;
-    public float range => Auto_Aim_Range;
+    public Transform target => targetTransform;
+    public float range => autoAimRange;
 
-    private void OnEnable()
+    private void Awake()
     {
-        TryGetComponent(out Range);
-        Auto_Aim_Range = Range.range;
+        if (detectRange == null)
+            detectRange = GetComponent<DetectRange>();
+
+        if (detectRange == null)
+            detectRange = GetComponentInChildren<DetectRange>();
+
+        if (detectRange == null)
+            Debug.LogError($"{name} : DetectRange를 찾을 수 없습니다.");
     }
 
     private void Update()
     {
-        Auto_Aim_Range = Range.range;
-        
+        if (detectRange == null)
+            return;
 
-        Auto_Aim_Distance = Auto_Aim_Range * Auto_Aim_Range;
+        autoAimRange = detectRange.range;
+        autoAimDistance = autoAimRange * autoAimRange;
 
-        if (Target_Transform != null)
+        // 현재 타겟이 있을 때
+        if (targetTransform != null)
         {
-            if (!Target_Transform.gameObject.activeInHierarchy)
+            // 비활성화된 적이면 타겟 해제
+            if (!targetTransform.gameObject.activeInHierarchy)
             {
-                Target_Transform = null;
+                targetTransform = null;
                 return;
             }
 
-            float Target_Distance = (Target_Transform.position - transform.position).sqrMagnitude;
+            float targetDistance =
+                (targetTransform.position - transform.position).sqrMagnitude;
 
-            if (Target_Distance > Auto_Aim_Distance)
+            // 사거리 밖으로 나가면 타겟 해제
+            if (targetDistance > autoAimDistance)
             {
-                Target_Transform = null;
+                targetTransform = null;
                 return;
             }
 
+            // 현재 타겟 유지
             return;
         }
 
-        SearchTimer -= Time.deltaTime;
+        searchTimer -= Time.deltaTime;
 
-        if (SearchTimer <= 0f)
+        if (searchTimer <= 0f)
         {
             FindClosestTarget();
-            SearchTimer = SearchTime;
+            searchTimer = searchTime;
         }
     }
 
     private void FindClosestTarget()
     {
-        float Closest_Distance = Auto_Aim_Distance;
-        Transform Closest_Target = null;
+        float closestDistance = autoAimDistance;
+        Transform closestTarget = null;
 
-        GameObject[] Enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
 
-        for (int i = 0; i < Enemies.Length; i++)
+        for (int i = 0; i < enemies.Length; i++)
         {
-            GameObject Enemy = Enemies[i];
+            GameObject enemy = enemies[i];
 
-            if (Enemy == null || !Enemy.activeInHierarchy)
+            if (enemy == null || !enemy.activeInHierarchy)
                 continue;
 
-            float Distance = (Enemy.transform.position - transform.position).sqrMagnitude;
+            float distance =
+                (enemy.transform.position - transform.position).sqrMagnitude;
 
-            if (Distance < Closest_Distance)
+            if (distance < closestDistance)
             {
-                Closest_Distance = Distance;
-                Closest_Target = Enemy.transform;
+                closestDistance = distance;
+                closestTarget = enemy.transform;
             }
         }
 
-        Target_Transform = Closest_Target;
+        targetTransform = closestTarget;
     }
 }
