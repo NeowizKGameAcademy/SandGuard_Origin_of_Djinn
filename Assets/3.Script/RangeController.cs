@@ -15,6 +15,17 @@ public class RangeController : MonoBehaviour
 
     [Header("Slow")]
     [SerializeField] private float SlowRatio = 0.5f;
+    private SphereCollider SlowRange;
+
+    private void OnEnable()
+    {
+        TryGetComponent(out SlowRange);
+
+        if (type.Equals(Type.Slow))
+        {
+            SlowRange.radius = DetectRange.range;
+        }
+    }
 
     private void OnTriggerStay(Collider other)
     {
