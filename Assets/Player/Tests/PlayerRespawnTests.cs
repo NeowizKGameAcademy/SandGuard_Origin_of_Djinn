@@ -79,6 +79,7 @@ namespace SandGuard.Player.Tests
             var respawner = player.GetComponent<PlayerRespawner>();
             var crosshair = player.GetComponent<PlayerCrosshair>();
             Assert.NotNull(respawner, "Player.prefab carries a PlayerRespawner.");
+            respawner.respawnDelay = 0f; health.reviveProtection = 0f; // 즉시 부활 경로를 본다. 기획 기본값(5초·2초)은 아래 지연 테스트가 본다
             int respawns = 0; Vector3 from = Vector3.zero, to = Vector3.zero; int revived = 0;
             respawner.Respawned += (a, b) => { respawns++; from = a; to = b; };
             health.Revived += _ => revived++;
@@ -92,6 +93,10 @@ namespace SandGuard.Player.Tests
             Assert.True(motor.TryDash().Succeeded, "Spend mana and start the dash cooldown before dying.");
             Assert.Less(mana.CurrentMana, mana.MaxMana);
             Assert.Greater(motor.DashCooldownRemaining, 0f);
+            var caster = player.GetComponent<PlayerSkillCaster>();
+            player.GetComponent<PlayerEffects>().Apply(new Effects.SandVortexEffect());
+            Assert.True(caster.TryCast(PlayerSkillCaster.Vortex).Succeeded, "Start a skill cooldown before dying.");
+            Assert.Greater(caster.CooldownRemaining(PlayerSkillCaster.Vortex), 0f);
             Kill(health);
             Assert.True(respawner.IsRespawning);
             Assert.AreEqual(0, respawns, "The death frame keeps the player incapacitated.");
@@ -107,6 +112,7 @@ namespace SandGuard.Player.Tests
             Assert.AreEqual(mana.MaxMana, mana.CurrentMana, "Mana is fully restored on respawn.");
             Assert.AreEqual(0f, motor.DashCooldownRemaining, "Dash cooldown is cleared on respawn.");
             Assert.AreEqual(0f, player.GetComponent<PlayerBasicAttack>().CooldownRemaining);
+            Assert.AreEqual(0f, caster.CooldownRemaining(PlayerSkillCaster.Vortex), "Skill cooldowns are cleared on respawn.");
             Assert.AreEqual(motor.ExtraAirJumps, motor.RemainingAirJumps);
             Assert.True(motor.TryDash().Succeeded, "Dash is available right after respawning.");
             Keys(Key.W); yield return new WaitForSeconds(0.4f); Keys();
@@ -128,6 +134,7 @@ namespace SandGuard.Player.Tests
             var health = player.GetComponent<PlayerHealth>();
             var motor = player.GetComponent<PlayerMotor>();
             var rig = player.GetComponentInChildren<PlayerCameraRig>();
+            player.GetComponent<PlayerRespawner>().respawnDelay = 0f; health.reviveProtection = 0f; // 위치만 본다. 연달아 두 번 죽인다
             yield return null; yield return null; yield return null;
             Assert.Less(Vector3.Distance(player.transform.position, new Vector3(10f, 0.1f, 10f)), 0.3f, "The designer's PlayerStart marker decides where the player begins.");
             Assert.Greater(player.transform.forward.x, 0.95f, "A rotated marker sets the facing.");
@@ -152,13 +159,21 @@ namespace SandGuard.Player.Tests
             var player = Player(Vector3.zero);
             var health = player.GetComponent<PlayerHealth>();
             var respawner = player.GetComponent<PlayerRespawner>();
+            Assert.AreEqual(5f, respawner.respawnDelay, "Designed respawn time is 5 s.");
+            Assert.AreEqual(2f, health.reviveProtection, "Designed revive protection is 2 s.");
             respawner.respawnDelay = 0.3f; health.reviveProtection = 0.5f;
+            float started = -1f; respawner.RespawnStarted += delay => started = delay;
+            Assert.AreEqual(0f, respawner.RespawnRemaining, "Nothing to count down while alive.");
             yield return new WaitForSeconds(0.3f);
             Kill(health);
+            Assert.AreEqual(0.3f, started, 0.0001f, "RespawnStarted reports this wait.");
+            Assert.AreEqual(0.3f, respawner.RespawnRemaining, 0.02f);
             yield return new WaitForSeconds(0.15f);
             Assert.AreEqual(LifeState.Incapacitated, health.State, "Stays down until the delay elapses.");
+            Assert.That(respawner.RespawnRemaining, Is.InRange(0.01f, 0.2f), "The countdown decreases.");
             yield return new WaitForSeconds(0.3f);
             Assert.AreEqual(LifeState.Alive, health.State);
+            Assert.AreEqual(0f, respawner.RespawnRemaining);
             Assert.True(health.IsProtected); Assert.False(health.IsTargetable, "Protected players leave enemy target selection.");
             Assert.AreEqual(DamageStatus.Protected, health.TakeDamage(new DamageInfo(10f, "Enemy")).Status);
             yield return new WaitForSeconds(0.6f);

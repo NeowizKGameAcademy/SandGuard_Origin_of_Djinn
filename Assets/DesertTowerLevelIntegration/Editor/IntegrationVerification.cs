@@ -3,6 +3,7 @@ using System.IO;
 using DesertTower.Levels;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace DesertTower.LevelIntegration.Editor
 {
@@ -55,6 +56,7 @@ namespace DesertTower.LevelIntegration.Editor
                 Check(level.TryResolveSpawnGroup(group,out var binding,out _) && binding.SuggestedRoute==legacy, "legacy route remains compatible", ref passed);
                 group.routeId=null; group.spawnId=spawn.id; group.targetId=core.id;
                 Check(level.TryResolveSpawnGroup(group,out binding,out _) && graph.Find(binding.Spawn)==a, "graph spawn binding", ref passed);
+                GroundChecks(ref passed);
                 Debug.Log("LEVEL_INTEGRATION_CHECKS_PASSED="+passed);
                 if (Application.isBatchMode) EditorApplication.Exit(0);
             }
@@ -65,6 +67,37 @@ namespace DesertTower.LevelIntegration.Editor
                 else throw;
             }
             finally { UnityEngine.Object.DestroyImmediate(root); }
+        }
+        /// <summary>노드가 NavMesh 바닥에서 높이 허용치보다 뜨면 검사가 잡는지. 멀리 떨어진 곳에 임시 바닥을 구워 열린 씬과 섞이지 않게 한다.</summary>
+        static void GroundChecks(ref int passed)
+        {
+            var origin = new Vector3(5000f, 0f, 5000f);
+            var sources = new System.Collections.Generic.List<NavMeshBuildSource> { new NavMeshBuildSource
+            { shape = NavMeshBuildSourceShape.Box, size = new Vector3(20f, 1f, 20f), transform = Matrix4x4.Translate(origin + Vector3.down * .5f), area = 0 } };
+            var data = UnityEngine.AI.NavMeshBuilder.BuildNavMeshData(NavMesh.GetSettingsByID(0), sources, new Bounds(origin, new Vector3(30f, 10f, 30f)), Vector3.zero, Quaternion.identity);
+            var instance = NavMesh.AddNavMeshData(data);
+            var root = new GameObject("Ground verification");
+            try
+            {
+                var level = root.AddComponent<LevelRoot>();
+                var graph = root.AddComponent<RouteGraph>(); graph.level = level;
+                var start = Node(root, "OnFloor", origin);
+                var floating = Node(root, "Floating", origin + new Vector3(4f, 1.1f, 0f));
+                start.outgoing.Add(new RouteLink { target = floating });
+                var errors = graph.ValidateGraph();
+                Check(errors.Exists(e => e.StartsWith("Floating:") && e.Contains("높이")), "floating node is reported", ref passed);
+                Check(!errors.Exists(e => e.StartsWith("OnFloor:")), "node on the floor passes", ref passed);
+                floating.heightTolerance = 1.5f;
+                Check(graph.ValidateGraph().Count == 0, "raised height tolerance accepts the node", ref passed);
+                floating.transform.position = origin + new Vector3(4f, 0f, 0f); floating.heightTolerance = .5f;
+                Check(graph.ValidateGraph().Count == 0, "node moved to the floor passes", ref passed);
+            }
+            finally
+            {
+                instance.Remove();
+                UnityEngine.Object.DestroyImmediate(data);
+                UnityEngine.Object.DestroyImmediate(root);
+            }
         }
         static RouteNode Node(GameObject parent,string name,Vector3 position)
         {

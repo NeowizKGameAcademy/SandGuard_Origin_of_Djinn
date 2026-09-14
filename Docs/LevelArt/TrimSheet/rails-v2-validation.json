@@ -1,0 +1,428 @@
+{
+  "groups": 22,
+  "separateRails": 44,
+  "stairs": 18,
+  "bridges": 4,
+  "metresPerSheet": 8,
+  "uvContinuity": "PASS: all shared top/side vertices; intentional seams on underside/end caps",
+  "inventory": [
+    {
+      "source": "RAILS_REBUILT_B_NE_T5",
+      "componentsBefore": 2,
+      "parts": [
+        {
+          "name": "RAILS_REBUILT_B_NE_T5__Left",
+          "vertices": 12,
+          "profileLength": 1.4169600317826427,
+          "positionError": 4.726464176559212e-06
+        },
+        {
+          "name": "RAILS_REBUILT_B_NE_T5__Right",
+          "vertices": 12,
+          "profileLength": 1.4169600317826427,
+          "positionError": 5.741879739185474e-06
+        }
+      ],
+      "type": "stairs"
+    },
+    {
+      "source": "RAILS_REBUILT_B_NW_T6",
+      "componentsBefore": 2,
+      "parts": [
+        {
+          "name": "RAILS_REBUILT_B_NW_T6__Left",
+          "vertices": 12,
+          "profileLength": 1.4169600317826427,
+          "positionError": 5.741879739185474e-06
+        },
+        {
+          "name": "RAILS_REBUILT_B_NW_T6__Right",
+          "vertices": 12,
+          "profileLength": 1.4169600317826427,
+          "positionError": 4.726464176559212e-06
+        }
+      ],
+      "type": "stairs"
+    },
+    {
+      "source": "RAILS_REBUILT_B_SE_T5",
+      "componentsBefore": 2,
+      "parts": [
+        {
+          "name": "RAILS_REBUILT_B_SE_T5__Left",
+          "vertices": 12,
+          "profileLength": 1.4169600317826427,
+          "positionError": 4.5984510235752844e-06
+        },
+        {
+          "name": "RAILS_REBUILT_B_SE_T5__Right",
+          "vertices": 12,
+          "profileLength": 1.4169600317826427,
+          "positionError": 4.324521338276161e-06
+        }
+      ],
+      "type": "stairs"
+    },
+    {
+      "source": "RAILS_REBUILT_B_SW_T6",
+      "componentsBefore": 2,
+      "parts": [
+        {
+          "name": "RAILS_REBUILT_B_SW_T6__Left",
+          "vertices": 12,
+          "profileLength": 1.4169600317826427,
+          "positionError": 4.324521338276161e-06
+        },
+        {
+          "name": "RAILS_REBUILT_B_SW_T6__Right",
+          "vertices": 12,
+          "profileLength": 1.4169600317826427,
+          "positionError": 4.5984510235752844e-06
+        }
+      ],
+      "type": "stairs"
+    },
+    {
+      "source": "RAILS_REBUILT_ENTRY_NE_T1",
+      "componentsBefore": 2,
+      "parts": [
+        {
+          "name": "RAILS_REBUILT_ENTRY_NE_T1__Left",
+          "vertices": 12,
+          "profileLength": 1.5553499501286814,
+          "positionError": 1.1444091796875e-05
+        },
+        {
+          "name": "RAILS_REBUILT_ENTRY_NE_T1__Right",
+          "vertices": 12,
+          "profileLength": 1.5553499501286814,
+          "positionError": 1.1444091796875e-05
+        }
+      ],
+      "type": "stairs"
+    },
+    {
+      "source": "RAILS_REBUILT_ENTRY_NW_T4",
+      "componentsBefore": 2,
+      "parts": [
+        {
+          "name": "RAILS_REBUILT_ENTRY_NW_T4__Left",
+          "vertices": 12,
+          "profileLength": 1.5553499501286814,
+          "positionError": 1.1444091796875e-05
+        },
+        {
+          "name": "RAILS_REBUILT_ENTRY_NW_T4__Right",
+          "vertices": 12,
+          "profileLength": 1.5553499501286814,
+          "positionError": 1.1444091796875e-05
+        }
+      ],
+      "type": "stairs"
+    },
+    {
+      "source": "RAILS_REBUILT_ENTRY_SE_T2",
+      "componentsBefore": 2,
+      "parts": [
+        {
+          "name": "RAILS_REBUILT_ENTRY_SE_T2__Left",
+          "vertices": 12,
+          "profileLength": 1.5553499501286814,
+          "positionError": 1.1444091796875e-05
+        },
+        {
+          "name": "RAILS_REBUILT_ENTRY_SE_T2__Right",
+          "vertices": 12,
+          "profileLength": 1.5553499501286814,
+          "positionError": 1.1444091796875e-05
+        }
+      ],
+      "type": "stairs"
+    },
+    {
+      "source": "RAILS_REBUILT_ENTRY_SW_T3",
+      "componentsBefore": 2,
+      "parts": [
+        {
+          "name": "RAILS_REBUILT_ENTRY_SW_T3__Left",
+          "vertices": 12,
+          "profileLength": 1.5553499501286814,
+          "positionError": 1.1444091796875e-05
+        },
+        {
+          "name": "RAILS_REBUILT_ENTRY_SW_T3__Right",
+          "vertices": 12,
+          "profileLength": 1.5553499501286814,
+          "positionError": 1.1444091796875e-05
+        }
+      ],
+      "type": "stairs"
+    },
+    {
+      "source": "RAILS_REBUILT_L3_NE_T8",
+      "componentsBefore": 2,
+      "parts": [
+        {
+          "name": "RAILS_REBUILT_L3_NE_T8__Left",
+          "vertices": 12,
+          "profileLength": 1.3798000407370439,
+          "positionError": 6.106495129998063e-06
+        },
+        {
+          "name": "RAILS_REBUILT_L3_NE_T8__Right",
+          "vertices": 12,
+          "profileLength": 1.3798000051539283,
+          "positionError": 5.7220458984375e-06
+        }
+      ],
+      "type": "stairs"
+    },
+    {
+      "source": "RAILS_REBUILT_L3_NW_T8",
+      "componentsBefore": 2,
+      "parts": [
+        {
+          "name": "RAILS_REBUILT_L3_NW_T8__Left",
+          "vertices": 12,
+          "profileLength": 1.3798000051539283,
+          "positionError": 5.7220458984375e-06
+        },
+        {
+          "name": "RAILS_REBUILT_L3_NW_T8__Right",
+          "vertices": 12,
+          "profileLength": 1.117632555048318,
+          "positionError": 6.106495129998063e-06
+        }
+      ],
+      "type": "stairs"
+    },
+    {
+      "source": "RAILS_REBUILT_L3_SE_T7",
+      "componentsBefore": 2,
+      "parts": [
+        {
+          "name": "RAILS_REBUILT_L3_SE_T7__Left",
+          "vertices": 12,
+          "profileLength": 1.3798000051539283,
+          "positionError": 5.3947966093944364e-06
+        },
+        {
+          "name": "RAILS_REBUILT_L3_SE_T7__Right",
+          "vertices": 12,
+          "profileLength": 1.117632555048318,
+          "positionError": 5.478441854990033e-06
+        }
+      ],
+      "type": "stairs"
+    },
+    {
+      "source": "RAILS_REBUILT_L3_SW_T7",
+      "componentsBefore": 2,
+      "parts": [
+        {
+          "name": "RAILS_REBUILT_L3_SW_T7__Left",
+          "vertices": 12,
+          "profileLength": 1.3798000407370439,
+          "positionError": 5.478441854990033e-06
+        },
+        {
+          "name": "RAILS_REBUILT_L3_SW_T7__Right",
+          "vertices": 12,
+          "profileLength": 1.3798000051539283,
+          "positionError": 5.3947966093944364e-06
+        }
+      ],
+      "type": "stairs"
+    },
+    {
+      "source": "RAILS_REBUILT_T1_B_NE",
+      "componentsBefore": 2,
+      "parts": [
+        {
+          "name": "RAILS_REBUILT_T1_B_NE__Left",
+          "vertices": 12,
+          "profileLength": 1.579999941666724,
+          "positionError": 5.3947966093944364e-06
+        },
+        {
+          "name": "RAILS_REBUILT_T1_B_NE__Right",
+          "vertices": 12,
+          "profileLength": 1.5800099466131894,
+          "positionError": 7.867813110351562e-06
+        }
+      ],
+      "type": "bridge"
+    },
+    {
+      "source": "RAILS_REBUILT_T2_B_SE",
+      "componentsBefore": 2,
+      "parts": [
+        {
+          "name": "RAILS_REBUILT_T2_B_SE__Left",
+          "vertices": 12,
+          "profileLength": 1.579999941666724,
+          "positionError": 5.3947966093944364e-06
+        },
+        {
+          "name": "RAILS_REBUILT_T2_B_SE__Right",
+          "vertices": 12,
+          "profileLength": 1.5800099466131894,
+          "positionError": 7.867813110351562e-06
+        }
+      ],
+      "type": "bridge"
+    },
+    {
+      "source": "RAILS_REBUILT_T3_B_SW",
+      "componentsBefore": 2,
+      "parts": [
+        {
+          "name": "RAILS_REBUILT_T3_B_SW__Left",
+          "vertices": 12,
+          "profileLength": 1.5800099466131894,
+          "positionError": 7.867813110351562e-06
+        },
+        {
+          "name": "RAILS_REBUILT_T3_B_SW__Right",
+          "vertices": 12,
+          "profileLength": 1.579999941666724,
+          "positionError": 5.3947966093944364e-06
+        }
+      ],
+      "type": "bridge"
+    },
+    {
+      "source": "RAILS_REBUILT_T4_B_NW",
+      "componentsBefore": 2,
+      "parts": [
+        {
+          "name": "RAILS_REBUILT_T4_B_NW__Left",
+          "vertices": 12,
+          "profileLength": 1.5800099466131894,
+          "positionError": 7.867813110351562e-06
+        },
+        {
+          "name": "RAILS_REBUILT_T4_B_NW__Right",
+          "vertices": 12,
+          "profileLength": 1.579999941666724,
+          "positionError": 5.3947966093944364e-06
+        }
+      ],
+      "type": "bridge"
+    },
+    {
+      "source": "RAILS_REBUILT_T5_L3_NE",
+      "componentsBefore": 2,
+      "parts": [
+        {
+          "name": "RAILS_REBUILT_T5_L3_NE__Left",
+          "vertices": 12,
+          "profileLength": 1.369730016838448,
+          "positionError": 5.3947966093944364e-06
+        },
+        {
+          "name": "RAILS_REBUILT_T5_L3_NE__Right",
+          "vertices": 12,
+          "profileLength": 1.369720011891983,
+          "positionError": 4.264961199760036e-06
+        }
+      ],
+      "type": "stairs"
+    },
+    {
+      "source": "RAILS_REBUILT_T5_L3_SE",
+      "componentsBefore": 2,
+      "parts": [
+        {
+          "name": "RAILS_REBUILT_T5_L3_SE__Left",
+          "vertices": 12,
+          "profileLength": 1.369720011891983,
+          "positionError": 4.264961199760036e-06
+        },
+        {
+          "name": "RAILS_REBUILT_T5_L3_SE__Right",
+          "vertices": 12,
+          "profileLength": 1.369730016838448,
+          "positionError": 4.821717361487552e-06
+        }
+      ],
+      "type": "stairs"
+    },
+    {
+      "source": "RAILS_REBUILT_T6_L3_NW",
+      "componentsBefore": 2,
+      "parts": [
+        {
+          "name": "RAILS_REBUILT_T6_L3_NW__Left",
+          "vertices": 12,
+          "profileLength": 1.369720011891983,
+          "positionError": 4.264961199760036e-06
+        },
+        {
+          "name": "RAILS_REBUILT_T6_L3_NW__Right",
+          "vertices": 12,
+          "profileLength": 1.369730016838448,
+          "positionError": 5.3947966093944364e-06
+        }
+      ],
+      "type": "stairs"
+    },
+    {
+      "source": "RAILS_REBUILT_T6_L3_SW",
+      "componentsBefore": 2,
+      "parts": [
+        {
+          "name": "RAILS_REBUILT_T6_L3_SW__Left",
+          "vertices": 12,
+          "profileLength": 1.369730016838448,
+          "positionError": 4.821717361487552e-06
+        },
+        {
+          "name": "RAILS_REBUILT_T6_L3_SW__Right",
+          "vertices": 12,
+          "profileLength": 1.369720011891983,
+          "positionError": 4.264961199760036e-06
+        }
+      ],
+      "type": "stairs"
+    },
+    {
+      "source": "RAILS_REBUILT_T7_CORE",
+      "componentsBefore": 2,
+      "parts": [
+        {
+          "name": "RAILS_REBUILT_T7_CORE__Left",
+          "vertices": 12,
+          "profileLength": 1.4135400338997788,
+          "positionError": 4.264961199760036e-06
+        },
+        {
+          "name": "RAILS_REBUILT_T7_CORE__Right",
+          "vertices": 12,
+          "profileLength": 1.4135400338997788,
+          "positionError": 4.264961199760036e-06
+        }
+      ],
+      "type": "stairs"
+    },
+    {
+      "source": "RAILS_REBUILT_T8_CORE",
+      "componentsBefore": 2,
+      "parts": [
+        {
+          "name": "RAILS_REBUILT_T8_CORE__Left",
+          "vertices": 12,
+          "profileLength": 1.4135400338997788,
+          "positionError": 4.264961199760036e-06
+        },
+        {
+          "name": "RAILS_REBUILT_T8_CORE__Right",
+          "vertices": 12,
+          "profileLength": 1.4135400338997788,
+          "positionError": 4.264961199760036e-06
+        }
+      ],
+      "type": "stairs"
+    }
+  ]
+}

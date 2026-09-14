@@ -82,6 +82,7 @@ namespace SandGuard.Player.Editor
             respawner.motor = root.GetComponent<PlayerMotor>();
             respawner.cameraRig = root.GetComponentInChildren<PlayerCameraRig>(true);
             respawner.attack = root.GetComponent<PlayerBasicAttack>();
+            respawner.skills = root.GetComponent<PlayerSkillCaster>();
             var health = root.GetComponent<PlayerHealth>();
             if (health != null) respawner.lifeSource = health;
             return respawner;

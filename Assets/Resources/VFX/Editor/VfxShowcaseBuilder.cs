@@ -61,7 +61,91 @@ namespace DesertTower.VFX.Editor
             public System.Action<VfxShowcaseStation> Dress;
         }
 
-        static Exhibit[] Exhibits() => new[]
+        static Exhibit[] Exhibits()
+        {
+            string[] labels = { "NEW 01 Shield Front Guard", "NEW 02 Facility Hit", "NEW 03 Player Hit",
+                "NEW 04 Demolition Explosion", "NEW 05 Facility Disabled", "NEW 06 Core Hit",
+                "NEW 07 Experience Mote", "NEW 08 Level Up" };
+            var result = new List<Exhibit>();
+            for (int i = 0; i < labels.Length; i++)
+            {
+                int index = i;
+                result.Add(new Exhibit { Label = labels[i], Prefab = RequestedVfxBuilder.Paths[i],
+                    Mode = i == 4 ? VfxShowcaseStation.Mode.DisabledPulse : i == 6 ? VfxShowcaseStation.Mode.Loop : VfxShowcaseStation.Mode.Replay,
+                    Dress = st => DressRequested(st, index) });
+            }
+            result.Add(new Exhibit { Label = "NEW 09 Core Destruction", Prefab = CoreDestructionBuilder.PrefabPath,
+                Mode = VfxShowcaseStation.Mode.CoreDestruction, Dress = st =>
+                {
+                    var reference = (GameObject)PrefabUtility.InstantiatePrefab(Load(CoreDestructionBuilder.ReferencePath));
+                    reference.name = "Core Base - Destruction Reference";
+                    reference.transform.position = st.transform.position;
+                    reference.transform.localScale = Vector3.one * 0.18f;
+                    st.transform.localScale = Vector3.one * 0.18f;
+                    st.Target = reference.transform; st.Interval = 4f;
+                } });
+            result.Add(new Exhibit { Label = "NEW 10 Cobra Destruction", Prefab = CobraDestructionBuilder.PrefabPath,
+                Mode = VfxShowcaseStation.Mode.CobraDestruction, Dress = st =>
+                {
+                    var tower = CobraReference(st.transform.position);
+                    st.Target = tower.transform; st.Interval = 3.5f;
+                    st.transform.localScale = Vector3.one * 0.6f;
+                    tower.transform.localScale = Vector3.one * 0.6f;
+                    Box("Cobra Stand (survives)", st.transform.position + Vector3.up * 0.45f, new Vector3(1.8f, 0.9f, 1.8f));
+                } });
+            result.AddRange(LegacyExhibits());
+            return result.ToArray();
+        }
+
+        static void DressRequested(VfxShowcaseStation st, int index)
+        {
+            var feet = st.transform.position;
+            st.Interval = index == 3 ? 3f : 2.2f;
+            if (index == 0)
+            {
+                Capsule("Shield Soldier", feet + Vector3.forward * 0.4f);
+                Box("Shield", feet + new Vector3(0f, 1f, -0.05f), new Vector3(0.65f, 1.05f, 0.1f));
+                st.transform.position += new Vector3(0f, 1f, -0.12f);
+                st.transform.rotation = Quaternion.LookRotation(Vector3.back);
+            }
+            else if (index == 1 || index == 4)
+            {
+                var tower = index == 4 ? CobraReference(feet) : Box("Requested Facility", feet + new Vector3(0f, 0.85f, 0f), new Vector3(0.8f, 1.7f, 0.8f));
+                st.Target = tower.transform;
+                if (index == 1) st.transform.position += new Vector3(0f, 1.2f, -0.45f);
+                else { st.PulseOn = 5f; st.PulseOff = 2f; }
+            }
+            else if (index == 2 || index == 7)
+            {
+                Capsule("Requested Player", feet);
+                if (index == 2) st.transform.position += new Vector3(0f, 1.1f, -0.4f);
+            }
+            else if (index == 5)
+            {
+                var core = (GameObject)PrefabUtility.InstantiatePrefab(Load(CoreAmbientBuilder.PrefabPath));
+                core.name = "Requested Core Reference";
+                core.transform.position = feet;
+            }
+        }
+
+        public static GameObject CobraReference(Vector3 position)
+        {
+            var tower = (GameObject)PrefabUtility.InstantiatePrefab(Load(RequestedVfxBuilder.CobraPath));
+            tower.name = "Tower (Cobra) - Disabled Reference";
+            tower.transform.position = position;
+            // Showcase copy is visual-only: no autonomous targeting, range triggers or flame emission.
+            foreach (var script in tower.GetComponentsInChildren<MonoBehaviour>(true)) Object.DestroyImmediate(script);
+            foreach (var ps in tower.GetComponentsInChildren<ParticleSystem>(true))
+            {
+                ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+                var main = ps.main; main.playOnAwake = false;
+            }
+            foreach (var collider in tower.GetComponentsInChildren<Collider>(true)) collider.enabled = false;
+            foreach (var body in tower.GetComponentsInChildren<Rigidbody>(true)) body.isKinematic = true;
+            return tower;
+        }
+
+        static Exhibit[] LegacyExhibits() => new[]
         {
             // Row 1: the mana loop
             new Exhibit { Label = "1 Mana Bolt (projectile → impact)", Mode = VfxShowcaseStation.Mode.Projectile, Prefab = ManaBoltProjectileBuilder.PrefabPath, Dress = st =>

@@ -22,6 +22,7 @@ namespace SandGuard.Enemy
         Guid entityId = Guid.NewGuid();
         Collider[] colliders;
         Coroutine removal;
+        readonly System.Collections.Generic.List<IDamageModifier> modifiers = new System.Collections.Generic.List<IDamageModifier>();
 
         public Guid EntityId => entityId;
         public string FactionId => factionId;
@@ -56,8 +57,15 @@ namespace SandGuard.Enemy
             if (!damage.IsValid) return DamageResult.Rejected(DamageStatus.InvalidRequest);
             if (State != LifeState.Alive) return DamageResult.Rejected(DamageStatus.NotAlive);
             if (damage.SourceFactionId == factionId) return DamageResult.Rejected(DamageStatus.NonHostile);
+            // 방패 같은 받는 쪽 방어 규칙은 같은 오브젝트의 보정 컴포넌트가 맡는다. 체력 코드는 규칙을 모른다.
+            float amount = damage.Amount;
+            GetComponents(modifiers);
+            foreach (var modifier in modifiers)
+                if (!(modifier is Behaviour behaviour) || behaviour.isActiveAndEnabled)
+                    amount = Mathf.Max(0f, modifier.ModifyIncoming(damage, amount));
+            if (damage.Amount > 0f && amount <= 0f) return DamageResult.Rejected(DamageStatus.Protected);
             float previous = CurrentHealth;
-            float applied = Mathf.Min(previous, damage.Amount);
+            float applied = Mathf.Min(previous, amount);
             CurrentHealth = previous - applied;
             bool killed = applied > 0f && CurrentHealth <= 0f;
             if (killed) { State = LifeState.Dying; SetCombatEnabled(false); } // 알림을 받는 쪽은 항상 최종 상태를 본다.

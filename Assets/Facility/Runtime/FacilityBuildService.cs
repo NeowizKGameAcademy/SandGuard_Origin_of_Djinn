@@ -6,13 +6,15 @@ using UnityEngine;
 
 namespace SandGuard.Facility
 {
-    /// <summary>슬롯 건설 서비스. 규칙을 검사하고 시설을 생성한 뒤 슬롯을 점유한다. 건설 시간은 없고 생성 연출 → 완료다.</summary>
+    /// <summary>슬롯 건설·수리 서비스. 규칙을 검사하고 마나를 낸 뒤 시설을 생성해 슬롯을 점유한다. 건설 시간은 없고 생성 연출 → 완료다.</summary>
     /// <remarks>
-    /// 기존 계약(IFacilityBuilder, BuildSlotRegistry, PlacementPhaseRule, SlotPlacementRule)을 그대로 쓴다.
-    /// 마나 지갑은 아직 없어 비용을 차감하지 않는다. 자유 배치도 아직 없다.
+    /// 기존 계약(IFacilityBuilder, BuildSlotRegistry, PlacementPhaseRule, SlotPlacementRule)을 그대로 쓴다. 자유 배치는 아직 없다.
+    /// 마나는 예약 → 모든 변경 완료 → 차감 순서로 쓴다. 실패하면 예약만 풀고 마나를 바꾸지 않는다. 지갑이 없는 씬(테스트·데모)은 무료다.
+    /// 수리는 살아 있는 시설만 한 번에 최대 체력까지. 비용 = 건설비 × 잃은 체력 비율 × repairCostRatio(올림).
+    /// 파괴된 시설은 자리를 비우고, 같은 받침에 다시 지을 수 있다. 강화·철거는 아직 없다(Locked).
     /// </remarks>
     [DefaultExecutionOrder(-50)]
-    public sealed class FacilityBuildService : MonoBehaviour, IFacilityBuilder, IGameStateReader
+    public sealed class FacilityBuildService : MonoBehaviour, IFacilityBuilder, IFacilityMaintenance, IGameStateReader
     {
         public FacilityCatalog catalog;
         [Tooltip("비우면 씬에서 찾는다")]
@@ -25,23 +27,34 @@ namespace SandGuard.Facility
         [Tooltip("제공자가 없을 때의 단계. 준비·전투 모두 슬롯 건설을 허용한다")]
         public GamePhase phase = GamePhase.Preparation;
         public bool paused;
+        [Tooltip("건설·수리 비용을 낼 마나 지갑(IManaWallet, 예: PlayerManaWallet). 비우면 씬에서 찾고, 없으면 비용 없이 진행한다")]
+        public MonoBehaviour manaSource;
+        [Min(0f), Tooltip("수리 비용 = 건설비 × 잃은 체력 비율 × 이 값 (올림)")]
+        public float repairCostRatio = .5f;
         public event Action Changed;
         public event Action<FacilityAnchor, FacilityViewData> Built;
+        /// <summary>수리에 성공했다. (시설, 회복량, 쓴 마나)</summary>
+        public event Action<FacilityInstance, float, int> Repaired;
         IGameStateReader Source => gameStateSource as IGameStateReader;
+        IManaWallet Wallet => manaSource as IManaWallet;
         public GamePhase Phase => Source != null ? Source.Phase : phase;
         public bool IsPaused => Source != null ? Source.IsPaused : paused;
         public IBuildSlotQuery Slots => registry;
         BuildSlotRegistry registry;
         IPlacementValidator validator;
         readonly Dictionary<string, FacilityAnchor> anchors = new Dictionary<string, FacilityAnchor>(StringComparer.Ordinal);
+        readonly Dictionary<Guid, FacilityInstance> facilities = new Dictionary<Guid, FacilityInstance>();
 
         void Awake()
         {
             if (level == null) level = FindFirstObjectByType<LevelRoot>();
             if (level == null) { Debug.LogError("FacilityBuildService: LevelRoot가 없습니다.", this); enabled = false; return; }
-            if (gameStateSource == null)
+            if (gameStateSource == null || manaSource == null)
                 foreach (var candidate in FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None))
-                    if (candidate != this && candidate is IGameStateReader) { gameStateSource = candidate; break; }
+                {
+                    if (gameStateSource == null && candidate != this && candidate is IGameStateReader) gameStateSource = candidate;
+                    if (manaSource == null && candidate is IManaWallet) manaSource = candidate;
+                }
             registry = new BuildSlotRegistry(level);
             validator = new CompositePlacementValidator(new IPlacementRule[] { new PlacementPhaseRule(this), new SlotPlacementRule(registry) });
             foreach (var anchor in FindObjectsByType<FacilityAnchor>(FindObjectsSortMode.None)) Register(anchor);
@@ -62,6 +75,9 @@ namespace SandGuard.Facility
         public bool TryGetAnchor(string slotId, out FacilityAnchor anchor)
             => anchors.TryGetValue(slotId ?? string.Empty, out anchor) && anchor != null;
 
+        public bool TryGetFacility(Guid facilityId, out FacilityInstance facility)
+            => facilities.TryGetValue(facilityId, out facility) && facility != null;
+
         public BuildResult TryBuild(PlacementRequest request)
         {
             if (registry == null || catalog == null) return BuildResult.Failed(ActionFailure.InvalidRequest, PlacementResult.Denied(PlacementFailure.InvalidRequest));
@@ -77,27 +93,112 @@ namespace SandGuard.Facility
             if (anchor.IsOccupied) return BuildResult.Failed(ActionFailure.InvalidPlacement, PlacementResult.Denied(PlacementFailure.Occupied));
             registry.TryGetSlot(request.SlotId, out BuildSlotState slot);
 
-            // 생성 → 점유 순서. 점유에 실패하면 만든 것을 지워 부분 상태를 남기지 않는다.
-            Guid id = Guid.NewGuid();
-            GameObject instance = Instantiate(definition.prefab, slot.Position, slot.Rotation, anchor.transform);
-            instance.name = definition.id;
-            var facility = instance.GetComponent<FacilityInstance>() ?? instance.AddComponent<FacilityInstance>();
-            facility.Initialize(id, definition, request.SlotId);
-            if (!registry.TryOccupy(request.SlotId, definition.id, id))
+            // 마나를 먼저 잡아 둔다. 이후 어느 단계에서 실패해도 예약만 풀리고 마나는 그대로다.
+            IManaReservation reservation = null;
+            if (definition.manaCost > 0 && Wallet != null && !Wallet.TryReserve(definition.manaCost, out reservation))
+                return BuildResult.Failed(ActionFailure.InsufficientMana, PlacementResult.Denied(PlacementFailure.InsufficientMana));
+            try
             {
-                Destroy(instance);
-                return BuildResult.Failed(ActionFailure.InvalidPlacement, PlacementResult.Denied(PlacementFailure.Occupied));
+                RemoveBrokenFacilities(anchor);
+
+                // 생성 → 점유 순서. 점유에 실패하면 만든 것을 지워 부분 상태를 남기지 않는다.
+                Guid id = Guid.NewGuid();
+                GameObject instance = Instantiate(definition.prefab, slot.Position, slot.Rotation, anchor.transform);
+                instance.name = definition.id;
+                var facility = instance.GetComponent<FacilityInstance>();
+                if (facility == null) facility = instance.AddComponent<FacilityInstance>();
+                facility.Initialize(id, definition, request.SlotId);
+                if (!registry.TryOccupy(request.SlotId, definition.id, id))
+                {
+                    Destroy(instance);
+                    return BuildResult.Failed(ActionFailure.InvalidPlacement, PlacementResult.Denied(PlacementFailure.Occupied));
+                }
+                facilities[id] = facility;
+                anchor.Occupant = facility;
+                // 파괴되면 슬롯을 비워 다시 지을 수 있게 한다.
+                if (facility.Health != null)
+                {
+                    string slotId = request.SlotId;
+                    facility.Health.Despawned += _ =>
+                    {
+                        registry.Release(slotId, id);
+                        facilities.Remove(id);
+                        if (anchor != null && anchor.Occupant == facility) anchor.Occupant = null;
+                    };
+                }
+                if (reservation != null) reservation.TryCommit();
+                // "짠" 등장: 연막 → 드러남 + 펀치/플래시 + 완료 이펙트. 프리팹에 VfxPopIn이 없으면 붙이고 서비스의 완료 이펙트를 쓴다.
+                var popIn = instance.GetComponent<VfxPopIn>();
+                if (popIn == null) popIn = instance.AddComponent<VfxPopIn>();
+                if (popIn.RevealPrefab == null) popIn.RevealPrefab = buildCompleteVfx;
+                popIn.EffectLifetime = vfxLifetime;
+                popIn.Play();
+                FacilityViewData view = facility.ViewData;
+                Built?.Invoke(anchor, view);
+                return BuildResult.Built(view);
             }
-            anchor.Occupant = facility;
-            // "짠" 등장: 연막 → 드러남 + 펀치/플래시 + 완료 이펙트. 프리팹에 VfxPopIn이 없으면 붙이고 서비스의 완료 이펙트를 쓴다.
-            var popIn = instance.GetComponent<VfxPopIn>() ?? instance.AddComponent<VfxPopIn>();
-            if (popIn.RevealPrefab == null) popIn.RevealPrefab = buildCompleteVfx;
-            popIn.EffectLifetime = vfxLifetime;
-            popIn.Play();
-            FacilityViewData view = facility.ViewData;
-            Built?.Invoke(anchor, view);
-            return BuildResult.Built(view);
+            finally { reservation?.Dispose(); }
         }
+
+        /// <summary>
+        /// 파괴되어 꺼진 채 남은 본체를 치운다. 파괴 시 본체를 끄기만 하는 시설(받침이 본체를 참조하는 타워)은
+        /// 다시 지을 때 옛 본체가 받침 아래에 남아 있다.
+        /// </summary>
+        static void RemoveBrokenFacilities(FacilityAnchor anchor)
+        {
+            foreach (var leftover in anchor.GetComponentsInChildren<FacilityInstance>(true))
+                if (leftover != null && leftover != anchor.Occupant && !leftover.gameObject.activeSelf) Destroy(leftover.gameObject);
+        }
+
+        // ---- 수리 ----
+
+        public MaintenanceQuote GetRepairQuote(Guid facilityId)
+        {
+            if (!TryGetFacility(facilityId, out var facility)) return Unavailable(ActionFailure.NotFound);
+            var health = facility.Health;
+            if (health == null) return Unavailable(ActionFailure.InvalidRequest);
+            if (!health.IsAlive) return Unavailable(ActionFailure.NotAlive);
+            if (IsPaused) return Unavailable(ActionFailure.Paused);
+            if (Phase != GamePhase.Preparation && Phase != GamePhase.Combat) return Unavailable(ActionFailure.WrongPhase);
+            float missing = health.MaxHealth - health.CurrentHealth;
+            if (missing <= .01f) return Unavailable(ActionFailure.NoChange);
+            return new MaintenanceQuote(ActionResult.Success(), RepairCost(facility, missing), missing);
+        }
+
+        public ActionResult TryRepair(Guid facilityId)
+        {
+            MaintenanceQuote quote = GetRepairQuote(facilityId);
+            if (!quote.Availability.Succeeded) return quote.Availability;
+            TryGetFacility(facilityId, out var facility);
+            IManaReservation reservation = null;
+            if (quote.ManaAmount > 0 && Wallet != null && !Wallet.TryReserve(quote.ManaAmount, out reservation))
+                return ActionResult.Fail(ActionFailure.InsufficientMana);
+            try
+            {
+                float restored = facility.Health.Repair(quote.HealthToRestore);
+                if (restored <= 0f) return ActionResult.Fail(ActionFailure.NoChange);
+                if (reservation != null) reservation.TryCommit();
+                Repaired?.Invoke(facility, restored, quote.ManaAmount);
+                return ActionResult.Success();
+            }
+            finally { reservation?.Dispose(); }
+        }
+
+        int RepairCost(FacilityInstance facility, float missing)
+        {
+            var definition = catalog != null ? catalog.Find(facility.definitionId) : null;
+            int buildCost = definition != null ? definition.manaCost : 0;
+            float ratio = facility.Health.MaxHealth > 0f ? missing / facility.Health.MaxHealth : 0f;
+            return Mathf.Max(0, Mathf.CeilToInt(buildCost * ratio * repairCostRatio - .0001f));
+        }
+
+        static MaintenanceQuote Unavailable(ActionFailure failure) => new MaintenanceQuote(ActionResult.Fail(failure), 0);
+
+        // 강화·철거는 아직 기획 확정 전이라 막아 둔다.
+        public MaintenanceQuote GetDemolitionQuote(Guid facilityId) => Unavailable(ActionFailure.Locked);
+        public FacilityUpgradeQuote GetUpgradeQuote(Guid facilityId) => new FacilityUpgradeQuote(ActionResult.Fail(ActionFailure.Locked), 0, 0, 0);
+        public ActionResult TryUpgrade(Guid facilityId) => ActionResult.Fail(ActionFailure.Locked);
+        public ActionResult TryDemolish(Guid facilityId) => ActionResult.Fail(ActionFailure.Locked);
 
         static ActionFailure Map(PlacementFailure failure)
         {

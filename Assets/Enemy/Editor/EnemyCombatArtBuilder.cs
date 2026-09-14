@@ -372,6 +372,8 @@ namespace SandGuard.Enemy.Editor
                 root.GetComponent<UnityEngine.AI.NavMeshAgent>().speed = spec.MoveSpeed;
                 root.GetComponent<EnemyHealth>().removeDelay = deathLength + .3f;
                 EnemyScaleBuilder.Configure(root, spec.Name);
+                if (spec.Name == EnemyShieldSetup.ShieldGuardName && prefabPath != BasePrefab) EnemyShieldSetup.Ensure(root);
+                if (spec.Name == "Chief") ChiefSkillSetup.Ensure(root);
                 visuals.RebuildVisual();
                 PrefabUtility.SaveAsPrefabAsset(root, prefabPath);
             }

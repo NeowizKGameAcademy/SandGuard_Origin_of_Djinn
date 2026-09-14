@@ -107,6 +107,7 @@ namespace SandGuard.Player.Tests
             Assert.AreEqual(Vector3.zero, lamp.SwayAngles, "Even a small teleport resets the pendulum.");
             yield return null;
             Assert.Less(lamp.SwayAngles.magnitude, 0.01f);
+            player.GetComponent<PlayerRespawner>().respawnDelay = 0f; // 사망·부활 때의 램프 초기화만 본다. 부활 시간은 PlayerRespawnTests가 다룬다
             player.GetComponent<PlayerHealth>().TakeDamage(new DamageInfo(10000f, "Enemy"));
             Assert.AreEqual(Vector3.zero, lamp.SwayAngles);
             yield return new WaitForSeconds(0.2f);

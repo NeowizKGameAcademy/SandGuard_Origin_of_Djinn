@@ -30,6 +30,7 @@ namespace SandGuard.Enemy
         public UnityEvent onDied = new UnityEvent();
         [SerializeField, HideInInspector] GameObject visualInstance;
         Animator animator;
+        public Animator Animator => animator;
         Transform weaponPivot;
         Coroutine swing;
         /// <summary>외형이 지정한 공격 기준점. 없으면 null이다.</summary>

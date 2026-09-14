@@ -2295,8 +2295,32 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 657662337107258619, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8371826727400998966}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 658155196757490767, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 9112991278895469412}
   m_SourcePrefab: {fileID: 100100000, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+--- !u!1 &5772900462070000592 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 658155196757490767, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+  m_PrefabInstance: {fileID: 6430941016845473695}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &9112991278895469412
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5772900462070000592}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d574dfac0e62fc4ab468434595bb818, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SandGuard.Enemy.Runtime::SandGuard.Enemy.EnemyShield
+  frontHalfAngle: 60
+  frontMultiplier: 0
+  guardVfx: {fileID: 8929661459040911821, guid: 443d163808b76b844bf439c8b3cc50d6, type: 3}
+  guardVfxLifetime: 1
 --- !u!4 &5773393312463338340 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 657662337107258619, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}

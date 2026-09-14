@@ -6,10 +6,14 @@ using UnityEngine.UI;
 
 namespace SandGuard.Facility
 {
-    /// <summary>플레이어가 빈 받침대에 다가오면 뜨는 건설 메뉴. 번호 키(Slot1~9)로 카탈로그 순서의 시설을 짓는다.</summary>
+    /// <summary>
+    /// 받침대 근처에서 뜨는 시설 메뉴. 빈 받침대면 건설(번호 키 Slot1~9 = 카탈로그 순서, 마나 비용 표시),
+    /// 체력이 깎인 시설이면 수리(번호 키 1, 비용 표시)를 한다.
+    /// </summary>
     /// <remarks>UI는 Docs/ui/facillity-implementation-ui.png에서 잘라 낸 스프라이트로 코드에서 만든다. 캔버스는 이 오브젝트 아래에 생성된다.</remarks>
     public sealed class FacilityBuildMenu : MonoBehaviour
     {
+        public enum MenuMode { Build, Repair }
         [Tooltip("비우면 씬에서 찾는다")]
         public FacilityBuildService service;
         [Tooltip("거리 판정에 쓰는 플레이어. 비우면 PlayerInputReader 또는 PlayerMotor를 찾는다")]
@@ -20,9 +24,14 @@ namespace SandGuard.Facility
         public Vector2 tileSize = new Vector2(104f, 104f);
         public float tileSpacing = 14f;
         public string title = "건설  —  번호 키";
+        public string repairTitle = "수리  —  1";
         public FacilityAnchor Current { get; private set; }
         public bool IsOpen => Current != null;
+        public MenuMode Mode { get; private set; }
         public BuildResult LastResult { get; private set; }
+        public ActionResult LastRepairResult { get; private set; }
+        Text repairCostText;
+        int shownRepairCost = -1;
         PlayerInputReader input;
         Canvas canvas;
         RectTransform panel;
@@ -52,21 +61,31 @@ namespace SandGuard.Facility
             FacilityAnchor nearest = null; float best = float.MaxValue;
             foreach (var anchor in anchors)
             {
-                if (anchor == null || anchor.IsOccupied || string.IsNullOrEmpty(anchor.SlotId)) continue;
+                if (anchor == null || string.IsNullOrEmpty(anchor.SlotId)) continue;
+                if (anchor.IsOccupied && !NeedsRepair(anchor)) continue;
                 Vector3 delta = anchor.transform.position - player.position; delta.y = 0f;
                 float distance = delta.magnitude;
                 if (distance <= anchor.interactionRadius && distance < best) { best = distance; nearest = anchor; }
             }
-            if (nearest != Current) { if (nearest != null) Open(nearest); else Close(); }
-            if (Current != null) Follow();
+            MenuMode wanted = nearest != null && nearest.IsOccupied ? MenuMode.Repair : MenuMode.Build;
+            if (nearest != Current || (nearest != null && wanted != Mode)) { if (nearest != null) Open(nearest); else Close(); }
+            if (Current != null) { Follow(); RefreshRepairCost(); }
             if (input == null && Current != null && Keyboard.current != null) // 플레이어 입력기가 없는 씬(테스트·데모)용
                 for (int i = 0; i < 9; i++)
                     if (Keyboard.current[(Key)((int)Key.Digit1 + i)].wasPressedThisFrame) { Select(i); break; }
         }
 
+        static bool NeedsRepair(FacilityAnchor anchor)
+        {
+            var health = anchor.Occupant != null ? anchor.Occupant.Health : null;
+            return health != null && health.IsAlive && health.CurrentHealth < health.MaxHealth - .01f;
+        }
+
         void Open(FacilityAnchor anchor)
         {
             Current = anchor;
+            Mode = anchor.IsOccupied ? MenuMode.Repair : MenuMode.Build;
+            titleText.text = Mode == MenuMode.Repair ? repairTitle : title;
             RebuildTiles();
             panel.gameObject.SetActive(true);
             Follow();
@@ -78,10 +97,18 @@ namespace SandGuard.Facility
             if (panel != null) panel.gameObject.SetActive(false);
         }
 
-        /// <summary>카탈로그 순서(0부터)의 시설을 현재 받침대에 짓는다. 번호 키와 테스트가 부른다.</summary>
+        /// <summary>건설 모드: 카탈로그 순서(0부터)의 시설을 현재 받침대에 짓는다. 수리 모드: 0번이면 수리한다. 번호 키와 테스트가 부른다.</summary>
         public void Select(int index)
         {
-            if (Current == null || service == null || service.catalog == null) return;
+            if (Current == null || service == null) return;
+            if (Mode == MenuMode.Repair)
+            {
+                if (index != 0 || Current.Occupant == null) return;
+                LastRepairResult = service.TryRepair(Current.Occupant.EntityId);
+                if (!LastRepairResult.Succeeded) Debug.Log("수리 실패: " + LastRepairResult.Failure);
+                return; // 다 고쳐지면 다음 Update에서 메뉴가 닫힌다.
+            }
+            if (service.catalog == null) return;
             if (index < 0 || index >= service.catalog.facilities.Count) return;
             var definition = service.catalog.facilities[index];
             LastResult = service.TryBuild(PlacementRequest.AtSlot(definition.id, Current.SlotId));
@@ -122,10 +149,40 @@ namespace SandGuard.Facility
             titleText.rectTransform.sizeDelta = new Vector2(420f, 30f);
         }
 
+        void RefreshRepairCost()
+        {
+            if (Mode != MenuMode.Repair || repairCostText == null || Current == null || Current.Occupant == null) return;
+            var quote = service.GetRepairQuote(Current.Occupant.EntityId);
+            int cost = quote.Availability.Succeeded ? quote.ManaAmount : 0;
+            if (cost == shownRepairCost) return;
+            shownRepairCost = cost;
+            repairCostText.text = "마나 " + cost;
+        }
+
         void RebuildTiles()
         {
             foreach (var tile in tiles) Destroy(tile);
             tiles.Clear();
+            repairCostText = null; shownRepairCost = -1;
+            if (Mode == MenuMode.Repair)
+            {
+                panel.sizeDelta = new Vector2(tileSize.x + 80f, tileSize.y + 80f);
+                var repair = new GameObject("Tile Repair", typeof(RectTransform)).GetComponent<RectTransform>();
+                repair.SetParent(panel, false);
+                repair.anchorMin = repair.anchorMax = new Vector2(.5f, 0f); repair.pivot = new Vector2(.5f, 0f);
+                repair.sizeDelta = tileSize; repair.anchoredPosition = new Vector2(0f, 40f);
+                Image(repair, "Disc", discSprite, Vector2.zero, tileSize, new Color(1f, 1f, 1f, .92f));
+                if (numberSprites.Length > 0 && numberSprites[0] != null)
+                    Image(repair, "Number", numberSprites[0], new Vector2(-tileSize.x * .38f, tileSize.y * .38f), new Vector2(40f, 40f), Color.white);
+                var repairLabel = Label(repair, "수리", 22, FontStyle.Bold);
+                repairLabel.rectTransform.sizeDelta = new Vector2(tileSize.x, 30f);
+                repairCostText = Label(repair, "", 16, FontStyle.Normal);
+                repairCostText.rectTransform.anchoredPosition = new Vector2(0f, -22f);
+                repairCostText.rectTransform.sizeDelta = new Vector2(tileSize.x + 40f, 26f);
+                tiles.Add(repair.gameObject);
+                RefreshRepairCost();
+                return;
+            }
             var catalog = service.catalog;
             int count = catalog != null ? catalog.facilities.Count : 0;
             float width = count * tileSize.x + Mathf.Max(0, count - 1) * tileSpacing;
@@ -142,7 +199,7 @@ namespace SandGuard.Facility
                 Image(tile, "Icon", definition.icon, Vector2.zero, tileSize * .72f, Color.white);
                 if (i < numberSprites.Length && numberSprites[i] != null)
                     Image(tile, "Number", numberSprites[i], new Vector2(-tileSize.x * .38f, tileSize.y * .38f), new Vector2(40f, 40f), Color.white);
-                var label = Label(tile, definition.displayName, 18, FontStyle.Normal);
+                var label = Label(tile, definition.manaCost > 0 ? definition.displayName + "  " + definition.manaCost : definition.displayName, 18, FontStyle.Normal);
                 label.rectTransform.anchoredPosition = new Vector2(0f, -22f);
                 label.rectTransform.sizeDelta = new Vector2(tileSize.x + 40f, 26f);
                 tiles.Add(tile.gameObject);
