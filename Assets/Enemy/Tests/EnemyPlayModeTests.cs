@@ -211,6 +211,63 @@ namespace SandGuard.Enemy.Tests
             yield return null;
             Assert.True(enemy == null, "Without a core interaction the enemy despawns on arrival.");
         }
+
+        [UnityTest] public IEnumerator SteeredEnemyWalksToSteerPointInsteadOfObjectiveAndNeverArrivesByItself()
+        {
+            Bake(new Vector3(16, 1, 30));
+            var goal = Track(new GameObject("Objective"));
+            goal.transform.position = new Vector3(6, 0, -3);
+            goal.AddComponent<EnemyObjective>();
+            var enemy = Enemy(Vector3.zero);
+            var brain = enemy.GetComponent<EnemyBrain>();
+            bool reached = false;
+            brain.ReachedObjective += _ => reached = true;
+            var point = new Vector3(0, 0, 15);
+            brain.Steer(point);
+            yield return Until(() => EnemyMotor.Planar(enemy.transform.position, point) < 0.6f, 15f, "Steered enemy must walk to the steer point.");
+            yield return new WaitForSeconds(1f);
+            Assert.True(enemy != null, "Arrival is the route runner's job; a steered enemy must not despawn itself.");
+            Assert.False(reached);
+            Assert.AreNotEqual(EnemyBrainState.Arrived, brain.State);
+
+            brain.ReleaseSteering();
+            yield return Until(() => reached || enemy == null, 15f, "After release the enemy returns to its own objective.");
+        }
+
+        [UnityTest] public IEnumerator AttacksBuiltTowerWithCombatHealth()
+        {
+            Bake(new Vector3(16, 1, 30));
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Facility/Generated/FireCobraTower.prefab");
+            Assert.NotNull(prefab, "Run SandGuard/Facility/Create Missing Assets first.");
+            var tower = Track(UnityEngine.Object.Instantiate(prefab, new Vector3(0, 0, 7), Quaternion.identity));
+            var target = tower.GetComponent<ICombatTarget>();
+            var health = tower.GetComponent<IHealth>();
+            Assert.NotNull(target, "Run SandGuard/Facility/Add Combat Health To Towers first.");
+            Assert.AreEqual(CombatTargetKind.Tower, target.Kind);
+            float start = health.CurrentHealth;
+            var enemy = Enemy(Vector3.zero);
+            yield return Until(() => health.CurrentHealth < start, 15f, "Enemy must find the tower through ICombatTarget and damage it.");
+            Assert.AreEqual(target.EntityId, enemy.GetComponent<EnemyBrain>().CurrentTarget?.EntityId);
+        }
+
+        [UnityTest] public IEnumerator SteeredEnemyIgnoresTargetsBeyondRouteLeash()
+        {
+            Bake(new Vector3(20, 1, 30));
+            var far = Target("Far from route", CombatTargetKind.Player, new Vector3(6.5f, 1, 6), Vector3.one, 30f);
+            var near = Target("Near route", CombatTargetKind.Player, new Vector3(2.5f, 1, 12), Vector3.one, 30f);
+            yield return new WaitForSeconds(.5f); // 장애물이 NavMesh를 깎은 뒤에 경로를 잰다.
+            var enemy = Enemy(Vector3.zero);
+            var brain = enemy.GetComponent<EnemyBrain>();
+            brain.routeLeash = 4f;
+            yield return null;
+            brain.Steer(new Vector3(0, 0, 20));
+            bool chasedFar = false;
+            yield return Until(() => { chasedFar |= ReferenceEquals(brain.CurrentTarget, far); return near.HitCount > 0; }, 20f,
+                "A hostile close to the route must still be engaged.");
+            Assert.False(chasedFar, "A hostile whose approach point is beyond the leash must never be selected.");
+            Assert.AreEqual(0, far.HitCount);
+            Assert.Less(enemy.transform.position.x, 4.5f, "The enemy must stay near its route.");
+        }
     }
 }
 #endif

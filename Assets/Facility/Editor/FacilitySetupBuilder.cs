@@ -34,6 +34,129 @@ namespace SandGuard.Facility.Editor
         /// <summary>받침대 모델 폭(4m)을 슬롯 자리 크기에 맞추는 기준.</summary>
         const float BaseModelWidth = 4f;
         public const string CobraId = "cobra";
+        /// <summary>팀원이 만든 레벨 배치용 타워(Level.unity, Tower.unity). 테스트용으로 체력과 몸통 충돌체를 붙인다.</summary>
+        public const string TeamTowerPrefabPath = "Assets/2.Model/Prefabs/Tower Base.prefab";
+        /// <summary>
+        /// 시설 몸통 충돌체를 받침대 충돌체보다 조금 넓게 잡는다. 같은 면이면 적의 시야 레이가 받침대에 먼저 맞아
+        /// 공격 대상이 가려진 것으로 판정된다.
+        /// </summary>
+        const float CombatBodyMargin = .2f;
+
+        /// <summary>팀원 타워에서 체력을 받는 본체(받침 위 코브라). 받침은 부서지지 않는다.</summary>
+        public const string TeamTowerBodyName = "Tower (Cobra)";
+        const string FacilityHitVfxPath = "Assets/Resources/VFX/Prefabs/VFX_Facility_Hit.prefab";
+        const string CobraDestructionVfxPath = "Assets/Resources/VFX/Prefabs/VFX_Cobra_Destruction.prefab";
+
+        [MenuItem("SandGuard/Facility/Add Combat Health To Towers")]
+        public static void AddCombatHealthToTowers()
+        {
+            Patch(CobraPrefabPath, root =>
+            {
+                EnsureCombatTarget(root, BaseModelWidth + CombatBodyMargin, root.transform);
+                EnsureHitVfx(root);
+            });
+            Patch(TeamTowerPrefabPath, root =>
+            {
+                // 예전에는 루트(받침 포함)에 붙였다. 본체만 부서지도록 본체로 옮긴다.
+                foreach (var old in root.GetComponents<FacilityHealth>()) Object.DestroyImmediate(old);
+                var body = root.transform.Find(TeamTowerBodyName);
+                if (body == null) { Debug.LogError(TeamTowerPrefabPath + ": 본체 '" + TeamTowerBodyName + "'가 없습니다."); return; }
+                Bounds whole = MeshBounds(root, root.transform);
+                var baseMesh = root.transform.Find("Mesh");
+                Bounds footing = baseMesh != null ? MeshBounds(baseMesh.gameObject, root.transform) : whole;
+                BlockTower(root, footing, whole);
+                // 본체 판정은 받침 충돌체보다 넓게 잡는다. 면이 겹치면 적의 시야 레이가 받침에 먼저 맞아 공격하지 못한다.
+                foreach (var old in body.GetComponents<BoxCollider>()) if (!old.isTrigger) Object.DestroyImmediate(old);
+                float footprint = Mathf.Max(footing.size.x, footing.size.z) + CombatBodyMargin;
+                var health = EnsureCombatTarget(body.gameObject, footprint, root.transform);
+                // 본체 판정 상자가 받침 충돌체와 겹친다. 동적 Rigidbody면 물리가 서로 밀어내므로 kinematic으로 둔다.
+                // RotateTower는 MoveRotation으로 돌리고 충돌·트리거 이벤트를 쓰지 않아 동작은 같다.
+                var turret = body.GetComponent<Rigidbody>();
+                if (turret != null) turret.isKinematic = true;
+                health.removal = FacilityHealth.RemovalMode.Deactivate; // 받침의 ShowRange가 본체의 DetectRange를 계속 참조한다
+                EnsureHitVfx(body.gameObject);
+                var destruction = body.GetComponent<VfxDestructionOnDeath>(); if (destruction == null) destruction = body.gameObject.AddComponent<VfxDestructionOnDeath>();
+                destruction.Prefab = AssetDatabase.LoadAssetAtPath<GameObject>(CobraDestructionVfxPath);
+                destruction.Lifetime = 3f;
+            });
+            AssetDatabase.SaveAssets();
+            Debug.Log("FACILITY_COMBAT_READY");
+        }
+
+        /// <summary>
+        /// 본체가 부서져도 남는 받침을 통과하지 못하게 한다. 플레이어(CharacterController)는 받침 충돌체에,
+        /// 적(NavMeshAgent는 충돌체를 무시한다)은 받침·본체 높이를 덮는 NavMesh 장애물(깎기)에 막힌다.
+        /// </summary>
+        static void BlockTower(GameObject root, Bounds footing, Bounds whole)
+        {
+            var solid = root.GetComponent<BoxCollider>();
+            if (solid == null) solid = root.AddComponent<BoxCollider>();
+            // 높이는 타워 전체로 잡는다. 받침이 낮아도 계단처럼 올라서거나 넘지 못한다.
+            solid.isTrigger = false;
+            solid.center = new Vector3(footing.center.x, whole.center.y, footing.center.z);
+            solid.size = new Vector3(footing.size.x, whole.size.y, footing.size.z);
+            var obstacle = root.GetComponent<UnityEngine.AI.NavMeshObstacle>();
+            if (obstacle == null) obstacle = root.AddComponent<UnityEngine.AI.NavMeshObstacle>();
+            obstacle.shape = UnityEngine.AI.NavMeshObstacleShape.Box;
+            obstacle.center = new Vector3(footing.center.x, whole.center.y, footing.center.z);
+            obstacle.size = new Vector3(footing.size.x, whole.size.y, footing.size.z);
+            obstacle.carving = true; obstacle.carveOnlyStationary = true;
+        }
+
+        static void EnsureHitVfx(GameObject body)
+        {
+            var reaction = body.GetComponent<VfxHitReaction>(); if (reaction == null) reaction = body.AddComponent<VfxHitReaction>();
+            reaction.HitPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(FacilityHitVfxPath);
+            reaction.HitLifetime = 1.5f;
+        }
+
+        static void Patch(string path, System.Action<GameObject> edit)
+        {
+            if (AssetDatabase.LoadAssetAtPath<GameObject>(path) == null) { Debug.LogWarning("프리팹이 없습니다: " + path); return; }
+            var root = PrefabUtility.LoadPrefabContents(path);
+            try { edit(root); PrefabUtility.SaveAsPrefabAsset(root, path); }
+            finally { PrefabUtility.UnloadPrefabContents(root); }
+        }
+
+        /// <summary>
+        /// 본체에 FacilityHealth와, 본체 메시를 감싸는 BoxCollider(트리거 아님)를 붙인다. 이미 있으면 그대로 둔다.
+        /// 충돌체 바닥은 ground 높이(받침 원점)까지 내린다. 받침이 높아도 땅에 선 적의 근접 공격이 닿게 한다.
+        /// </summary>
+        public static FacilityHealth EnsureCombatTarget(GameObject body, float minFootprint, Transform ground)
+        {
+            var health = body.GetComponent<FacilityHealth>(); if (health == null) health = body.AddComponent<FacilityHealth>();
+            if (body.GetComponents<Collider>().Any(c => !c.isTrigger)) return health;
+            Bounds bounds = MeshBounds(body, body.transform);
+            Vector3 min = bounds.min, max = bounds.max;
+            if (ground != null) min.y = Mathf.Min(min.y, body.transform.InverseTransformPoint(ground.position).y);
+            Vector3 size = max - min;
+            size.x = Mathf.Max(size.x, minFootprint); size.z = Mathf.Max(size.z, minFootprint);
+            var collider = body.AddComponent<BoxCollider>();
+            collider.center = new Vector3(bounds.center.x, (min.y + max.y) * .5f, bounds.center.z);
+            collider.size = size;
+            return health;
+        }
+
+        /// <summary>root 아래 메시를 space 좌표계로 감싼 경계. 사거리 표시 같은 "Range" 오브젝트는 뺀다.</summary>
+        static Bounds MeshBounds(GameObject root, Transform space)
+        {
+            Matrix4x4 toSpace = space.worldToLocalMatrix;
+            var bounds = new Bounds(); bool any = false;
+            foreach (var filter in root.GetComponentsInChildren<MeshFilter>(true))
+            {
+                if (filter.sharedMesh == null || filter.name.Contains("Range")) continue;
+                Bounds local = filter.sharedMesh.bounds;
+                Matrix4x4 matrix = toSpace * filter.transform.localToWorldMatrix;
+                for (int i = 0; i < 8; i++)
+                {
+                    var corner = local.center + Vector3.Scale(local.extents, new Vector3((i & 1) == 0 ? -1 : 1, (i & 2) == 0 ? -1 : 1, (i & 4) == 0 ? -1 : 1));
+                    Vector3 point = matrix.MultiplyPoint3x4(corner);
+                    if (any) bounds.Encapsulate(point); else { bounds = new Bounds(point, Vector3.zero); any = true; }
+                }
+            }
+            if (!any) { Debug.LogWarning(root.name + ": 메시가 없어 충돌체 크기를 정하지 못했습니다."); bounds = new Bounds(Vector3.up, Vector3.one * 2f); }
+            return bounds;
+        }
 
         [MenuItem("SandGuard/Facility/Create Missing Assets")]
         public static void Build()
@@ -85,6 +208,7 @@ namespace SandGuard.Facility.Editor
                 popIn.PlayOnEnable = false; // 건설 서비스가 Play()를 부른다.
                 var model = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(Art + "/Tower/FireCobra.obj"));
                 model.name = "Cobra"; model.transform.SetParent(cobraRoot.transform, false);
+                EnsureCombatTarget(cobraRoot, BaseModelWidth + CombatBodyMargin, cobraRoot.transform); EnsureHitVfx(cobraRoot);
                 PrefabUtility.SaveAsPrefabAsset(cobraRoot, CobraPrefabPath);
             }
             finally { Object.DestroyImmediate(cobraRoot); }

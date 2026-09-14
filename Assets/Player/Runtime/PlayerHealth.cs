@@ -10,7 +10,9 @@ namespace SandGuard.Player
         public Transform hitPoint;
         public Collider[] disableOnDeath = Array.Empty<Collider>();
         [Min(0f), Tooltip("부활 직후 피해를 거부하고 적의 대상에서 빠지는 시간(초). 0이면 보호 없음")]
-        public float reviveProtection = 0f;
+        public float reviveProtection = DefaultReviveProtection;
+        /// <summary>기획 기본값: 부활 뒤 2초 무적.</summary>
+        public const float DefaultReviveProtection = 2f;
         [Tooltip("스탯 수정자. DamageTaken 배수를 받는 피해에 곱한다. 비우면 같은 오브젝트에서 찾는다")]
         public PlayerStats stats;
         float protectedUntil = -1f;

@@ -16,6 +16,7 @@ namespace DesertTower.VFX.Editor
             VfxBuildKit.BuildShared();
             foreach (var (spec, path) in ImpactVfxBuilder.All()) ImpactVfxBuilder.Build(spec, path);
             ManaBoltProjectileBuilder.Build();
+            ExperienceMoteBuilder.Build();
             CoreAmbientBuilder.Build();
             FlameBreathBuilder.BuildBreath();
             FlameBreathBuilder.BuildBurning();
@@ -30,6 +31,9 @@ namespace DesertTower.VFX.Editor
             CombatVfxBuilder.BuildAll();
             UpdraftVfxBuilder.Build();
             SandZoneVfxBuilder.Build();
+            RequestedVfxBuilder.Build();
+            CoreDestructionBuilder.Build();
+            CobraDestructionBuilder.Build();
             AssetDatabase.SaveAssets();
             VfxShowcaseBuilder.Build();
             Debug.Log("[VFX] Build All done.");

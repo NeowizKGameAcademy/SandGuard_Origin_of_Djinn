@@ -2485,8 +2485,80 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 657662337107258619, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5828418854815482164}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 658155196757490767, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 355252262188723009}
+    - targetCorrespondingSourceObject: {fileID: 658155196757490767, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 9088134297400010009}
+    - targetCorrespondingSourceObject: {fileID: 658155196757490767, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6845969559114640935}
   m_SourcePrefab: {fileID: 100100000, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+--- !u!1 &1931109115925317170 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 658155196757490767, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+  m_PrefabInstance: {fileID: 1436244934191610493}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &355252262188723009
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1931109115925317170}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d574dfac0e62fc4ab468434595bb818, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SandGuard.Enemy.Runtime::SandGuard.Enemy.EnemyShield
+  frontHalfAngle: 60
+  frontMultiplier: 0
+  guardVfx: {fileID: 0}
+  guardVfxLifetime: 1
+--- !u!114 &9088134297400010009
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1931109115925317170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0fa2b5c3bd51fb049a594aa59e9f9985, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SandGuard.Enemy.Runtime::SandGuard.Enemy.ChiefGoldenShieldSkill
+  shield: {fileID: 355252262188723009}
+  vfxPrefab: {fileID: 5241151560336676957, guid: 0c9aa1c929206cd43b101304158273d8, type: 3}
+  localPosition: {x: 0, y: 1.15, z: 0.65}
+  summonDuration: 0.35
+  activeDuration: 4
+  cooldown: 8
+  castRange: 8
+--- !u!114 &6845969559114640935
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1931109115925317170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b77569f3fa9931419f04411f84a7d60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SandGuard.Enemy.Runtime::SandGuard.Enemy.ChiefBombThrowSkill
+  bombPrefab: {fileID: 1156261780094768151, guid: aef2336eb1af848419e0c58f8626a8bc, type: 3}
+  range: 8
+  cooldown: 6
+  flightTime: 1
+  fuseAfterLanding: 0.35
+  damage: 20
+  blastRadius: 2.5
+  damageMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  handOffset: {x: 0, y: -0.05, z: 0.05}
 --- !u!4 &1931742154583938694 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 657662337107258619, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}

@@ -2081,7 +2081,7 @@ MonoBehaviour:
   hitPoint: {fileID: 5475696462340052794}
   disableOnDeath:
   - {fileID: 6902154684297817577}
-  reviveProtection: 0
+  reviveProtection: 2
   stats: {fileID: 6961237080123456789}
 --- !u!114 &2246301817342103262
 MonoBehaviour:
@@ -2221,7 +2221,7 @@ MonoBehaviour:
   cameraRig: {fileID: 5269684110936986897}
   attack: {fileID: 7253828756529038947}
   restoreResources: 1
-  respawnDelay: 0
+  respawnDelay: 5
   useLevelMarkers: 1
   moveToStartMarker: 1
   preferRespawnMarkers: 1

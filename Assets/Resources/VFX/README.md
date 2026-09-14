@@ -1,5 +1,11 @@
 # VFX
 
+코브라 타워 파괴는 [CobraDestruction.md](CobraDestruction.md)를 참고한다. Showcase NEW 10에 배치되어 있다.
+
+코어 파괴는 [CoreDestruction.md](CoreDestruction.md)를 참고한다. Core Base 원본 형상을 사용하며 Showcase NEW 09에서 확인할 수 있다.
+
+UI 없이 제작한 방패 방어·시설/플레이어 피격·철거 폭발·시설 정지·코어 피격·경험치·레벨 업 8종은 [RequestedSet.md](RequestedSet.md)에 프리팹 경로와 연결 방법을 정리했다.
+
 코드로 생성하는 파티클 프리팹 모음. 근거 문서: `Docs/plan/SandGuard_VFX_제작계획_v0.2.md`.
 폴더는 `Assets/Resources/VFX`이고 빌더가 빌려 쓰는 팩도 `Assets/Resources/` 아래에 있다 (`VfxBuildKit`의 경로 상수).
 프리팹은 손으로 고치지 말고 `Editor/` 빌더를 수정한 뒤 다시 빌드한다(GUID 유지, 덮어쓰기 안전).
@@ -26,6 +32,7 @@ Unity.exe -batchmode -projectPath . -executeMethod DesertTower.VFX.Editor.VfxBat
 | `VFX_ManaBolt_Projectile` | #1 | 투사체 위치, 로컬 +Z가 진행 방향 | 투사체에 자식으로 붙인다. 총구 플래시는 스폰 시 1회 자동 재생 |
 | `VFX_ManaBolt_Impact` | #2 | 착탄점 | 없음 |
 | `VFX_Enemy_Death` | #23 | 적 발밑 | `VfxTint.Apply(적 색)` · `VfxParticleAttractor.Target = 플레이어` |
+| `VFX_Experience_Mote` | 경험치 드롭 외형 | 바닥 기준, 큐브 중심 y=0.35 | 유지형 금빛 큐브. 생성·획득·경험치 지급은 게임플레이에서 연결 |
 | `VFX_Build_Complete` | #14 | 슬롯 중심(바닥) | 시설 오브젝트에 `VfxScaleIn`을 붙이면 0→1 솟아오름 |
 | `VFX_Core_Ambient` | #9 | 코어 바닥 (크리스탈 y=1.2) | `CoreAmbientVfx.SetStability(0~100)` — 60/30 경계에서 틸→노랑→빨강+연기 |
 | `VFX_FlameCobra_Breath` | #17 | 코브라 입, 로컬 +Z가 분사 방향 | 루프. 공격 시작/끝에 Play/Stop |

@@ -20,10 +20,14 @@ namespace SandGuard.Player
         public PlayerCameraRig cameraRig;
         [Tooltip("공격 쿨다운을 회복할 대상. 비우면 같은 오브젝트에서 찾는다")]
         public PlayerBasicAttack attack;
-        [Tooltip("부활할 때 마나·대시 쿨다운·공격 쿨다운·공중 점프를 모두 회복한다 (체력은 항상 최대로 회복)")]
+        [Tooltip("Q/E/R 쿨다운을 회복할 대상. 비우면 같은 오브젝트에서 찾는다")]
+        public PlayerSkillCaster skills;
+        [Tooltip("부활할 때 마나·대시 쿨다운·공격 쿨다운·스킬 쿨다운·공중 점프를 모두 회복한다 (체력은 항상 최대로 회복)")]
         public bool restoreResources = true;
         [Min(0f), Tooltip("사망 뒤 부활까지의 시간(초). 0이면 다음 프레임에 바로 부활한다")]
-        public float respawnDelay = 0f;
+        public float respawnDelay = DefaultRespawnDelay;
+        /// <summary>기획 기본값: 사망 뒤 5초 뒤 부활.</summary>
+        public const float DefaultRespawnDelay = 5f;
         [Tooltip("씬의 레벨 마커(PlayerStart / Respawn)를 스폰 지점으로 쓴다. 끄면 씬에 놓인 시작 위치를 쓴다")]
         public bool useLevelMarkers = true;
         [Tooltip("시작할 때 PlayerStart 마커로 이동한다. 기획자가 마커를 옮기면 씬을 다시 만들지 않아도 거기서 시작한다")]
@@ -40,14 +44,20 @@ namespace SandGuard.Player
         public Vector3 SpawnPosition { get; private set; }
         public Quaternion SpawnRotation { get; private set; }
         public bool IsRespawning => routine != null;
+        /// <summary>부활까지 남은 시간(초). 부활 대기 중이 아니면 0. HUD의 카운트다운에 쓴다.</summary>
+        public float RespawnRemaining => routine != null ? Mathf.Max(0f, respawnAt - Time.time) : 0f;
+        /// <summary>사망해서 부활 대기를 시작했다. 인자는 이번 대기 시간(초).</summary>
+        public event Action<float> RespawnStarted;
         public int RespawnCount { get; private set; }
         ILifeState Life => lifeSource as ILifeState;
         Coroutine routine;
+        float respawnAt;
 
         void Awake()
         {
             SpawnPosition = transform.position; SpawnRotation = transform.rotation;
             if (attack == null) attack = GetComponent<PlayerBasicAttack>();
+            if (skills == null) skills = GetComponent<PlayerSkillCaster>();
         }
         void OnEnable() { if (Life != null) Life.Died += OnDied; }
         void OnDisable()
@@ -73,7 +83,10 @@ namespace SandGuard.Player
         IEnumerator Respawn()
         {
             Vector3 deathPosition = transform.position;
-            if (respawnDelay > 0f) yield return new WaitForSeconds(respawnDelay);
+            float delay = respawnDelay;
+            respawnAt = Time.time + delay;
+            RespawnStarted?.Invoke(delay);
+            if (delay > 0f) yield return new WaitForSeconds(delay);
             else yield return null; // 사망 알림을 받은 쪽이 같은 프레임에 살아난 플레이어를 보지 않게 한다
             Vector3 position = SpawnPosition; Quaternion rotation = SpawnRotation;
             if (useLevelMarkers)
@@ -92,13 +105,14 @@ namespace SandGuard.Player
             onRespawned.Invoke();
         }
 
-        /// <summary>마나를 최대로 채우고 대시·공격 쿨다운을 지운다. 공중 점프 횟수는 이동 시 이미 복구된다.</summary>
+        /// <summary>마나를 최대로 채우고 대시·공격·스킬 쿨다운을 지운다. 공중 점프 횟수는 이동 시 이미 복구된다.</summary>
         void RestoreResources()
         {
             var wallet = (motor != null ? motor.manaSource : null) as IManaWallet ?? GetComponent<IManaWallet>();
             if (wallet != null && wallet.CurrentMana < wallet.MaxMana) wallet.Gain(wallet.MaxMana - wallet.CurrentMana);
             if (motor != null) motor.ResetDashCooldown();
             if (attack != null) attack.ResetCooldown();
+            if (skills != null) skills.ResetCooldowns();
         }
 
         /// <summary>마커 위치에 spawnHeight를 더한다. 마커가 회전되어 있으면 그 Y 회전을 시작 방향으로 쓰고, 아니면 지금 방향을 유지한다.</summary>

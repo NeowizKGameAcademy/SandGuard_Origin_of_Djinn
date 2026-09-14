@@ -19,6 +19,9 @@ namespace DesertTower.VFX
             Core,           // CoreAmbientVfx stability sweeps 100 → 0 → 100 over CorePeriod
             EnemyDeath,     // Replay + random VfxTint + attractor toward Target
             BuildComplete,  // Replay + Facility scales in with VfxScaleIn
+            DisabledPulse,  // whole VFX + material tint on/off, unlike particle-only breath pulsing
+            CoreDestruction,
+            CobraDestruction,
         }
 
         public Mode Kind = Mode.Replay;
@@ -49,10 +52,22 @@ namespace DesertTower.VFX
 
         void Spawn()
         {
-            if (_inst != null) Destroy(_inst);
+            if (_inst != null)
+            {
+                _inst.GetComponent<VfxCoreDestruction>()?.RestoreTarget();
+                _inst.GetComponent<VfxCobraDestruction>()?.RestoreTarget();
+                Destroy(_inst);
+            }
             if (Prefab == null) return;
             _inst = Instantiate(Prefab, transform.position, transform.rotation, transform);
             _timer = 0f;
+            _pulseOn = true;
+            if (Kind == Mode.CoreDestruction && Target != null)
+                _inst.GetComponent<VfxCoreDestruction>()?.BindTarget(Target);
+            if (Kind == Mode.CobraDestruction && Target != null)
+                _inst.GetComponent<VfxCobraDestruction>()?.BindTarget(Target);
+            if (Kind == Mode.DisabledPulse && Target != null)
+                _inst.GetComponent<VfxDisabledVisual>()?.BindTarget(Target);
 
             if (Target != null)
                 foreach (var a in _inst.GetComponentsInChildren<VfxParticleAttractor>()) a.Target = Target;
@@ -73,7 +88,23 @@ namespace DesertTower.VFX
             _timer += Time.deltaTime;
             switch (Kind)
             {
+                case Mode.DisabledPulse:
+                    if (_inst == null) break;
+                    if (_pulseOn && _timer >= PulseOn)
+                    {
+                        _inst.SetActive(false); // restores facility material and hides electrical strokes
+                        _pulseOn = false; _timer = 0f;
+                    }
+                    else if (!_pulseOn && _timer >= PulseOff)
+                    {
+                        _inst.SetActive(true);
+                        _inst.GetComponent<VfxDisabledVisual>()?.BindTarget(Target);
+                        _pulseOn = true; _timer = 0f;
+                    }
+                    break;
                 case Mode.Replay:
+                case Mode.CoreDestruction:
+                case Mode.CobraDestruction:
                 case Mode.EnemyDeath:
                 case Mode.BuildComplete:
                     if (_timer >= Interval) Spawn();

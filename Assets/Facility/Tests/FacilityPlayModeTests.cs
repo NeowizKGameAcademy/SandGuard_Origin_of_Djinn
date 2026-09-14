@@ -113,6 +113,88 @@ namespace SandGuard.Facility.Tests
             Assert.False(menu.IsOpen, "An occupied anchor never reopens the menu.");
         }
 
+        [UnityTest] public IEnumerator BuiltCobraIsACombatTargetAndFreesItsSlotWhenDestroyed()
+        {
+            var ground = Track(GameObject.CreatePrimitive(PrimitiveType.Cube));
+            ground.transform.position = new Vector3(0, -.5f, 0); ground.transform.localScale = new Vector3(30, 1, 30);
+            var level = Track(new GameObject("Level")).AddComponent<LevelRoot>();
+            var slotObject = new GameObject("BuildSlot_Test"); slotObject.transform.SetParent(level.transform, false);
+            var slot = slotObject.AddComponent<LevelBuildSlot>();
+            slot.id = "slot-test"; slot.occupancySurfaceId = "test"; slot.allowedFacilityIds = new List<string> { "cobra" }; slot.footprint = new Vector2(1.4f, 1.4f);
+            var anchor = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Facility/Generated/TowerAnchor.prefab"), slotObject.transform).GetComponent<FacilityAnchor>();
+            anchor.transform.localScale = Vector3.one * (1.4f / 4f);
+            var service = Track(Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Facility/Generated/FacilityBuildService.prefab"))).GetComponent<FacilityBuildService>();
+            yield return null;
+
+            var built = service.TryBuild(PlacementRequest.AtSlot("cobra", "slot-test"));
+            Assert.True(built.Outcome.Succeeded, "Build failed: " + built.Placement.Failure);
+            var health = anchor.Occupant.GetComponent<FacilityHealth>();
+            Assert.NotNull(health, "Run SandGuard/Facility/Add Combat Health To Towers first.");
+            ICombatTarget target = health;
+            Assert.AreEqual(CombatTargetKind.Tower, target.Kind);
+            Assert.AreEqual("Ally", target.FactionId);
+            Assert.AreEqual(built.Facility.Value.EntityId, target.EntityId, "Combat ID must match the facility ID.");
+            Assert.AreEqual(target.EntityId, target.DamageReceiver is FacilityHealth receiver ? receiver.EntityId : System.Guid.Empty);
+
+            // 적의 탐색과 같은 방식(트리거 제외 OverlapSphere → 부모의 ICombatTarget)으로 찾혀야 한다.
+            yield return new WaitForSeconds(.5f);
+            bool found = false;
+            foreach (var collider in Physics.OverlapSphere(new Vector3(0, .5f, 3f), 4f, ~0, QueryTriggerInteraction.Ignore))
+                found |= ReferenceEquals(collider.GetComponentInParent<ICombatTarget>(), target);
+            Assert.True(found, "The tower needs a non-trigger collider that resolves to its ICombatTarget.");
+
+            float max = health.MaxHealth;
+            Assert.AreEqual(DamageStatus.NonHostile, health.TakeDamage(new DamageInfo(10f, "Ally", System.Guid.NewGuid(), "test", Vector3.zero, Vector3.forward)).Status);
+            var hit = health.TakeDamage(new DamageInfo(40f, "Enemy", System.Guid.NewGuid(), "test", Vector3.zero, Vector3.forward));
+            Assert.True(hit.WasApplied);
+            Assert.NotNull(GameObject.Find("VFX_Facility_Hit(Clone)"), "A hit on the tower plays the facility hit VFX.");
+            Assert.AreEqual(max - 40f, health.CurrentHealth, .01f);
+            Assert.AreEqual(max - 40f, anchor.Occupant.ViewData.CurrentHealth, .01f, "View data reads the live health.");
+
+            var kill = health.TakeDamage(new DamageInfo(max, "Enemy", System.Guid.NewGuid(), "test", Vector3.zero, Vector3.forward));
+            Assert.True(kill.WasKilled);
+            Assert.False(target.IsTargetable);
+            yield return new WaitForSeconds(health.removeDelay + .3f);
+            Assert.True(health == null, "A destroyed tower is removed.");
+            Assert.True(anchor != null && anchor.gameObject.activeInHierarchy, "Only the body breaks; the base (anchor) stays.");
+            Assert.False(anchor.IsOccupied, "Destroying the tower frees the anchor.");
+            Assert.True(service.Slots.TryGetSlot("slot-test", out var state) && !state.OccupantId.HasValue, "Destroying the tower frees the slot.");
+            Assert.True(service.TryBuild(PlacementRequest.AtSlot("cobra", "slot-test")).Outcome.Succeeded, "The slot can be built again.");
+        }
+
+        [UnityTest] public IEnumerator TeamTowerBodyBreaksWithVfxWhileTheBaseStays()
+        {
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/2.Model/Prefabs/Tower Base.prefab");
+            Assert.NotNull(prefab);
+            var tower = Track(Object.Instantiate(prefab, new Vector3(0f, 0f, 0f), Quaternion.identity));
+            yield return null;
+            Assert.True(tower.GetComponent<FacilityHealth>() == null, "The base itself has no health.");
+            var body = tower.transform.Find("Tower (Cobra)");
+            Assert.NotNull(body);
+            var health = body.GetComponent<FacilityHealth>();
+            Assert.NotNull(health, "Run SandGuard/Facility/Add Combat Health To Towers first.");
+            var bodyCollider = body.GetComponents<Collider>();
+            Assert.True(System.Array.Exists(bodyCollider, c => !c.isTrigger && c.enabled), "The body has a solid hitbox for enemies.");
+            var baseMesh = tower.transform.Find("Mesh").GetComponent<Renderer>();
+            Assert.True(baseMesh.enabled);
+
+            Assert.True(health.TakeDamage(new DamageInfo(10f, "Enemy", hitPosition: body.position + Vector3.up * 2f, hitDirection: Vector3.forward)).WasApplied);
+            Assert.NotNull(GameObject.Find("VFX_Facility_Hit(Clone)"), "Hits play the facility hit VFX.");
+
+            Assert.True(health.TakeDamage(new DamageInfo(10000f, "Enemy")).WasKilled);
+            var destruction = GameObject.Find("VFX_Cobra_Destruction(Clone)");
+            Assert.NotNull(destruction, "Death plays the cobra destruction VFX.");
+            Assert.Less(Vector3.Distance(destruction.transform.position, body.position), .001f, "The VFX lines up with the body root.");
+            foreach (var renderer in body.GetComponentsInChildren<Renderer>()) Assert.False(renderer.enabled, "The original body is hidden at once: " + renderer.name);
+            Assert.True(baseMesh.enabled, "The base keeps rendering.");
+
+            yield return new WaitForSeconds(health.removeDelay + .3f);
+            Assert.False(body.gameObject.activeSelf, "The broken body is removed.");
+            Assert.True(tower.activeInHierarchy && baseMesh.enabled, "The base stays after the body breaks.");
+            Assert.True(destruction.activeInHierarchy, "Debris stays after the body is gone.");
+            yield return new WaitForSeconds(.5f); // 받침 스크립트(ShowRange 등)가 본체가 꺼진 뒤에도 오류 없이 돈다
+        }
+
         void Capture(Vector3 focus, string name)
         {
             if (SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Null) return;

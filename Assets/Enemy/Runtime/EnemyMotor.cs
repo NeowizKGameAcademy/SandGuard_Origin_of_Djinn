@@ -129,6 +129,14 @@ namespace SandGuard.Enemy
             return true;
         }
 
+        /// <summary>지금 자리에서 target까지 갈 경로를 계산만 한다. 목적지와 이동 상태는 바꾸지 않는다.</summary>
+        public bool TryCalculatePath(Vector3 target, NavMeshPath path)
+        {
+            if (path == null || !IsFinite(target) || !IsOnNavMesh) return false;
+            if (!NavMesh.SamplePosition(target, out NavMeshHit hit, sampleRadius, agent.areaMask)) return false;
+            return agent.CalculatePath(hit.position, path) && path.status != NavMeshPathStatus.PathInvalid && path.corners.Length > 0;
+        }
+
         public void Stop()
         {
             if (IsOnNavMesh) { agent.isStopped = true; agent.ResetPath(); }

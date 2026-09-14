@@ -37,6 +37,11 @@ namespace SandGuard.Enemy
         public TargetSelection CurrentSelection { get; private set; }
         /// <summary>현재 대상을 공격하러 갈 NavMesh 위 위치. 대상이 없으면 null이다.</summary>
         public Vector3? ApproachPosition { get; private set; }
+        /// <summary>
+        /// 접근 지점이 허용 범위 안인지 묻는다(예: 경로에서 너무 먼 대상 제외). false면 갈 수 없는 대상처럼 고르지 않는다.
+        /// null이면 제한이 없다. 길을 막은 차단 시설(우선순위 0)은 경로 위에 있으므로 묻지 않는다.
+        /// </summary>
+        public Func<Vector3, bool> ApproachFilter { get; set; }
 
         public TargetSelection SelectTarget()
         {
@@ -106,7 +111,8 @@ namespace SandGuard.Enemy
             if (self == null || target.EntityId == self.EntityId || collider == null) return;
             bool hostile = target.IsTargetable && target.FactionId != self.FactionId;
             Vector3 approach = transform.position;
-            bool reachable = hostile && TryFindApproach(collider, out approach);
+            bool reachable = hostile && TryFindApproach(collider, out approach)
+                && (priority == 0 || ApproachFilter == null || ApproachFilter(approach));
             entries[target.EntityId] = new Entry { Target = target, Collider = collider, Priority = priority, Approach = reachable ? approach : transform.position };
             candidates.Add(new TargetCandidate(target.EntityId, reachable, reachable, priority,
                 (target.HitPosition - transform.position).sqrMagnitude));

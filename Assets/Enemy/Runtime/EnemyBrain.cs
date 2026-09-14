@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace SandGuard.Enemy
 {
@@ -9,6 +10,8 @@ namespace SandGuard.Enemy
     /// <remarks>
     /// 장애물 우회는 NavMesh가 처리한다. 길이 완전히 막히면 경로 끝에서 막은 시설을 찾아 공격하고, 길이 열리면 다시 진격한다.
     /// 코어 도착 처리기(ICoreInteraction)를 연결하면 도착 시 그 판단을 따르고, 없으면 despawnOnArrival에 따라 스스로 사라진다.
+    /// 웨이브 경로 진행기가 <see cref="Steer"/>로 목적지를 넘기면 objective 대신 그 지점으로 가고, 도착 판정은 진행기에 맡긴다.
+    /// 조종 중에는 경로 구간에서 routeLeash보다 먼 대상은 쫓지 않는다.
     /// </remarks>
     [DefaultExecutionOrder(100)]
     public sealed class EnemyBrain : MonoBehaviour
@@ -25,16 +28,79 @@ namespace SandGuard.Enemy
         [Min(0f)] public float turnSpeed = 540f;
         [Tooltip("코어 도착 처리기가 없을 때 도착하면 스스로 사라진다 (도착 즉시 흡수 방식의 임시 대체)")]
         public bool despawnOnArrival = true;
+        [Min(0f), Tooltip("경로 조종 중일 때, 접근 지점이 현재 경로 구간에서 이 거리 안인 대상만 쫓는다. 0이면 제한 없음")]
+        public float routeLeash = 6f;
         public bool AIEnabled { get; set; } = true;
+        /// <summary>외부 경로 진행기가 목적지를 정하고 있는지. <see cref="Steer"/>로 켜고 <see cref="ReleaseSteering"/>으로 끈다.</summary>
+        public bool IsSteered { get; private set; }
+        public Vector3 SteerPoint { get; private set; }
         /// <summary>코어 도착 처리기. 연결하면 도착 시 흡수·공격 지시를 따른다.</summary>
         public ICoreInteraction CoreInteraction { get; set; }
         public EnemyBrainState State { get; private set; }
         public ICombatTarget CurrentTarget => selector != null && selector.CurrentSelection.HasTarget ? selector.CurrentSelection.Target : null;
         public event Action<EnemyBrain> ReachedObjective;
         float nextThink;
+        Vector3[] leg = new Vector3[0];
+        NavMeshPath legPath;
+        Func<Vector3, bool> leashFilter;
+        ChiefGoldenShieldSkill shieldSkill;
+        ChiefBombThrowSkill bombSkill;
 
-        void OnEnable() { if (health != null) health.StateChanged += OnLifeStateChanged; nextThink = 0f; }
-        void OnDisable() { if (health != null) health.StateChanged -= OnLifeStateChanged; }
+        void Awake() { shieldSkill = GetComponent<ChiefGoldenShieldSkill>(); bombSkill = GetComponent<ChiefBombThrowSkill>(); }
+
+        void OnEnable()
+        {
+            if (health != null) health.StateChanged += OnLifeStateChanged;
+            nextThink = 0f;
+            if (selector != null) selector.ApproachFilter = leashFilter ??= WithinRouteLeash;
+        }
+        void OnDisable()
+        {
+            if (health != null) health.StateChanged -= OnLifeStateChanged;
+            if (selector != null && selector.ApproachFilter == leashFilter) selector.ApproachFilter = null;
+        }
+
+        /// <summary>
+        /// 목적지를 외부에서 정한다(웨이브 경로의 다음 노드). 매 프레임 같은 지점으로 불러도 된다.
+        /// 지점이 바뀌면 지금 자리에서 그 지점까지의 경로를 이탈 한도 기준선으로 기록하고 바로 다시 판단한다.
+        /// </summary>
+        public void Steer(Vector3 point)
+        {
+            if (IsSteered && (point - SteerPoint).sqrMagnitude <= 0.25f) return;
+            IsSteered = true;
+            SteerPoint = point;
+            legPath ??= new NavMeshPath();
+            leg = motor != null && motor.TryCalculatePath(point, legPath)
+                ? legPath.corners
+                : new[] { transform.position, point };
+            nextThink = 0f;
+        }
+
+        /// <summary>외부 조종을 끝낸다. 이후에는 objective를 향한 원래 판단으로 돌아간다.</summary>
+        public void ReleaseSteering()
+        {
+            IsSteered = false;
+            leg = new Vector3[0];
+        }
+
+        /// <summary>조종 중이면 접근 지점이 현재 경로 구간(꺾인 선)에서 routeLeash 안인지 본다.</summary>
+        public bool WithinRouteLeash(Vector3 approach)
+        {
+            if (!IsSteered || routeLeash <= 0f || leg.Length == 0) return true;
+            float limit = routeLeash * routeLeash;
+            if ((approach - leg[0]).sqrMagnitude <= limit) return true;
+            for (int i = 1; i < leg.Length; i++)
+                if (SqrDistanceToSegment(approach, leg[i - 1], leg[i]) <= limit) return true;
+            return false;
+        }
+
+        static float SqrDistanceToSegment(Vector3 point, Vector3 a, Vector3 b)
+        {
+            Vector3 ab = b - a;
+            float lengthSqr = ab.sqrMagnitude;
+            float t = lengthSqr > 1e-6f ? Mathf.Clamp01(Vector3.Dot(point - a, ab) / lengthSqr) : 0f;
+            return (point - (a + ab * t)).sqrMagnitude;
+        }
 
         void Update()
         {
@@ -53,23 +119,31 @@ namespace SandGuard.Enemy
         public void Think()
         {
             if (State == EnemyBrainState.Dead) return;
+            if (shieldSkill != null && shieldSkill.isActiveAndEnabled && shieldSkill.IsCasting)
+            { motor?.Stop(); return; }
+            if (bombSkill != null && bombSkill.isActiveAndEnabled && bombSkill.IsCasting)
+            { motor?.Stop(); return; }
             if (motor != null && motor.IsDetached) // 떨어지는 중·복귀 중: 공중에서 휘두르지 않는다. EnemyFall이 다시 붙이면 다음 판단부터 이어 간다
             { attack?.Cancel(); selector?.ClearTarget(); State = EnemyBrainState.Idle; return; }
-            if (objective == null && EnemyObjective.Current != null) objective = EnemyObjective.Current.transform;
+            if (!IsSteered && objective == null && EnemyObjective.Current != null) objective = EnemyObjective.Current.transform;
             motor?.Refresh();
             TargetSelection selection = selector != null ? selector.SelectTarget() : default;
             if (selection.HasTarget) { Engage(selection.Target); return; }
             attack?.Cancel();
-            if (objective == null || motor == null) { State = EnemyBrainState.Idle; motor?.Stop(); return; }
-            if (EnemyMotor.Planar(transform.position, objective.position) <= objectiveArrivalDistance) { Arrive(); return; }
+            if (motor == null || (!IsSteered && objective == null)) { State = EnemyBrainState.Idle; motor?.Stop(); return; }
+            // 조종 중에는 도착 판정·흡수를 진행기가 한다. 여기서는 지점까지 걷기만 한다.
+            Vector3 goal = IsSteered ? SteerPoint : objective.position;
+            if (!IsSteered && EnemyMotor.Planar(transform.position, goal) <= objectiveArrivalDistance) { Arrive(); return; }
             if (State == EnemyBrainState.Blocked) motor.Stop(); // 길이 바뀌었을 수 있으니 처음부터 다시 계산한다.
-            if (!motor.TrySetDestination(objective.position)) { State = EnemyBrainState.Blocked; return; }
+            if (!motor.TrySetDestination(goal)) { State = EnemyBrainState.Blocked; return; }
             State = motor.PathState == MovementPathState.Partial && motor.IsAtPathEnd ? EnemyBrainState.Blocked : EnemyBrainState.Advancing;
         }
 
         void Engage(ICombatTarget target)
         {
             State = EnemyBrainState.Engaging;
+            if (shieldSkill != null && shieldSkill.TryUse(target)) return;
+            if (bombSkill != null && bombSkill.TryUse(target)) return;
             if (attack != null && attack.IsInRange(target)) { motor?.Stop(); attack.TryAttack(target); return; }
             if (attack != null && attack.IsAttacking) return; // 휘두르는 중에는 움직이지 않는다.
             Vector3 approach = selector != null && selector.ApproachPosition.HasValue ? selector.ApproachPosition.Value : target.HitPosition;
@@ -108,6 +182,9 @@ namespace SandGuard.Enemy
         public void ResetForReuse()
         {
             State = EnemyBrainState.Idle; nextThink = 0f; AIEnabled = true;
+            shieldSkill?.ResetForReuse();
+            bombSkill?.ResetForReuse();
+            ReleaseSteering();
             attack?.Cancel(); selector?.ClearTarget();
         }
     }

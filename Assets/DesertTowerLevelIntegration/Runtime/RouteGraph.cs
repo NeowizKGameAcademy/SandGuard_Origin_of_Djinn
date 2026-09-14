@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using DesertTower.Levels;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace DesertTower.LevelIntegration
 {
@@ -75,7 +76,36 @@ namespace DesertTower.LevelIntegration
             }
             var visiting = new HashSet<RouteNode>(); var done = new HashSet<RouteNode>();
             foreach (var node in nodes) if (Cycle(node, visiting, done)) { errors.Add("활성 경로에 순환이 있습니다."); break; }
+            CheckGround(nodes, errors);
             return errors;
+        }
+
+        /// <summary>
+        /// 적은 NavMesh 바닥 위를 걷고 도착은 노드의 높이·반경 허용치로 판정하므로, 노드가 바닥에서 떠 있으면 영원히 도착하지 못한다.
+        /// 어느 노드 근처에도 NavMesh가 없으면(굽기 전, 임시 검증 그래프) 이 검사는 건너뛴다.
+        /// </summary>
+        static void CheckGround(HashSet<RouteNode> nodes, List<string> errors)
+        {
+            var found = new Dictionary<RouteNode, NavMeshHit>();
+            var missing = new List<(RouteNode node, float search)>();
+            foreach (var node in nodes)
+            {
+                float search = Mathf.Max(3f, node.heightTolerance * 4f);
+                if (NavMesh.SamplePosition(node.transform.position, out NavMeshHit hit, search, NavMesh.AllAreas)) found[node] = hit;
+                else missing.Add((node, search));
+            }
+            if (found.Count == 0) return;
+            foreach (var (node, search) in missing) errors.Add($"{node.name}: {search:0.#}m 안에 NavMesh 바닥이 없습니다.");
+            foreach (var pair in found)
+            {
+                RouteNode node = pair.Key; Vector3 position = node.transform.position, ground = pair.Value.position;
+                float rise = position.y - ground.y;
+                float planar = Vector2.Distance(new Vector2(position.x, position.z), new Vector2(ground.x, ground.z));
+                if (Mathf.Abs(rise) > node.heightTolerance)
+                    errors.Add($"{node.name}: NavMesh 바닥과 높이가 {rise:+0.00;-0.00}m 어긋나 적이 도착하지 못합니다(높이 허용 {node.heightTolerance:0.##}m). Y를 {ground.y:0.00}로 옮기거나 허용치를 올리세요.");
+                else if (planar > node.arrivalRadius)
+                    errors.Add($"{node.name}: 가장 가까운 NavMesh 바닥이 {planar:0.00}m 옆이라 적이 도착하지 못합니다(도착 반경 {node.arrivalRadius:0.##}m).");
+            }
         }
         static bool Cycle(RouteNode node, HashSet<RouteNode> visiting, HashSet<RouteNode> done)
         {

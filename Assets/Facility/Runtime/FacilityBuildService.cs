@@ -89,6 +89,16 @@ namespace SandGuard.Facility
                 return BuildResult.Failed(ActionFailure.InvalidPlacement, PlacementResult.Denied(PlacementFailure.Occupied));
             }
             anchor.Occupant = facility;
+            // 파괴되면 슬롯을 비워 다시 지을 수 있게 한다.
+            if (facility.Health != null)
+            {
+                string slotId = request.SlotId;
+                facility.Health.Despawned += _ =>
+                {
+                    registry.Release(slotId, id);
+                    if (anchor != null && anchor.Occupant == facility) anchor.Occupant = null;
+                };
+            }
             // "짠" 등장: 연막 → 드러남 + 펀치/플래시 + 완료 이펙트. 프리팹에 VfxPopIn이 없으면 붙이고 서비스의 완료 이펙트를 쓴다.
             var popIn = instance.GetComponent<VfxPopIn>() ?? instance.AddComponent<VfxPopIn>();
             if (popIn.RevealPrefab == null) popIn.RevealPrefab = buildCompleteVfx;

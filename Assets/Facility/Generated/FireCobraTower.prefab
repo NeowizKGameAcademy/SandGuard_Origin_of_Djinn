@@ -11,6 +11,9 @@ GameObject:
   - component: {fileID: 7574631450187757354}
   - component: {fileID: 3010626743454679890}
   - component: {fileID: 8937673858506985148}
+  - component: {fileID: 927188647996426422}
+  - component: {fileID: 7532185385637068781}
+  - component: {fileID: 3908891489275748474}
   m_Layer: 0
   m_Name: FireCobraTower
   m_TagString: Untagged
@@ -75,6 +78,79 @@ MonoBehaviour:
   FitEffectsToBounds: 1
   EffectLifetime: 3
   PlayOnEnable: 0
+--- !u!114 &927188647996426422
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8977132870309111719}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d5708071aaef944d9e8bd26d63eb7ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SandGuard.Facility.Runtime::SandGuard.Facility.FacilityHealth
+  maxHealth: 150
+  factionId: Ally
+  definitionId: facility
+  kind: 3
+  removeDelay: 0.5
+  removal: 0
+  onDied:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!65 &7532185385637068781
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8977132870309111719}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 4.2, y: 4.7, z: 4.2}
+  m_Center: {x: 0, y: 2.35, z: 0}
+--- !u!114 &3908891489275748474
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8977132870309111719}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eeb53d2018c5e254aaca319c0e369f6f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesertTower.VFX.Runtime::DesertTower.VFX.VfxHitReaction
+  HitPrefab: {fileID: 209659319031985367, guid: aab47f54c43bc3446a202ec976839258, type: 3}
+  HitLifetime: 1.5
+  OrientToHit: 1
+  FlashRenderers: []
+  FlashColor: {r: 1, g: 1, b: 1, a: 1}
+  FlashIntensity: 2.5
+  FlashDuration: 0.1
+  FlinchTarget: {fileID: 0}
+  FlinchScale: 0.9
+  FlinchDuration: 0.12
+  ScreenPrefab: {fileID: 0}
+  ScreenLifetime: 1
+  CameraShake: 0
+  CameraShakeDuration: 0.2
+  DeathPrefab: {fileID: 0}
+  DeathLifetime: 4
+  FitDeathToBounds: 0
+  TintDeathWithRenderer: 1
+  AttractTarget: {fileID: 0}
 --- !u!1001 &4464309046621744258
 PrefabInstance:
   m_ObjectHideFlags: 0

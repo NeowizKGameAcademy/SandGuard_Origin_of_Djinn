@@ -80,7 +80,7 @@ namespace SandGuard.Waves
             instance.GetComponent<EnemyFall>()?.ResetForReuse();
             instance.GetComponent<EnemyMotor>()?.Enable(position);
             var brain = instance.GetComponent<EnemyBrain>();
-            // 경로 감독(ActorBridge)이 두뇌를 꺼 두고 반납할 수 있으므로 재사용 때 다시 켠다.
+            // 경로 러너(ActorBridge)가 AI를 멈추고 조종 중인 채로 반납할 수 있으므로 재사용 때 초기화한다.
             if (brain != null) { brain.enabled = true; brain.ResetForReuse(); }
             instance.GetComponent<EnemyMeleeAttack>()?.ResetForReuse();
             instance.GetComponent<EnemyVisuals>()?.ResetForReuse();
