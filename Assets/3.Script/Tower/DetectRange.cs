@@ -28,14 +28,28 @@ public class DetectRange : MonoBehaviour
 
     private HashSet<EnemyState> detectedEnemies = new();
 
+    // [통합 수정 2026-09-15] 코브라 불꽃(FireOnOff)·타워 색(TowerOnOff)이 켜지지 않던 문제.
+    //   기존 값은 트리거로 채우던 detectedEnemies 개수였는데, 위 설명대로 트리거를 꺼서 항상 0(= 탐지 안 됨)이었습니다.
+    //   이제 매 프레임 범위 안의 "공격 가능한 적" 수를 직접 세어 넣습니다. 쓰는 쪽 코드는 그대로 동작합니다.
+    /* 기존 코드
     public bool IsDetecting => detectedEnemies.Count > 0;
     public int DetectCount => detectedEnemies.Count;
+    */
+    public bool IsDetecting => Detect_Count > 0;
+    public int DetectCount => Detect_Count;
 
     public float range => Range;
+
+    // [통합 추가] 이번 프레임에 범위 안에 있는 적 수, 겹침 검사 버퍼, 같은 편 구분용 타워 자신
+    private int Detect_Count;
+    private readonly Collider[] Detect_Buffer = new Collider[64];
+    private readonly HashSet<ICombatTarget> Detect_Counted = new();
+    private ICombatTarget Owner;
 
     private void Awake()
     {
         TryGetComponent(out Detect_Range);
+        Owner = GetComponentInParent<ICombatTarget>(); // [통합 추가]
     }
 
     private void Update()
@@ -43,6 +57,27 @@ public class DetectRange : MonoBehaviour
         Range = Mathf.Clamp(Range, 0f, 50f);
 
         SetRange();
+        CountEnemies(); // [통합 추가]
+    }
+
+    // [통합 추가] 범위 구체와 겹치는 콜라이더 중 공격 가능한 다른 편 전투 대상 수를 센다(트리거는 무시).
+    //   몸에 콜라이더가 여러 개인 적은 한 번만 센다. Contains()와 같은 기준(몸 가장자리까지)이다.
+    private void CountEnemies()
+    {
+        string Faction = Owner != null ? Owner.FactionId : "Ally";
+        int Count = Physics.OverlapSphereNonAlloc(transform.position, Range, Detect_Buffer, ~0, QueryTriggerInteraction.Ignore);
+
+        Detect_Counted.Clear();
+
+        for (int i = 0; i < Count; i++)
+        {
+            ICombatTarget Enemy = Detect_Buffer[i].GetComponentInParent<ICombatTarget>();
+
+            if (Enemy != null && Enemy.IsTargetable && Enemy.FactionId != Faction)
+                Detect_Counted.Add(Enemy);
+        }
+
+        Detect_Count = Detect_Counted.Count;
     }
 
     private void SetRange()
