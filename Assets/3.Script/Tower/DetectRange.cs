@@ -26,18 +26,10 @@ public class DetectRange : MonoBehaviour
     [SerializeField] private float Range = 20f;
     [SerializeField] private SphereCollider Detect_Range;
 
-    private HashSet<EnemyState> detectedEnemies = new();
-
-    // [통합 수정 2026-09-15] 코브라 불꽃(FireOnOff)·타워 색(TowerOnOff)이 켜지지 않던 문제.
-    //   기존 값은 트리거로 채우던 detectedEnemies 개수였는데, 위 설명대로 트리거를 꺼서 항상 0(= 탐지 안 됨)이었습니다.
-    //   이제 매 프레임 범위 안의 "공격 가능한 적" 수를 직접 세어 넣습니다. 쓰는 쪽 코드는 그대로 동작합니다.
-    /* 기존 코드
-    public bool IsDetecting => detectedEnemies.Count > 0;
-    public int DetectCount => detectedEnemies.Count;
-    */
     public bool IsDetecting => Detect_Count > 0;
     public int DetectCount => Detect_Count;
-
+    public HashSet<ICombatTarget> enemies => Detect_Counted;
+    public Collider[] detect_buffer => Detect_Buffer;
     public float range => Range;
 
     // [통합 추가] 이번 프레임에 범위 안에 있는 적 수, 겹침 검사 버퍼, 같은 편 구분용 타워 자신
@@ -99,24 +91,4 @@ public class DetectRange : MonoBehaviour
 
         return (other.ClosestPoint(center) - center).sqrMagnitude <= Range * Range;
     }
-
-    /* 기존 코드: 트리거로 EnemyState에 탐지 기록. 위 설명의 이유로 사용하지 않는다.
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.TryGetComponent(out EnemyState enemyState))
-        {
-            detectedEnemies.Add(enemyState);
-            enemyState.Detected(this, true);
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.TryGetComponent(out EnemyState enemyState))
-        {
-            detectedEnemies.Remove(enemyState);
-            enemyState.Detected(this, false);
-        }
-    }
-    */
 }
