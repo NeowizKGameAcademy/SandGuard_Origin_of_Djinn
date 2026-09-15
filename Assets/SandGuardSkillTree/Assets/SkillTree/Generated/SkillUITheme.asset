@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e880ff2ca565da8b311d5b30518a803, type: 3}
+  m_Name: SkillUITheme
+  m_EditorClassIdentifier: 
+  font: {fileID: 12800000, guid: ca104d10b37454ca96cef047f343070d, type: 3}
+  panel: {fileID: 21300000, guid: 7590f39f57495cd6a6b344e08c00efce, type: 3}
+  button: {fileID: 21300000, guid: 4db3a8af85d2508f85e9ff9ca64d1af8, type: 3}
+  ring: {fileID: 21300000, guid: c12e6fe2a00857ce9ab08aaf106a4fd8, type: 3}
+  ornament: {fileID: 21300000, guid: 48eaa020cc145e66ae06b2374a147e98, type: 3}
+  icons:
+  - skillId: move.dash
+    sprite: {fileID: 21300000, guid: bb688ec970b05ed0bab4586427739b5a, type: 3}
+  - skillId: move.jump
+    sprite: {fileID: 21300000, guid: 78e67645ae6e5a92a40dc7742831c1b2, type: 3}
+  - skillId: move.recall
+    sprite: {fileID: 21300000, guid: 0dcd4308ceef598a95cded09e4943414, type: 3}
+  - skillId: attack.pierce
+    sprite: {fileID: 21300000, guid: a9055dda882c5228a87a7899783475f7, type: 3}
+  - skillId: attack.burst
+    sprite: {fileID: 21300000, guid: 533a26cdf1cb59a2998ce498b853c7ae, type: 3}
+  - skillId: attack.vortex
+    sprite: {fileID: 21300000, guid: ca2aa58af2ac5b5d8235541b60f57b69, type: 3}
+  - skillId: attack.storm
+    sprite: {fileID: 21300000, guid: 96d086a380625309b66dd7afff748baa, type: 3}
+  - skillId: tower.cobra
+    sprite: {fileID: 21300000, guid: 4b82b6d01b5456db918a9c2599a941d3, type: 3}
+  - skillId: tower.skeleton
+    sprite: {fileID: 21300000, guid: 93788a60924d5d858c242bce52161fa2, type: 3}
+  - skillId: tower.anubis
+    sprite: {fileID: 21300000, guid: e36f7e8ad27354e88d2cce0108f6cb0a, type: 3}
+  gold: {r: 1, g: 0.77, b: 0.31, a: 1}
+  cyan: {r: 0.24, g: 0.91, b: 1, a: 1}
+  muted: {r: 0.40, g: 0.46, b: 0.50, a: 1}
