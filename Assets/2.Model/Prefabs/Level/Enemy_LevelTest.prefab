@@ -55,25 +55,5 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 658155196757490767, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 6618992813876538428}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
---- !u!1 &1263845989488090087 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 658155196757490767, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
-  m_PrefabInstance: {fileID: 1776715756347844520}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &6618992813876538428
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1263845989488090087}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 363f3fced0d2527f846aa6359e4e77a5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: DesertTower.LevelIntegration.SandGuard::DesertTower.LevelIntegration.SandGuardActorBridge

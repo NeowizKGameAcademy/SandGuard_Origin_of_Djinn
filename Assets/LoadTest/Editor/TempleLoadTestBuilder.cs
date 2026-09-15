@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using SandGuard.Enemy;
-using SandGuard.Waves;
+using DesertTower.LevelIntegration;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
 using UnityEditor.SceneManagement;

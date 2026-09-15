@@ -31,6 +31,7 @@ groups={};region='D_Detail';skipped=0
 relief_placements=[]
 imported_regions=set()
 custom_motifs={}
+monumental_reliefs=[]
 stair_closures=0
 def clear(vs):
     global skipped
@@ -83,7 +84,7 @@ def strip(points,width,depth,mat='Temple_Limestone'):
         if j:
             k=j*4;f=k-4;fs.extend([(f,f+1,k+1,k),(f+2,k+2,k+3,f+3),(f,k,k+2,f+2),(f+1,f+3,k+3,k+1)])
     fs.extend([(0,2,3,1),(len(vs)-4,len(vs)-3,len(vs)-1,len(vs)-2)]);add(vs,fs,mat,True)
-def wall_relief(cx,cz,tx,tz,nx,nz,base,height,width=2.5,out=0,slope=0):
+def wall_relief(cx,cz,tx,tz,nx,nz,base,height,width=2.5,out=0,slope=0,design_override=None):
     global region
     # Towers have real columns and inset cells. The old detached tablets are removed.
     if region.startswith('D_Pylon'):return
@@ -96,21 +97,22 @@ def wall_relief(cx,cz,tx,tz,nx,nz,base,height,width=2.5,out=0,slope=0):
             base=base+(height-ph)/2,height=ph,width=width,out=out,slope=slope))
         return
     designs=['lotus','winged_sun','scarab','watchful_eye','papyrus','constellation','stepped_diamond','river']
-    serial=sum(custom_motifs.values());design=designs[serial%len(designs)]
+    serial=sum(custom_motifs.values());design=design_override or designs[serial%len(designs)]
     custom_motifs[design]=custom_motifs.get(design,0)+1
     region='D_CustomMotif_'+str(serial)+'_'+design
-    h=min(height,width*(1.05 if serial%3==0 else 1.55))
+    h=min(height,width*(1.8 if design_override else (1.05 if serial%3==0 else 1.55)))
     base+=(height-h)/2;height=h
     def point(u,v,depth):
         return local(cx,cz,tx,tz,nx,nz,u*width,base+v*height,out+depth-slope*v*height)
     def line(points,w=.035,mat='Temple_Recess'):
-        # Geometry intersects its supporting wall by 5mm; no independent tablet is created.
+        # Raised carved edges are rooted inside the real supporting wall; no tablet backing.
+        w*=max(1,min(2.6,width/2.4))
         vv=[];ff=[]
         for j,(u,v) in enumerate(points):
             a=points[max(0,j-1)];b=points[min(len(points)-1,j+1)]
             dx,dy=(b[0]-a[0])*width,(b[1]-a[1])*height
             length=max(.00001,math.hypot(dx,dy))
-            for depth in [-.055,-.012]:
+            for depth in [-.055,.205]:
                 for sign in [-1,1]:
                     vv.append(point(u+sign*dy/length*w/width/2,v-sign*dx/length*w/height/2,depth))
             if j:
@@ -120,7 +122,54 @@ def wall_relief(cx,cz,tx,tz,nx,nz,base,height,width=2.5,out=0,slope=0):
         add(vv,ff,mat,True)
     def oval(u,v,rx,ry,mat='Temple_Recess'):
         line([(u+rx*math.cos(j*math.tau/32),v+ry*math.sin(j*math.tau/32)) for j in range(33)],.045,mat)
+    def filled(points,mat='Temple_Limestone',depth=.09):
+        # Closed extruded polygon: broad carved surfaces instead of outline-only symbols.
+        n=len(points);vs=[point(u,v,d) for d in [-.065,depth] for u,v in points]
+        fs=[tuple(range(n-1,-1,-1)),tuple(range(n,2*n))]
+        fs.extend((j,(j+1)%n,(j+1)%n+n,j+n) for j in range(n))
+        add(vs,fs,mat,True)
+    def disk(u,v,rx,ry,mat='Temple_Turquoise',depth=.10):
+        filled([(u+rx*math.cos(j*math.tau/32),v+ry*math.sin(j*math.tau/32)) for j in range(32)],mat,depth)
     accent='Temple_Turquoise' if serial%2 else 'Temple_Bronze'
+    if design=='lotus':
+        for sign in [-1,1]:
+            filled([(0,.19),(sign*.29,.35),(sign*.39,.62),(sign*.16,.5)],'Temple_Limestone')
+            filled([(sign*.06,.28),(sign*.25,.39),(sign*.32,.55),(sign*.16,.47)],'Temple_Turquoise',.12)
+        filled([(0,.19),(-.12,.55),(0,.84),(.12,.55)],'Temple_Turquoise',.12)
+        filled([(-.36,.11),(.36,.11),(.32,.18),(-.32,.18)],'Temple_Bronze',.12)
+    elif design=='winged_sun':
+        disk(0,.65,.135,.13,'Temple_Bronze',.17)
+        for sign in [-1,1]:
+            for j in range(5):
+                u=sign*(.16+j*.048)
+                filled([(u,.66),(u+sign*.075,.73),(u+sign*.09,.36+j*.047),(u+sign*.025,.34+j*.047)],'Temple_Turquoise' if j%2 else 'Temple_Limestone',.11)
+    elif design=='scarab':
+        disk(0,.46,.16,.22,'Temple_Turquoise',.12)
+        disk(0,.73,.085,.075,'Temple_Bronze',.15)
+        disk(0,.9,.09,.06,'Temple_Bronze',.16)
+        for sign in [-1,1]:
+            filled([(sign*.015,.28),(sign*.14,.39),(sign*.14,.56),(sign*.025,.65)],'Temple_Turquoise',.16)
+    elif design=='watchful_eye':
+        filled([(-.43,.58),(-.2,.73),(.06,.75),(.42,.56),(.12,.42),(-.18,.43)],'Temple_Limestone',.08)
+        disk(.02,.58,.09,.12,'Temple_Turquoise',.17)
+        disk(.02,.58,.035,.075,'Temple_Recess',.19)
+    elif design=='papyrus':
+        for j in [-1,0,1]:
+            u=j*.22;v=.86-abs(j)*.06
+            filled([(u,.68),(u-.13,v),(u-.06,v+.035),(u+.06,v+.035),(u+.13,v)],'Temple_Turquoise',.12)
+    elif design=='constellation':
+        for u,v in [(-.28,.78),(.12,.87),(.30,.54),(-.12,.40),(.12,.12)]:
+            filled([(u-.065,v),(u-.02,v+.02),(u,v+.065),(u+.02,v+.02),(u+.065,v),(u+.02,v-.02),(u,v-.065),(u-.02,v-.02)],'Temple_Bronze',.14)
+        disk(-.27,.22,.075,.055,'Temple_Turquoise',.12)
+    elif design=='stepped_diamond':
+        filled([(0,.92),(-.42,.5),(0,.08),(.42,.5)],'Temple_Limestone',.055)
+        filled([(0,.79),(-.29,.5),(0,.21),(.29,.5)],'Temple_Turquoise',.10)
+        filled([(0,.66),(-.16,.5),(0,.34),(.16,.5)],'Temple_Bronze',.14)
+    else:
+        for row in range(4):
+            upper=[(-.43+j*.86/24,.15+row*.2+.055*math.sin(j*math.tau/12+row*.6)) for j in range(25)]
+            filled(upper+[(u,v-.045) for u,v in reversed(upper)],'Temple_Turquoise' if row%2 else 'Temple_Limestone',.10)
+
     if design=='lotus':
         line([(-.36,.14),(.36,.14)],.075)
         for sign in [-1,1]:
@@ -237,6 +286,124 @@ for part in parts:
                 apothem=(mx-cx)*nx+(mz-cz)*nz;slope=0
                 wall_relief(mx,mz,tx,tz,nx,nz,2.0,min(8,gallery_base-3),min(3.8,length*.3),-apothem*.025+.045,slope)
 
+# Concept architecture pass: engaged masonry details, never independent wall tablets.
+# Source decks, stairs, structural solids and all C_ collision meshes stay unchanged.
+architecture_towers=[]
+for part in parts:
+    if not part['name'].endswith('_deck') or part['max']['y']<10:continue
+    poly=hull(list(map(xyz,part['vertices'])));top=part['max']['y']
+    name=part['name'].replace('_deck','');architecture_towers.append(name)
+    cx=(part['min']['x']+part['max']['x'])/2;cz=(part['min']['z']+part['max']['z'])/2
+    gallery=top-10.3
+    region='D_Architecture_Tower_'+name
+    for i,(ax,az) in enumerate(poly):
+        bx,bz=poly[(i+1)%len(poly)];length=math.hypot(bx-ax,bz-az)
+        if length<6:continue
+        tx,tz=(bx-ax)/length,(bz-az)/length;nx,nz=tz,-tx
+        mx,mz=(ax+bx)/2,(az+bz)/2;yaw=math.atan2(tz,tx)
+        apothem=(mx-cx)*nx+(mz-cz)*nz;wall=-apothem*.025
+        def stone(s,y,w,h,d,out,mat='Temple_Limestone'):
+            box(local(mx,mz,tx,tz,nx,nz,s,y,out),(w,h,d),mat,yaw)
+        # Individual cornice blocks establish scale without covering the preserved roof plane.
+        count=max(3,round(length/2.1));unit=length/count
+        for j in range(count):
+            ss=-length/2+(j+.5)*unit
+            stone(ss,top-.42,unit-.055,.38,1.12,.10)
+            stone(ss,top-1.84,unit-.045,.27,.96,.06)
+            stone(ss,top-2.08,unit-.045,.18,.70,-.04,'Temple_Bronze')
+        # A deep turquoise fascia sits directly against the existing solid roof edge.
+        stone(0,top-1.14,length-.18,.38,.12,.51,'Temple_Turquoise')
+        for j in range(max(3,round(length/.9))):
+            ss=-length/2+.4+j*.9
+            if ss>length/2-.2:continue
+            stone(ss,top-1.63,.24,.23,.28,.44)
+        # The broad lower wall is grounded; stepped base courses remain wall-attached.
+        for yy,hh,dd,out in [(1.32,.38,.76,wall+.12),(1.69,.24,.54,wall+.08),(1.91,.13,.40,wall+.06)]:
+            for j in range(count):stone(-length/2+(j+.5)*unit,yy,unit-.05,hh,dd,out)
+        if gallery>4:
+            stone(0,2.10,length-.2,.15,.08,wall+.18,'Temple_Turquoise')
+        # Capitals and bases on existing gallery columns, plus fine engaged shaft ribs.
+        for ss in [-length*.35,length*.35]:
+            for yy,hh,ww,dd in [(top-2.35,.26,1.85,1.5),(top-2.65,.30,1.52,1.28),
+                                  (gallery+.20,.35,1.68,1.50),(gallery+.54,.24,1.43,1.27)]:
+                stone(ss,yy,ww,hh,dd,-.12)
+            stone(ss,top-2.85,1.4,.13,.09,.51,'Temple_Bronze')
+            stone(ss,gallery+.77,1.37,.16,.09,.51,'Temple_Turquoise')
+            low=max(2.4,gallery+.95);high=top-3.10
+            if high>low:
+                for offset in [-.43,.43]:stone(ss+offset,(low+high)/2,.10,high-low,.08,.44)
+        # Frame the lower masonry field with grounded pilasters, leaving the central field quiet.
+        if gallery>5:
+            h=gallery-2.45
+            for ss in [-length*.25,length*.25]:
+                stone(ss,2.25+h/2,.45,h,.20,wall+.03)
+                stone(ss,2.29,.72,.22,.30,wall+.04)
+                stone(ss,gallery-.28,.72,.22,.30,wall+.04)
+            stone(0,gallery-.12,length*.54,.24,.24,wall+.03)
+
+# Central spine receives shallow architectural bays and layered cornices on its real walls.
+for tier,(w,d,bottom,top) in enumerate([(41,106,1.1,6),(33,72,6,14),(25,47,14,25),(20,28,25,37)]):
+    region='D_Architecture_Sanctuary_'+str(tier)
+    for sx in [-1,1]:
+        face=sx*w/2
+        for j in range(max(2,round(d/2.4))):
+            n=max(2,round(d/2.4));unit=d/n;z=-d/2+(j+.5)*unit
+            box((face+sx*.10,top-.65,z),(.72,.30,unit-.055))
+            box((face+sx*.06,bottom+.28,z),(.50,.28,unit-.055))
+        box((face+sx*.18,top-1.60,0),(.10,.18,d-.4),'Temple_Turquoise')
+        bays=max(2,round(d/10));spacing=d/bays
+        for j in range(bays):
+            z=-d/2+(j+.5)*spacing;low=bottom+.7;high=top-2.1
+            if high-low<1.5:continue
+            # Nested shallow stone surrounds imply a recessed field, with the existing wall as backing.
+            for dz in [-spacing*.34,spacing*.34]:
+                box((face+sx*.07,(low+high)/2,z+dz),(.26,high-low,.38))
+                box((face+sx*.09,low+.12,z+dz),(.35,.24,.65))
+                box((face+sx*.09,high-.12,z+dz),(.35,.24,.65))
+            box((face+sx*.07,high,z),(.26,.24,spacing*.72))
+            box((face+sx*.07,low,z),(.26,.20,spacing*.72))
+            if tier>=2:
+                box((face+sx*.20,high-.37,z),(.06,.12,spacing*.58),'Temple_Bronze')
+
+# Monumental carved fields attach to the exact scaled tower wall faces.
+# Use the same polygon centroid as prism(), not the bounding-box midpoint.
+for index,part in enumerate(p for p in parts if p['name'].endswith('_deck') and p['max']['y']>=25.9):
+    poly=hull(list(map(xyz,part['vertices'])));cx=sum(x for x,z in poly)/len(poly);cz=sum(z for x,z in poly)/len(poly)
+    top=part['max']['y'];gallery=top-10.3;name=part['name'].replace('_deck','')
+    styles=['lotus','papyrus','winged_sun','watchful_eye','scarab','constellation','river']
+    for i,(ax,az) in enumerate(poly):
+        bx,bz=poly[(i+1)%len(poly)];length=math.hypot(bx-ax,bz-az)
+        if length<6:continue
+        tx,tz=(bx-ax)/length,(bz-az)/length;nx,nz=tz,-tx
+        mx=cx+((ax+bx)/2-cx)*.975;mz=cz+((az+bz)/2-cz)*.975
+        region='D_Monumental_'+name+'_'+str(i)
+        primary={'CORE':4,'L3_NE':0,'L3_NW':1,'L3_SE':3,'L3_SW':2,'T7':6,'T8':5}[name]
+        style=styles[(primary+i%2)%len(styles)];width=length*.37;height=gallery-3.6
+        wall_relief(mx,mz,tx,tz,nx,nz,2.8,height,width,.045,0,style)
+        monumental_reliefs.append(dict(tower=name,face=i,design=style,width=width))
+# Distinct large winged and solar emblems on the upper recessed cell of the central tower.
+part=next(p for p in parts if p['name']=='CORE_deck')
+poly=hull(list(map(xyz,part['vertices'])));cx=sum(x for x,z in poly)/len(poly);cz=sum(z for x,z in poly)/len(poly)
+for i,(ax,az) in enumerate(poly):
+    bx,bz=poly[(i+1)%len(poly)];length=math.hypot(bx-ax,bz-az)
+    if length<6:continue
+    tx,tz=(bx-ax)/length,(bz-az)/length;nx,nz=tz,-tx
+    mx=cx+((ax+bx)/2-cx)*.57;mz=cz+((az+bz)/2-cz)*.57
+    region='D_Monumental_CORE_Cell_'+str(i)
+    wall_relief(mx,mz,tx,tz,nx,nz,44.5,7.0,length*.40,.045,0,'scarab' if i%2 else 'winged_sun')
+    monumental_reliefs.append(dict(tower='CORE_Cell',face=i,design='scarab' if i%2 else 'winged_sun'))
+# Selected sanctuary bays carry emblems, leaving alternate fields quiet.
+for tier,(w,d,bottom,top) in enumerate([(41,106,1.1,6),(33,72,6,14),(25,47,14,25),(20,28,25,37)]):
+    if tier==0:continue
+    bays=max(2,round(d/10));spacing=d/bays
+    for sx in [-1,1]:
+        for j in range(bays):
+            if (j+tier)%2:continue
+            z=-d/2+(j+.5)*spacing;region='D_Monumental_Sanctuary_'+str(tier)
+            style=['papyrus','watchful_eye','stepped_diamond','scarab'][(j+tier+(sx>0))%4]
+            wall_relief(sx*w/2,z,0,1,sx,0,bottom+.9,top-bottom-3.3,spacing*.48,.045,0,style)
+            monumental_reliefs.append(dict(tower='Sanctuary_'+str(tier),bay=j,side=sx,design=style))
+
 # Solid visual risers: keep collision on the original smooth ramps.
 for part in parts:
     if not part['name'].startswith('TREADS_FLUSH') or part['max']['y']-part['min']['y']<.5:continue
@@ -298,7 +465,17 @@ for side in range(4):
         poly=[(mx-tx*length/2-nx*1.75,mz-tz*length/2-nz*1.75),(mx+tx*length/2-nx*1.75,mz+tz*length/2-nz*1.75),(mx+tx*length/2+nx*1.75,mz+tz*length/2+nz*1.75),(mx-tx*length/2+nx*1.75,mz-tz*length/2+nz*1.75)]
         box((mx,4.6,mz),(length,9.2,3.5),'Temple_Sandstone',angle,False)
         region='D_Wall_'+str(side)
-        box((mx+nx*.25,9.25,mz+nz*.25),(length+.3,.75,4.35),yaw=angle)
+        # Separate coping stones with shallow chipped top corners, within the original cap envelope.
+        units=max(2,round(length/2.5));unit=(length+.3)/units
+        for q in range(units):
+            ss=-(length+.3)/2+(q+.5)*unit;ww=unit-.035
+            vv=[]
+            for yy in [8.875,9.625]:
+                for u,v in [(-ww/2,-2.175),(ww/2,-2.175),(ww/2,2.175),(-ww/2,2.175)]:
+                    chip=.10 if yy>9 and (q+side)%7==0 and u<0 and v>0 else 0
+                    vv.append(local(mx,mz,tx,tz,nx,nz,ss+u,yy-chip,.25+v))
+            add(vv,[(0,3,2,1),(4,5,6,7),(0,1,5,4),(1,2,6,5),(2,3,7,6),(3,0,4,7)],
+                'Temple_Sandstone' if q%9==4 else 'Temple_Limestone',True)
         frieze(mx,mz,tx,tz,nx,nz,8.25,length,1.83)
         # Long wall panels, not a colonnade around every floor.
         for j in range(max(1,int(length/9))):
@@ -333,6 +510,80 @@ for sz in [-1,1]:
             box((x,4,z),(1.25,5.8,1.25),'Temple_Limestone',check=False)
             region='D_Portico';box((x,6.8,z),(1.8,.55,1.8));box((x,1.43,z),(1.8,.55,1.8))
             region='S_CourtPortico_'+str(sx)+'_'+str(sz)
+
+# Concept enclosure pass: attached facade trim with all structural/collision meshes unchanged.
+enclosure_details={'wall_runs':6,'gate_pylons':12,'axial_gates':2,'porticos':4,'portico_columns':28}
+for side in range(4):
+    angle=side*math.pi/2;tx,tz=math.cos(angle),math.sin(angle);nx,nz=tz,-tx;cx,cz=nx*70.8,nz*70.8
+    for k,(start,end) in enumerate([(-58,-7),(7,58)] if side%2==0 else [(-58,58)]):
+        length=end-start;center=(start+end)/2;mx,mz=cx+tx*center,cz+tz*center
+        region='D_Architecture_Enclosure_'+str(side)+'_'+str(k)
+        n=max(2,round(length/2.5));unit=length/n
+        for j in range(n):
+            ss=-length/2+(j+.5)*unit
+            for out in [-1.78,1.78]:
+                box(local(mx,mz,tx,tz,nx,nz,ss,1.37,out),(unit-.045,.38,.24),'Temple_Limestone',angle)
+                box(local(mx,mz,tx,tz,nx,nz,ss,8.94,out),(unit-.045,.20,.22),'Temple_Limestone',angle)
+        # The existing external piers receive caps/bases instead of new freestanding columns.
+        for j in range(max(1,int(length/9))):
+            ss=-length/2+4.5+j*9
+            for ds in [-3.9,3.9]:
+                for yy,hh,ww in [(1.49,.34,.95),(1.82,.18,.83),(7.91,.20,.93),(8.08,.16,1.03)]:
+                    box(local(mx,mz,tx,tz,nx,nz,ss+ds,yy,1.96),(ww,hh,.82),'Temple_Limestone',angle)
+
+for sz in [-1,1]:
+    for sx in [-1,1]:
+        for x,z in [(sx*73,sz*61.5),(sx*61.5,sz*73),(sx*8.9,sz*71.5)]:
+            top=12.6 if abs(x)<20 else 11.4
+            region='D_Architecture_Gateway_'+str(x)+'_'+str(z)
+            # Recessed-edge trims stay on front/back faces, clear of the jamb opening.
+            for facing in [-1,1]:
+                zz=z+facing*2.62
+                for dx in [-2.20,2.20]:
+                    box((x+dx,6.2,zz),(.26,9.1,.20))
+                    box((x+dx,1.73,zz),(.48,.30,.28))
+                    box((x+dx,10.7,zz),(.48,.28,.28))
+                box((x,1.44,zz),(5.1,.30,.24))
+                box((x,1.76,zz),(5.05,.18,.18))
+                box((x,top-1.5,zz),(5.0,.20,.20))
+                box((x,top-1.23,zz),(5.0,.12,.10),'Temple_Bronze')
+            # Four discrete crown courses, none taller than the preserved upper silhouette.
+            for dx in [-1.35,1.35]:
+                for dz in [-1.35,1.35]:
+                    box((x+dx,top+.47,z+dz),(2.66,.15,2.66))
+            for facing in [-1,1]:
+                box((x,top-.15,z+facing*2.58),(5.15,.24,.32))
+    # Layered axial portal surrounds fixed to the original lintel; clear height unchanged.
+    region='D_Architecture_Portal_'+str(sz)
+    for face in [-1,1]:
+        z=sz*71.5+face*2.42
+        for j in range(7):
+            box((-5.7+j*1.9,12.69,z),(1.86,.40,.25))
+        box((0,11.26,z),(12.5,.20,.20))
+        box((0,12.93,z),(13.0,.12,.24),'Temple_Bronze')
+        # A shallow decorative top frieze keeps the existing doorway open.
+        for j in range(13):box((-5.7+j*.95,11.58,z),(.18,.20,.13))
+
+# Four existing porticos: articulate their beams, capitals and shafts without adding columns.
+for sz in [-1,1]:
+    for sx in [-1,1]:
+        region='D_Architecture_Portico_'+str(sx)+'_'+str(sz)
+        for j in range(14):
+            x=sx*35-17.5+(j+.5)*2.5
+            box((x,7.50,sz*63.16),(2.46,.30,.16))
+            box((x,7.09,sz*63.16),(2.46,.17,.12),'Temple_Turquoise')
+        for j in range(7):
+            x=sx*(19.2+j*5.25);z=sz*63.8
+            # All widened bases/capitals remain within the pre-existing 1.8m footprint.
+            box((x,1.64,z),(1.74,.12,1.74))
+            box((x,1.82,z),(1.43,.22,1.43))
+            box((x,6.54,z),(1.46,.18,1.46))
+            box((x,6.72,z),(1.76,.14,1.76))
+            for face in [-1,1]:
+                zz=z+face*.625
+                box((x,2.04,zz),(1.17,.13,.08),'Temple_Bronze')
+                box((x,6.32,zz),(1.17,.12,.08),'Temple_Turquoise')
+                for dx in [-.40,.40]:box((x+dx,4.15,zz),(.095,3.9,.08))
 
 # Uneven rubble and shallow sand aprons integrate walls with the ground; gameplay clearance is sampled.
 for side in range(4):
@@ -403,7 +654,7 @@ objects=[];booleans=0
 for (name,mat),(verts,faces) in groups.items():
     if not faces:continue
     obj=make_object(name+'_'+mat,verts,faces,mat);bpy.context.view_layer.objects.active=obj;obj.select_set(True)
-    if name.startswith(('S_','D_Pylon','D_GatePylon')):
+    if name.startswith(('S_','D_Pylon','D_GatePylon','D_Architecture','D_CustomMotif')):
         for cutter in cutters:
             if not intersects(obj,cutter):continue
             mod=obj.modifiers.new('Preserve gameplay clearance','BOOLEAN');mod.operation='DIFFERENCE';mod.solver='EXACT';mod.object=cutter
@@ -521,5 +772,5 @@ bpy.ops.object.select_all(action='DESELECT')
 for obj in objects:obj.select_set(True)
 bpy.ops.wm.save_as_mainfile(filepath=str(DOC/'Temple_Courtyard_v2.blend'))
 bpy.ops.export_scene.fbx(filepath=str(OUT/'Temple_Courtyard_v2.fbx'),use_selection=True,object_types={'MESH'},axis_forward='-Z',axis_up='Y',bake_anim=False,add_leaf_bones=False)
-report={'imported_wall_reliefs':len([p for p in relief_placements if p]),'custom_motifs':custom_motifs,'closed_risers':stair_closures,'unique_statues':statue_records,'objects':len(objects),'triangles':sum(sum(len(p.vertices)-2 for p in o.data.polygons) for o in objects),'rejected_decorations':skipped,'clearance_boolean_cuts':booleans,'platforms':17,'protected_surface_triangles':len(pf)}
+report={'enclosure_details':enclosure_details,'monumental_reliefs':monumental_reliefs,'architecture_towers':architecture_towers,'architecture_sanctuary_tiers':4,'imported_wall_reliefs':len([p for p in relief_placements if p]),'custom_motifs':custom_motifs,'closed_risers':stair_closures,'unique_statues':statue_records,'objects':len(objects),'triangles':sum(sum(len(p.vertices)-2 for p in o.data.polygons) for o in objects),'rejected_decorations':skipped,'clearance_boolean_cuts':booleans,'platforms':17,'protected_surface_triangles':len(pf)}
 (DOC/'model-report.json').write_text(json.dumps(report,indent=2));print('COURTYARD_MODEL_COMPLETE',report)

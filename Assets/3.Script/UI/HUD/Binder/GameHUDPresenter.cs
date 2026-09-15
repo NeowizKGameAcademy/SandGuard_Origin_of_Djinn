@@ -162,11 +162,6 @@ namespace SandGuard.UI.HUD
             return null;
         }
 
-        static MonoBehaviour FindWave()
-        {
-            var integration = FindAnyObjectByType<WaveDirector>();
-            if (integration != null) return integration;
-            return FindAnyObjectByType<SandGuard.Waves.WaveDirector>();
-        }
+        static MonoBehaviour FindWave() { return FindAnyObjectByType<WaveDirector>(); }
     }
 }

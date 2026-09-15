@@ -1799,6 +1799,50 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 146623436a4a34b409ebb59e60214c9b, type: 3}
+--- !u!1 &1139939586
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1139939587}
+  - component: {fileID: 1139939588}
+  m_Layer: 0
+  m_Name: Enemy Pool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1139939587
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1139939586}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1869011763}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1139939588
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1139939586}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: faac8b6b9c6394145b6bbb7bfc1bab3e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SandGuard.Waves.Runtime::SandGuard.Waves.EnemyPool
 --- !u!1001 &1185377012
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2734,6 +2778,7 @@ MonoBehaviour:
   levelName: Desert Tower Level
   gridSize: 1
   waves: {fileID: 11400000, guid: 4dd76a9d56cdf124a9094f6073464295, type: 2}
+  elementCatalog: {fileID: 11400000, guid: 79807e7040f1893429c3e8803643f6b0, type: 2}
   lastBakeUtc: 2026-09-10 03:58:54Z
 --- !u!4 &1869011763
 Transform:
@@ -2760,6 +2805,7 @@ Transform:
   - {fileID: 635200801}
   - {fileID: 1932910400}
   - {fileID: 352644028}
+  - {fileID: 1139939587}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1880977364
@@ -3510,6 +3556,14 @@ PrefabInstance:
     - target: {fileID: 2544806748085938965, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
       propertyPath: m_LocalPosition.z
       value: 0.85
+      objectReference: {fileID: 0}
+    - target: {fileID: 3448926556712515526, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
+      propertyPath: pool
+      value: 
+      objectReference: {fileID: 1139939588}
+    - target: {fileID: 3448926556712515526, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
+      propertyPath: prewarmPerPrefab
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 4608032317268764644, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
       propertyPath: m_Name

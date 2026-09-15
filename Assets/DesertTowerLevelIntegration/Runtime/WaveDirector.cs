@@ -14,8 +14,8 @@ namespace DesertTower.LevelIntegration
         public PrefabCatalog catalog;
         [Tooltip("ILevelCoreReceiver 구현 컴포넌트")]
         public MonoBehaviour coreReceiver;
-        [Tooltip("IActorFactory 구현 컴포넌트(예: EnemyPoolActorFactory). 비우면 같은 오브젝트에서 찾고, 없으면 Instantiate/Destroy를 쓴다")]
-        public MonoBehaviour actorFactory;
+        [Tooltip("적 생성을 맡는 풀 팩토리. 비우면 같은 오브젝트에서 찾고, 그래도 없으면 Instantiate/Destroy를 쓴다")]
+        public EnemyPoolActorFactory actorFactory;
         public bool startAutomatically;
         public int randomSeed = 1234;
         [Min(1)] public int maxSpawnsPerFrame = 32;
@@ -102,13 +102,10 @@ namespace DesertTower.LevelIntegration
         System.Random random;
         float elapsed;
         ILevelCoreReceiver Core => coreReceiver as ILevelCoreReceiver;
-        IActorFactory Factory => actorFactory as IActorFactory;
 
         void Awake()
         {
-            if (actorFactory == null)
-                foreach (var component in GetComponents<MonoBehaviour>())
-                    if (component is IActorFactory) { actorFactory = component; break; }
+            if (actorFactory == null) actorFactory = GetComponent<EnemyPoolActorFactory>();
         }
 
         void Start() { if (startAutomatically) Begin(); }
@@ -131,7 +128,7 @@ namespace DesertTower.LevelIntegration
                     if (group == null || group.count <= 0 || !FiniteNonnegative(group.delay) || !FiniteNonnegative(group.interval) || group.interval <= 0)
                     { errors.Add("출현 수량/시간 오류"); continue; }
                     if (!graph.level.TryResolveSpawnGroup(group, out var binding, out var error)) { errors.Add(error); continue; }
-                    var entry = group.element ? catalog.Find(group.element.gameKey) : null;
+                    var entry = catalog.Find(group.ResolvedKey);
                     if (entry == null || entry.role != PrefabRole.Enemy) errors.Add("웨이브의 gameKey가 적 프리팹에 연결되지 않았습니다.");
                     if (!binding.SuggestedRoute)
                     {
@@ -157,6 +154,14 @@ namespace DesertTower.LevelIntegration
             TotalSpawned = Killed = Absorbed = 0; WaveIndex = -1; LastError = null;
             NextWave();
         }
+        /// <summary>남은 준비 시간을 건너뛰고 바로 전투로 들어간다. 시작 전이면 시작부터 한다.
+        /// 다음 Update에서 일정이 세워지므로 한 프레임 뒤에 Running이 된다.</summary>
+        public void SkipPreparation()
+        {
+            if (State != RunState.Preparing && State != RunState.Running) Begin();
+            if (State != RunState.Preparing) return;
+            PreparationRemaining = 0; Notify();
+        }
         void NextWave()
         {
             WaveIndex++;
@@ -174,6 +179,7 @@ namespace DesertTower.LevelIntegration
             if (Core.IsDefeated) { FinishLoss(); return; }
             if (State == RunState.Preparing)
             {
+                PrewarmStep();
                 PreparationRemaining = Mathf.Max(0, PreparationRemaining - Time.deltaTime);
                 if (PreparationRemaining > 0) return;
                 schedules.Clear(); elapsed = 0;
@@ -209,21 +215,37 @@ namespace DesertTower.LevelIntegration
             if (actors.Count == 0 && schedules.TrueForAll(s => s.emitted == s.group.count))
             { onWaveCleared.Invoke(); if (State == RunState.Running) NextWave(); }
         }
+        /// <summary>준비 중에 다음 웨이브가 쓸 프리팹을 하나씩 미리 만든다. 프레임당 하나만 만들어
+        /// 준비 시간 전체에 비용을 흩뜨린다. 팩토리가 이 기능을 지원하지 않으면 아무것도 하지 않는다.</summary>
+        void PrewarmStep()
+        {
+            if (!actorFactory || !catalog) return;
+            var wave = WaveAt(WaveIndex);
+            if (wave == null) return;
+            foreach (var group in wave.groups)
+            {
+                if (group == null) continue;
+                var entry = catalog.Find(group.ResolvedKey);
+                if (entry == null || !entry.prefab) continue;
+                if (actorFactory.PrewarmStep(entry.prefab)) return;
+            }
+        }
+
         SpawnOutcome Spawn(SpawnGroup group)
         {
             if (!graph.level.TryResolveSpawnGroup(group, out var binding, out var error)) { Fail(error); return SpawnOutcome.Failed; }
-            var entry = catalog.Find(group.element.gameKey);
+            var entry = catalog.Find(group.ResolvedKey);
             if (entry == null || !entry.prefab) { Fail("적 프리팹이 사라졌습니다."); return SpawnOutcome.Failed; }
             // Exact marker position avoids NavMesh sampling onto an adjacent floor.
             Vector3 position = binding.Spawn.transform.position;
             Quaternion rotation = binding.Spawn.transform.rotation;
-            GameObject instance = Factory != null
-                ? Factory.Spawn(entry.prefab, position, rotation)
+            GameObject instance = actorFactory
+                ? actorFactory.Spawn(entry.prefab, position, rotation)
                 : Instantiate(entry.prefab, position, rotation);
             if (instance == null) return SpawnOutcome.Deferred; // 풀의 동시 활성 상한
             var actor = instance.GetComponent<ActorBridge>();
             if (!actor || !actor.Prepare(out error)) { Despawn(instance); Fail(error ?? "ActorBridge 누락"); return SpawnOutcome.Failed; }
-            var walker = new Walker { actor = actor, damage = entry.coreDamage };
+            var walker = new Walker { actor = actor, damage = actor.coreDamage };
             if (binding.SuggestedRoute) walker.legacy = new Queue<Vector3>(binding.SuggestedRoute.WorldPoints());
             else { walker.next = graph.Find(binding.Spawn); walker.goal = graph.Find(binding.Target); }
             actors.Add(walker); TotalSpawned++; Notify(); return SpawnOutcome.Spawned;
@@ -231,7 +253,7 @@ namespace DesertTower.LevelIntegration
 
         void Despawn(GameObject instance)
         {
-            if (Factory != null) Factory.Despawn(instance); else Destroy(instance);
+            if (actorFactory) actorFactory.Despawn(instance); else Destroy(instance);
         }
         bool Advance(Walker w)
         {

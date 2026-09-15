@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using DesertTower.Levels;
+using SandGuard.Waves;
 using NUnit.Framework;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -94,6 +95,23 @@ namespace DesertTower.LevelIntegration.Tests
             Assert.AreNotEqual(RunState.Error, director.State, "실행 중 오류: " + director.LastError);
             Assert.Null(director.LastError);
             Assert.Greater(changed, 0, "상태가 바뀌었는데 Changed가 한 번도 오지 않았다.");
+        }
+
+        [UnityTest] public IEnumerator PreparationPrewarmsThePool()
+        {
+            yield return LoadLevel(1f);
+            var director = Director();
+            var factory = UnityEngine.Object.FindFirstObjectByType<EnemyPoolActorFactory>();
+            Assert.NotNull(factory, "씬에 EnemyPoolActorFactory가 있어야 한다.");
+            Assert.NotNull(factory.pool, "적 풀은 씬에 배치돼 있어야 한다. 런타임 생성이면 인스펙터에서 보이지 않는다.");
+            Assert.Greater(factory.prewarmPerPrefab, 0, "프리워밍이 꺼져 있다.");
+
+            yield return UntilRealtime(() => director.State == RunState.Preparing, 5f, "준비 단계로 들어가지 않았다.");
+            // 준비 중에 프레임마다 하나씩 쌓인다. 전투 시작 전에 예비가 생겨야 의미가 있다.
+            yield return UntilRealtime(() => factory.pool.IdleCount > 0, 10f,
+                "준비 단계가 끝나도록 예비 개체가 하나도 만들어지지 않았다.");
+            Assert.AreEqual(RunState.Preparing, director.State, "아직 준비 단계여야 한다.");
+            Assert.AreEqual(0, factory.pool.ActiveCount, "예비 개체는 활성으로 세지 않는다.");
         }
 
         [UnityTest] public IEnumerator EnemiesClimbToCoreAndAreAbsorbed()

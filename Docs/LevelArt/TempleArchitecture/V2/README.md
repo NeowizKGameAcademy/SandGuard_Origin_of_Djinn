@@ -1,3 +1,11 @@
+> 최신 재질·환경·조명 작업: [REPAIR-09.md](REPAIR-09.md).
+
+> 최신 성벽·문·회랑 작업: [REPAIR-08.md](REPAIR-08.md).
+
+> 최신 컨셉 기반 부조 작업: [REPAIR-07.md](REPAIR-07.md).
+
+> 최신 컨셉 기반 건축 수정: [REPAIR-06.md](REPAIR-06.md).
+
 > 최신 계단 틈·탑 패널·문양·조각상 수정은 [REPAIR-05.md](REPAIR-05.md)를 참고한다.
 
 > 최신 충돌·난간·내벽·장식 수정은 [REPAIR-04.md](REPAIR-04.md)를 참고한다. 아래 내용은 03 단계 기록이다.

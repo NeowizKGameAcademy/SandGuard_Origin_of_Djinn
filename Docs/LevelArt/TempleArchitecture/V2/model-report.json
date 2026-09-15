@@ -1,14 +1,379 @@
 {
+  "enclosure_details": {
+    "wall_runs": 6,
+    "gate_pylons": 12,
+    "axial_gates": 2,
+    "porticos": 4,
+    "portico_columns": 28
+  },
+  "monumental_reliefs": [
+    {
+      "tower": "CORE",
+      "face": 0,
+      "design": "scarab",
+      "width": 7.4
+    },
+    {
+      "tower": "CORE",
+      "face": 1,
+      "design": "constellation",
+      "width": 7.4
+    },
+    {
+      "tower": "CORE",
+      "face": 2,
+      "design": "scarab",
+      "width": 7.4
+    },
+    {
+      "tower": "CORE",
+      "face": 3,
+      "design": "constellation",
+      "width": 7.4
+    },
+    {
+      "tower": "L3_NE",
+      "face": 0,
+      "design": "lotus",
+      "width": 4.44407
+    },
+    {
+      "tower": "L3_NE",
+      "face": 1,
+      "design": "papyrus",
+      "width": 2.251033354217569
+    },
+    {
+      "tower": "L3_NE",
+      "face": 2,
+      "design": "lotus",
+      "width": 3.58937
+    },
+    {
+      "tower": "L3_NE",
+      "face": 3,
+      "design": "papyrus",
+      "width": 3.3803199999999998
+    },
+    {
+      "tower": "L3_NE",
+      "face": 4,
+      "design": "lotus",
+      "width": 2.3048624275648213
+    },
+    {
+      "tower": "L3_NE",
+      "face": 5,
+      "design": "papyrus",
+      "width": 4.77226
+    },
+    {
+      "tower": "L3_NW",
+      "face": 0,
+      "design": "papyrus",
+      "width": 2.251033354217569
+    },
+    {
+      "tower": "L3_NW",
+      "face": 1,
+      "design": "winged_sun",
+      "width": 4.44407
+    },
+    {
+      "tower": "L3_NW",
+      "face": 2,
+      "design": "papyrus",
+      "width": 4.77226
+    },
+    {
+      "tower": "L3_NW",
+      "face": 3,
+      "design": "winged_sun",
+      "width": 2.3048624275648213
+    },
+    {
+      "tower": "L3_NW",
+      "face": 4,
+      "design": "papyrus",
+      "width": 3.3803199999999998
+    },
+    {
+      "tower": "L3_NW",
+      "face": 5,
+      "design": "winged_sun",
+      "width": 3.58937
+    },
+    {
+      "tower": "L3_SE",
+      "face": 0,
+      "design": "watchful_eye",
+      "width": 2.3048624275648213
+    },
+    {
+      "tower": "L3_SE",
+      "face": 1,
+      "design": "scarab",
+      "width": 3.3803199999999998
+    },
+    {
+      "tower": "L3_SE",
+      "face": 2,
+      "design": "watchful_eye",
+      "width": 3.58937
+    },
+    {
+      "tower": "L3_SE",
+      "face": 3,
+      "design": "scarab",
+      "width": 2.251033354217569
+    },
+    {
+      "tower": "L3_SE",
+      "face": 4,
+      "design": "watchful_eye",
+      "width": 4.44407
+    },
+    {
+      "tower": "L3_SE",
+      "face": 5,
+      "design": "scarab",
+      "width": 4.77226
+    },
+    {
+      "tower": "L3_SW",
+      "face": 0,
+      "design": "winged_sun",
+      "width": 3.3803199999999998
+    },
+    {
+      "tower": "L3_SW",
+      "face": 1,
+      "design": "watchful_eye",
+      "width": 2.3048624275648213
+    },
+    {
+      "tower": "L3_SW",
+      "face": 2,
+      "design": "winged_sun",
+      "width": 4.77226
+    },
+    {
+      "tower": "L3_SW",
+      "face": 3,
+      "design": "watchful_eye",
+      "width": 4.44407
+    },
+    {
+      "tower": "L3_SW",
+      "face": 4,
+      "design": "winged_sun",
+      "width": 2.251033354217569
+    },
+    {
+      "tower": "L3_SW",
+      "face": 5,
+      "design": "watchful_eye",
+      "width": 3.58937
+    },
+    {
+      "tower": "T7",
+      "face": 0,
+      "design": "river",
+      "width": 2.2784911836125246
+    },
+    {
+      "tower": "T7",
+      "face": 1,
+      "design": "lotus",
+      "width": 4.48366
+    },
+    {
+      "tower": "T7",
+      "face": 2,
+      "design": "river",
+      "width": 2.2784911836125246
+    },
+    {
+      "tower": "T7",
+      "face": 3,
+      "design": "lotus",
+      "width": 4.42557
+    },
+    {
+      "tower": "T7",
+      "face": 4,
+      "design": "river",
+      "width": 6.475
+    },
+    {
+      "tower": "T7",
+      "face": 5,
+      "design": "lotus",
+      "width": 4.42557
+    },
+    {
+      "tower": "T8",
+      "face": 0,
+      "design": "constellation",
+      "width": 6.475
+    },
+    {
+      "tower": "T8",
+      "face": 1,
+      "design": "river",
+      "width": 4.42557
+    },
+    {
+      "tower": "T8",
+      "face": 2,
+      "design": "constellation",
+      "width": 2.2784911836125246
+    },
+    {
+      "tower": "T8",
+      "face": 3,
+      "design": "river",
+      "width": 4.48366
+    },
+    {
+      "tower": "T8",
+      "face": 4,
+      "design": "constellation",
+      "width": 2.2784911836125246
+    },
+    {
+      "tower": "T8",
+      "face": 5,
+      "design": "river",
+      "width": 4.42557
+    },
+    {
+      "tower": "CORE_Cell",
+      "face": 0,
+      "design": "winged_sun"
+    },
+    {
+      "tower": "CORE_Cell",
+      "face": 1,
+      "design": "scarab"
+    },
+    {
+      "tower": "CORE_Cell",
+      "face": 2,
+      "design": "winged_sun"
+    },
+    {
+      "tower": "CORE_Cell",
+      "face": 3,
+      "design": "scarab"
+    },
+    {
+      "tower": "Sanctuary_1",
+      "bay": 1,
+      "side": -1,
+      "design": "stepped_diamond"
+    },
+    {
+      "tower": "Sanctuary_1",
+      "bay": 3,
+      "side": -1,
+      "design": "papyrus"
+    },
+    {
+      "tower": "Sanctuary_1",
+      "bay": 5,
+      "side": -1,
+      "design": "stepped_diamond"
+    },
+    {
+      "tower": "Sanctuary_1",
+      "bay": 1,
+      "side": 1,
+      "design": "scarab"
+    },
+    {
+      "tower": "Sanctuary_1",
+      "bay": 3,
+      "side": 1,
+      "design": "watchful_eye"
+    },
+    {
+      "tower": "Sanctuary_1",
+      "bay": 5,
+      "side": 1,
+      "design": "scarab"
+    },
+    {
+      "tower": "Sanctuary_2",
+      "bay": 0,
+      "side": -1,
+      "design": "stepped_diamond"
+    },
+    {
+      "tower": "Sanctuary_2",
+      "bay": 2,
+      "side": -1,
+      "design": "papyrus"
+    },
+    {
+      "tower": "Sanctuary_2",
+      "bay": 4,
+      "side": -1,
+      "design": "stepped_diamond"
+    },
+    {
+      "tower": "Sanctuary_2",
+      "bay": 0,
+      "side": 1,
+      "design": "scarab"
+    },
+    {
+      "tower": "Sanctuary_2",
+      "bay": 2,
+      "side": 1,
+      "design": "watchful_eye"
+    },
+    {
+      "tower": "Sanctuary_2",
+      "bay": 4,
+      "side": 1,
+      "design": "scarab"
+    },
+    {
+      "tower": "Sanctuary_3",
+      "bay": 1,
+      "side": -1,
+      "design": "papyrus"
+    },
+    {
+      "tower": "Sanctuary_3",
+      "bay": 1,
+      "side": 1,
+      "design": "watchful_eye"
+    }
+  ],
+  "architecture_towers": [
+    "CORE",
+    "L3_NE",
+    "L3_NW",
+    "L3_SE",
+    "L3_SW",
+    "T5",
+    "T6",
+    "T7",
+    "T8"
+  ],
+  "architecture_sanctuary_tiers": 4,
   "imported_wall_reliefs": 3,
   "custom_motifs": {
-    "lotus": 12,
-    "winged_sun": 11,
-    "scarab": 11,
-    "watchful_eye": 11,
-    "papyrus": 11,
-    "constellation": 11,
-    "stepped_diamond": 11,
-    "river": 11
+    "scarab": 23,
+    "constellation": 16,
+    "lotus": 17,
+    "papyrus": 20,
+    "winged_sun": 19,
+    "watchful_eye": 20,
+    "river": 17,
+    "stepped_diamond": 15
   },
   "closed_risers": 736,
   "unique_statues": [
@@ -31,10 +396,10 @@
       "height": 7
     }
   ],
-  "objects": 569,
-  "triangles": 449866,
-  "rejected_decorations": 102,
-  "clearance_boolean_cuts": 191,
+  "objects": 973,
+  "triangles": 782438,
+  "rejected_decorations": 166,
+  "clearance_boolean_cuts": 243,
   "platforms": 17,
   "protected_surface_triangles": 13038
 }

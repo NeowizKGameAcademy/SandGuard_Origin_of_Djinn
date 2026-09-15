@@ -8,6 +8,8 @@ namespace DesertTower.Levels
         public string levelName = "New Level";
         [Min(0.1f)] public float gridSize = 1;
         public WaveSet waves;
+        [Tooltip("웨이브 편집기에서 고를 종류 목록. 게임 쪽 카탈로그를 지정한다. 비우면 요소 에셋을 직접 지정한다.")]
+        public LevelElementCatalog elementCatalog;
         [Tooltip("Set after a navigation bake; geometry changes require another bake.")]
         public string lastBakeUtc;
 

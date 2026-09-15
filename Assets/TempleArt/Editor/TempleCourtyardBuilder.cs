@@ -36,8 +36,8 @@ public static class TempleCourtyardBuilder
         if(!m){m=new Material(shader){name=name};AssetDatabase.CreateAsset(m,path);}else m.shader=shader;
         m.SetColor("_BaseColor",color);
         m.SetFloat("_Smoothness",glaze?.17f:.10f);m.SetFloat("_Metallic",name.Contains("Bronze")?.45f:0);
-        m.SetColor("_JointColor",color*.79f);m.SetFloat("_Masonry",glaze?0:masonry);m.SetFloat("_Variation",.22f);m.SetVector("_BlockSize",name.Contains("Paving")?new Vector4(3.8f,2.1f,0,0):new Vector4(2.8f,1.25f,0,0));m.SetFloat("_JointWidth",.023f);
-        m.SetTexture("_WeatherMap",AssetDatabase.LoadAssetAtPath<Texture2D>(Root+"/StoneWeather.png"));m.SetFloat("_BumpStrength",.65f);
+        m.SetColor("_JointColor",color*.83f);m.SetFloat("_Masonry",glaze?0:masonry);m.SetFloat("_Variation",glaze?.06f:(name.Contains("Paving")?.22f:.18f));m.SetVector("_BlockSize",name.Contains("Paving")?new Vector4(3.8f,2.1f,0,0):new Vector4(2.8f,1.25f,0,0));m.SetFloat("_JointWidth",.018f);
+        m.SetTexture("_WeatherMap",AssetDatabase.LoadAssetAtPath<Texture2D>(Root+"/StoneWeather.png"));m.SetFloat("_BumpStrength",.28f);
         if(name=="Temple_Sand"){m.SetFloat("_IsSand",1);m.SetTexture("_SurfaceMap",AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/TempleArt/Terrain/Textures/Sand_BaseColor.png"));}
         EditorUtility.SetDirty(m);return m;
     }
@@ -55,7 +55,7 @@ public static class TempleCourtyardBuilder
             if(PrefabUtility.IsPartOfPrefabInstance(temple))PrefabUtility.UnpackPrefabInstance(PrefabUtility.GetOutermostPrefabInstanceRoot(temple),PrefabUnpackMode.Completely,InteractionMode.AutomatedAction);
             var old=temple.Find(DressName);if(old)Object.DestroyImmediate(old.gameObject);
             var oldRoutes=temple.Find("Original walking collision");if(oldRoutes)Object.DestroyImmediate(oldRoutes.gameObject);
-            var palette=new[]{Mat("Temple_Sandstone",new Color(.70f,.595f,.445f)),Mat("Temple_Limestone",new Color(.82f,.74f,.59f),.65f),Mat("Temple_Recess",new Color(.31f,.24f,.16f),.1f),Mat("Temple_Paving",new Color(.68f,.57f,.42f),.7f),Mat("Temple_Turquoise",new Color(.10f,.29f,.265f)),Mat("Temple_Bronze",new Color(.41f,.285f,.13f)),Mat("Temple_Sand",Color.white,0)}.ToDictionary(m=>m.name);
+            var palette=new[]{Mat("Temple_Sandstone",new Color(.76f,.645f,.47f)),Mat("Temple_Limestone",new Color(.85f,.77f,.61f),.65f),Mat("Temple_Recess",new Color(.31f,.24f,.16f),.1f),Mat("Temple_Paving",new Color(.75f,.64f,.48f),1f),Mat("Temple_Turquoise",new Color(.10f,.29f,.265f)),Mat("Temple_Bronze",new Color(.41f,.285f,.13f)),Mat("Temple_Sand",Color.white,0)}.ToDictionary(m=>m.name);
             foreach(var kind in new[]{"wall-deco","wall-deco-anubis","god-la","la-dragon","osiris-dragon","obelisk-giant"}){
                 string texturePath=Root+"/Relief_"+kind+".png";
                 if(!File.Exists(texturePath))File.Copy("Docs/model-art/"+kind+".png",texturePath);
@@ -68,7 +68,7 @@ public static class TempleCourtyardBuilder
             int hidden=0;
             foreach(var r in temple.GetComponentsInChildren<MeshRenderer>(true)){
                 r.enabled=Walking(r.name);if(!r.enabled)hidden++;
-                if(r.enabled)r.sharedMaterials=r.sharedMaterials.Select(_=>palette["Temple_Limestone"]).ToArray();
+                if(r.enabled)r.sharedMaterials=r.sharedMaterials.Select(_=>palette[r.name.EndsWith("_deck")?"Temple_Paving":"Temple_Limestone"]).ToArray();
             }
             // The old single collider includes the removed full pyramid. Keeping it would leave invisible walls.
             foreach(var col in temple.GetComponentsInChildren<Collider>(true))col.enabled=false;
@@ -99,6 +99,7 @@ public static class TempleCourtyardBuilder
                 key.transform.rotation=Quaternion.Euler(40,-35,0);key.intensity=1.3f;key.color=new Color(1,.94f,.84f);
             }
             var fill=GameObject.Find("Dunes - Sky Fill");if(fill)fill.GetComponent<Light>().intensity=.22f;
+            TempleCourtyardAtmosphere.Apply();
             TemplePlayerViewSetup.Setup(); // Keep the saved scene playable after art regeneration.
             EditorSceneManager.SaveScene(scene);AssetDatabase.SaveAssets();ticks=0;EditorApplication.update+=Capture;
         }catch(Exception e){Debug.LogException(e);if(Application.isBatchMode)EditorApplication.Exit(1);}

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using DesertTower.Levels;
+using SandGuard.Waves;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -15,6 +16,7 @@ namespace DesertTower.LevelIntegration.Editor
     {
         const string ScenePath = "Assets/1.Scene/Level.unity";
         const string CorePrefabPath = "Assets/2.Model/Prefabs/Core.prefab";
+        const string CatalogPath = "Assets/2.Model/Prefabs/Level/GamePrefabCatalog.asset";
         /// <summary>ValidateSetup이 코어 마커와 수신 컴포넌트 거리를 1 이내로 요구한다.</summary>
         const float MarkerMatchDistance = 1f;
 
@@ -88,6 +90,48 @@ namespace DesertTower.LevelIntegration.Editor
                 serialized.ApplyModifiedProperties();
             }
 
+            // 5) 웨이브 편집기가 적 종류를 이름으로 고를 수 있게 목록 공급자를 물린다.
+            var catalog = AssetDatabase.LoadAssetAtPath<PrefabCatalog>(CatalogPath);
+            if (!catalog) return Fail(log, CatalogPath + " 를 찾지 못했습니다.");
+            bool needsCatalog = root.elementCatalog != catalog;
+            log.AppendLine(Step(apply, needsCatalog, "LevelRoot.elementCatalog: "
+                + Describe(root.elementCatalog) + " → " + Describe(catalog)));
+            if (apply && needsCatalog)
+            {
+                Undo.RecordObject(root, "Assign element catalog");
+                root.elementCatalog = catalog;
+                EditorUtility.SetDirty(root);
+            }
+
+            // 6) 적 풀을 씬에 둔다. 없으면 런타임에 이름 없는 오브젝트로 생겨 인스펙터에서 안 보인다.
+            var factory = Object.FindFirstObjectByType<EnemyPoolActorFactory>(FindObjectsInactive.Include);
+            if (!factory) return Fail(log, "EnemyPoolActorFactory가 씬에 없습니다.");
+            var pool = Object.FindFirstObjectByType<EnemyPool>(FindObjectsInactive.Include);
+            log.AppendLine(Step(apply, !pool, "Enemy Pool 오브젝트 생성 → " + Path(root.transform) + "/Enemy Pool"));
+            if (apply && !pool)
+            {
+                var host = new GameObject("Enemy Pool");
+                Undo.RegisterCreatedObjectUndo(host, "Create enemy pool");
+                Undo.SetTransformParent(host.transform, root.transform, "Create enemy pool");
+                pool = Undo.AddComponent<EnemyPool>(host);
+            }
+            if (pool)
+            {
+                log.AppendLine(Step(apply, factory.pool != pool, "EnemyPoolActorFactory.pool: "
+                    + Describe(factory.pool) + " → " + Describe(pool)));
+                // 7) 미리 만들어 둘 수는 웨이브 데이터에서 뽑는다. 한 웨이브가 한 종류를 가장 많이 쓰는 값.
+                int demand = Mathf.Min(PeakPerPrefabDemand(root, catalog), Mathf.Max(1, factory.maxActive));
+                log.AppendLine(Step(apply, factory.prewarmPerPrefab != demand,
+                    "prewarmPerPrefab: " + factory.prewarmPerPrefab + " → " + demand + " (웨이브 최대 동시 수요)"));
+                if (apply)
+                {
+                    var serializedFactory = new SerializedObject(factory);
+                    serializedFactory.FindProperty("pool").objectReferenceValue = pool;
+                    serializedFactory.FindProperty("prewarmPerPrefab").intValue = demand;
+                    serializedFactory.ApplyModifiedProperties();
+                }
+            }
+
             log.AppendLine("--- ValidateSetup ---");
             List<string> errors = director.ValidateSetup();
             if (errors.Count == 0) log.AppendLine("오류 없음.");
@@ -104,6 +148,29 @@ namespace DesertTower.LevelIntegration.Editor
             Debug.Log(log.ToString());
             // 검사 모드는 아직 배선 전이라 오류가 남아 있는 게 정상이다.
             return true;
+        }
+
+        /// <summary>한 웨이브 안에서 같은 프리팹을 가장 많이 쓰는 수. 이만큼 미리 만들어 두면 전투 중 생성이 없다.</summary>
+        static int PeakPerPrefabDemand(LevelRoot root, PrefabCatalog catalog)
+        {
+            if (!root.waves || !catalog) return 0;
+            int peak = 0;
+            var perPrefab = new Dictionary<GameObject, int>();
+            foreach (var wave in root.waves.waves)
+            {
+                if (wave == null) continue;
+                perPrefab.Clear();
+                foreach (var group in wave.groups)
+                {
+                    if (group == null) continue;
+                    var entry = catalog.Find(group.ResolvedKey);
+                    if (entry == null || !entry.prefab) continue;
+                    perPrefab.TryGetValue(entry.prefab, out int already);
+                    perPrefab[entry.prefab] = already + Mathf.Max(0, group.count);
+                }
+                foreach (var count in perPrefab.Values) peak = Mathf.Max(peak, count);
+            }
+            return peak;
         }
 
         /// <summary>Core.prefab 인스턴스의 루트를 찾는다. 이름 규칙이 아니라 프리팹 출처로 판별한다.</summary>

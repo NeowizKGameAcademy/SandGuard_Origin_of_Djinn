@@ -140,7 +140,7 @@ namespace SandGuard.UI.HUD.Editor
             {
                 var info = root.GetComponent<EnemyBossInfo>();
                 bool changed = false;
-                if (info == null) { info = root.AddComponent<EnemyBossInfo>(); info.displayName = "우두머리 자히르"; changed = true; } // EnemyCatalog의 이름
+                if (info == null) { info = root.AddComponent<EnemyBossInfo>(); info.displayName = "우두머리 자히르"; changed = true; } // GamePrefabCatalog의 이름
                 // 초상화는 HUDBossPortraitGenerator가 만든다(그래픽 장치 필요). 이미 있으면 여기서 건다.
                 var portrait = AssetDatabase.LoadAssetAtPath<Sprite>(HUDBossPortraitGenerator.ChiefPath);
                 if (portrait != null && info.icon != portrait) { info.icon = portrait; changed = true; }

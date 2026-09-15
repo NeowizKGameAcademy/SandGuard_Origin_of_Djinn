@@ -30,7 +30,6 @@ namespace SandGuard.Facility.Editor
         const string BuildCompleteVfxPath = "Assets/Resources/VFX/Prefabs/VFX_Build_Complete.prefab";
         const string BuildPoofVfxPath = "Assets/Resources/VFX/Prefabs/VFX_Build_Poof.prefab";
         const string FontPath = "Assets/9.Font/public/static/alternative/Pretendard-Medium.ttf";
-        const string PlayerAndEnemyScene = "Assets/PlayerAndEnemy/Generated/PlayerAndEnemyTest.unity";
         /// <summary>받침대 모델 폭(4m)을 슬롯 자리 크기에 맞추는 기준.</summary>
         const float BaseModelWidth = 4f;
         public const string CobraId = "cobra";
@@ -406,18 +405,6 @@ namespace SandGuard.Facility.Editor
             return count;
         }
 
-        [MenuItem("SandGuard/Facility/Wire Into Player And Enemy Scene")]
-        public static void WirePlayerAndEnemyScene()
-        {
-            if (!File.Exists(PlayerAndEnemyScene)) { Debug.LogError("씬이 없습니다: " + PlayerAndEnemyScene); return; }
-            var scene = EditorSceneManager.OpenScene(PlayerAndEnemyScene, OpenSceneMode.Single);
-            WireIntoScene(scene);
-            EditorSceneManager.SaveScene(scene);
-            AssetDatabase.SaveAssets();
-        }
-
-        /// <summary>배치 모드용: 에셋 생성 + 통합 씬 연결.</summary>
-        public static void BuildAndWire() { Build(); WirePlayerAndEnemyScene(); }
 
         static void ImportModel(string path, Material material)
         {
