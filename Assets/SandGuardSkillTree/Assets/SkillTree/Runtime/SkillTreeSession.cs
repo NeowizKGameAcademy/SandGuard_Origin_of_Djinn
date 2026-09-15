@@ -65,7 +65,7 @@ namespace SandGuard.Skills.Unity
         void Report(SkillResult r)=>LastMessage=r.Success?"완료":r.Failure.ToString();
         void OnDestroy()
         {
-            if(Service!=null){Service.Changed-=OnChanged;Service.ObserverError-=OnError;}
+            if(Service!=null){Service.Changed-=OnChanged;Service.ObserverError-=OnError;Service.Dispose();}
             if(temporary)Destroy(temporary);
         }
     }

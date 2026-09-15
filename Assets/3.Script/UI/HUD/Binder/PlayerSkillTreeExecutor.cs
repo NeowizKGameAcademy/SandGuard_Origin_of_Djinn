@@ -54,6 +54,10 @@ namespace SandGuard.UI.HUD
             if(session.executorSource && session.executorSource!=this)
             {LastResult="기존 실행기가 있어 자동 교체하지 않았습니다.";Debug.LogError(LastResult,this);return;}
             if(service!=null)service.Changed-=Sync;
+            var progression=GetComponent<PlayerProgression>();
+            if(!progression){Debug.LogError("PlayerProgression이 필요합니다.",this);return;}
+            var bind=session.Service.BindWallet(progression.PointWallet);
+            if(!bind.Success){Debug.LogError("공유 포인트 연결 실패: 이미 구매한 시험 세션이거나 다른 트리가 지갑을 사용 중입니다. 새 게임에서 연결하세요.",this);return;}
             service=session.Service;service.Changed+=Sync;session.BindExecutor(this);
             foreach(var starter in FindObjectsByType<PlayerStarterEffects>(FindObjectsSortMode.None))
             {
@@ -68,7 +72,7 @@ namespace SandGuard.UI.HUD
         void Sync()
         {
             if(!Allowed("move.recall"))ClearMark();
-            if(service!=null && service.Snapshot().Learned.Count==0){pierceReady=recallReady=0;caster.ResetCooldowns();motor.ResetDashCooldown();}
+
         }
         bool Allowed(string id)=>SkillLoadoutAccess.CanUse(service,id,this && isActiveAndEnabled && session && session.isActiveAndEnabled);
         bool Ready=>isActiveAndEnabled && input && input.isActiveAndEnabled && input.AcceptsInput && Time.timeScale>0 && !SkillTreeWindow.AnyOpen && (!health || health.CurrentHealth>0);
