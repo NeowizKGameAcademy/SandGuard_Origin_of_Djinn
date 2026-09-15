@@ -1,91 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &583067633873042800
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 373656555947818837}
-  - component: {fileID: 6818513646672208016}
-  - component: {fileID: 6928796580453807552}
-  - component: {fileID: 5606108419501954222}
-  m_Layer: 0
-  m_Name: Detect Range
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &373656555947818837
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 583067633873042800}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 5449316330342491862}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &6818513646672208016
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 583067633873042800}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 20
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &6928796580453807552
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 583067633873042800}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d84d375c5a312545b715be04b98d296, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DetectRange
-  Range: 20
-  Detect_Range: {fileID: 0}
---- !u!114 &5606108419501954222
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 583067633873042800}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0b1b74fe2153f0848a4ca364425c316c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FindEnemy
-  Range: {fileID: 0}
-  SearchTime: 0.2
-  Target_Mask:
-    serializedVersion: 2
-    m_Bits: 4294967295
 --- !u!1 &1444436953499636085
 GameObject:
   m_ObjectHideFlags: 0
@@ -153,7 +67,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RangeController
   type: 1
-  DetectRange: {fileID: 6928796580453807552}
+  DetectRange: {fileID: 6310251084391081439}
   SlowRatio: 0.5
   Tick_Interval: 0.25
   Fire_Damage: 5
@@ -263,7 +177,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f076b6f6d31ff644e9a3afdb04e79f4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TowerOnOff
-  detectRange: {fileID: 6928796580453807552}
+  detectRange: {fileID: 6310251084391081439}
   meshRenderer: {fileID: 7822748913691543983}
   materials:
   - {fileID: 2100000, guid: a9ae31e869215d645840712457e4841a, type: 2}
@@ -302,7 +216,6 @@ Transform:
   m_Children:
   - {fileID: 4585028690203330811}
   - {fileID: 2568274384031038986}
-  - {fileID: 373656555947818837}
   - {fileID: 3711595522218444364}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -340,7 +253,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DetectRange
   Range: 20
-  Detect_Range: {fileID: 0}
 --- !u!1 &5365876196027343574
 GameObject:
   m_ObjectHideFlags: 0
