@@ -8,7 +8,7 @@ namespace SandGuard.UI.HUD
     /// <summary>
     /// 씬의 게임 상태를 GameHUD 뷰에 옮긴다. 시작할 때 소스를 한 번 찾고(비어 있는 칸만), 매 프레임 값이 바뀐 칸만 다시 그린다.
     /// 플레이어: 체력·마나·레벨·경험치, Q/E/R 스킬(해금·쿨타임), 대시 쿨타임·공중 점프. 코어 안정도, 웨이브 번호, 보스(EnemyBossInfo).
-    /// 찾지 못한 칸(플레이어 단독 씬의 코어·웨이브 등)은 숨긴다. 미니맵은 아직 시스템이 없어 빈 틀만 보인다. F(타워 계열) 슬롯은 잠김.
+    /// 찾지 못한 칸(플레이어 단독 씬의 코어·웨이브 등)은 숨긴다. 미니맵 내용은 MinimapController가 채운다. F(타워 계열) 슬롯은 잠김.
     /// 플레이어를 찾으면 같은 오브젝트의 HUDDebugController 더미 값을 끈다. 못 찾으면(HUD.unity) 더미가 그대로 보인다.
     /// </summary>
     [DefaultExecutionOrder(-100)]
@@ -43,7 +43,7 @@ namespace SandGuard.UI.HUD
             if (core == null) core = FindCore();
             if (wave == null) wave = FindWave();
             if (hud == null) return;
-            hud.Minimap.SetVisible(true); // 지도 시스템은 아직 없지만 디자인(Docs/ui/ingame-hud.png)대로 빈 틀은 보인다
+            hud.Minimap.SetVisible(true); // 지도는 같은 오브젝트의 MinimapController가 채운다
             if (player == null) return;
             hud.CoreStatus.SetVisible(core != null);
             hud.Wave.gameObject.SetActive(wave != null);
@@ -156,7 +156,7 @@ namespace SandGuard.UI.HUD
                 hud.BossStatus.SetHealth(bossHp = boss.Health.CurrentHealth, bossMax = boss.Health.MaxHealth);
         }
 
-        static MonoBehaviour FindCore()
+        internal static MonoBehaviour FindCore()
         {
             var receiver = FindAnyObjectByType<CoreReceiver>();
             if (receiver != null) return receiver;
