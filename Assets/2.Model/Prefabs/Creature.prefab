@@ -12,7 +12,8 @@ GameObject:
   - component: {fileID: 1240308291502630620}
   - component: {fileID: 38970156477118595}
   - component: {fileID: 4544851218621388194}
-  - component: {fileID: 9079280121459362356}
+  - component: {fileID: -8137773739032751433}
+  - component: {fileID: 6387613184954942579}
   m_Layer: 0
   m_Name: Creature
   m_TagString: Untagged
@@ -112,7 +113,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &9079280121459362356
+--- !u!114 &-8137773739032751433
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -121,6 +122,26 @@ MonoBehaviour:
   m_GameObject: {fileID: 5238717034265097383}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 03011231b6270c44191b601e87001338, type: 3}
+  m_Script: {fileID: 11500000, guid: 0b1b74fe2153f0848a4ca364425c316c, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Creature
+  m_EditorClassIdentifier: Assembly-CSharp::FindEnemy
+  Range: {fileID: 0}
+  SearchTime: 0.2
+  Target_Mask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+--- !u!114 &6387613184954942579
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5238717034265097383}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 619ad44726c097949bcaaceb2b485de5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CreatureMove
+  enemy: {fileID: 0}
+  MoveSpeed: 5
+  StopDistance: 1.5

@@ -35,7 +35,7 @@ public class CoffinSummon : MonoBehaviour
         summonPoints = new Vector3[summonNum];
         summonedCreatures = new Creature[summonNum];
 
-        float radius = Range.range * 0.5f;
+        float radius = Range.range * 0.3f;
         float angleStep = 360f / summonNum;
 
         for (int i = 0; i < summonNum; i++)
@@ -45,7 +45,7 @@ public class CoffinSummon : MonoBehaviour
 
             Vector3 offset = new Vector3(
                 Mathf.Sin(radian),
-                0f,
+                0.1f,
                 Mathf.Cos(radian)
             );
 
@@ -69,7 +69,7 @@ public class CoffinSummon : MonoBehaviour
 
         Creature creature = obj.GetComponent<Creature>();
 
-        creature.Initialize(this, index);
+        creature.Initialize(this, index, summonPoints[index]);
         summonedCreatures[index] = creature;
 
         obj.SetActive(true);

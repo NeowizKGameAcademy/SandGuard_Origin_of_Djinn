@@ -2,24 +2,26 @@ using UnityEngine;
 
 public class Creature : MonoBehaviour
 {
-    private CoffinSummon owner;
-    private int summonIndex;
+    protected CoffinSummon owner;
+    protected int summonIndex;
+    protected Vector3 summonPoint;
 
-    public void Initialize(CoffinSummon coffin, int index)
+    protected bool IsInitialized;
+
+    public void Initialize(CoffinSummon coffin, int index, Vector3 point)
     {
         owner = coffin;
         summonIndex = index;
-    }
+        summonPoint = point;
 
-    public void Die()
-    {
-        owner.Respawn(summonIndex);
-        gameObject.SetActive(false);
+        IsInitialized = true;
     }
 
     public void Despawn()
     {
+        IsInitialized = false;
         owner = null;
+
         gameObject.SetActive(false);
     }
 }
