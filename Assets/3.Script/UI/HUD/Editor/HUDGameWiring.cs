@@ -35,6 +35,7 @@ namespace SandGuard.UI.HUD.Editor
             if (AssetDatabase.LoadAssetAtPath<Sprite>(HUDSkillIconGenerator.Burst) == null) HUDSkillIconGenerator.Generate();
             ApplyKoreanFont();
             WireGameHUDPrefab();
+            HUDLayoutSync.SyncFromHUDScene(); // HUD.unity에서 맞춘 배치를 GameHUD 프리팹에 옮긴다
             BuildCanvasPrefab();
             WireChiefBoss();
             foreach (var scene in Scenes) WireScene(scene);

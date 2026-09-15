@@ -152,45 +152,108 @@ public static class TempleHeroArtBuilder
         catch(Exception e){Fail(e);}
     }
     static Camera[] placedCameras;
+    public static void AlignCityPlan(){
+        try{
+            var scene=EditorSceneManager.OpenScene(Root+"/Scenes/Level_TempleArt.unity");
+            var root=GameObject.Find("Buried City - processional road and ruins").transform;
+            var terrain=Object.FindFirstObjectByType<Terrain>();
+            float Ground(float x,float z)=>terrain.SampleHeight(new Vector3(x,0,z))+terrain.transform.position.y;
+            void Move(Transform t,float x,float z){float offset=t.position.y-Ground(t.position.x,t.position.z);t.position=new Vector3(x,Ground(x,z)+offset,z);PrefabUtility.RecordPrefabInstancePropertyModifications(t);}
+            var children=root.Cast<Transform>().ToArray();
+            foreach(var t in children.Where(t=>t.name.StartsWith("BuriedCityGate")))Move(t,0,-340);
+            Vector2[] oldSites={new Vector2(-99,-52),new Vector2(-99,-14),new Vector2(-99,24),new Vector2(100,-52),new Vector2(100,-14)};
+            Vector2[] newSites={new Vector2(-185,-75),new Vector2(-210,20),new Vector2(-175,120),new Vector2(190,-55),new Vector2(205,75)};
+            for(int i=0;i<5;i++){
+                var group=root.Find("Buried courtyard "+(i+1));
+                float dy=Ground(newSites[i].x,newSites[i].y)-Ground(oldSites[i].x,oldSites[i].y);
+                group.position+=new Vector3(newSites[i].x-oldSites[i].x,dy,newSites[i].y-oldSites[i].y);
+            }
+            foreach(var t in children.Where(t=>t.name.StartsWith("Ruin")||t.name.StartsWith("OfferingJar")||t.name.StartsWith("BrokenColumns"))){
+                int nearest=-1;float distance=24;
+                for(int i=0;i<5;i++){float d=Vector2.Distance(new Vector2(t.position.x,t.position.z),oldSites[i]);if(d<distance){nearest=i;distance=d;}}
+                if(nearest>=0)Move(t,t.position.x+newSites[nearest].x-oldSites[nearest].x,t.position.z+newSites[nearest].y-oldSites[nearest].y);
+            }
+            var avenueColumns=children.Where(t=>t.name.StartsWith("BrokenColumns")&&Mathf.Abs(t.position.x)<40).OrderByDescending(t=>t.position.z).ToArray();
+            for(int i=0;i<avenueColumns.Length;i++)Move(avenueColumns[i],i%2==0?-21:21,-120-(i/2)*78);
+            foreach(var t in children.Where(t=>t.name=="Exposed processional paving")){
+                float z=-82+(t.position.z+82)*6.2f;Move(t,t.position.x,z);
+                t.localScale=new Vector3(t.localScale.x,.5f,4.8f);
+            }
+            var top=GameObject.Find("Art placement - top").GetComponent<Camera>();top.transform.position=new Vector3(0,700,-70);top.orthographicSize=380;
+            var c=GameObject.Find("Art detail - seal and ruins").GetComponent<Camera>();c.transform.position=new Vector3(-230,55,-120);c.transform.LookAt(new Vector3(-185,5,-75));c.orthographicSize=38;
+            EditorSceneManager.SaveScene(scene);AssetDatabase.SaveAssets();
+            Directory.CreateDirectory(Output+"/CityPlanAligned");
+            Capture(top,Output+"/CityPlanAligned/top.png",1800,1800);
+            Capture(c,Output+"/CityPlanAligned/housing.png",1600,1000);
+            c.transform.position=new Vector3(50,48,-390);c.transform.LookAt(new Vector3(0,5,-325));c.orthographicSize=48;
+            Capture(c,Output+"/CityPlanAligned/south-gate.png",1600,1000);
+            File.WriteAllText(Output+"/CityPlanAligned/alignment.txt","Reference registered by temple footprint, north=+Z. South gate (0,-340); west housing (-185,-75),(-210,20),(-175,120); east housing (190,-55),(205,75). Avenue aligned X=0. Relative plan proportions used; illustrated scale bar not treated as a survey. Terrain-relative burial offsets preserved.\n");
+            Debug.Log("CITY_PLAN_ALIGNED");EditorApplication.Exit(0);
+        }catch(Exception e){Fail(e);}
+    }
+    public static void RefreshRuins(){
+        var scene=EditorSceneManager.OpenScene(Root+"/Scenes/Level_TempleArt.unity");
+        placedCameras=new[]{GameObject.Find("Art detail - south guardians").GetComponent<Camera>(),GameObject.Find("Art detail - seal and ruins").GetComponent<Camera>(),GameObject.Find("Art placement - top").GetComponent<Camera>()};
+        placedCameras[0].transform.position=new Vector3(32,28,-116);placedCameras[0].transform.LookAt(new Vector3(0,3,-107));placedCameras[0].orthographicSize=25;
+        placedCameras[1].transform.position=new Vector3(-112,26,-22);placedCameras[1].transform.LookAt(new Vector3(-98,3,-48));placedCameras[1].orthographicSize=22;
+        EditorSceneManager.SaveScene(scene);ticks=0;EditorApplication.update+=CapturePlacement;
+    }
     static GameObject artRoot;
     static void BuildPlacement()
     {
         var path=Root+"/Scenes/Level_TempleArt.unity";
-        if(!AssetDatabase.CopyAsset("Assets/Resources/VFX/TempleSandstorm/Level_Sandstorm.unity",path))throw new Exception("Could not copy storm scene");
+        if(!AssetDatabase.CopyAsset("Assets/TempleArt/Terrain/Level_Dunes.unity",path))throw new Exception("Could not copy dune scene");
         var scene=EditorSceneManager.OpenScene(path,OpenSceneMode.Single);
-        artRoot=new GameObject("Temple Art - heroes and reused debris");
-        Spawn(Heroes[0],new Vector3(-94,.8f,-34),30,2,artRoot.transform);
-        Spawn(Heroes[0],new Vector3(94,.8f,34),210,2,artRoot.transform);
-        Spawn(Heroes[1],new Vector3(-88,.6f,48),-15,2.2f,artRoot.transform);
-        Spawn(Heroes[1],new Vector3(88,.6f,-46),145,2,artRoot.transform);
-        Spawn(Heroes[3],new Vector3(-33,.8f,-89),0,2,artRoot.transform);
-        Spawn(Heroes[3],new Vector3(33,.8f,-89),0,2,artRoot.transform);
-        var temple=scene.GetRootGameObjects().SelectMany(g=>g.GetComponentsInChildren<Transform>()).First(t=>t.name.StartsWith("DesertTemple"));
-        Physics.SyncTransforms();float altarY=.8f;
-        var ray=new Ray(new Vector3(5.8f,160,4),Vector3.down);
-        foreach(var col in temple.GetComponentsInChildren<Collider>())if(col.Raycast(ray,out var hit,220))altarY=Mathf.Max(altarY,hit.point.y);
-        Spawn(Heroes[2],new Vector3(5.8f,altarY,4),0,1,artRoot.transform);
-        var rng=new System.Random(47);
-        for(int i=0;i<18;i++)
-        {
-            // Debris stays outside the 160m-square temple and clear of the four corner approaches.
-            float x=(i%2==0?-1:1)*(88+(float)rng.NextDouble()*11),z=-49+(float)rng.NextDouble()*98;
-            Spawn(Reused[i%2],new Vector3(x,.55f,z),(float)rng.NextDouble()*360,.7f+(float)rng.NextDouble(),artRoot.transform);
+        artRoot=new GameObject("Buried City - processional road and ruins");
+        var terrain=Object.FindFirstObjectByType<Terrain>();
+        float Ground(float x,float z)=>terrain.SampleHeight(new Vector3(x,0,z))+terrain.transform.position.y;
+        GameObject Buried(GameObject prefab,float x,float z,float yaw,float scale,float depth){
+            return Spawn(prefab,new Vector3(x,Ground(x,z)-depth,z),yaw,scale,artRoot.transform);
         }
-        for(int i=0;i<5;i++)Spawn(Reused[2],new Vector3(-4+i*2,.67f,-94),0,1,artRoot.transform);
-        Spawn(Reused[3],new Vector3(-92,.8f,-29),20,1.4f,artRoot.transform);
-        Spawn(Reused[3],new Vector3(-90,.8f,-30),-20,1.1f,artRoot.transform);
+        var gate=CreateReuse("Desert/prefab/gate.prefab","BuriedCityGate",12);
+        Buried(gate,0,-124,0,1,5);
+        Buried(Heroes[3],-14,-101,0,2,2.4f);
+        Buried(Heroes[3],14,-101,8,2,4.5f);
+        Buried(Heroes[0],-28,-114,15,1.7f,2.1f);
+        for(int i=0;i<6;i++)Buried(Heroes[1],i%2==0?-21:21,-91-i*6,12+i*41,1.5f,1.1f+i*.16f);
+        var rng=new System.Random(731);
+        // Discontinuous paving follows exposed sand; gaps retain the original buried road line.
+        for(int row=0;row<14;row++)for(int col=0;col<4;col++){
+            if(rng.NextDouble()<.35)continue;
+            float x=-4.5f+col*3,z=-82-row*3;
+            var stone=GameObject.CreatePrimitive(PrimitiveType.Cube);stone.name="Exposed processional paving";
+            stone.transform.SetParent(artRoot.transform);stone.transform.position=new Vector3(x,Ground(x,z)-.12f,z);
+            stone.transform.localScale=new Vector3(2.6f,.5f,2.6f);stone.transform.rotation=Quaternion.Euler(0,(float)rng.NextDouble()*8-4,0);
+            stone.GetComponent<Renderer>().sharedMaterial=Palette["Temple_CutStone"];
+        }
+        // Low wall fragments describe courtyards; buried footing avoids complete houses perched on sand.
+        for(int site=0;site<5;site++){
+            float cx=site<3?-99:100,cz=-52+site%3*38;
+            var group=new GameObject("Buried courtyard "+(site+1));group.transform.SetParent(artRoot.transform);
+            float foundation=Ground(cx,cz)-2.2f;
+            for(int side=0;side<3;side++)for(int segment=0;segment<5;segment++){
+                if(rng.NextDouble()<.22)continue;
+                float x=cx+(side==0?-8+segment*4:side==1?-8:8),z=cz+(side==0?-7:-7+segment*3.5f);
+                float height=3.2f+(float)rng.NextDouble()*2.2f;
+                var wall=GameObject.CreatePrimitive(PrimitiveType.Cube);wall.name="Broken masonry wall";wall.transform.SetParent(group.transform);
+                wall.transform.position=new Vector3(x,foundation+height*.5f,z);wall.transform.localScale=side==0?new Vector3(3.8f,height,1.2f):new Vector3(1.2f,height,3.3f);
+                wall.GetComponent<Renderer>().sharedMaterial=Palette["Temple_Sandstone"];
+            }
+            Buried(Heroes[1],cx+5,cz+3,site*61,1.3f,1.6f);
+            for(int j=0;j<6;j++)Buried(Reused[j%2],cx-10+(float)rng.NextDouble()*20,cz-8+(float)rng.NextDouble()*16,j*47,1.2f,.3f);
+            Buried(Reused[3],cx-3,cz-6,12,1.4f,.35f);
+        }
+        Buried(Heroes[2],-36,-99,0,1.4f,.7f);
         foreach(var c in Object.FindObjectsByType<Camera>(FindObjectsSortMode.None))c.enabled=false;
         placedCameras=new[]{
-            CameraAt("Art detail - south guardians",new Vector3(-46,13,-110),new Vector3(-24,3,-87),17),
-            CameraAt("Art detail - seal and ruins",new Vector3(-115,13,-55),new Vector3(-93,4,-30),12),
-            CameraAt("Art placement - top",new Vector3(0,260,0),Vector3.zero,115)
+            CameraAt("Art detail - south guardians",new Vector3(48,38,-147),new Vector3(0,5,-104),38),
+            CameraAt("Art detail - seal and ruins",new Vector3(-138,33,-86),new Vector3(-99,5,-44),30),
+            CameraAt("Art placement - top",new Vector3(0,260,0),Vector3.zero,145)
         };
         placedCameras[2].transform.rotation=Quaternion.Euler(90,0,0);
         placedCameras[1].enabled=false;placedCameras[2].enabled=false;
         EditorSceneManager.SaveScene(scene);AssetDatabase.SaveAssets();
-        Report.Add("Placement: 2 seal stones, 2 column clusters, 2 jackal guardians, 1 offering altar; 25 reused debris props. Temple geometry and storm dimensions unchanged.");
-        Report.Add("Altar surface Y="+altarY+"; only placement raycast checked, no gameplay path tests.");
+        Report.Add("Terrain-sampled placement: gate, two differently buried guardians, partial processional paving, columns, seal, altar and five courtyard ruins. Existing dune and opaque storm assets retained. Gameplay navigation not rebaked.");
     }
     static void CapturePlacement()
     {

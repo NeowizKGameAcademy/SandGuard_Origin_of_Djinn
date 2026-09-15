@@ -11,9 +11,34 @@ public static class TempleDunesBuilder
 {
     const string Root="Assets/TempleArt/Terrain";
     const string ScenePath=Root+"/Level_Dunes.unity";
-    const string Output="Docs/LevelArt/TempleDunes";
+    const string Output="Docs/LevelArt/TempleDunes/SealedStorm";
     static Camera top, overview, ground;
     static int ticks;
+    public static void SealStorm(){
+        try{
+            var scene=EditorSceneManager.OpenScene(ScenePath);
+            var storm=Object.FindFirstObjectByType<DesertTower.VFX.TempleSandstorm>();
+            storm.transform.position=new Vector3(0,-10,0);storm.transform.localScale=new Vector3(1,.55f,1);
+            const int segments=256,rows=16;
+            var vertices=new Vector3[(segments+1)*(rows+1)];var uv=new Vector2[vertices.Length];var triangles=new int[segments*rows*6];int ti=0;
+            for(int a=0;a<=segments;a++)for(int b=0;b<=rows;b++){
+                float u=a/(float)segments,v=b/(float)rows,angle=u*Mathf.PI*2;
+                float radius=148+8*Mathf.Sin(v*Mathf.PI)+2*Mathf.Sin(angle*5)*Mathf.Sin(v*Mathf.PI);
+                int index=a*(rows+1)+b;
+                vertices[index]=new Vector3(Mathf.Cos(angle)*radius,Mathf.Lerp(-12,50,v),Mathf.Sin(angle)*radius);uv[index]=new Vector2(u,v);
+                if(a<segments&&b<rows){int next=index+rows+1;triangles[ti++]=index;triangles[ti++]=next;triangles[ti++]=index+1;triangles[ti++]=index+1;triangles[ti++]=next;triangles[ti++]=next+1;}
+            }
+            var mesh=new Mesh{name="Continuous buried storm wall"};mesh.vertices=vertices;mesh.uv=uv;mesh.triangles=triangles;mesh.RecalculateNormals();mesh.RecalculateBounds();
+            AssetDatabase.CreateAsset(mesh,Root+"/StormOccluder.asset");
+            var mat=new Material(Shader.Find("SandGuard/VFX/TempleSandstormOccluder"));mat.CopyPropertiesFromMaterial(storm.sandLayers[0].sharedMaterial);mat.renderQueue=2000;
+            AssetDatabase.CreateAsset(mat,Root+"/StormOccluder.mat");
+            var wall=new GameObject("Storm - opaque buried curtain");wall.AddComponent<MeshFilter>().sharedMesh=mesh;wall.AddComponent<MeshRenderer>().sharedMaterial=mat;
+            var motion=wall.AddComponent<DesertTower.VFX.TempleSandstorm>();motion.sandLayers=new[]{wall.GetComponent<Renderer>()};
+            Cam("Dunes - Sealed Interior",new Vector3(0,15,-45),new Vector3(0,20,150),0);
+            Cam("Dunes - Summit View",new Vector3(0,55,0),new Vector3(0,52,170),0);
+            EditorSceneManager.SaveScene(scene);AssetDatabase.SaveAssets();RefreshCapture();
+        }catch(Exception e){Debug.LogException(e);EditorApplication.Exit(1);}
+    }
     public static void LowerDunes(){ ReshapeDunes(); }
     public static void ReshapeDunes(){
         try{
@@ -21,7 +46,7 @@ public static class TempleDunesBuilder
             int n=data.heightmapResolution;var heights=new float[n,n];float max=0;
             for(int z=0;z<n;z++)for(int x=0;x<n;x++){
                 float h=Height(x*1000f/(n-1)-500,z*1000f/(n-1)-500);
-                if(float.IsNaN(h)||h<.79f||h>24)throw new Exception("Dune height outside expected range");
+                if(float.IsNaN(h)||h<.79f||h>28)throw new Exception("Dune height outside expected range");
                 heights[z,x]=h/data.size.y;max=Mathf.Max(max,h);
             }
             data.SetHeights(0,0,heights);EditorUtility.SetDirty(data);AssetDatabase.SaveAssets();
@@ -30,11 +55,27 @@ public static class TempleDunesBuilder
         }catch(Exception e){Debug.LogException(e);EditorApplication.Exit(1);}
     }
     public static void RefreshCapture(){
+        Directory.CreateDirectory(Output);
         var scene=EditorSceneManager.OpenScene(ScenePath);
         top=GameObject.Find("Dunes - Top").GetComponent<Camera>();top.transform.rotation=Quaternion.Euler(90,0,0);
         overview=GameObject.Find("Dunes - Overview").GetComponent<Camera>();overview.orthographicSize=225;
         ground=GameObject.Find("Dunes - Ground").GetComponent<Camera>();
+        var interior=GameObject.Find("Dunes - Sealed Interior");if(interior){interior.transform.position=new Vector3(95,12,0);interior.transform.LookAt(new Vector3(160,18,0));}
         Object.FindFirstObjectByType<Terrain>().heightmapPixelError=1;
+        foreach(var light in Object.FindObjectsByType<Light>(FindObjectsSortMode.None).Where(l=>l.type==LightType.Directional && l.name!="Dunes - Sky Fill")){
+            light.transform.rotation=Quaternion.Euler(28,110,0);light.intensity=1.25f;
+            light.color=new Color(1,.91f,.77f);light.lightmapBakeType=LightmapBakeType.Realtime;
+            light.shadows=LightShadows.Soft;light.shadowStrength=.85f;
+        }
+        RenderSettings.ambientMode=UnityEngine.Rendering.AmbientMode.Trilight;
+        RenderSettings.ambientSkyColor=new Color(.32f,.36f,.43f);
+        RenderSettings.ambientEquatorColor=new Color(.22f,.20f,.17f);
+        RenderSettings.ambientGroundColor=new Color(.12f,.10f,.08f);
+        var fillObject=GameObject.Find("Dunes - Sky Fill")??new GameObject("Dunes - Sky Fill");
+        var fill=fillObject.GetComponent<Light>();if(!fill)fill=fillObject.AddComponent<Light>();
+        fill.type=LightType.Directional;fill.intensity=.55f;fill.color=new Color(.85f,.9f,1);
+        fill.transform.rotation=Quaternion.Euler(65,-70,0);fill.shadows=LightShadows.None;
+        fill.lightmapBakeType=LightmapBakeType.Realtime;
         EditorSceneManager.SaveScene(scene);ticks=0;EditorApplication.update+=Capture;
     }
     public static void Build()
@@ -75,36 +116,31 @@ public static class TempleDunesBuilder
     }
     static float Height(float x,float z)
     {
-        // Wind-aligned, curved crests with a broad windward slope and shorter lee slope.
-        float u=x*.86f+z*.51f,v=-x*.51f+z*.86f;
-        float dunes=0;
-        for(int k=-9;k<=9;k++){
-            float crest=k*73+20*Mathf.Sin(v*.014f+k*1.73f)+9*Mathf.Sin(v*.029f+k*.8f);
-            float d=u-crest;
-            float width=d<0?48:20;
-            float along=.73f+.27f*Mathf.Sin(v*.018f+k*2.4f);
-            dunes+= (20+7*Mathf.Sin(k*1.9f+1))*along*Mathf.Exp(-d*d/(width*width));
-        }
+        // A continuous wind-deformed wave field: every trough joins the next crest.
+        float u=x*.92f+z*.39f,v=-x*.39f+z*.92f;
+        // Smooth spatial warping varies spacing and curvature without isolated bumps.
+        float warp=110*(Mathf.PerlinNoise(u*.0038f+17,v*.0048f+43)-.5f)
+            +38*(Mathf.PerlinNoise(u*.011f+71,v*.012f+29)-.5f);
+        float bend=19*Mathf.Sin(v*.012f+u*.003f)+warp;
+        float phase=(u+bend)/83f;
+        float strength=Mathf.Clamp01((Mathf.PerlinNoise(u*.008f+31,v*.009f+53)-.25f)*2);
+        float amplitude=7+12*strength;
+        float crest=.64f+.15f*Mathf.PerlinNoise(u*.01f+13,v*.012f+81);
+        float main=Wave(phase,crest)*amplitude;
+        float secondary=Wave((u+warp*.55f+17*Mathf.Sin(v*.022f+u*.006f)+v*.12f)/37f+.35f)
+            *(1+2.2f*Mathf.PerlinNoise(u*.015f+91,v*.012f+7));
+        float swell=3*Mathf.PerlinNoise(u*.006f+5,v*.007f+61);
         float edge=Mathf.Max(Mathf.Abs(x),Mathf.Abs(z));
-        float mask=Mathf.SmoothStep(0,1,Mathf.InverseLerp(79,155,edge));
-        float approach=1-.68f*Mathf.Exp(-x*x/180)*(1-Mathf.SmoothStep(0,1,Mathf.InverseLerp(105,220,Mathf.Abs(z))));
-        float macro=3*Mathf.PerlinNoise(x*.008f+41,z*.008f+71);
-        float outskirts=Mathf.Lerp(.045f,.125f,Mathf.SmoothStep(0,1,Mathf.InverseLerp(110,280,edge)));
-        float high=Ridge(x,z,-240,-155,17,85,.3f)
-            +Ridge(x,z,230,155,19,100,-.2f)
-            +Ridge(x,z,-115,290,14,80,.15f)
-            +Ridge(x,z,170,-270,12,75,-.35f)
-            +Ridge(x,z,-350,280,15,95,.25f)
-            +Ridge(x,z,370,-110,16,90,-.1f);
-        return .8f+mask*approach*((dunes+macro)*outskirts+high);
+        float mask=Mathf.SmoothStep(0,1,Mathf.InverseLerp(79,150,edge));
+        float approach=1-.65f*Mathf.Exp(-x*x/230)*(1-Mathf.SmoothStep(0,1,Mathf.InverseLerp(105,210,Mathf.Abs(z))));
+        return .8f+mask*approach*(main+secondary+swell);
     }
-    static float Ridge(float x,float z,float cx,float cz,float height,float length,float angle){
-        float dx=x-cx,dz=z-cz;
-        float u=dx*Mathf.Cos(angle)-dz*Mathf.Sin(angle);
-        float v=dx*Mathf.Sin(angle)+dz*Mathf.Cos(angle);
-        float d=u-22*(v/length)*(v/length);
-        float width=d<0?48:24;
-        return height*Mathf.Exp(-d*d/(width*width)-Mathf.Pow(v/length,4));
+    static float Wave(float phase,float crest=.72f)
+    {
+        float t=Mathf.Repeat(phase,1);
+        // Long climbing face; short lee face. Rounded trough, distinct connected crest.
+        float ramp=t<crest?t/crest:(1-t)/(1-crest);
+        return ramp*ramp*(2-ramp);
     }
     static Camera Cam(string name,Vector3 pos,Vector3 target,float size){
         var c=new GameObject(name).AddComponent<Camera>();c.transform.position=pos;c.transform.LookAt(target);c.orthographic=size>0;c.orthographicSize=size>0?size:1;c.fieldOfView=60;c.farClipPlane=2000;c.nearClipPlane=.3f;c.enabled=false;c.GetUniversalAdditionalCameraData().renderPostProcessing=false;return c;
@@ -113,6 +149,9 @@ public static class TempleDunesBuilder
         if(++ticks<40)return;EditorApplication.update-=Capture;
         try{
             Shot(top,"dunes-top",1800,1800);Shot(overview,"dunes-overview",1920,1280);Shot(ground,"dunes-ground",1920,1080);
+            foreach(var name in new[]{"Dunes - Sealed Interior","Dunes - Summit View"}){
+                var obj=GameObject.Find(name);if(obj)Shot(obj.GetComponent<Camera>(),name=="Dunes - Sealed Interior"?"storm-interior":"storm-summit",1920,1080);
+            }
             Debug.Log("TEMPLE_DUNES_COMPLETE");EditorApplication.Exit(0);
         }catch(Exception e){Debug.LogException(e);EditorApplication.Exit(1);}
     }
