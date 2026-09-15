@@ -1,0 +1,39 @@
+Pure C# executable tests (.NET 8):
+PASS: prerequisite rejection is atomic
+PASS: unknown skill rejection
+PASS: purchase deducts exact cost and notifies once
+PASS: purchase does not auto equip
+PASS: duplicate purchase does not charge
+PASS: advanced purchase without level requirement
+PASS: insufficient points is atomic
+PASS: locked skill cannot equip
+PASS: incompatible slot rejected
+PASS: equip learned skill
+PASS: duplicate slot rejected atomically
+PASS: unchanged equip has no event
+PASS: passive cannot occupy active slot
+PASS: edit lock blocks purchase and removal
+PASS: rewards allowed during editing lock
+PASS: snapshot detached from mutations
+PASS: valid snapshot restores loadout
+PASS: restore rejects missing prerequisite atomically
+PASS: restore rejects duplicate loadout
+PASS: negative reward rejected
+PASS: point overflow rejected
+PASS: notifications see committed state and reject reentrancy
+PASS: observer failure does not rollback or skip later observers
+PASS: dispatch equipped skill
+PASS: slot change cannot bypass cooldown
+PASS: cooldown expires using injected clock
+PASS: empty slot cannot execute
+PASS: new run clears unlock and loadout
+PASS: duplicate definition rejected
+PASS: dangling prerequisite rejected
+PASS: cycle rejected
+PASS: invalid slot definition rejected
+PASS: all prerequisites required
+PASS: all prerequisites satisfied
+TOTAL: 34 passed
+
+Unity 6000.2.8f1 reference assembly compilation: Core / Runtime / Editor PASS.
+Unity Editor import and Play Mode were not run.
