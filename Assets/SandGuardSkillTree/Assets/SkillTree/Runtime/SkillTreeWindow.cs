@@ -47,6 +47,7 @@ namespace SandGuard.Skills.Unity
             if(!modal)SkillWindowLayout.Build(this);
             modal.SetActive(false);prompt.SetActive(false);
             BindButtons();
+            BuildRespecUI();
         }
         void Start()
         {
@@ -55,6 +56,38 @@ namespace SandGuard.Skills.Unity
             session.Service.Changed+=MarkDirty;bound=true;
             if(!player){var go=GameObject.FindGameObjectWithTag("Player");if(go)player=go.transform;}
             if(standalonePreview)Open();
+        }
+        GameObject respecPanel;
+        Text respecText;
+        Button RespecButton(Transform parent,string name,string text,float x,float y,float width,UnityAction action)
+        {
+            var rect=SkillWindowLayout.Rect(parent,name,x,y,width,48);
+            var image=rect.gameObject.AddComponent<Image>();image.color=new Color(.15f,.22f,.25f,1);
+            var button=rect.gameObject.AddComponent<Button>();button.targetGraphic=image;button.onClick.AddListener(action);
+            SkillWindowLayout.Label(rect,theme.font,"Label",text,21,8,0,width-16,48,TextAnchor.MiddleCenter).color=theme.gold;
+            return button;
+        }
+        void BuildRespecUI()
+        {
+            var window=modal.transform.Find("Window");
+            RespecButton(window,"Respec","스킬 포인트 초기화",32,43,265,()=>
+            {
+                if(!IsOpen)return;
+                respecText.text="구매·장착을 모두 초기화하고\n"+session.Service.RefundPoints+" SP를 환불합니다.\n레벨·경험치·이미 설치한 타워는 유지됩니다.";
+                respecPanel.SetActive(true);respecPanel.transform.SetAsLastSibling();
+            });
+            var overlay=SkillWindowLayout.Rect(window,"Respec Confirmation",0,0,1480,850);
+            overlay.gameObject.AddComponent<Image>().color=new Color(0,0,0,.92f);respecPanel=overlay.gameObject;
+            respecText=SkillWindowLayout.Label(overlay,theme.font,"Message","",28,330,275,820,160,TextAnchor.MiddleCenter);
+            RespecButton(overlay,"Cancel","취소",430,475,260,()=>respecPanel.SetActive(false));
+            RespecButton(overlay,"Confirm","초기화 및 환불",790,475,260,()=>
+            {
+                if(!IsOpen)return;
+                session.Service.EditingAllowed=session.editingAllowed;
+                var result=session.Service.Respec();feedback=result.Success?"초기화 완료 — 구매 포인트를 환불했습니다.":Reason(result.Failure);
+                respecPanel.SetActive(false);dirty=true;
+            });
+            respecPanel.SetActive(false);
         }
         void BindButtons()
         {
@@ -108,6 +141,7 @@ namespace SandGuard.Skills.Unity
         public void Close()
         {
             if(!IsOpen)return;
+            if(respecPanel)respecPanel.SetActive(false);
             IsOpen=false;if(modal)modal.SetActive(false);
             foreach(var entry in suspended)if(entry.Key)entry.Key.enabled=entry.Value;
             suspended.Clear();Cursor.lockState=previousLock;Cursor.visible=previousVisible;

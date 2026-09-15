@@ -1,4 +1,5 @@
 using System;
+using SandGuard.Skills;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -28,7 +29,10 @@ namespace SandGuard.Player
         /// <summary>지금까지 실제로 반영된 경험치 합.</summary>
         public int TotalExperience { get; private set; }
         /// <summary>아직 쓰지 않은 스킬 포인트. 스킬트리가 <see cref="TrySpendSkillPoints"/>로 쓴다.</summary>
-        public int SkillPoints { get; private set; }
+        public int SkillPoints => PointWallet.Balance;
+        public SkillPointWallet PointWallet { get; }=new SkillPointWallet();
+        bool updatingProgression,changingExperience;
+        void PointsChanged(){if(!updatingProgression)Changed?.Invoke();}
 
         public Vector3 CollectPosition => transform.position + Vector3.up * collectHeight;
         public bool CanCollect => isActiveAndEnabled && (health == null || health.State == LifeState.Alive);
@@ -42,6 +46,7 @@ namespace SandGuard.Player
             if (mana == null) mana = GetComponent<PlayerManaWallet>();
             if (stats == null) stats = GetComponent<PlayerStats>();
             ResetState();
+            PointWallet.Changed+=PointsChanged;
         }
         void OnEnable() => ExperienceReceivers.Register(this);
         void OnDisable() => ExperienceReceivers.Unregister(this);
@@ -49,6 +54,7 @@ namespace SandGuard.Player
         /// <summary>Lv.1, 경험치 0, 시작 포인트로 되돌리고 레벨 능력치를 걷어낸다. 게임 재시작용.</summary>
         public void ResetProgression()
         {
+            if(changingExperience || PointWallet.IsBusy)return;
             ResetState();
             Changed?.Invoke();
         }
@@ -56,15 +62,22 @@ namespace SandGuard.Player
         void ResetState()
         {
             Level = 1; ExperienceInLevel = 0; TotalExperience = 0;
-            SkillPoints = table != null ? table.startingSkillPoints : 0;
+            updatingProgression=true;
+            try{PointWallet.Reset(table != null ? table.startingSkillPoints : 0);}finally{updatingProgression=false;}
             if (stats != null) stats.RemoveAll(this);
         }
 
         public int GainExperience(int amount)
         {
+            if(changingExperience || PointWallet.IsBusy)return 0;
+            changingExperience=true;
+            try{return GainExperienceInternal(amount);}finally{changingExperience=false;}
+        }
+        int GainExperienceInternal(int amount)
+        {
             if (amount < 0) throw new ArgumentOutOfRangeException(nameof(amount));
             if (amount == 0 || IsMaxLevel) return 0;
-            int startLevel = Level, applied = 0;
+            int startLevel = Level, applied = 0; long pointsAward=0;
             while (amount > 0 && !IsMaxLevel)
             {
                 int take = Mathf.Min(amount, ExperienceToNextLevel - ExperienceInLevel);
@@ -72,10 +85,13 @@ namespace SandGuard.Player
                 if (ExperienceInLevel < ExperienceToNextLevel) break;
                 Level++;
                 ExperienceInLevel = 0; // 최대 레벨에서는 계약대로 0, 남은 경험치는 버린다
-                SkillPoints += table.SkillPointsOnReach(Level);
+                pointsAward+=table.SkillPointsOnReach(Level);
             }
             TotalExperience += applied;
             if (Level != startLevel) ApplyLevelRewards(Level - startLevel);
+            updatingProgression=true;
+            try{if(pointsAward>0)PointWallet.TryChange((int)Math.Min(pointsAward,int.MaxValue-(long)SkillPoints));}
+            finally{updatingProgression=false;}
             Changed?.Invoke();
             if (Level == startLevel) return applied;
             for (int level = startLevel + 1; level <= Level; level++) LevelUp?.Invoke(level);
@@ -86,10 +102,10 @@ namespace SandGuard.Player
         public bool TrySpendSkillPoints(int amount)
         {
             if (amount <= 0 || amount > SkillPoints) return false;
-            SkillPoints -= amount;
-            Changed?.Invoke();
-            return true;
+            return PointWallet.TryChange(-amount);
         }
+
+        void OnDestroy(){PointWallet.Changed-=PointsChanged;}
 
         void ApplyLevelRewards(int levelsGained)
         {

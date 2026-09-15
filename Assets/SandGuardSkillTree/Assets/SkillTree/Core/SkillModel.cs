@@ -74,10 +74,12 @@ namespace SandGuard.Skills
         }
     }
     /// <summary>Points and unlock state have one owner. No Unity, casting, mana or HUD dependency.</summary>
-    public sealed class SkillService
+    public sealed class SkillService : IDisposable
     {
         public SkillCatalog Catalog { get; }
-        public int Points { get; private set; }
+        public int Points => wallet.Balance;
+        SkillPointWallet wallet;bool shared,changing,disposed;int generation;
+        public int RefundPoints { get; private set; }
         public bool EditingAllowed { get; set; }=true;
         readonly HashSet<string> learned=new HashSet<string>();
         readonly Dictionary<EquipSlot,string> loadout=new Dictionary<EquipSlot,string>();
@@ -85,13 +87,14 @@ namespace SandGuard.Skills
         public event Action Changed;
         public event Action<Exception> ObserverError;
         public SkillService(SkillCatalog catalog,int initialPoints=0)
-        { Catalog=catalog??throw new ArgumentNullException(nameof(catalog));if(initialPoints<0)throw new ArgumentOutOfRangeException();Points=initialPoints; }
+        { Catalog=catalog??throw new ArgumentNullException(nameof(catalog));if(initialPoints<0)throw new ArgumentOutOfRangeException();wallet=new SkillPointWallet(initialPoints);wallet.Claim(this);wallet.Changed+=WalletChanged; }
         public SkillSnapshot Snapshot()=>new SkillSnapshot(Points,learned,loadout);
         public bool IsLearned(string id)=>id!=null && learned.Contains(id);
         public string Equipped(EquipSlot slot)=>loadout.TryGetValue(slot,out var id)?id:null;
         public SkillResult CanLearn(string id)
         {
-            if(notifying)return Fail(SkillFailure.Busy);
+            if(disposed)return Fail(SkillFailure.Invalid);
+            if(notifying || changing)return Fail(SkillFailure.Busy);
             if(!EditingAllowed)return Fail(SkillFailure.EditingBlocked);
             var d=Catalog.Find(id);if(d==null)return Fail(SkillFailure.NotFound);
             if(learned.Contains(id))return Fail(SkillFailure.AlreadyLearned);
@@ -101,11 +104,17 @@ namespace SandGuard.Skills
         public SkillResult Learn(string id)
         {
             var r=CanLearn(id);if(!r.Success)return r;
-            Points-=Catalog.Find(id).Cost;learned.Add(id);Notify();return r;
+            int cost=Catalog.Find(id).Cost;
+            if(RefundPoints>int.MaxValue-cost)return Fail(SkillFailure.Invalid);
+            changing=true;bool ok;
+            try{ok=wallet.TryChange(-cost,()=>{learned.Add(id);RefundPoints+=cost;});}finally{changing=false;}
+            if(!ok)return Fail(SkillFailure.Points);
+            Notify();return r;
         }
         public SkillResult Equip(EquipSlot slot,string id)
         {
-            if(notifying)return Fail(SkillFailure.Busy);
+            if(disposed)return Fail(SkillFailure.Invalid);
+            if(notifying || changing)return Fail(SkillFailure.Busy);
             if(!EditingAllowed)return Fail(SkillFailure.EditingBlocked);
             if(!Enum.IsDefined(typeof(EquipSlot),slot))return Fail(SkillFailure.Invalid);
             if(id==null){if(loadout.Remove(slot))Notify();return Fail(SkillFailure.None);}
@@ -118,29 +127,67 @@ namespace SandGuard.Skills
         }
         public SkillResult Grant(int amount)
         {
-            if(notifying)return Fail(SkillFailure.Busy);
+            if(disposed)return Fail(SkillFailure.Invalid);
+            if(notifying || changing)return Fail(SkillFailure.Busy);
             if(amount<=0 || Points>int.MaxValue-amount)return Fail(SkillFailure.Invalid);
-            Points+=amount;Notify();return Fail(SkillFailure.None);
+            if(shared)return Fail(SkillFailure.Invalid);
+            return Fail(wallet.TryChange(amount)?SkillFailure.None:SkillFailure.Busy);
         }
         // New run, not a refund. Caller chooses authoritative starting points.
         public SkillResult Reset(int startingPoints)
         {
-            if(notifying)return Fail(SkillFailure.Busy);
+            if(disposed)return Fail(SkillFailure.Invalid);
+            if(notifying || changing)return Fail(SkillFailure.Busy);
             if(startingPoints<0)return Fail(SkillFailure.Invalid);
-            Points=startingPoints;learned.Clear();loadout.Clear();Notify();return Fail(SkillFailure.None);
+            if(shared)return Fail(SkillFailure.Invalid);
+            return Fail(wallet.Reset(startingPoints)?SkillFailure.None:SkillFailure.Busy);
         }
         public SkillResult Restore(SkillSnapshot state)
         {
-            if(notifying)return Fail(SkillFailure.Busy);
+            if(disposed)return Fail(SkillFailure.Invalid);
+            if(notifying || changing)return Fail(SkillFailure.Busy);
+            if(shared)return Fail(SkillFailure.Invalid);
             if(state==null || state.Points<0)return Fail(SkillFailure.Invalid);
             var set=new HashSet<string>(state.Learned);
             if(set.Count!=state.Learned.Count || set.Any(id=>Catalog.Find(id)==null || Catalog.Find(id).Prerequisites.Any(p=>!set.Contains(p))))return Fail(SkillFailure.Invalid);
             var used=new HashSet<string>();
             foreach(var p in state.Loadout)
                 if(!Enum.IsDefined(typeof(EquipSlot),p.Key) || p.Value==null || !set.Contains(p.Value) || !used.Add(p.Value) || !Catalog.Find(p.Value).Slots.Contains(p.Key))return Fail(SkillFailure.Invalid);
-            Points=state.Points;learned.Clear();foreach(var id in set)learned.Add(id);
-            loadout.Clear();foreach(var p in state.Loadout)loadout.Add(p.Key,p.Value);Notify();return Fail(SkillFailure.None);
+            // Legacy snapshots did not record actual purchase payments: imported unlocks receive no refund credit.
+            changing=true;
+            try{if(!wallet.Reset(state.Points))return Fail(SkillFailure.Busy);generation=wallet.Generation;
+                learned.Clear();foreach(var id in set)learned.Add(id);RefundPoints=0;
+                loadout.Clear();foreach(var p in state.Loadout)loadout.Add(p.Key,p.Value);}
+            finally{changing=false;}
+            Notify();return Fail(SkillFailure.None);
         }
+        public SkillResult BindWallet(SkillPointWallet source)
+        {
+            if(disposed)return Fail(SkillFailure.Invalid);
+            if(notifying || changing)return Fail(SkillFailure.Busy);
+            if(source==wallet)return Fail(SkillFailure.None);
+            if(source==null || learned.Count>0 || !source.Claim(this))return Fail(SkillFailure.Invalid);
+            wallet.Changed-=WalletChanged;wallet.Release(this);wallet=source;shared=true;generation=source.Generation;
+            wallet.Changed+=WalletChanged;Notify();return Fail(SkillFailure.None);
+        }
+        public SkillResult Respec()
+        {
+            if(disposed)return Fail(SkillFailure.Invalid);
+            if(notifying || changing)return Fail(SkillFailure.Busy);
+            if(!EditingAllowed)return Fail(SkillFailure.EditingBlocked);
+            if(learned.Count==0 && loadout.Count==0)return Fail(SkillFailure.None);
+            changing=true;bool ok;
+            try{ok=wallet.TryChange(RefundPoints,()=>{learned.Clear();loadout.Clear();RefundPoints=0;});}
+            finally{changing=false;}
+            if(!ok)return Fail(SkillFailure.Invalid);Notify();return Fail(SkillFailure.None);
+        }
+        void WalletChanged()
+        {
+            if(changing)return;
+            if(generation!=wallet.Generation){generation=wallet.Generation;learned.Clear();loadout.Clear();RefundPoints=0;}
+            Notify();
+        }
+        public void Dispose(){disposed=true;wallet.Changed-=WalletChanged;wallet.Release(this);}
         static SkillResult Fail(SkillFailure f)=>new SkillResult(f);
         void Notify()
         {
