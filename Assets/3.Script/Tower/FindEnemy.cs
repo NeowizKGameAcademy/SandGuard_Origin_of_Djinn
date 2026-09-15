@@ -25,13 +25,11 @@ public class FindEnemy : MonoBehaviour
 {
     [Header("Auto Aim")]
     [SerializeField] private DetectRange Range;
-    private float Auto_Aim_Range;
     [SerializeField] private float SearchTime = 0.2f;
 
     // [통합 추가] 적 콜라이더를 모을 레이어. 기본은 전부.
     [SerializeField] private LayerMask Target_Mask = ~0;
 
-    private float Auto_Aim_Distance;
     private float SearchTimer;
 
     private Transform Target_Transform;
@@ -39,11 +37,9 @@ public class FindEnemy : MonoBehaviour
     // [통합 추가] 조준 중인 전투 대상과, 진영 비교에 쓰는 타워 자신의 전투 정보
     private ICombatTarget Target_Combat;
     private ICombatTarget Owner;
-    private readonly Collider[] Search_Buffer = new Collider[64];
 
     //Properties
     public Transform target => Target_Transform;
-    public float range => Auto_Aim_Range;
     // [통합 추가] 조준점. 대상이 없으면 타워 위치.
     public Vector3 aimPoint => Target_Combat != null ? Target_Combat.HitPosition : (Target_Transform != null ? Target_Transform.position : transform.position);
     // [통합 추가] 조준 중인 전투 대상(없으면 null)
@@ -54,46 +50,11 @@ public class FindEnemy : MonoBehaviour
     private void OnEnable()
     {
         TryGetComponent(out Range);
-        Auto_Aim_Range = Range.range;
         Owner = GetComponentInParent<ICombatTarget>(); // [통합 추가]
     }
 
     private void Update()
     {
-        Auto_Aim_Range = Range.range;
-
-
-        Auto_Aim_Distance = Auto_Aim_Range * Auto_Aim_Range;
-
-        if (Target_Transform != null)
-        {
-            // [통합 수정] 죽는 중이거나 풀로 돌아간 적은 오브젝트가 켜져 있어도 놓아 준다.
-            /* 기존 코드
-            if (!Target_Transform.gameObject.activeInHierarchy)
-            {
-                Target_Transform = null;
-                return;
-            }
-            */
-            if (!Target_Transform.gameObject.activeInHierarchy || Target_Combat == null || !Target_Combat.IsTargetable)
-            {
-                Target_Transform = null;
-                Target_Combat = null;
-                return;
-            }
-
-            float Target_Distance = (Target_Transform.position - transform.position).sqrMagnitude;
-
-            if (Target_Distance > Auto_Aim_Distance)
-            {
-                Target_Transform = null;
-                Target_Combat = null; // [통합 추가]
-                return;
-            }
-
-            return;
-        }
-
         SearchTimer -= Time.deltaTime;
 
         if (SearchTimer <= 0f)
@@ -105,36 +66,16 @@ public class FindEnemy : MonoBehaviour
 
     private void FindClosestTarget()
     {
-        float Closest_Distance = Auto_Aim_Distance;
+        float Closest_Distance = Range.range * Range.range;
         Transform Closest_Target = null;
         ICombatTarget Closest_Combat = null; // [통합 추가]
 
-        /* 기존 코드: 태그 "Enemy"로 찾기. 실제 적은 태그가 없어 찾지 못한다.
-        GameObject[] Enemies = GameObject.FindGameObjectsWithTag("Enemy");
-
-        for (int i = 0; i < Enemies.Length; i++)
-        {
-            GameObject Enemy = Enemies[i];
-
-            if (Enemy == null || !Enemy.activeInHierarchy)
-                continue;
-
-            float Distance = (Enemy.transform.position - transform.position).sqrMagnitude;
-
-            if (Distance < Closest_Distance)
-            {
-                Closest_Distance = Distance;
-                Closest_Target = Enemy.transform;
-            }
-        }
-        */
-
         // [통합 수정] 사거리 안 콜라이더 → 전투 대상. 트리거(사거리 표시 등)는 무시한다.
-        int Count = Physics.OverlapSphereNonAlloc(transform.position, Auto_Aim_Range, Search_Buffer, Target_Mask, QueryTriggerInteraction.Ignore);
+        int Count = Physics.OverlapSphereNonAlloc(transform.position, Range.range, Range.detect_buffer, Target_Mask, QueryTriggerInteraction.Ignore);
 
         for (int i = 0; i < Count; i++)
         {
-            ICombatTarget Enemy = Search_Buffer[i].GetComponentInParent<ICombatTarget>();
+            ICombatTarget Enemy = Range.detect_buffer[i].GetComponentInParent<ICombatTarget>();
 
             // 전투 대상이 아니거나, 공격할 수 없거나(죽는 중 등), 같은 편이면 건너뛴다.
             if (Enemy == null || !Enemy.IsTargetable || Enemy.FactionId == Faction)
