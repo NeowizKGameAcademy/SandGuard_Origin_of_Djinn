@@ -1,4 +1,5 @@
 using System;
+using SandGuard.Skills.Unity;
 using System.Collections.Generic;
 using DesertTower.Levels;
 using DesertTower.VFX;
@@ -17,6 +18,25 @@ namespace SandGuard.Facility
     public sealed class FacilityBuildService : MonoBehaviour, IFacilityBuilder, IFacilityMaintenance, IGameStateReader
     {
         public FacilityCatalog catalog;
+        [Tooltip("실제 게임에서는 켜 두세요. 끄면 독립 시설 테스트용으로 해금 검사를 생략합니다.")]
+        public bool requireSkillUnlock = true;
+        public SkillTreeSession skillSession;
+        bool sessionWasBound;
+        public bool IsUnlocked(string facilityId)
+        {
+            var definition=catalog!=null?catalog.Find(facilityId):null;
+            if(definition==null)return false;
+            if(!requireSkillUnlock)return true;
+            if(!skillSession && !sessionWasBound)
+            {
+                SkillTreeSession found=null;int count=0;
+                foreach(var s in FindObjectsByType<SkillTreeSession>(FindObjectsSortMode.None))
+                    if(s.gameObject.scene==gameObject.scene && s.isActiveAndEnabled){found=s;count++;}
+                if(count==1)skillSession=found;
+            }
+            if(skillSession)sessionWasBound=true;
+            return TowerUnlockPolicy.IsUnlocked(skillSession && skillSession.isActiveAndEnabled?skillSession.Service:null,definition.id,definition.requiredSkillId);
+        }
         [Tooltip("비우면 씬에서 찾는다")]
         public LevelRoot level;
         [Tooltip("시설 프리팹의 VfxPopIn에 완료 이펙트가 없을 때 쓰는 기본값(VFX_Build_Complete)")]
@@ -81,6 +101,9 @@ namespace SandGuard.Facility
         public BuildResult TryBuild(PlacementRequest request)
         {
             if (registry == null || catalog == null) return BuildResult.Failed(ActionFailure.InvalidRequest, PlacementResult.Denied(PlacementFailure.InvalidRequest));
+            // Reject before reservations, spawning or slot occupancy, including direct API calls.
+            if (!IsUnlocked(request.FacilityId))
+                return BuildResult.Failed(ActionFailure.Locked, PlacementResult.Denied(PlacementFailure.Locked));
             PlacementResult placement = validator.Validate(request);
             if (!placement.CanPlace) return BuildResult.Failed(Map(placement.Failure), placement);
             if (request.Kind != PlacementKind.DesignatedSlot) // 자유 배치는 아직 없다.

@@ -10,6 +10,8 @@ namespace SandGuard.Facility
     {
         [Tooltip("PlacementRequest와 슬롯 허용 목록에 쓰는 시설 종류 ID")]
         public string id = "cobra";
+        [Tooltip("필요한 스킬 ID. 비우면 tower. + 시설 ID를 사용합니다.")]
+        public string requiredSkillId;
         public string displayName = "화염 코브라";
         [Tooltip("슬롯 위에 생성되는 프리팹. 루트 스케일 1, 바닥 원점, 정면 +Z")]
         public GameObject prefab;

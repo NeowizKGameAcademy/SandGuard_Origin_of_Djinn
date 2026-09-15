@@ -21,6 +21,7 @@ namespace SandGuard.UI.HUD
 
         PlayerHealth health; PlayerManaWallet mana; PlayerProgression progression; PlayerMotor motor; PlayerSkillCaster caster;
         EnemyBossInfo boss;
+        SkillTreeHUDLink skillTreeLink;
         // 마지막으로 그린 값. NaN이면 아직 그리지 않았다.
         float hp = float.NaN, hpMax, coreValue = float.NaN, coreMax, bossHp = float.NaN, bossMax;
         int mp = -1, mpMax, level = -1, exp, expNeed, waveNumber = -1;
@@ -31,6 +32,9 @@ namespace SandGuard.UI.HUD
 
         void Start()
         {
+            // The link owns only skill slots. Health, mana, XP and encounter HUD remain here.
+            skillTreeLink=GetComponent<SkillTreeHUDLink>();
+            if(skillTreeLink==null)skillTreeLink=gameObject.AddComponent<SkillTreeHUDLink>();
             if (player == null) { var found = FindAnyObjectByType<PlayerHealth>(); if (found != null) player = found.gameObject; }
             if (player != null)
             {
@@ -80,6 +84,7 @@ namespace SandGuard.UI.HUD
 
         void RefreshSkills()
         {
+            if(skillTreeLink!=null && skillTreeLink.OwnsSlots)return;
             if (caster != null)
             {
                 Combat(0, hud.CombatSkills.Q, PlayerSkillCaster.Burst);

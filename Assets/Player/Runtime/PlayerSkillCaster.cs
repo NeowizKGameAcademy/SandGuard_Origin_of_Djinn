@@ -45,9 +45,11 @@ namespace SandGuard.Player
         [Min(0.1f)] public float stormVfxRadius = 1f;
         readonly float[] cooldowns = new float[3];
         public const int Burst = 0, Vortex = 1, Storm = 2;
-        public bool BurstUnlocked => attack != null && attack.SandBurst;
-        public bool VortexUnlocked => Flag(PlayerStat.SandVortex);
-        public bool StormUnlocked => Flag(PlayerStat.SandStorm);
+        public Func<int,bool> SkillTreeAllowed;
+        public Action<int> SkillTreeInput;
+        public bool BurstUnlocked => SkillTreeAllowed!=null?SkillTreeAllowed(Burst):attack != null && attack.SandBurst;
+        public bool VortexUnlocked => SkillTreeAllowed!=null?SkillTreeAllowed(Vortex):Flag(PlayerStat.SandVortex);
+        public bool StormUnlocked => SkillTreeAllowed!=null?SkillTreeAllowed(Storm):Flag(PlayerStat.SandStorm);
         public float VortexRadius => Stat(PlayerStat.VortexRadius, vortexRadius);
         public float VortexDuration => Stat(PlayerStat.VortexDuration, vortexDuration);
         public float StormRadius => Stat(PlayerStat.StormRadius, stormRadius);
@@ -79,7 +81,7 @@ namespace SandGuard.Player
         void OnEnable() { if (input != null) input.SkillPressed += OnSkill; }
         void OnDisable() { if (input != null) input.SkillPressed -= OnSkill; }
         void Update() { for (int i = 0; i < cooldowns.Length; i++) cooldowns[i] = Mathf.Max(0f, cooldowns[i] - Time.deltaTime); }
-        void OnSkill(int slot) => TryCast(slot);
+        void OnSkill(int slot) { if(SkillTreeInput!=null)SkillTreeInput(slot);else TryCast(slot); }
 
         /// <summary>부활 등으로 자원을 회복할 때 쿨다운을 지운다.</summary>
         public void ResetCooldowns() => Array.Clear(cooldowns, 0, cooldowns.Length);
