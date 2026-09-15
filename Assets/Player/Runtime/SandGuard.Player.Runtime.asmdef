@@ -1,4 +1,12 @@
 {
   "name": "SandGuard.Player.Runtime",
-  "references": ["DesertTower.Gameplay.Abstractions", "DesertTower.Combat.Runtime", "DesertTower.Levels.Runtime", "DesertTower.VFX.Runtime", "Unity.InputSystem", "UnityEngine.UI"]
+  "references": [
+    "DesertTower.Gameplay.Abstractions",
+    "DesertTower.Combat.Runtime",
+    "DesertTower.Levels.Runtime",
+    "DesertTower.VFX.Runtime",
+    "Unity.InputSystem",
+    "UnityEngine.UI",
+    "SandGuard.Skills.Core"
+  ]
 }

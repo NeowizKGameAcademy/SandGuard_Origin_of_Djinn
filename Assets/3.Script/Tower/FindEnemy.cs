@@ -50,6 +50,10 @@ public class FindEnemy : MonoBehaviour
     private void OnEnable()
     {
         TryGetComponent(out Range);
+
+        if (Range == null)
+            Range = GetComponentInParent<DetectRange>();
+
         Owner = GetComponentInParent<ICombatTarget>(); // [통합 추가]
     }
 
