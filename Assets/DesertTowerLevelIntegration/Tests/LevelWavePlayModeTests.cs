@@ -1,6 +1,7 @@
 #if UNITY_EDITOR
 using System;
 using System.Collections;
+using System.Linq;
 using DesertTower.Levels;
 using SandGuard.Waves;
 using NUnit.Framework;
@@ -67,6 +68,7 @@ namespace DesertTower.LevelIntegration.Tests
 
             IWaveStateReader wave = director;
             IGameStateReader game = director;
+            CollectionAssert.IsEmpty(director.ValidateSetup(), "씬 설정 검증에 오류가 있다.");
             Assert.AreEqual(GamePhase.Preparation, game.Phase, "준비 중에는 Preparation이어야 한다.");
             Assert.False(game.IsPaused, "timeScale이 1이면 일시정지가 아니다.");
             Assert.AreEqual(root.waves.waves.Count, wave.TotalWaves, "전체 웨이브 수가 WaveSet과 달라졌다.");
@@ -112,6 +114,59 @@ namespace DesertTower.LevelIntegration.Tests
                 "준비 단계가 끝나도록 예비 개체가 하나도 만들어지지 않았다.");
             Assert.AreEqual(RunState.Preparing, director.State, "아직 준비 단계여야 한다.");
             Assert.AreEqual(0, factory.pool.ActiveCount, "예비 개체는 활성으로 세지 않는다.");
+        }
+
+        /// <summary>
+        /// 몸통이 큰 적을 두 입구에서 몰아넣어도 전원이 코어까지 가는지 본다. 한 마리만 도착해도 통과하던
+        /// 기존 확인으로는 노드에서 서로 밀어내 멈춘 적을 잡지 못했다. 씬의 웨이브는 기획 데이터이므로 건드리지 않고
+        /// 이 테스트만의 웨이브를 잠시 끼워 넣는다.
+        /// </summary>
+        [UnityTest] public IEnumerator HeavyEnemiesAllReachCoreWhenCrowded()
+        {
+            yield return LoadLevel(5f);
+            var director = Director();
+            var root = UnityEngine.Object.FindFirstObjectByType<LevelRoot>();
+            var core = UnityEngine.Object.FindFirstObjectByType<CoreReceiver>();
+            Assert.NotNull(core, "코어 수신부가 있어야 한다.");
+            string Marker(string label) => root.Markers.First(m => m.label == label).id;
+            string coreId = root.Markers.First(m => m.kind == MarkerKind.Core).id;
+            SpawnGroup Group(string spawn, string key, int count, float delay, float interval) => new SpawnGroup
+                { spawnId = Marker(spawn), targetId = coreId, enemyKey = key, count = count, delay = delay, interval = interval };
+
+            var heavy = ScriptableObject.CreateInstance<WaveSet>();
+            var wave = new Wave { label = "혼잡 확인", preparationSeconds = 0.5f };
+            // 동쪽 두 입구는 2층 T5에서 합류한다. 1층과 합류 지점 양쪽에서 몸통 큰 적이 겹친다.
+            wave.groups.Add(Group("NE Spawn", "bandit.shieldguard", 4, 0f, 0.4f));
+            wave.groups.Add(Group("SE Spawn", "bandit.hammerbrute", 3, 0f, 0.4f));
+            wave.groups.Add(Group("NE Spawn", "bandit.chief", 2, 1f, 0.6f));
+            heavy.waves.Add(wave);
+            int planned = wave.groups.Sum(g => g.count);
+
+            float totalDamage = 0f;
+            foreach (var g in wave.groups)
+                totalDamage += director.catalog.Find(g.enemyKey).prefab.GetComponent<ActorBridge>().coreDamage * g.count;
+            Assume.That(totalDamage < core.Current, "이 테스트의 적이 코어를 먼저 쓰러뜨리면 전원 도착을 볼 수 없다. 코어 피해량 " + totalDamage + " / 코어 " + core.Current);
+
+            var original = root.waves;
+            try
+            {
+                director.StopRun();
+                root.waves = heavy;
+                director.Begin();
+                yield return UntilRealtime(() => director.State == RunState.Running, 15f, "전투로 넘어가지 않았다. " + director.LastError);
+                yield return UntilRealtime(() => director.State != RunState.Running && director.State != RunState.Preparing, 300f,
+                    "적이 코어로 가지 못하고 남아 있다. Spawned=" + director.TotalSpawned + " Absorbed=" + director.Absorbed
+                    + " Killed=" + director.Killed + "\n" + director.DescribeActors());
+                Assert.AreEqual(RunState.Won, director.State, "끝 상태가 승리가 아니다: " + director.LastError);
+                Assert.AreEqual(planned, director.TotalSpawned, "계획한 수만큼 나오지 않았다.");
+                Assert.AreEqual(planned, director.Absorbed + director.Killed, "전원이 처리되지 않았다.");
+            }
+            finally
+            {
+                director.StopRun();
+                root.waves = original;
+                UnityEngine.Object.Destroy(heavy);
+            }
         }
 
         [UnityTest] public IEnumerator EnemiesClimbToCoreAndAreAbsorbed()

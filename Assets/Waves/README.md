@@ -9,6 +9,7 @@
 1. `LevelRoot.waves`(WaveSet) → 웨이브마다 `preparationSeconds` 카운트다운. 이 동안 다음 웨이브가 쓸 적을 **프레임당 하나씩 미리 만들어** 풀에 쌓는다
 2. 전투: 그룹마다 `delay` 뒤 `count`마리를 `interval` 간격으로 스폰. 위치는 `spawnId` 마커의 **정확한 좌표**(나선 지형에서 NavMesh 샘플링이 아래층으로 새는 것을 막는다)
 3. 이동: `RouteGraph` 노드를 따라 층을 올라가고, 노드와 노드 사이는 NavMesh가 건는다. 분기는 `RouteLink.weight` 가중 무작위. 그룹에 `routeId`가 있으면 그 `LevelRoute`의 웨이포인트를 그대로 따른다
+   - 노드 도착 판정(`arrivalRadius`)은 **발밑 플랫폼 크기**로 잡는다. 한 점으로 두면 몸통 큰 적(방패병·망치병·우두머리)이 몰릴 때 회피가 서로를 원 밖으로 밀어내 영영 도착하지 못한다. 가장 큰 적의 반경보다 작은 노드는 `ValidateSetup`이 오류로 막는다
 4. 코어 도착 → `ILevelCoreReceiver.TryAbsorb`로 피해를 넘기고 적은 풀로 돌아간다
 5. 모든 그룹이 소진되고 생존이 0이면 다음 웨이브. 마지막 웨이브 뒤 `Won`
 6. 제거된 적은 `EnemyPool`에 비활성 보관 → 다음 스폰에서 `ResetForReuse`(새 EntityId·체력·NavMesh 위치·상태·애니메이터)로 되살림
@@ -42,7 +43,7 @@
 |---|---|
 | `SandGuard > Waves > Create Missing Assets` | 없는 에셋만 생성. **기존 웨이브 구성·요소·카탈로그 항목은 건드리지 않음** |
 | `SandGuard > Waves > Reset Canyon Waves To Code Defaults` | 협곡 웨이브를 코드 기본값으로 되돌림. 확인 대화상자 있음 |
-| `Tools > Desert Tower > Wire Level Scene — 검사만 / 적용` | Level 씬의 코어 배선·마커 정렬·카탈로그 연결. 멱등 |
+| `Tools > Desert Tower > Wire Level Scene — 검사만 / 적용` | Level 씬의 코어 배선·마커 정렬·카탈로그·풀·프리워밍 수, **노드 도착 반경·높이 허용치**(노드 주변 NavMesh를 격자로 훑어 같은 높이로 이어진 플랫폼 크기의 90%). 멱등. 지형·노드를 옮기면 다시 돌린다 |
 | `Tools > Desert Tower > Enemy Bridge — 검사만 / 적용` | 적 기반 프리팹의 `ActorBridge` 부착·중복 정리 |
 
 ## 풀 재사용에 필요한 적 쪽 훅
@@ -64,6 +65,7 @@
 - `SceneEntersPreparationAndReportsWaveState` — 준비 단계 진입, 상태 계약 전부(`Phase`·`WaveNumber`·`PendingEnemyCount`·`PreparationSecondsRemaining`·`NextRouteIds`)
 - `PreparationPrewarmsThePool` — 풀이 씬에 배치돼 있고, 전투 시작 **전에** 예비 개체가 쌓이는지
 - `PreparationEndsAndEnemiesSpawn` — 준비→전투 전환, 실제 스폰, `Changed` 이벤트
+- `HeavyEnemiesAllReachCoreWhenCrowded` — 방패병·망치병·우두머리를 두 입구에서 몰아넣어도 **전원**이 코어까지 간다. 옛 반경(0.5)에서는 4마리가 T1에서 영구 정체하는 것을 재현해 확인했다
 - `EnemiesClimbToCoreAndAreAbsorbed` — 0층 스폰에서 5층 코어까지 올라가 흡수
 
 **`Assets/Waves/Tests/EnemyPoolTests.cs`** — 풀 자체. 실행기 구조에 기대지 않습니다.

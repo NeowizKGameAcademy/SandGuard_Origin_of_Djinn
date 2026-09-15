@@ -31,6 +31,7 @@ namespace SandGuard.Enemy.Tests
             if (bombSkill) bombSkill.enabled = false; // 방패/근접 회귀 검증은 폭탄과 독립적으로 실행한다.
             skill = chief.GetComponent<ChiefGoldenShieldSkill>(); Assert.NotNull(skill);
             skill.summonDuration = .1f; skill.activeDuration = .5f; skill.cooldown = .2f;
+            skill.healthThreshold = 1f; // 방패 동작 자체는 시전 체력 조건과 떼어 검증한다. 조건은 전용 테스트가 본다.
             health = chief.GetComponent<EnemyHealth>(); brain = chief.GetComponent<EnemyBrain>();
             brain.AIEnabled = false; // 준비 프레임에서 먼저 자동 발동하지 않도록 한다.
             targetObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -51,7 +52,7 @@ namespace SandGuard.Enemy.Tests
             while (!condition() && Time.time < deadline) yield return null;
             Assert.True(condition(), message);
         }
-        [UnityTest] public IEnumerator BrainCastsBlocksThenResumesMeleeAndRecasts()
+        [UnityTest] public IEnumerator BrainCastsBlocksThenResumesMeleeAndIsNotRecast()
         {
             brain.AIEnabled = true;
             Assert.False(skill.shield.enabled);
@@ -72,8 +73,44 @@ namespace SandGuard.Enemy.Tests
             Assert.False(skill.shield.enabled);
             Assert.True(health.TakeDamage(Hit(Vector3.back)).WasApplied);
             yield return Until(() => target.HitCount > 0, "Melee resumes after summon");
-            yield return Until(() => skill.CastCount >= 2, "AI casts again after cooldown");
+            // 한 생애에 한 번만 쓴다. 쿨다운(0.2초)이 몇 번 지나도 다시 소환하지 않는다.
+            yield return new WaitForSeconds(1f);
+            Assert.AreEqual(1, skill.CastCount, "쿨다운 뒤에도 다시 쓰지 않는다");
+            Assert.True(skill.IsSpent);
+            Assert.False(skill.TryUse(target));
         }
+        [Test] public void ChiefPrefabShieldLastsTwentySecondsAndBothSkillsAreUsedOnce()
+        {
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Enemy/Generated/Enemy_Chief.prefab");
+            var shieldRules = prefab.GetComponent<ChiefGoldenShieldSkill>();
+            var bombRules = prefab.GetComponent<ChiefBombThrowSkill>();
+            Assert.AreEqual(20f, shieldRules.activeDuration, "황금 방패는 20초 유지된다");
+            Assert.AreEqual(1, shieldRules.maxUses, "황금 방패는 한 번만 쓴다");
+            Assert.AreEqual(0.5f, shieldRules.healthThreshold, "황금 방패는 체력의 절반을 잃은 뒤 쓴다");
+            Assert.AreEqual(1, bombRules.maxUses, "철거 폭탄은 한 번만 던진다");
+        }
+
+        [UnityTest] public IEnumerator ShieldWaitsUntilHalfHealthIsLost()
+        {
+            skill.healthThreshold = 0.5f;
+            brain.AIEnabled = true;
+            float max = health.MaxHealth;
+            Assert.False(skill.TryUse(target), "체력이 가득하면 시전하지 않는다");
+            brain.Think();
+            Assert.AreEqual(ChiefGoldenShieldSkill.Phase.Ready, skill.State, "브레인도 체력이 충분하면 방패를 꺼내지 않는다");
+
+            health.TakeDamage(new DamageInfo(max * 0.4f, "World"));
+            Assert.Greater(health.CurrentHealth, max * 0.5f);
+            Assert.False(skill.TryUse(target), "절반보다 덜 잃었으면 아직 시전하지 않는다");
+
+            health.TakeDamage(new DamageInfo(max * 0.15f, "World"));
+            Assert.LessOrEqual(health.CurrentHealth, max * 0.5f);
+            chief.GetComponent<EnemyMeleeAttack>().Cancel(); // 첫 판단에서 시작한 휘두르기는 시전을 막으므로 끊는다
+            brain.Think();
+            Assert.AreEqual(ChiefGoldenShieldSkill.Phase.Summoning, skill.State, "절반을 잃으면 다음 판단에서 방패를 꺼낸다");
+            yield return null;
+        }
+
         [UnityTest] public IEnumerator DeathAndReuseClearShieldAndResetCooldown()
         {
             brain.AIEnabled = true;

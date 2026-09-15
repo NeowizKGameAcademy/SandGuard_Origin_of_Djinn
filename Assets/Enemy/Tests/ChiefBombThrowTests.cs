@@ -27,6 +27,7 @@ namespace SandGuard.Enemy.Tests
             skill = chief.GetComponent<ChiefBombThrowSkill>(); Assert.NotNull(skill);
             targetObject = GameObject.CreatePrimitive(PrimitiveType.Cube); targetObject.transform.position = new Vector3(0, 1, 5);
             target = targetObject.AddComponent<EnemyTestTarget>(); target.maxHealth = 10000;
+            target.kind = CombatTargetKind.Tower; // 철거 폭탄은 타워에만 던진다
             targetObject.AddComponent<SphereCollider>(); // 복수 충돌체에도 한 번만 피해
             Physics.SyncTransforms();
         }
@@ -107,6 +108,7 @@ namespace SandGuard.Enemy.Tests
         [UnityTest] public IEnumerator BrainUsesShieldThenBombAndExplosionIgnoresFriendlies()
         {
             var shield = chief.GetComponent<ChiefGoldenShieldSkill>(); shield.summonDuration = .1f;
+            shield.healthThreshold = 1f; // 방패→폭탄 순서를 보는 테스트라 시전 체력 조건은 풀어 둔다
             brain.AIEnabled = true; brain.Think();
             Assert.True(shield.IsCasting); Assert.False(skill.IsCasting);
             yield return Until(() => skill.IsCasting, "Brain chooses bomb after shield summon");
@@ -118,7 +120,30 @@ namespace SandGuard.Enemy.Tests
             Assert.AreEqual(0, ally.HitCount);
             yield return Until(() => !skill.IsCasting, "Throw recovery finishes");
             Assert.Greater(skill.CooldownRemaining, 0); Assert.False(skill.TryUse(target));
+            Assert.True(skill.IsSpent, "한 번 던지면 다 쓴 상태다");
         }
+        [UnityTest] public IEnumerator BombIgnoresNonTowersFindsANearbyTowerAndIsUsedOnce()
+        {
+            brain.AIEnabled = true; skill.cooldown = .1f;
+            target.kind = CombatTargetKind.Player;
+            Assert.False(skill.TryUse(target), "사거리 안에 타워가 없으면 플레이어에게는 던지지 않는다");
+            var towerObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            towerObject.transform.position = new Vector3(2, 1, 5);
+            var tower = towerObject.AddComponent<EnemyTestTarget>(); tower.kind = CombatTargetKind.Tower; tower.maxHealth = 10000;
+            Physics.SyncTransforms();
+            try
+            {
+                Assert.True(skill.TryUse(target), "싸우는 상대가 플레이어여도 사거리 안의 타워를 찾아 던진다");
+                Assert.AreSame(tower, skill.AimTarget, "겨냥한 대상은 타워다");
+                yield return Until(() => skill.ThrowCount == 1, "투척");
+                yield return Until(() => !skill.IsCasting, "투척 회복");
+                yield return new WaitForSeconds(.3f); // 쿨다운이 지나도 다시 쓰지 않는다
+                Assert.True(skill.IsSpent);
+                Assert.False(skill.TryUse(tower), "한 번 던지면 다시 던지지 않는다");
+            }
+            finally { Object.Destroy(towerObject); }
+        }
+
         void CaptureThrow()
         {
             var cameraObject = new GameObject("Throw test camera");

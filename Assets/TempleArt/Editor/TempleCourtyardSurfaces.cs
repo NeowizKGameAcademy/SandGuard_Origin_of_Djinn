@@ -73,6 +73,10 @@ public static class TempleCourtyardSurfaces
             string path=Root+"/Rails/"+side+"_Sandstone.mat";
             var mat=AssetDatabase.LoadAssetAtPath<Material>(path);
             if(!mat){mat=new Material(sourceMat);AssetDatabase.CreateAsset(mat,path);}
+            mat.shader=Shader.Find("SandGuard/Architecture/Courtyard Rail Stone");
+            mat.SetColor("_BaseColor",new Color(.76f,.645f,.47f,1));
+            mat.SetFloat("_DetailContrast",.7f);mat.SetFloat("_TextureMidpoint",.35f);
+            mat.SetFloat("_Metallic",0);mat.SetFloat("_Smoothness",.1f);
             mat.SetTexture("_BaseMap",AssetDatabase.LoadAssetAtPath<Texture2D>(texturePath));EditorUtility.SetDirty(mat);materials[side]=mat;
         }
         int count=0;

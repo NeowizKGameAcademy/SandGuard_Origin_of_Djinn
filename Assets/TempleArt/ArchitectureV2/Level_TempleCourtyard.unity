@@ -16389,9 +16389,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: VFX_TempleSandstorm
       objectReference: {fileID: 0}
+    - target: {fileID: 5797303551924873572, guid: c9be3eaf92ea0914b8010e1e520bbe8b, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 4300000, guid: 9eea89b109a72fe47ac508fa41d1fd60, type: 2}
     - target: {fileID: 6647194689567113236, guid: c9be3eaf92ea0914b8010e1e520bbe8b, type: 3}
       propertyPath: animationSpeed
-      value: 0.35
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6868117655499745849, guid: c9be3eaf92ea0914b8010e1e520bbe8b, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -16401,10 +16405,18 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 0f4b213bd5e483641aa2decad2c7010b, type: 2}
+    - target: {fileID: 7980399695418554503, guid: c9be3eaf92ea0914b8010e1e520bbe8b, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 4300000, guid: 8836af0a52b9f054ca854b8173e49e35, type: 2}
     - target: {fileID: 8069665350343077503, guid: c9be3eaf92ea0914b8010e1e520bbe8b, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: b4008ead2c6dd764baee015c03d2afa3, type: 2}
+    - target: {fileID: 9035981616154023974, guid: c9be3eaf92ea0914b8010e1e520bbe8b, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 4300000, guid: 7af4bf43e520b9e418fa446689776e45, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -24584,7 +24596,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab6f98e8ed8f3b7438ee19c78c9e2175, type: 3}
   m_Name: 
   m_EditorClassIdentifier: DesertTower.VFX.Runtime::DesertTower.VFX.TempleSandstorm
-  animationSpeed: 0.35
+  animationSpeed: 2
   animate: 1
   previewTime: 12
   sandLayers:
@@ -24644,7 +24656,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1030826290}
-  m_Mesh: {fileID: 4300000, guid: dd41251129a90034ca4a45277411d807, type: 2}
+  m_Mesh: {fileID: 4300000, guid: 7d092aa38046a214cba646cb035e068f, type: 2}
 --- !u!4 &1030826294
 Transform:
   m_ObjectHideFlags: 0

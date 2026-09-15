@@ -14,6 +14,8 @@ namespace SandGuard.Enemy
         public Vector3 localPosition;
         public Vector3 localEulerAngles;
         public Vector3 localScale = Vector3.one;
+        /// <summary>모델이 EnemyScaleBuilder로 커진 배율. 사람 크기(1) 기준으로 잡은 오프셋·연출을 몸에 맞출 때 곱한다.</summary>
+        public float BodyScale => Mathf.Max(0.01f, localScale.x);
         public EnemyMotor motor;
         public EnemyHealth health;
         [Header("애니메이터 파라미터 — 없으면 생략")]

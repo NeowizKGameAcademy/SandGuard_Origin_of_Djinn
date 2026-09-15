@@ -111,18 +111,19 @@ public static class TempleCourtyardAtmosphere {
   // Fade the existing visual seal, keeping every original transform and collider.
   int layers=0;
   foreach(var storm in Object.FindObjectsByType<DesertTower.VFX.TempleSandstorm>(FindObjectsSortMode.None)) {
-   storm.animationSpeed=.35f;EditorUtility.SetDirty(storm);
+   storm.animationSpeed=2f;EditorUtility.SetDirty(storm);
    foreach(var renderer in storm.GetComponentsInChildren<Renderer>(true)) {
     var source=renderer.sharedMaterial;if(!source)continue;
     string name="Dust_"+renderer.GetInstanceID();
     // Stable hierarchy-derived name makes regeneration reuse the same asset.
     name="Dust_"+storm.name.Replace(" ","_").Replace(":","_")+"_"+renderer.name.Replace(" ","_").Replace(":","_");
     var mat=CopyMaterial(name,source);mat.shader=Shader.Find("SandGuard/VFX/TempleSandstorm");
-    mat.SetFloat("_Opacity",.16f);mat.SetFloat("_FlowSpeed",.45f);
+    mat.SetFloat("_Opacity",.48f);mat.SetFloat("_FlowSpeed",1.5f);
     mat.SetColor("_DarkColor",new Color(.58f,.43f,.29f,1));mat.SetColor("_LightColor",new Color(.91f,.77f,.56f,1));
     mat.renderQueue=3000;renderer.sharedMaterial=mat;renderer.shadowCastingMode=ShadowCastingMode.Off;
     PrefabUtility.RecordPrefabInstancePropertyModifications(renderer);EditorUtility.SetDirty(mat);layers++;
    }
+   TempleStormTuning.Configure(storm);
   }
   foreach(var light in Object.FindObjectsByType<Light>(FindObjectsSortMode.None).Where(l=>l.type==LightType.Directional&&l.name!="Dunes - Sky Fill")) {
    light.transform.rotation=Quaternion.Euler(32,-38,0);light.intensity=1.45f;light.color=new Color(1,.90f,.73f);light.shadows=LightShadows.Soft;light.shadowStrength=.85f;

@@ -35,7 +35,9 @@ public static class TempleCourtyardBuilder
         var shader=Shader.Find("SandGuard/Architecture/Courtyard Stone")??Shader.Find("SandGuard/Architecture/Weathered Stone");
         if(!m){m=new Material(shader){name=name};AssetDatabase.CreateAsset(m,path);}else m.shader=shader;
         m.SetColor("_BaseColor",color);
-        m.SetFloat("_Smoothness",glaze?.17f:.10f);m.SetFloat("_Metallic",name.Contains("Bronze")?.45f:0);
+        m.SetFloat("_Smoothness",name.Contains("Bronze")?.28f:(glaze?.22f:.10f));m.SetFloat("_Metallic",name.Contains("Bronze")?.65f:0);
+        m.SetFloat("_OrnamentWeathering",glaze?.75f:0);
+        m.SetColor("_PatinaColor",name.Contains("Bronze")?new Color(.19f,.30f,.23f):new Color(.31f,.46f,.38f));
         m.SetColor("_JointColor",color*.83f);m.SetFloat("_Masonry",glaze?0:masonry);m.SetFloat("_Variation",glaze?.06f:(name.Contains("Paving")?.22f:.18f));m.SetVector("_BlockSize",name.Contains("Paving")?new Vector4(3.8f,2.1f,0,0):new Vector4(2.8f,1.25f,0,0));m.SetFloat("_JointWidth",.018f);
         m.SetTexture("_WeatherMap",AssetDatabase.LoadAssetAtPath<Texture2D>(Root+"/StoneWeather.png"));m.SetFloat("_BumpStrength",.28f);
         if(name=="Temple_Sand"){m.SetFloat("_IsSand",1);m.SetTexture("_SurfaceMap",AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/TempleArt/Terrain/Textures/Sand_BaseColor.png"));}
@@ -55,7 +57,7 @@ public static class TempleCourtyardBuilder
             if(PrefabUtility.IsPartOfPrefabInstance(temple))PrefabUtility.UnpackPrefabInstance(PrefabUtility.GetOutermostPrefabInstanceRoot(temple),PrefabUnpackMode.Completely,InteractionMode.AutomatedAction);
             var old=temple.Find(DressName);if(old)Object.DestroyImmediate(old.gameObject);
             var oldRoutes=temple.Find("Original walking collision");if(oldRoutes)Object.DestroyImmediate(oldRoutes.gameObject);
-            var palette=new[]{Mat("Temple_Sandstone",new Color(.76f,.645f,.47f)),Mat("Temple_Limestone",new Color(.85f,.77f,.61f),.65f),Mat("Temple_Recess",new Color(.31f,.24f,.16f),.1f),Mat("Temple_Paving",new Color(.75f,.64f,.48f),1f),Mat("Temple_Turquoise",new Color(.10f,.29f,.265f)),Mat("Temple_Bronze",new Color(.41f,.285f,.13f)),Mat("Temple_Sand",Color.white,0)}.ToDictionary(m=>m.name);
+            var palette=new[]{Mat("Temple_Sandstone",new Color(.76f,.645f,.47f)),Mat("Temple_Limestone",new Color(.85f,.77f,.61f),.65f),Mat("Temple_Recess",new Color(.31f,.24f,.16f),.1f),Mat("Temple_Paving",new Color(.75f,.64f,.48f),1f),Mat("Temple_Turquoise",new Color(.13f,.36f,.32f)),Mat("Temple_Bronze",new Color(.52f,.37f,.16f)),Mat("Temple_Sand",Color.white,0)}.ToDictionary(m=>m.name);
             foreach(var kind in new[]{"wall-deco","wall-deco-anubis","god-la","la-dragon","osiris-dragon","obelisk-giant"}){
                 string texturePath=Root+"/Relief_"+kind+".png";
                 if(!File.Exists(texturePath))File.Copy("Docs/model-art/"+kind+".png",texturePath);

@@ -2777,7 +2777,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: DesertTower.Levels.Runtime::DesertTower.Levels.LevelRoot
   levelName: Desert Tower Level
   gridSize: 1
-  waves: {fileID: 11400000, guid: 4dd76a9d56cdf124a9094f6073464295, type: 2}
+  waves: {fileID: 11400000, guid: e45eb8b505cc0f447904f87761db0904, type: 2}
   elementCatalog: {fileID: 11400000, guid: 79807e7040f1893429c3e8803643f6b0, type: 2}
   lastBakeUtc: 2026-09-10 03:58:54Z
 --- !u!4 &1869011763
@@ -3545,6 +3545,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1869011763}
     m_Modifications:
+    - target: {fileID: 673091648156478182, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
+      propertyPath: arrivalRadius
+      value: 5.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 673091648156478182, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
+      propertyPath: heightTolerance
+      value: 0.65
+      objectReference: {fileID: 0}
+    - target: {fileID: 2013683312565566381, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
+      propertyPath: arrivalRadius
+      value: 6.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 2013683312565566381, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
+      propertyPath: heightTolerance
+      value: 0.6
+      objectReference: {fileID: 0}
     - target: {fileID: 2544806748085938965, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
       propertyPath: m_LocalPosition.x
       value: -2.02661
@@ -3557,6 +3573,14 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 0.85
       objectReference: {fileID: 0}
+    - target: {fileID: 3322431036388404526, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
+      propertyPath: arrivalRadius
+      value: 6.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 3322431036388404526, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
+      propertyPath: heightTolerance
+      value: 0.65
+      objectReference: {fileID: 0}
     - target: {fileID: 3448926556712515526, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
       propertyPath: pool
       value: 
@@ -3565,9 +3589,81 @@ PrefabInstance:
       propertyPath: prewarmPerPrefab
       value: 8
       objectReference: {fileID: 0}
+    - target: {fileID: 3625429444686599254, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
+      propertyPath: arrivalRadius
+      value: 5.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 3625429444686599254, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
+      propertyPath: heightTolerance
+      value: 0.65
+      objectReference: {fileID: 0}
+    - target: {fileID: 4255690789476090402, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
+      propertyPath: arrivalRadius
+      value: 5.65
+      objectReference: {fileID: 0}
+    - target: {fileID: 4255690789476090402, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
+      propertyPath: heightTolerance
+      value: 0.65
+      objectReference: {fileID: 0}
     - target: {fileID: 4608032317268764644, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
       propertyPath: m_Name
       value: GraphIntegration
+      objectReference: {fileID: 0}
+    - target: {fileID: 4719616613749036436, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
+      propertyPath: arrivalRadius
+      value: 5.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 4719616613749036436, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
+      propertyPath: heightTolerance
+      value: 0.65
+      objectReference: {fileID: 0}
+    - target: {fileID: 4786486749409712378, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
+      propertyPath: arrivalRadius
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4786486749409712378, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
+      propertyPath: heightTolerance
+      value: 0.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 4989674833150764728, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
+      propertyPath: arrivalRadius
+      value: 5.85
+      objectReference: {fileID: 0}
+    - target: {fileID: 4989674833150764728, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
+      propertyPath: heightTolerance
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5587377520207479626, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
+      propertyPath: arrivalRadius
+      value: 6.85
+      objectReference: {fileID: 0}
+    - target: {fileID: 5587377520207479626, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
+      propertyPath: heightTolerance
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6261454956841857888, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
+      propertyPath: arrivalRadius
+      value: 5.65
+      objectReference: {fileID: 0}
+    - target: {fileID: 6261454956841857888, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
+      propertyPath: heightTolerance
+      value: 0.65
+      objectReference: {fileID: 0}
+    - target: {fileID: 6299483712473558420, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
+      propertyPath: arrivalRadius
+      value: 6.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 6299483712473558420, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
+      propertyPath: heightTolerance
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 6378878777631025218, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
+      propertyPath: arrivalRadius
+      value: 6.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 6378878777631025218, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
+      propertyPath: heightTolerance
+      value: 0.75
       objectReference: {fileID: 0}
     - target: {fileID: 6497633374297665909, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
       propertyPath: catalog
@@ -3581,10 +3677,34 @@ PrefabInstance:
       propertyPath: startAutomatically
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6772295335057425392, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
+      propertyPath: arrivalRadius
+      value: 5.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 6772295335057425392, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
+      propertyPath: heightTolerance
+      value: 0.65
+      objectReference: {fileID: 0}
+    - target: {fileID: 7117028460697831494, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
+      propertyPath: arrivalRadius
+      value: 7.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 7117028460697831494, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
+      propertyPath: heightTolerance
+      value: 0.85
+      objectReference: {fileID: 0}
     - target: {fileID: 7329238922625864213, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
       propertyPath: level
       value: 
       objectReference: {fileID: 1869011762}
+    - target: {fileID: 7343694806784292229, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
+      propertyPath: arrivalRadius
+      value: 7.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 7343694806784292229, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
+      propertyPath: heightTolerance
+      value: 0.6
+      objectReference: {fileID: 0}
     - target: {fileID: 7347575392112855064, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -3624,6 +3744,22 @@ PrefabInstance:
     - target: {fileID: 7347575392112855064, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7473521570364382750, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
+      propertyPath: arrivalRadius
+      value: 5.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 7473521570364382750, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
+      propertyPath: heightTolerance
+      value: 0.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 8085857453885177053, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
+      propertyPath: arrivalRadius
+      value: 7.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 8085857453885177053, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
+      propertyPath: heightTolerance
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 8087007938291939131, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
       propertyPath: level

@@ -6,6 +6,7 @@ using SandGuard.Waves;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace DesertTower.LevelIntegration.Editor
 {
@@ -19,6 +20,10 @@ namespace DesertTower.LevelIntegration.Editor
         const string CatalogPath = "Assets/2.Model/Prefabs/Level/GamePrefabCatalog.asset";
         /// <summary>ValidateSetup이 코어 마커와 수신 컴포넌트 거리를 1 이내로 요구한다.</summary>
         const float MarkerMatchDistance = 1f;
+        /// <summary>플랫폼에 들어가는 원 반지름에 곱하는 비율. 원이 플랫폼 가장자리에 닿지 않게 살짝 줄인다.</summary>
+        const float PlatformFill = 0.9f;
+        /// <summary>같은 플랫폼으로 묶는 높이 폭. 도착 높이 허용치도 이 폭을 덮어야 원 끝에서 판정이 끊기지 않는다.</summary>
+        const float PlatformBand = 0.4f;
 
         [MenuItem("Tools/Desert Tower/Wire Level Scene — 검사만", false, 20)]
         public static void Inspect() { Run(false); }
@@ -132,6 +137,10 @@ namespace DesertTower.LevelIntegration.Editor
                 }
             }
 
+            // 8) 노드 도착 반경을 발밑 플랫폼 크기에 맞춘다. 적이 많아지면 플랫폼이 거의 꽉 차므로,
+            //    한 점이 아니라 플랫폼 전체를 도착 구역으로 본다.
+            SizeRouteNodes(director.graph, catalog, log, apply);
+
             log.AppendLine("--- ValidateSetup ---");
             List<string> errors = director.ValidateSetup();
             if (errors.Count == 0) log.AppendLine("오류 없음.");
@@ -148,6 +157,121 @@ namespace DesertTower.LevelIntegration.Editor
             Debug.Log(log.ToString());
             // 검사 모드는 아직 배선 전이라 오류가 남아 있는 게 정상이다.
             return true;
+        }
+
+        /// <summary>
+        /// 노드의 도착 반경을 발밑 플랫폼 크기에 맞춘다. 노드 주변을 격자로 훑어 노드와 같은 높이로 이어진
+        /// 걸을 수 있는 칸을 모으고(플랫폼), 노드에서 그 칸들까지 거리의 90% 지점에 PlatformFill을 곱한다.
+        /// 노드가 플랫폼 가장자리나 NavMesh 경계에 찍혀 있어도 플랫폼 전체를 기준으로 잡힌다.
+        /// 몸통이 가장 큰 적이 노드 근처까지는 들어올 수 있도록 하한을 두고, 같은 높이대의 다른 노드와는 겹치지 않게 묶는다.
+        /// </summary>
+        static void SizeRouteNodes(RouteGraph graph, PrefabCatalog catalog, StringBuilder log, bool apply)
+        {
+            if (!graph) { log.AppendLine("  [건너뜀] RouteGraph 없음"); return; }
+            int agentType = 0; float widest = 0f;
+            foreach (var e in catalog.entries)
+            {
+                var agent = e != null && e.role == PrefabRole.Enemy && e.prefab ? e.prefab.GetComponent<NavMeshAgent>() : null;
+                if (!agent) continue;
+                agentType = agent.agentTypeID;
+                var scale = agent.transform.lossyScale;
+                widest = Mathf.Max(widest, agent.radius * Mathf.Max(Mathf.Abs(scale.x), Mathf.Abs(scale.z)));
+            }
+            var filter = new NavMeshQueryFilter { agentTypeID = agentType, areaMask = NavMesh.AllAreas };
+            var nodes = graph.Nodes;
+            int measured = 0;
+            log.AppendLine("--- 노드 도착 반경 (플랫폼 기준, 가장 큰 적 반경 " + widest.ToString("0.00") + ") ---");
+            foreach (var node in nodes.OrderBy(n => n.floor).ThenBy(n => n.label))
+            {
+                Vector3 p = node.transform.position;
+                if (!NavMesh.SamplePosition(p, out var hit, 3f, filter)) { log.AppendLine("  [건너뜀] " + node.label + ": 발밑 3m 안에 NavMesh 없음"); continue; }
+                float extent = PlatformExtent(p, hit.position, filter, out int cells);
+                if (cells == 0) { log.AppendLine("  [건너뜀] " + node.label + ": 플랫폼 칸을 찾지 못함"); continue; }
+                measured++;
+                float offset = new Vector2(p.x - hit.position.x, p.z - hit.position.z).magnitude;
+                float spacing = float.MaxValue;
+                foreach (var other in nodes)
+                {
+                    if (other == node) continue;
+                    Vector3 d = other.transform.position - p;
+                    if (Mathf.Abs(d.y) < 3f) spacing = Mathf.Min(spacing, new Vector2(d.x, d.z).magnitude);
+                }
+                float target = extent * PlatformFill;
+                target = Mathf.Max(target, offset + widest * 2f);
+                if (spacing < float.MaxValue) target = Mathf.Min(target, spacing * 0.45f);
+                target = Mathf.Round(target * 20f) / 20f;
+                float dy = p.y - hit.position.y;
+                // 플랫폼 칸은 발밑 점 기준 ±PlatformBand이고 노드는 거기서 dy만큼 떠 있다. 원 어디서든 판정되도록 덮는다. 줄이지는 않는다.
+                float tolerance = Mathf.Max(node.heightTolerance, Mathf.Ceil((PlatformBand + Mathf.Abs(dy) + 0.15f) * 20f) / 20f);
+                bool needs = Mathf.Abs(node.arrivalRadius - target) > 0.01f || Mathf.Abs(node.heightTolerance - tolerance) > 0.01f;
+                log.AppendLine(Step(apply, needs, node.label + " (층 " + node.floor + "): 반경 " + node.arrivalRadius.ToString("0.##")
+                    + " → " + target.ToString("0.##") + ", 높이 허용 " + node.heightTolerance.ToString("0.##") + " → " + tolerance.ToString("0.##")
+                    + "  [플랫폼 " + cells + "칸, 90% 거리 " + extent.ToString("0.00")
+                    + ", NavMesh 이탈 " + offset.ToString("0.00") + ", 높이차 " + dy.ToString("0.00") + "]"));
+                if (apply && needs)
+                {
+                    var serialized = new SerializedObject(node);
+                    serialized.FindProperty("arrivalRadius").floatValue = target;
+                    serialized.FindProperty("heightTolerance").floatValue = tolerance;
+                    serialized.ApplyModifiedProperties();
+                }
+            }
+            if (measured == 0) log.AppendLine("  경고: 어떤 노드에서도 플랫폼을 재지 못했습니다. 씬의 NavMesh 데이터가 로드됐는지 확인하세요.");
+        }
+
+        /// <summary>
+        /// surface(노드 발밑 NavMesh 점)와 같은 높이로 이어진 걸을 수 있는 격자 칸을 모아, 노드에서의 거리 90% 지점을 돌려준다.
+        /// 경사로를 따라 높이가 변하면 거기서 끊기므로 층의 플랫폼만 잡힌다.
+        /// </summary>
+        static float PlatformExtent(Vector3 node, Vector3 surface, NavMeshQueryFilter filter, out int cells)
+        {
+            const float half = 7f, step = 0.5f, band = PlatformBand;
+            int n = Mathf.RoundToInt(half * 2f / step) + 1;
+            var walkable = new bool[n, n];
+            float ox = node.x - half, oz = node.z - half;
+            for (int i = 0; i < n; i++)
+                for (int j = 0; j < n; j++)
+                {
+                    var g = new Vector3(ox + i * step, surface.y, oz + j * step);
+                    if (!NavMesh.SamplePosition(g, out var h, 0.5f, filter)) continue;
+                    if (Mathf.Abs(h.position.y - surface.y) > band) continue;
+                    if (new Vector2(h.position.x - g.x, h.position.z - g.z).sqrMagnitude > 0.3f * 0.3f) continue;
+                    walkable[i, j] = true;
+                }
+            int si = Mathf.Clamp(Mathf.RoundToInt((surface.x - ox) / step), 0, n - 1);
+            int sj = Mathf.Clamp(Mathf.RoundToInt((surface.z - oz) / step), 0, n - 1);
+            if (!walkable[si, sj])
+            {
+                bool found = false;
+                for (int r = 1; r <= 2 && !found; r++)
+                    for (int di = -r; di <= r && !found; di++)
+                        for (int dj = -r; dj <= r && !found; dj++)
+                        {
+                            int ii = si + di, jj = sj + dj;
+                            if (ii < 0 || jj < 0 || ii >= n || jj >= n || !walkable[ii, jj]) continue;
+                            si = ii; sj = jj; found = true;
+                        }
+                if (!found) { cells = 0; return 0f; }
+            }
+            var seen = new bool[n, n];
+            var queue = new Queue<Vector2Int>();
+            var distances = new List<float>();
+            queue.Enqueue(new Vector2Int(si, sj)); seen[si, sj] = true;
+            while (queue.Count > 0)
+            {
+                var c = queue.Dequeue();
+                float x = ox + c.x * step - node.x, z = oz + c.y * step - node.z;
+                distances.Add(Mathf.Sqrt(x * x + z * z));
+                foreach (var d in new[] { new Vector2Int(1, 0), new Vector2Int(-1, 0), new Vector2Int(0, 1), new Vector2Int(0, -1) })
+                {
+                    int ii = c.x + d.x, jj = c.y + d.y;
+                    if (ii < 0 || jj < 0 || ii >= n || jj >= n || seen[ii, jj] || !walkable[ii, jj]) continue;
+                    seen[ii, jj] = true; queue.Enqueue(new Vector2Int(ii, jj));
+                }
+            }
+            cells = distances.Count;
+            distances.Sort();
+            return distances[Mathf.Clamp(Mathf.FloorToInt(0.9f * (distances.Count - 1)), 0, distances.Count - 1)];
         }
 
         /// <summary>한 웨이브 안에서 같은 프리팹을 가장 많이 쓰는 수. 이만큼 미리 만들어 두면 전투 중 생성이 없다.</summary>

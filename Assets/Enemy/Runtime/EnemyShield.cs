@@ -21,6 +21,8 @@ namespace SandGuard.Enemy
         [Min(0.1f)] public float guardVfxLifetime = 1f;
 
         public int GuardCount { get; private set; }
+        /// <summary>모델이 EnemyScaleBuilder로 커진 배율. 사람 크기 기준으로 만든 연출을 몸에 맞출 때 쓴다.</summary>
+        float BodyScale { get { var visuals = GetComponent<EnemyVisuals>(); return visuals ? visuals.BodyScale : 1f; } }
         /// <summary>정면 공격을 방패로 받았다(막았거나 줄였다).</summary>
         public event Action<DamageInfo> Guarded;
 
@@ -41,7 +43,10 @@ namespace SandGuard.Enemy
             {
                 Vector3 point = damage.HitPosition ?? transform.position + Vector3.up;
                 Vector3 outward = -damage.HitDirection.Value;
-                PrefabPool.Release(PrefabPool.Spawn(guardVfx, point, Quaternion.LookRotation(outward.normalized)), guardVfxLifetime);
+                var effect = PrefabPool.Spawn(guardVfx, point, Quaternion.LookRotation(outward.normalized));
+                // 연출은 사람 크기 방패 기준으로 만들어졌다. 모델 스케일만큼 키워 손에 든 방패와 맞춘다. 풀 재사용이라 매번 설정한다.
+                effect.transform.localScale = guardVfx.transform.localScale * BodyScale;
+                PrefabPool.Release(effect, guardVfxLifetime);
             }
             Guarded?.Invoke(damage);
             return amount * frontMultiplier;

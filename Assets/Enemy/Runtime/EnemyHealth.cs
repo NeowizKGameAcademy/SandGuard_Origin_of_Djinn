@@ -28,7 +28,18 @@ namespace SandGuard.Enemy
         public Guid EntityId => entityId;
         public string FactionId => factionId;
         public CombatTargetKind Kind => CombatTargetKind.Enemy;
-        public Vector3 HitPosition => transform.TransformPoint(hitOffset);
+        /// <summary>조준점. hitOffset은 사람 크기 기준이라 모델 배율을 곱한다. 곱하지 않으면 4m 넘는 우두머리의 무릎을 겨냥한다.</summary>
+        public Vector3 HitPosition => transform.TransformPoint(hitOffset * BodyScale);
+        EnemyVisuals visuals;
+        bool visualsLooked;
+        float BodyScale
+        {
+            get
+            {
+                if (!visualsLooked) { visuals = GetComponent<EnemyVisuals>(); visualsLooked = true; }
+                return visuals ? visuals.BodyScale : 1f;
+            }
+        }
         /// <summary>몸통 충돌체 윗면의 중앙. 체력바 위치. 충돌체가 없거나 꺼져 있으면 기준점의 두 배 높이.</summary>
         public Vector3 TopPosition
         {

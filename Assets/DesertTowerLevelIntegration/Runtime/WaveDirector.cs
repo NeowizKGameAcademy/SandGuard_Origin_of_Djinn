@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using DesertTower.Levels;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.Events;
 
 namespace DesertTower.LevelIntegration
@@ -86,6 +87,22 @@ namespace DesertTower.LevelIntegration
         }
         void Notify() { Changed?.Invoke(); }
 
+        /// <summary>진행 중인 적마다 다음 노드까지의 수평 거리·높이차를 도착 반경·허용치와 나란히 보여 준다. 멈춘 적을 찾을 때 쓴다.</summary>
+        public string DescribeActors()
+        {
+            var text = new System.Text.StringBuilder();
+            foreach (var w in actors)
+            {
+                if (!w.actor) continue;
+                if (!w.next) { text.Append(w.actor.name).Append(" (경로 가이드 이동)\n"); continue; }
+                Vector3 d = w.actor.FeetPosition - w.next.transform.position;
+                text.Append(w.actor.name).Append(" → ").Append(w.next.label)
+                    .Append("  수평 ").Append(new Vector2(d.x, d.z).magnitude.ToString("0.00")).Append(" / 반경 ").Append(w.next.arrivalRadius.ToString("0.##"))
+                    .Append("  높이차 ").Append(d.y.ToString("0.00")).Append(" / 허용 ").Append(w.next.heightTolerance.ToString("0.##")).Append('\n');
+            }
+            return text.ToString();
+        }
+
         sealed class Schedule { public SpawnGroup group; public int emitted; public float next; }
         sealed class Walker
         {
@@ -118,6 +135,23 @@ namespace DesertTower.LevelIntegration
             errors.AddRange(graph.ValidateGraph());
             if (!catalog) { errors.Add("PrefabCatalog 필요"); return errors; }
             errors.AddRange(catalog.ValidateCatalog());
+            // 도착 반경이 가장 큰 적의 몸통 반경보다 작으면, 둘만 몰려도 회피가 서로를 원 밖으로 밀어내
+            // 밀려난 적은 영영 도착 판정을 받지 못한다.
+            float widest = 0f; string widestKey = null;
+            foreach (var e in catalog.entries)
+            {
+                if (e == null || e.role != PrefabRole.Enemy || !e.prefab) continue;
+                var agent = e.prefab.GetComponent<NavMeshAgent>();
+                if (!agent) continue;
+                var scale = agent.transform.lossyScale;
+                float radius = agent.radius * Mathf.Max(Mathf.Abs(scale.x), Mathf.Abs(scale.z));
+                if (radius > widest) { widest = radius; widestKey = e.key; }
+            }
+            if (widest > 0f)
+                foreach (var node in graph.Nodes)
+                    if (node && node.arrivalRadius < widest)
+                        errors.Add(node.label + ": 도착 반경 " + node.arrivalRadius.ToString("0.##") + "이 가장 큰 적(" + widestKey
+                            + ", 반경 " + widest.ToString("0.##") + ")보다 작습니다. 몰리면 서로 밀어내 도착하지 못합니다.");
             if (Core == null) errors.Add("ILevelCoreReceiver 연결 필요");
             if (graph.level.waves.waves.Count == 0) errors.Add("웨이브가 없습니다.");
             foreach (var wave in graph.level.waves.waves)
