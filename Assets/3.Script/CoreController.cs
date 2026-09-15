@@ -45,8 +45,7 @@ public class CoreController : MonoBehaviour
 
         Vector3 playerPosition = Player.transform.position;
 
-        float Distance =
-            (playerPosition - transform.position).sqrMagnitude;
+        float Distance = (playerPosition - transform.position).sqrMagnitude;
 
         bool IsInRange = Distance <= Range * Range;
 
