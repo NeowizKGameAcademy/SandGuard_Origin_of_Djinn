@@ -36,6 +36,12 @@ namespace SandGuard.Skills.Unity
             }
             catch(Exception e){LastMessage=e.Message;Debug.LogException(e,this);enabled=false;}
         }
+        public void BindExecutor(MonoBehaviour source)
+        {
+            if(Service==null)throw new InvalidOperationException("Session has not initialized");
+            if(!(source is ISkillExecutor executor))throw new ArgumentException("ISkillExecutor required");
+            executorSource=source;demo=null;dispatch=new SkillDispatch(Service,executor);
+        }
         void Update(){if(Service!=null)Service.EditingAllowed=editingAllowed;}
         void OnChanged()=>onChanged.Invoke();
         void OnError(Exception e)=>Debug.LogException(e,this);
@@ -59,7 +65,7 @@ namespace SandGuard.Skills.Unity
         void Report(SkillResult r)=>LastMessage=r.Success?"완료":r.Failure.ToString();
         void OnDestroy()
         {
-            if(Service!=null){Service.Changed-=OnChanged;Service.ObserverError-=OnError;}
+            if(Service!=null){Service.Changed-=OnChanged;Service.ObserverError-=OnError;Service.Dispose();}
             if(temporary)Destroy(temporary);
         }
     }

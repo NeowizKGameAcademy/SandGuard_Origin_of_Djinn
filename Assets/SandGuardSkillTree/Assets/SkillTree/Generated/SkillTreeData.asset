@@ -99,3 +99,12 @@ MonoBehaviour:
     prerequisites:
     - tower.skeleton
     allowedSlots: []
+  - id: tower.obelisk
+    displayName: 모래시계 오벨리스크 해금
+    description: 구매하면 모래시계 오벨리스크를 설치할 수 있습니다.
+    branch: 2
+    kind: 1
+    cost: 4
+    prerequisites:
+    - tower.cobra
+    allowedSlots: []
