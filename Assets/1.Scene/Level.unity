@@ -739,11 +739,6 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
---- !u!4 &326335696 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2008051816066845154, guid: d1835b17d5eb68d48b75b409723d7b07, type: 3}
-  m_PrefabInstance: {fileID: 352644027}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &328340941 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7347575392112855064, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
@@ -803,10 +798,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: 2008051816066845154, guid: d1835b17d5eb68d48b75b409723d7b07, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1420614422}
+    m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d1835b17d5eb68d48b75b409723d7b07, type: 3}
 --- !u!1 &357399259
@@ -2072,63 +2064,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d705d104876add8479058da61128db58, type: 3}
---- !u!1001 &1322203266
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 326335696}
-    m_Modifications:
-    - target: {fileID: 1000, guid: e25d07f08f835ca4b0fd0a25c60c30d5, type: 3}
-      propertyPath: m_Name
-      value: SkillAltarAnchor
-      objectReference: {fileID: 0}
-    - target: {fileID: 1001, guid: e25d07f08f835ca4b0fd0a25c60c30d5, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1001, guid: e25d07f08f835ca4b0fd0a25c60c30d5, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1001, guid: e25d07f08f835ca4b0fd0a25c60c30d5, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1001, guid: e25d07f08f835ca4b0fd0a25c60c30d5, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1001, guid: e25d07f08f835ca4b0fd0a25c60c30d5, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1001, guid: e25d07f08f835ca4b0fd0a25c60c30d5, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1001, guid: e25d07f08f835ca4b0fd0a25c60c30d5, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1001, guid: e25d07f08f835ca4b0fd0a25c60c30d5, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1001, guid: e25d07f08f835ca4b0fd0a25c60c30d5, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1001, guid: e25d07f08f835ca4b0fd0a25c60c30d5, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: e25d07f08f835ca4b0fd0a25c60c30d5, type: 3}
 --- !u!1001 &1351306459
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2190,11 +2125,6 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 1156825487328879271, guid: 146623436a4a34b409ebb59e60214c9b, type: 3}
   m_PrefabInstance: {fileID: 394964502}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &1420614422 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1001, guid: e25d07f08f835ca4b0fd0a25c60c30d5, type: 3}
-  m_PrefabInstance: {fileID: 1322203266}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1553642080
 GameObject:
@@ -2630,6 +2560,10 @@ PrefabInstance:
     - target: {fileID: 6740954383904229479, guid: e4240e248898d2c4788c6c96a492eb98, type: 3}
       propertyPath: m_Name
       value: GameHUDCanvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 6740954383904229479, guid: e4240e248898d2c4788c6c96a492eb98, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

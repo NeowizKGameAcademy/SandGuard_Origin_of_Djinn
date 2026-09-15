@@ -66,7 +66,15 @@ namespace SandGuard.Player
         public int ManaPerHit => stats != null ? stats.EvaluateCount(PlayerStat.ManaPerHit, 0) : 0;
         // 공격 마법 스킬. 켜짐은 개수형 스탯(0보다 크면), 수치는 인스펙터 기본값에 수정자를 얹은 값.
         public float BoltScale => Stat(PlayerStat.BoltScale, 1f);
-        public bool PierceBeam => Flag(PlayerStat.PierceBeam);
+        public Func<bool> SkillTreePierceAllowed;
+        // In tree mode piercing is an equipped active skill, not a free basic-attack upgrade.
+        public bool PierceBeam => SkillTreePierceAllowed==null && Flag(PlayerStat.PierceBeam);
+        public bool TrySkillPierce()
+        {
+            if(SkillTreePierceAllowed!=null && !SkillTreePierceAllowed() || !CanFire)return false;
+            Aim(out var muzzle,out var direction,out var origin);
+            FireBeam(muzzle,direction,origin);PlayCastVisual();return true;
+        }
         public float BeamRange => Stat(PlayerStat.BeamRange, beamRange);
         public bool SandBurst => Flag(PlayerStat.SandBurst);
         public float BurstRadius => Stat(PlayerStat.BurstRadius, burstRadius);

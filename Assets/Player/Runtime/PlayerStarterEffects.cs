@@ -27,8 +27,16 @@ namespace SandGuard.Player
         readonly List<IPlayerEffect> applied = new List<IPlayerEffect>();
         public IReadOnlyList<IPlayerEffect> Applied => applied;
 
+        public bool SuppressedBySkillTree { get; private set; }
+        public void SuppressForSkillTree()
+        {
+            SuppressedBySkillTree=true;
+            if(target!=null)foreach(var effect in applied)target.Remove(effect);
+            applied.Clear();
+        }
         void Start()
         {
+            if(SuppressedBySkillTree)return;
             if (target == null) target = FindFirstObjectByType<PlayerEffects>();
             if (target == null) { Debug.LogWarning("PlayerStarterEffects: 씬에 PlayerEffects가 없습니다.", this); return; }
             if (doubleJump) Add(new DoubleJumpEffect());

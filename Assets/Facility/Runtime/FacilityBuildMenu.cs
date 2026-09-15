@@ -38,7 +38,15 @@ namespace SandGuard.Facility
         Text titleText;
         readonly List<GameObject> tiles = new List<GameObject>();
         FacilityAnchor[] anchors;
-        float nextScan;
+        float nextScan, nextUnlockRefresh;
+        readonly List<bool> shownUnlocks=new List<bool>();
+        void RefreshUnlocks()
+        {
+            if(Mode!=MenuMode.Build || Current==null || service.catalog==null)return;
+            var defs=service.catalog.facilities;bool changed=shownUnlocks.Count!=defs.Count;
+            for(int i=0;!changed && i<defs.Count;i++)changed=shownUnlocks[i]!=service.IsUnlocked(defs[i].id);
+            if(changed)RebuildTiles();
+        }
 
         void Awake()
         {
@@ -70,6 +78,7 @@ namespace SandGuard.Facility
             MenuMode wanted = nearest != null && nearest.IsOccupied ? MenuMode.Repair : MenuMode.Build;
             if (nearest != Current || (nearest != null && wanted != Mode)) { if (nearest != null) Open(nearest); else Close(); }
             if (Current != null) { Follow(); RefreshRepairCost(); }
+            if(Time.unscaledTime>=nextUnlockRefresh){RefreshUnlocks();nextUnlockRefresh=Time.unscaledTime+.15f;}
             if (input == null && Current != null && Keyboard.current != null) // 플레이어 입력기가 없는 씬(테스트·데모)용
                 for (int i = 0; i < 9; i++)
                     if (Keyboard.current[(Key)((int)Key.Digit1 + i)].wasPressedThisFrame) { Select(i); break; }
@@ -113,6 +122,7 @@ namespace SandGuard.Facility
             var definition = service.catalog.facilities[index];
             LastResult = service.TryBuild(PlacementRequest.AtSlot(definition.id, Current.SlotId));
             if (LastResult.Outcome.Succeeded) Close();
+            else if(LastResult.Outcome.Failure==ActionFailure.Locked){titleText.text="먼저 스킬트리에서 타워를 해금하세요";}
             else Debug.Log("건설 실패: " + LastResult.Placement.Failure + " / " + LastResult.Outcome.Failure);
         }
 
@@ -163,6 +173,7 @@ namespace SandGuard.Facility
         {
             foreach (var tile in tiles) Destroy(tile);
             tiles.Clear();
+            shownUnlocks.Clear();
             repairCostText = null; shownRepairCost = -1;
             if (Mode == MenuMode.Repair)
             {
@@ -190,16 +201,17 @@ namespace SandGuard.Facility
             for (int i = 0; i < count; i++)
             {
                 var definition = catalog.facilities[i];
+                bool unlocked=service.IsUnlocked(definition.id);shownUnlocks.Add(unlocked);
                 var tile = new GameObject("Tile " + (i + 1), typeof(RectTransform)).GetComponent<RectTransform>();
                 tile.SetParent(panel, false);
                 tile.anchorMin = tile.anchorMax = new Vector2(.5f, 0f); tile.pivot = new Vector2(.5f, 0f);
                 tile.sizeDelta = tileSize;
                 tile.anchoredPosition = new Vector2(-width / 2f + tileSize.x / 2f + i * (tileSize.x + tileSpacing), 40f);
                 Image(tile, "Disc", discSprite, Vector2.zero, tileSize, new Color(1f, 1f, 1f, .92f));
-                Image(tile, "Icon", definition.icon, Vector2.zero, tileSize * .72f, Color.white);
+                Image(tile, "Icon", definition.icon, Vector2.zero, tileSize * .72f, unlocked?Color.white:new Color(.3f,.3f,.3f,.7f));
                 if (i < numberSprites.Length && numberSprites[i] != null)
                     Image(tile, "Number", numberSprites[i], new Vector2(-tileSize.x * .38f, tileSize.y * .38f), new Vector2(40f, 40f), Color.white);
-                var label = Label(tile, definition.manaCost > 0 ? definition.displayName + "  " + definition.manaCost : definition.displayName, 18, FontStyle.Normal);
+                var label = Label(tile, !unlocked ? definition.displayName + "  [잠김]" : definition.manaCost > 0 ? definition.displayName + "  " + definition.manaCost : definition.displayName, 18, FontStyle.Normal);
                 label.rectTransform.anchoredPosition = new Vector2(0f, -22f);
                 label.rectTransform.sizeDelta = new Vector2(tileSize.x + 40f, 26f);
                 tiles.Add(tile.gameObject);

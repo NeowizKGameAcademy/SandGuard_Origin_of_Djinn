@@ -70,7 +70,7 @@ namespace SandGuard.Player
         public float DashDistance => Stat(PlayerStat.DashDistance, dashDistance);
         public float DashCooldown => Stat(PlayerStat.DashCooldown, dashCooldown);
         public int DashManaCost => stats != null ? stats.EvaluateCount(PlayerStat.DashManaCost, dashManaCost) : dashManaCost;
-        public int ExtraAirJumps => stats != null ? stats.EvaluateCount(PlayerStat.ExtraAirJumps, extraAirJumps) : extraAirJumps;
+        public int ExtraAirJumps => SkillTreeAirJumpAllowed!=null ? (SkillTreeAirJumpAllowed()?Mathf.Max(1, stats!=null?stats.EvaluateCount(PlayerStat.ExtraAirJumps,extraAirJumps):extraAirJumps):0) : (stats != null ? stats.EvaluateCount(PlayerStat.ExtraAirJumps, extraAirJumps) : extraAirJumps);
         public int AirDashes => stats != null ? stats.EvaluateCount(PlayerStat.AirDashes, airDashes) : airDashes;
         /// <summary>이번 체공에서 아직 쓸 수 있는 공중 대시 횟수.</summary>
         public int RemainingAirDashes => Mathf.Max(0, AirDashes - airDashesUsed);
@@ -148,7 +148,10 @@ namespace SandGuard.Player
             jumpBufferTimer = 0f; coyoteTimer = 0f; dashRemaining = 0f;
         }
         void QueueJump() => jumpBufferTimer = Mathf.Max(jumpBufferTime, 0.0001f);
-        void QueueDash() => TryDash();
+        public System.Func<bool> SkillTreeDashAllowed;
+        public System.Func<bool> SkillTreeAirJumpAllowed;
+        public System.Action SkillTreeDashInput;
+        void QueueDash() { if(SkillTreeDashInput!=null)SkillTreeDashInput();else TryDash(); }
         /// <summary>충전(상승 기류)처럼 제자리에 붙들 때 켠다. 이동 입력·점프·대시를 받지 않지만 중력과 접지는 그대로다.</summary>
         public bool Anchored { get; set; }
         /// <summary>켜면 지상(코요테 포함) 점프를 버튼 누름에 바로 하지 않고 버린다. 상승 기류가 탭이면 <see cref="TryJump"/>, 홀드면 충전으로 처리한다. 공중 점프는 그대로다.</summary>
@@ -227,10 +230,11 @@ namespace SandGuard.Player
         {
             var common = CommonAvailability();
             if (!common.Succeeded) return common;
-            return !IsDashing && !Anchored && (IsGrounded || coyoteTimer > 0f || RemainingAirJumps > 0) ? ActionResult.Success() : ActionResult.Fail(ActionFailure.Locked);
+            return !IsDashing && !Anchored && (IsGrounded || coyoteTimer > 0f || (RemainingAirJumps > 0 && (SkillTreeAirJumpAllowed==null || SkillTreeAirJumpAllowed()))) ? ActionResult.Success() : ActionResult.Fail(ActionFailure.Locked);
         }
         ActionResult DashAvailability()
         {
+            if(SkillTreeDashAllowed!=null && !SkillTreeDashAllowed())return ActionResult.Fail(ActionFailure.Locked);
             var common = CommonAvailability();
             if (!common.Succeeded) return common;
             if (Anchored) return ActionResult.Fail(ActionFailure.Locked);
@@ -308,7 +312,7 @@ namespace SandGuard.Player
             {
                 bool groundJump = IsGrounded || coyoteTimer > 0f;
                 if (groundJump && DeferGroundJumps) jumpBufferTimer = 0f; // 상승 기류가 탭/홀드를 가른 뒤 TryJump로 점프시킨다
-                else if (groundJump || RemainingAirJumps > 0) { Jump(groundJump, false); jumpedThisFrame = true; }
+                else if (groundJump || (RemainingAirJumps > 0 && (SkillTreeAirJumpAllowed==null || SkillTreeAirJumpAllowed()))) { Jump(groundJump, false); jumpedThisFrame = true; }
             }
             jumpBufferTimer = Mathf.Max(0f, jumpBufferTimer - dt);
 

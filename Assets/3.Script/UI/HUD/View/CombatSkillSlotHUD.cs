@@ -22,5 +22,11 @@ namespace SandGuard.UI.HUD
         public void SetReady(bool ready) { if (ready) SetCooldown(0f, 1f); }
         public void SetKey(string key) => keyText.text = key ?? string.Empty;
         public void SetLocked(bool locked) => lockedOverlay.SetActive(locked);
+        public void SetUnavailable(string reason)
+        {
+            cooldownOverlay.fillAmount=1f;
+            cooldownText.gameObject.SetActive(true);
+            cooldownText.text=reason;
+        }
     }
 }
