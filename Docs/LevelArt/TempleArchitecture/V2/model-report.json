@@ -1,8 +1,40 @@
 {
-  "objects": 299,
-  "triangles": 989996,
+  "imported_wall_reliefs": 3,
+  "custom_motifs": {
+    "lotus": 12,
+    "winged_sun": 11,
+    "scarab": 11,
+    "watchful_eye": 11,
+    "papyrus": 11,
+    "constellation": 11,
+    "stepped_diamond": 11,
+    "river": 11
+  },
+  "closed_risers": 736,
+  "unique_statues": [
+    {
+      "model": "la-dragon",
+      "x": -34,
+      "z": -43,
+      "height": 4.3
+    },
+    {
+      "model": "osiris-dragon",
+      "x": 34,
+      "z": -43,
+      "height": 4.3
+    },
+    {
+      "model": "obelisk-giant",
+      "x": -42,
+      "z": 42,
+      "height": 7
+    }
+  ],
+  "objects": 569,
+  "triangles": 449866,
   "rejected_decorations": 102,
-  "clearance_boolean_cuts": 126,
+  "clearance_boolean_cuts": 191,
   "platforms": 17,
   "protected_surface_triangles": 13038
 }

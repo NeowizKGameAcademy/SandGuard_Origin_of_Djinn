@@ -41,25 +41,6 @@ public static class TempleCourtyardBuilder
         if(name=="Temple_Sand"){m.SetFloat("_IsSand",1);m.SetTexture("_SurfaceMap",AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/TempleArt/Terrain/Textures/Sand_BaseColor.png"));}
         EditorUtility.SetDirty(m);return m;
     }
-    static Mesh CombineWalking(Transform temple,bool rails=false){
-        var vertices=new List<Vector3>();var indices=new List<int>();
-        foreach(var f in temple.GetComponentsInChildren<MeshFilter>(true).Where(f=>Walking(f.name)&&f.name.StartsWith("RAILS_REBUILT")==rails)){
-            using(var data=Mesh.AcquireReadOnlyMeshData(f.sharedMesh)){
-                int offset=vertices.Count;
-                var v=new Unity.Collections.NativeArray<Vector3>(data[0].vertexCount,Unity.Collections.Allocator.Temp);data[0].GetVertices(v);
-                vertices.AddRange(v.ToArray().Select(p=>f.transform.TransformPoint(p)));v.Dispose();
-                for(int s=0;s<data[0].subMeshCount;s++){
-                    var ids=new Unity.Collections.NativeArray<int>(data[0].GetSubMesh(s).indexCount,Unity.Collections.Allocator.Temp);data[0].GetIndices(ids,s);
-                    indices.AddRange(ids.ToArray().Select(i=>i+offset));ids.Dispose();
-                }
-            }
-        }
-        var mesh=new Mesh{name="Original deck tread and rail collision",indexFormat=IndexFormat.UInt32};mesh.SetVertices(vertices);mesh.SetTriangles(indices,0);mesh.RecalculateBounds();
-        string path=Root+(rails?"/OriginalRailCollision.asset":"/OriginalWalkingCollision.asset");
-        var existing=AssetDatabase.LoadAssetAtPath<Mesh>(path);
-        if(existing){EditorUtility.CopySerialized(mesh,existing);Object.DestroyImmediate(mesh);mesh=existing;EditorUtility.SetDirty(mesh);}else AssetDatabase.CreateAsset(mesh,path);
-        return mesh;
-    }
     [MenuItem("Tools/Temple Art/Refresh Courtyard Architecture")]
     public static void Build(){
         try{
@@ -75,6 +56,15 @@ public static class TempleCourtyardBuilder
             var old=temple.Find(DressName);if(old)Object.DestroyImmediate(old.gameObject);
             var oldRoutes=temple.Find("Original walking collision");if(oldRoutes)Object.DestroyImmediate(oldRoutes.gameObject);
             var palette=new[]{Mat("Temple_Sandstone",new Color(.70f,.595f,.445f)),Mat("Temple_Limestone",new Color(.82f,.74f,.59f),.65f),Mat("Temple_Recess",new Color(.31f,.24f,.16f),.1f),Mat("Temple_Paving",new Color(.68f,.57f,.42f),.7f),Mat("Temple_Turquoise",new Color(.10f,.29f,.265f)),Mat("Temple_Bronze",new Color(.41f,.285f,.13f)),Mat("Temple_Sand",Color.white,0)}.ToDictionary(m=>m.name);
+            foreach(var kind in new[]{"wall-deco","wall-deco-anubis","god-la","la-dragon","osiris-dragon","obelisk-giant"}){
+                string texturePath=Root+"/Relief_"+kind+".png";
+                if(!File.Exists(texturePath))File.Copy("Docs/model-art/"+kind+".png",texturePath);
+                AssetDatabase.ImportAsset(texturePath);
+                var path=Root+"/Relief_"+kind+".mat";var material=AssetDatabase.LoadAssetAtPath<Material>(path);
+                if(!material){material=new Material(Shader.Find("Universal Render Pipeline/Lit"));AssetDatabase.CreateAsset(material,path);}
+                material.SetTexture("_BaseMap",AssetDatabase.LoadAssetAtPath<Texture2D>(texturePath));material.SetFloat("_Smoothness",.12f);
+                palette["Relief_"+kind]=material;EditorUtility.SetDirty(material);
+            }
             int hidden=0;
             foreach(var r in temple.GetComponentsInChildren<MeshRenderer>(true)){
                 r.enabled=Walking(r.name);if(!r.enabled)hidden++;
@@ -82,20 +72,22 @@ public static class TempleCourtyardBuilder
             }
             // The old single collider includes the removed full pyramid. Keeping it would leave invisible walls.
             foreach(var col in temple.GetComponentsInChildren<Collider>(true))col.enabled=false;
-            var routeMesh=CombineWalking(temple);var routeGo=new GameObject("Original walking collision");routeGo.transform.SetParent(temple,true);
-            routeGo.transform.position=Vector3.zero;routeGo.transform.rotation=Quaternion.identity;routeGo.transform.localScale=Vector3.one;
-            var routeCollider=routeGo.AddComponent<MeshCollider>();routeCollider.sharedMesh=routeMesh;
-            var railGo=new GameObject("Preserved rail collision");railGo.transform.SetParent(routeGo.transform,false);railGo.AddComponent<MeshCollider>().sharedMesh=CombineWalking(temple,true);
+            TempleCourtyardSurfaces.Build(temple);
             var importer=(ModelImporter)AssetImporter.GetAtPath(Root+"/Temple_Courtyard_v2.fbx");importer.importAnimation=false;importer.isReadable=true;importer.SaveAndReimport();
             var dress=(GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(Root+"/Temple_Courtyard_v2.fbx"));dress.name=DressName;
             dress.transform.SetParent(temple,true);dress.transform.position=Vector3.zero;dress.transform.rotation=Quaternion.identity;dress.transform.localScale=Vector3.one;
             foreach(var r in dress.GetComponentsInChildren<MeshRenderer>()){
                 r.sharedMaterials=r.sharedMaterials.Select(m=>palette.TryGetValue(m.name,out var found)?found:palette["Temple_Sandstone"]).ToArray();r.shadowCastingMode=ShadowCastingMode.On;
                 PrefabUtility.RecordPrefabInstancePropertyModifications(r);
-                if(r.name.StartsWith("S_"))r.gameObject.AddComponent<MeshCollider>().sharedMesh=r.GetComponent<MeshFilter>().sharedMesh;
+                if(r.name.StartsWith("C_")){r.enabled=false;r.gameObject.AddComponent<MeshCollider>().sharedMesh=r.GetComponent<MeshFilter>().sharedMesh;PrefabUtility.RecordPrefabInstancePropertyModifications(r);}
             }
+            var visible=dress.GetComponentsInChildren<MeshRenderer>();
+            if(visible.Count(r=>r.name.StartsWith("D_AuthoredRelief_"))>3)throw new Exception("Imported wall relief limit exceeded");
+            if(visible.Count(r=>r.name.StartsWith("D_UniqueStatue_"))!=3)throw new Exception("Expected three unique sculptures");
+            if(visible.Count(r=>r.name.StartsWith("V_ClosedRisers_"))!=18)throw new Exception("Expected 18 sealed stair flights");
             Physics.SyncTransforms();
-            Validate(temple,dress.transform,routeCollider,sourceSnapshot,hidden);
+            if(!sourceSnapshot.SequenceEqual(Snapshot(temple)))throw new Exception("Original platform or stair geometry changed");
+            TempleCourtyardSurfaces.Validate(temple);
             PrefabUtility.SaveAsPrefabAsset(temple.gameObject,Root+"/DesertTemple_Courtyard.prefab");
             foreach(var c in Object.FindObjectsByType<Camera>(FindObjectsSortMode.None))c.enabled=false;
             overview=Cam("Courtyard - Overview",new Vector3(130,125,-165),new Vector3(0,16,0),88);
@@ -107,28 +99,9 @@ public static class TempleCourtyardBuilder
                 key.transform.rotation=Quaternion.Euler(40,-35,0);key.intensity=1.3f;key.color=new Color(1,.94f,.84f);
             }
             var fill=GameObject.Find("Dunes - Sky Fill");if(fill)fill.GetComponent<Light>().intensity=.22f;
+            TemplePlayerViewSetup.Setup(); // Keep the saved scene playable after art regeneration.
             EditorSceneManager.SaveScene(scene);AssetDatabase.SaveAssets();ticks=0;EditorApplication.update+=Capture;
         }catch(Exception e){Debug.LogException(e);if(Application.isBatchMode)EditorApplication.Exit(1);}
-    }
-    static void Validate(Transform temple,Transform dress,MeshCollider route,string[] original,int hidden){
-        if(!original.SequenceEqual(Snapshot(temple)))throw new Exception("Protected mesh references or world transforms changed");
-        var survey=JsonUtility.FromJson<TempleArchitectureBuilder.Survey>(File.ReadAllText("Docs/LevelArt/TempleArchitecture/structure-reference.json"));
-        var solid=dress.GetComponentsInChildren<MeshCollider>();int probes=0,blocked=0,missing=0;var issues=new List<string>();
-        foreach(var part in survey.parts)for(int j=0;j<part.triangles.Length;j+=3){
-            var a=part.vertices[part.triangles[j]];var b=part.vertices[part.triangles[j+1]];var c=part.vertices[part.triangles[j+2]];
-            if(Vector3.Cross(b-a,c-a).y<=1e-6f)continue;var p=(a+b+c)/3;probes++;
-            if(!route.Raycast(new Ray(p+Vector3.up*.3f,Vector3.down),out var floor,.6f)||Mathf.Abs(floor.point.y-p.y)>.025f){missing++;if(issues.Count<30)issues.Add("ROUTE "+part.name+" "+p+" hit "+floor.point+" area "+Vector3.Cross(b-a,c-a).magnitude*.5f);}
-            foreach(var col in solid)if(col.Raycast(new Ray(new Vector3(p.x,80,p.z),Vector3.down),out var hit,82)&&hit.point.y>p.y+.08f){
-                blocked++;if(issues.Count<30)issues.Add(part.name+" "+p+" -> "+col.name+" "+hit.point);break;
-            }
-        }
-        int closedCourts=0;
-        foreach(float x in new[]{-45f,45f})foreach(float z in new[]{-43f,43f}){
-            if(!Physics.Raycast(new Ray(new Vector3(x,70,z),Vector3.down),out var hit,72,~0,QueryTriggerInteraction.Ignore)||hit.point.y>2){closedCourts++;issues.Add("Courtyard not clear at "+new Vector2(x,z)+" hit "+hit.point);}
-        }
-        string report=$"Protected source mesh references / matrices unchanged: {original.Length}\nWalking triangle probes: {probes}\nMissing/misaligned route collision: {missing}\nNew architecture above route: {blocked}\nBlocked ground-level courtyard probes (of 4): {closedCourts}\nHidden original bulk/decorative renderers: {hidden}\nOld whole-pyramid collider disabled in this copy. Exact deck/tread geometry supplies the route collider, and original rails have a separate collider. New structural meshes have separate colliders.\n"+string.Join("\n",issues);
-        File.WriteAllText(Output+"/validation-"+stage+".txt",report);
-        if(blocked>0||missing>0||closedCourts>0)throw new Exception("Courtyard clearance failed: "+blocked+" blocked, "+missing+" missing, "+closedCourts+" closed courts");
     }
     static void Shot(Camera c,string name,int w,int h){
         var rt=new RenderTexture(w,h,24);rt.Create();var old=RenderTexture.active;var tex=new Texture2D(w,h,TextureFormat.RGB24,false);

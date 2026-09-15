@@ -6,7 +6,7 @@ from pathlib import Path
 from mathutils import Vector
 from mathutils.bvhtree import BVHTree
 
-ROOT=Path('C:/course/unity/SandGuard')
+ROOT=Path(__file__).resolve().parents[2]
 OUT=ROOT/'Assets/TempleArt/ArchitectureV2'
 DOC=ROOT/'Docs/LevelArt/TempleArchitecture/V2'
 OUT.mkdir(parents=True,exist_ok=True);DOC.mkdir(parents=True,exist_ok=True)
@@ -28,6 +28,10 @@ for part in parts:
         if (b-a).cross(c-a).y>1e-6:pf.append(f)
 protect=BVHTree.FromPolygons(pv,pf,all_triangles=True)
 groups={};region='D_Detail';skipped=0
+relief_placements=[]
+imported_regions=set()
+custom_motifs={}
+stair_closures=0
 def clear(vs):
     global skipped
     lo=[min(v[i] for v in vs) for i in range(3)];hi=[max(v[i] for v in vs) for i in range(3)]
@@ -80,39 +84,96 @@ def strip(points,width,depth,mat='Temple_Limestone'):
             k=j*4;f=k-4;fs.extend([(f,f+1,k+1,k),(f+2,k+2,k+3,f+3),(f,k,k+2,f+2),(f+1,f+3,k+3,k+1)])
     fs.extend([(0,2,3,1),(len(vs)-4,len(vs)-3,len(vs)-1,len(vs)-2)]);add(vs,fs,mat,True)
 def wall_relief(cx,cz,tx,tz,nx,nz,base,height,width=2.5,out=0,slope=0):
-    yaw=math.atan2(tz,tx)
-    def B(s,y,o,w,h,d,mat='Temple_Limestone'):
-        # Both edges follow the battered wall, avoiding a flat tablet occluding its own upper relief.
-        verts=[local(cx,cz,tx,tz,nx,nz,s+ds,base+y+dy,out+o+dd-slope*(y+dy)) for ds,dy,dd in [(-w/2,-h/2,-d/2),(w/2,-h/2,-d/2),(w/2,h/2,-d/2),(-w/2,h/2,-d/2),(-w/2,-h/2,d/2),(w/2,-h/2,d/2),(w/2,h/2,d/2),(-w/2,h/2,d/2)]]
-        return add(verts,BOXF,mat,True)
-    B(0,height/2,0,width,height,.09,'Temple_Sandstone')
-    for s in [-width/2,width/2]:B(s,height/2,.035,.09,height,.10)
-    for y in [0,height]:B(0,y,.035,width,.09,.1)
-    # Solar disc with a carved shadow line and a broad fan of feathered rays.
-    r=min(width*.24,height*.115);sy=height*.78;vs=[];fs=[]
-    for rr in [r,r*.82]:
-        for j in range(40):
-            a=math.tau*j/40;yy=sy+rr*math.sin(a);vs.append(local(cx,cz,tx,tz,nx,nz,rr*math.cos(a),base+yy,out+.082-slope*yy))
-    fs.extend((j,(j+1)%40,(j+1)%40+40,j+40) for j in range(40));add(vs,fs,'Temple_Recess',True)
-    # A relief strip follows the wall plane; use quads with local tangent offsets.
-    def line(points,w,mat='Temple_Recess'):
+    global region
+    # Towers have real columns and inset cells. The old detached tablets are removed.
+    if region.startswith('D_Pylon'):return
+    original_region=region
+    imported_kind={'D_Wall_0':'wall-deco','D_Wall_1':'wall-deco-anubis','D_Wall_2':'god-la'}.get(region)
+    if imported_kind and region not in imported_regions:
+        imported_regions.add(region)
+        ph=min(height,width*1.05)
+        relief_placements.append(dict(kind=imported_kind,cx=cx,cz=cz,tx=tx,tz=tz,nx=nx,nz=nz,
+            base=base+(height-ph)/2,height=ph,width=width,out=out,slope=slope))
+        return
+    designs=['lotus','winged_sun','scarab','watchful_eye','papyrus','constellation','stepped_diamond','river']
+    serial=sum(custom_motifs.values());design=designs[serial%len(designs)]
+    custom_motifs[design]=custom_motifs.get(design,0)+1
+    region='D_CustomMotif_'+str(serial)+'_'+design
+    h=min(height,width*(1.05 if serial%3==0 else 1.55))
+    base+=(height-h)/2;height=h
+    def point(u,v,depth):
+        return local(cx,cz,tx,tz,nx,nz,u*width,base+v*height,out+depth-slope*v*height)
+    def line(points,w=.035,mat='Temple_Recess'):
+        # Geometry intersects its supporting wall by 5mm; no independent tablet is created.
         vv=[];ff=[]
-        for j,(s,y) in enumerate(points):
-            a=points[max(0,j-1)];b=points[min(len(points)-1,j+1)];dx,dy=b[0]-a[0],b[1]-a[1];ll=math.hypot(dx,dy)
-            for depth in [.07,.10]:
-                for sign in [-1,1]:vv.append(local(cx,cz,tx,tz,nx,nz,s+sign*dy/ll*w/2,base+y-sign*dx/ll*w/2,out+depth-slope*y))
+        for j,(u,v) in enumerate(points):
+            a=points[max(0,j-1)];b=points[min(len(points)-1,j+1)]
+            dx,dy=(b[0]-a[0])*width,(b[1]-a[1])*height
+            length=max(.00001,math.hypot(dx,dy))
+            for depth in [-.055,-.012]:
+                for sign in [-1,1]:
+                    vv.append(point(u+sign*dy/length*w/width/2,v-sign*dx/length*w/height/2,depth))
             if j:
-                k=j*4;f=k-4;ff.extend([(f,f+1,k+1,k),(f+2,k+2,k+3,f+3),(f,k,k+2,f+2),(f+1,f+3,k+3,k+1)])
-        ff.extend([(0,2,3,1),(len(vv)-4,len(vv)-3,len(vv)-1,len(vv)-2)]);add(vv,ff,mat,True)
-    for strand in [-2,-1,0,1,2]:
-        line([(strand*width*.095+width*.06*math.sin(t*5+strand*.4),height*(.1+.52*t)) for t in [j/24 for j in range(25)]],.045)
-    for sign in [-1,1]:
-        for j in range(6):
-            line([(sign*(width*.10+j*width*.055),height*.67),(sign*(width*.2+j*width*.055),height*(.62-j*.018))],.06)
-    # Side borders carry small chisel-cut geometric marks, rather than a framed poster.
-    for sign in [-1,1]:
-        for j in range(max(3,int(height/.55))):
-            B(sign*(width/2-.12),.25+j*.5,.075,.065,.19,.055,'Temple_Recess')
+                k=j*4;q=k-4
+                ff.extend([(q,q+1,k+1,k),(q+2,k+2,k+3,q+3),(q,k,k+2,q+2),(q+1,q+3,k+3,k+1)])
+        ff.extend([(0,2,3,1),(len(vv)-4,len(vv)-3,len(vv)-1,len(vv)-2)])
+        add(vv,ff,mat,True)
+    def oval(u,v,rx,ry,mat='Temple_Recess'):
+        line([(u+rx*math.cos(j*math.tau/32),v+ry*math.sin(j*math.tau/32)) for j in range(33)],.045,mat)
+    accent='Temple_Turquoise' if serial%2 else 'Temple_Bronze'
+    if design=='lotus':
+        line([(-.36,.14),(.36,.14)],.075)
+        for sign in [-1,1]:
+            line([(0,.19),(sign*.29,.35),(sign*.39,.62),(sign*.16,.5),(0,.19)],.055,accent)
+        line([(0,.19),(-.12,.55),(0,.84),(.12,.55),(0,.19)],.06)
+        line([(0,.19),(0,.04)],.07)
+    elif design=='winged_sun':
+        oval(0,.65,.13,.12,accent)
+        for sign in [-1,1]:
+            for j in range(5):
+                line([(sign*.12,.6-j*.035),(sign*(.25+j*.035),.69-j*.025),(sign*.43,.64-j*.075)],.035)
+        line([(-.3,.26),(0,.13),(.3,.26)],.065,accent)
+    elif design=='scarab':
+        oval(0,.46,.16,.22,accent);oval(0,.73,.085,.07)
+        line([(0,.25),(0,.66)],.04)
+        for sign in [-1,1]:
+            for j in range(3):
+                line([(sign*.15,.34+j*.12),(sign*.32,.30+j*.15),(sign*.42,.4+j*.14)],.035)
+        oval(0,.9,.08,.055,accent)
+    elif design=='watchful_eye':
+        line([(-.43,.58),(-.2,.73),(.06,.75),(.42,.56),(.12,.42),(-.18,.43),(-.43,.58)],.055)
+        oval(.02,.58,.09,.12,accent)
+        line([(.02,.43),(.02,.23),(-.16,.09),(-.29,.14),(-.24,.22)],.05)
+        line([(.4,.55),(.22,.23)],.05,accent)
+        line([(-.4,.85),(-.1,.92),(.22,.89),(.42,.79)],.055)
+    elif design=='papyrus':
+        for j in [-1,0,1]:
+            line([(j*.07,.08),(j*.14,.42),(j*.22,.7)],.05,accent)
+            for spread in [-.13,0,.13]:
+                line([(j*.22,.68),(j*.22+spread,.88-abs(j)*.06)],.04)
+        line([(-.35,.07),(.35,.07)],.06)
+    elif design=='constellation':
+        stars=[(-.28,.78),(.12,.87),(.30,.54),(-.12,.40),(.12,.12)]
+        line(stars,.025,accent)
+        for u,v in stars:
+            line([(u-.045,v),(u+.045,v)],.04)
+            line([(u,v-.035),(u,v+.035)],.04)
+        oval(-.27,.22,.075,.055,accent)
+    elif design=='stepped_diamond':
+        for k in [.16,.29,.42]:
+            line([(0,.5+k),(-k,.5),(0,.5-k),(k,.5),(0,.5+k)],.035,accent if k==.29 else 'Temple_Recess')
+        for sign in [-1,1]:line([(sign*.42,.93),(sign*.26,.93),(sign*.26,.84)],.04)
+    else:
+        for row in range(4):
+            line([(-.43+j*.86/24,.15+row*.2+.055*math.sin(j*math.tau/12+row*.6)) for j in range(25)],.045,accent if row%2 else 'Temple_Recess')
+        for u in [-.35,0,.35]:line([(u-.05,.95),(u,.88),(u+.05,.95)],.035)
+    # Border treatment varies; avoid identical framed tablets across the map.
+    if serial%3==0:
+        for sign in [-1,1]:
+            line([(sign*.46,.08),(sign*.46,.02),(sign*.31,.02)],.045)
+            line([(sign*.46,.92),(sign*.46,.98),(sign*.31,.98)],.045)
+    region=original_region
+
 def frieze(cx,cz,tx,tz,nx,nz,y,length,out=.12):
     yaw=math.atan2(tz,tx)
     box(local(cx,cz,tx,tz,nx,nz,0,y,out),(length,.46,.12),'Temple_Turquoise',yaw)
@@ -142,16 +203,16 @@ for part in parts:
     gallery_base=top-10.3
     if top>10:
         # Solid battered lower tower, recessed inner cell, actual open upper gallery, and stone roof.
-        prism(poly,.4,gallery_base,scale_bottom=1.10,scale_top=.975)
-        prism(poly,gallery_base,top-1.55,scale_bottom=.57,scale_top=.57)
+        prism(poly,.4,gallery_base,scale_bottom=.975,scale_top=.975)
+        prism(poly,.4,top-1.55,scale_bottom=.57,scale_top=.57)
         prism(poly,top-1.55,top-.22,scale_bottom=.99,scale_top=.99)
         for i,(ax,az) in enumerate(poly):
             bx,bz=poly[(i+1)%len(poly)];dx,dz=bx-ax,bz-az;length=math.hypot(dx,dz)
             if length<6:continue
             tx,tz=dx/length,dz/length;nx,nz=tz,-tx;mx,mz=(ax+bx)/2,(az+bz)/2
             for ss in [-length*.35,length*.35]:
-                hh=top-1.55-gallery_base
-                box(local(mx,mz,tx,tz,nx,nz,ss,gallery_base+hh/2,-.35),(1.3,hh,1.3),'Temple_Limestone',math.atan2(tz,tx),False)
+                hh=top-1.55-.4
+                box(local(mx,mz,tx,tz,nx,nz,ss,.4+hh/2,-.35),(1.3,hh,1.3),'Temple_Limestone',math.atan2(tz,tx),False)
     else:prism(poly,.4,top-.25,scale_bottom=1.015,scale_top=.975)
     region='D_Pylon_'+name
     # Horizontal entablature directly below the preserved deck, plus tapering vertical piers.
@@ -173,8 +234,25 @@ for part in parts:
             # Inscribed shrine is on the recessed wall; the columns in front have real air behind them.
             wall_relief(cx+(mx-cx)*.57,cz+(mz-cz)*.57,tx,tz,nx,nz,base+.7,min(7,top-base-3),min(3.8,length*.30),.055)
             if gallery_base>9:
-                apothem=(mx-cx)*nx+(mz-cz)*nz;slope=apothem*.125/(gallery_base-.4)
-                wall_relief(mx,mz,tx,tz,nx,nz,2.0,min(8,gallery_base-3),min(3.8,length*.3),apothem*.10-1.6*slope+.045,slope)
+                apothem=(mx-cx)*nx+(mz-cz)*nz;slope=0
+                wall_relief(mx,mz,tx,tz,nx,nz,2.0,min(8,gallery_base-3),min(3.8,length*.3),-apothem*.025+.045,slope)
+
+# Solid visual risers: keep collision on the original smooth ramps.
+for part in parts:
+    if not part['name'].startswith('TREADS_FLUSH') or part['max']['y']-part['min']['y']<.5:continue
+    vv=list(map(xyz,part['vertices']));levels={}
+    for j in range(0,len(part['triangles']),3):
+        face=[vv[i] for i in part['triangles'][j:j+3]]
+        normal=(Vector(face[1])-Vector(face[0])).cross(Vector(face[2])-Vector(face[0]))
+        if normal.length<1e-8 or normal.normalized().y<.999:continue
+        level=round(sum(v[1] for v in face)/3,3)
+        levels.setdefault(level,[]).extend(face)
+    region='V_ClosedRisers_'+part['name'][13:]
+    for level,points in levels.items():
+        poly=hull(points)
+        if len(poly)<3:continue
+        prism(poly,level-.85,level-.018,'Temple_Limestone')
+        stair_closures+=1
 
 # Thin sloping stair undersides with actual air between piers. Source tread meshes stay in Unity.
 flights=[]
@@ -235,13 +313,13 @@ for sz in [-1,1]:
             key=str(x)+'_'+str(z);region='S_GatePylon_'+key
             top=12.6 if abs(x)<20 else 11.4
             poly=[(x-2.6,z-2.6),(x+2.6,z-2.6),(x+2.6,z+2.6),(x-2.6,z+2.6)]
-            prism(poly,.3,top,scale_bottom=1.16,scale_top=.86)
+            prism(poly,.3,top,scale_bottom=1.0,scale_top=1.0)
             region='D_GatePylon_'+key
             box((x,top+.25,z),(5.4,.65,5.4))
             for nx,nz in [(1,0),(-1,0),(0,1),(0,-1)]:
                 tx,tz=-nz,nx
                 frieze(x+nx*2.24,z+nz*2.24,tx,tz,nx,nz,top-.8,4.45)
-                wall_relief(x+nx*2.91,z+nz*2.91,tx,tz,nx,nz,2.0,7.4,2.25,.045,.067)
+                wall_relief(x+nx*2.60,z+nz*2.60,tx,tz,nx,nz,2.0,7.4,2.25,.045,0)
     region='S_GateLintel_'+str(sz);box((0,11.95,sz*71.5),(13.2,1.9,4.7),'Temple_Sandstone',check=False)
     region='D_GateLintel_'+str(sz);box((0,13.1,sz*71.5),(16.5,.65,5.3));frieze(0,sz*73.9,1,0,0,sz,12,13)
 
@@ -325,7 +403,7 @@ objects=[];booleans=0
 for (name,mat),(verts,faces) in groups.items():
     if not faces:continue
     obj=make_object(name+'_'+mat,verts,faces,mat);bpy.context.view_layer.objects.active=obj;obj.select_set(True)
-    if name.startswith('S_'):
+    if name.startswith(('S_','D_Pylon','D_GatePylon')):
         for cutter in cutters:
             if not intersects(obj,cutter):continue
             mod=obj.modifiers.new('Preserve gameplay clearance','BOOLEAN');mod.operation='DIFFERENCE';mod.solver='EXACT';mod.object=cutter
@@ -343,7 +421,11 @@ for (name,mat),(verts,faces) in groups.items():
                 mod=obj.modifiers.new('Eroded missing stone','BOOLEAN');mod.operation='DIFFERENCE';mod.solver='EXACT';mod.object=chip
                 bpy.ops.object.modifier_apply(modifier=mod.name);bpy.data.objects.remove(chip,do_unlink=True)
     if len(obj.data.polygons):
-        if not name.startswith('D_SandApron'):
+        if name.startswith('S_'):
+            collision=obj.copy();collision.data=obj.data.copy();collision.name='C_'+obj.name[2:]
+            bpy.context.collection.objects.link(collision);objects.append(collision)
+            collision.hide_render=True;collision.display_type='WIRE'
+        if not name.startswith(('D_SandApron','V_ClosedRisers','D_CustomMotif')):
             bevel=obj.modifiers.new('Worn stone arris','BEVEL');bevel.width=.065 if name.startswith('S_') else .018;bevel.segments=2 if name.startswith('S_') else 1
             bpy.ops.object.modifier_apply(modifier=bevel.name)
         # Weighted normals retain broad stone planes after beveling.
@@ -351,6 +433,71 @@ for (name,mat),(verts,faces) in groups.items():
         bpy.ops.object.modifier_apply(modifier=normal.name)
         objects.append(obj)
     obj.select_set(False)
+
+# Separate authored relief objects retain their source UV maps and individual textures.
+templates={}
+for kind in ['wall-deco','wall-deco-anubis','god-la']:
+    bpy.ops.object.select_all(action='DESELECT')
+    bpy.ops.wm.obj_import(filepath=str(ROOT/'Docs/model-art'/(kind+'.obj')))
+    obj=bpy.context.selected_objects[0]
+    bpy.context.view_layer.objects.active=obj
+    bpy.ops.object.transform_apply(location=True,rotation=True,scale=True)
+    material=obj.data.materials[0];material.name='Relief_'+kind
+    templates[kind]=obj
+for i,p in enumerate(relief_placements):
+    if p is None:continue
+    template=templates[p['kind']];obj=template.copy();obj.data=template.data.copy()
+    obj.name='D_AuthoredRelief_'+str(i)+'_'+p['kind'];bpy.context.collection.objects.link(obj)
+    lo=[min(v.co[j] for v in obj.data.vertices) for j in range(3)]
+    hi=[max(v.co[j] for v in obj.data.vertices) for j in range(3)]
+    scale=min(p['width']*.82/(hi[0]-lo[0]),p['height']*.82/(hi[2]-lo[2]))
+    hh=(hi[2]-lo[2])*scale
+    for v in obj.data.vertices:
+        lateral=(v.co.x-(lo[0]+hi[0])/2)*scale
+        height=(v.co.z-lo[2])*scale+(p['height']-hh)/2
+        # Source OBJ faces toward -Y. Its back lies at max Y.
+        out=p['out']+.12+(hi[1]-v.co.y)*scale*.55-p['slope']*height
+        v.co=coord(local(p['cx'],p['cz'],p['tx'],p['tz'],p['nx'],p['nz'],lateral,p['base']+height,out))
+    # Mapping the authored forward axis onto the outward wall normal mirrors the mesh.
+    # Reverse its winding as well, preserving UV loops and the front relief surface.
+    bm=bmesh.new();bm.from_mesh(obj.data);bmesh.ops.reverse_faces(bm,faces=list(bm.faces));bm.to_mesh(obj.data);bm.free()
+    bpy.context.view_layer.objects.active=obj
+    for cutter in cutters:
+        if not intersects(obj,cutter):continue
+        mod=obj.modifiers.new('Route clearance','BOOLEAN');mod.operation='DIFFERENCE';mod.solver='EXACT';mod.object=cutter
+        bpy.ops.object.modifier_apply(modifier=mod.name)
+    objects.append(obj)
+for obj in templates.values():bpy.data.objects.remove(obj,do_unlink=True)
+
+
+statue_records=[]
+for kind,x,z,height,yaw in [
+    ('la-dragon',-34,-43,4.3,0),('osiris-dragon',34,-43,4.3,0),
+    ('obelisk-giant',-42,42,7,0)]:
+    bpy.ops.object.select_all(action='DESELECT')
+    bpy.ops.wm.obj_import(filepath=str(ROOT/'Docs/model-art'/(kind+'.obj')))
+    obj=bpy.context.selected_objects[0];bpy.context.view_layer.objects.active=obj
+    bpy.ops.object.transform_apply(location=True,rotation=True,scale=True)
+    lo=[min(v.co[j] for v in obj.data.vertices) for j in range(3)]
+    hi=[max(v.co[j] for v in obj.data.vertices) for j in range(3)]
+    scale=height/(hi[2]-lo[2])
+    for v in obj.data.vertices:v.co=Vector(((v.co.x-(lo[0]+hi[0])/2)*scale,(v.co.y-(lo[1]+hi[1])/2)*scale,(v.co.z-lo[2])*scale))
+    obj.location=(x,-z,2.13);obj.rotation_euler.z=yaw
+    obj.name='D_UniqueStatue_'+kind
+    obj.data.materials[0].name='Relief_'+kind
+    objects.append(obj)
+    collision=obj.copy();collision.data=obj.data.copy();collision.name='C_UniqueStatue_'+kind
+    bpy.context.collection.objects.link(collision);collision.hide_render=True;collision.display_type='WIRE';objects.append(collision)
+    # A separate solid base connects the sculpture to courtyard paving.
+    size=max(2.8,(hi[0]-lo[0])*scale+.5);depth=max(2.8,(hi[1]-lo[1])*scale+.5)
+    verts=[coord((x+dx,yy,z+dz)) for dx,yy,dz in [
+        (-size/2,1.12,-depth/2),(size/2,1.12,-depth/2),(size/2,2.13,-depth/2),(-size/2,2.13,-depth/2),
+        (-size/2,1.12,depth/2),(size/2,1.12,depth/2),(size/2,2.13,depth/2),(-size/2,2.13,depth/2)]]
+    plinth=make_object('S_StatuePlinth_'+kind,verts,BOXF,'Temple_Sandstone');objects.append(plinth)
+    col=plinth.copy();col.data=plinth.data.copy();col.name='C_StatuePlinth_'+kind
+    bpy.context.collection.objects.link(col);col.hide_render=True;col.display_type='WIRE';objects.append(col)
+    statue_records.append(dict(model=kind,x=x,z=z,height=height))
+
 for cutter in cutters:bpy.data.objects.remove(cutter,do_unlink=True)
 weather_path=OUT/'StoneWeather.png'
 if weather_path.exists():
@@ -374,5 +521,5 @@ bpy.ops.object.select_all(action='DESELECT')
 for obj in objects:obj.select_set(True)
 bpy.ops.wm.save_as_mainfile(filepath=str(DOC/'Temple_Courtyard_v2.blend'))
 bpy.ops.export_scene.fbx(filepath=str(OUT/'Temple_Courtyard_v2.fbx'),use_selection=True,object_types={'MESH'},axis_forward='-Z',axis_up='Y',bake_anim=False,add_leaf_bones=False)
-report={'objects':len(objects),'triangles':sum(sum(len(p.vertices)-2 for p in o.data.polygons) for o in objects),'rejected_decorations':skipped,'clearance_boolean_cuts':booleans,'platforms':17,'protected_surface_triangles':len(pf)}
+report={'imported_wall_reliefs':len([p for p in relief_placements if p]),'custom_motifs':custom_motifs,'closed_risers':stair_closures,'unique_statues':statue_records,'objects':len(objects),'triangles':sum(sum(len(p.vertices)-2 for p in o.data.polygons) for o in objects),'rejected_decorations':skipped,'clearance_boolean_cuts':booleans,'platforms':17,'protected_surface_triangles':len(pf)}
 (DOC/'model-report.json').write_text(json.dumps(report,indent=2));print('COURTYARD_MODEL_COMPLETE',report)

@@ -134,16 +134,8 @@ namespace SandGuard.UI.HUD
 
         void RefreshWave()
         {
-            int number = wave is IWaveStateReader reader ? reader.WaveNumber
-                : wave is WaveDirector director ? WaveNumberOf(director) : -1;
+            int number = wave is IWaveStateReader reader ? reader.WaveNumber : -1;
             if (number >= 0 && number != waveNumber) hud.Wave.SetWave(waveNumber = number);
-        }
-
-        // 계약(IWaveStateReader.WaveNumber)과 같이 첫 준비 단계부터 1로 보인다.
-        static int WaveNumberOf(WaveDirector director)
-        {
-            int total = director.graph != null && director.graph.level != null && director.graph.level.waves != null ? director.graph.level.waves.waves.Count : 0;
-            return total == 0 ? 0 : Mathf.Clamp(director.WaveIndex + 1, 1, total);
         }
 
         void RefreshBoss()

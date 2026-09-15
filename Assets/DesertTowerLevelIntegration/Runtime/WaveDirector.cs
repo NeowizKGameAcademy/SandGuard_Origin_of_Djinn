@@ -8,7 +8,7 @@ namespace DesertTower.LevelIntegration
 {
     public enum RunState { Idle, Preparing, Running, Won, Lost, Error, Stopped }
 
-    public sealed class WaveDirector : MonoBehaviour
+    public sealed class WaveDirector : MonoBehaviour, IWaveStateReader, IGameStateReader
     {
         public RouteGraph graph;
         public PrefabCatalog catalog;
@@ -30,6 +30,62 @@ namespace DesertTower.LevelIntegration
         public float PreparationRemaining { get; private set; }
         public string LastError { get; private set; }
 
+        // IWaveStateReader / IGameStateReader — HUD(GameHUDPresenter)와 건설 단계 판정
+        // (FacilityBuildService, PlacementPhaseRule)이 이 계약만 보고 동작한다.
+        public event Action Changed;
+        /// <summary>Idle·Stopped·Error는 전투가 도는 상태가 아니다. Error를 Defeat로 내면 설정 오류가
+        /// 패배 연출로 보이므로 준비 단계로 낸다. 오류 자체는 LastError와 콘솔에 남는다.</summary>
+        public GamePhase Phase => State == RunState.Running ? GamePhase.Combat
+            : State == RunState.Won ? GamePhase.Victory
+            : State == RunState.Lost ? GamePhase.Defeat
+            : GamePhase.Preparation;
+        public bool IsPaused => Time.timeScale <= 0f;
+        public int TotalWaves => graph && graph.level && graph.level.waves ? graph.level.waves.waves.Count : 0;
+        public int WaveNumber => TotalWaves == 0 ? 0 : Mathf.Clamp(WaveIndex + 1, 1, TotalWaves);
+        public int AliveEnemyCount => actors.Count;
+        /// <summary>아직 내보내지 않은 이번 웨이브의 적 수. 준비 단계에는 일정이 아직 없으므로 웨이브 총량을 낸다.</summary>
+        public int PendingEnemyCount
+        {
+            get
+            {
+                if (State == RunState.Preparing) return WaveTotal(WaveIndex);
+                if (State != RunState.Running) return 0;
+                int pending = 0;
+                foreach (var schedule in schedules) pending += Mathf.Max(0, schedule.group.count - schedule.emitted);
+                return pending;
+            }
+        }
+        public float? PreparationSecondsRemaining =>
+            State == RunState.Preparing ? (float?)Mathf.Max(0f, PreparationRemaining) : 0f;
+        public IReadOnlyList<string> NextRouteIds => nextRoutes;
+
+        Wave WaveAt(int index)
+        {
+            var set = graph && graph.level ? graph.level.waves : null;
+            return set && index >= 0 && index < set.waves.Count ? set.waves[index] : null;
+        }
+        int WaveTotal(int index)
+        {
+            var wave = WaveAt(index);
+            if (wave == null) return 0;
+            int total = 0;
+            foreach (var group in wave.groups) if (group != null) total += Mathf.Max(0, group.count);
+            return total;
+        }
+        void RebuildNextRoutes(Wave wave)
+        {
+            nextRoutes.Clear();
+            if (wave == null) return;
+            foreach (var group in wave.groups)
+            {
+                if (group == null) continue;
+                // 경로 가이드가 없으면 스폰 ID가 진입로 식별자 역할을 한다.
+                string id = string.IsNullOrWhiteSpace(group.routeId) ? group.spawnId : group.routeId;
+                if (!string.IsNullOrWhiteSpace(id) && !nextRoutes.Contains(id)) nextRoutes.Add(id);
+            }
+        }
+        void Notify() { Changed?.Invoke(); }
+
         sealed class Schedule { public SpawnGroup group; public int emitted; public float next; }
         sealed class Walker
         {
@@ -42,6 +98,7 @@ namespace DesertTower.LevelIntegration
         enum SpawnOutcome { Spawned, Deferred, Failed }
         readonly List<Schedule> schedules = new List<Schedule>();
         readonly List<Walker> actors = new List<Walker>();
+        readonly List<string> nextRoutes = new List<string>();
         System.Random random;
         float elapsed;
         ILevelCoreReceiver Core => coreReceiver as ILevelCoreReceiver;
@@ -103,8 +160,10 @@ namespace DesertTower.LevelIntegration
         void NextWave()
         {
             WaveIndex++;
-            if (WaveIndex >= graph.level.waves.waves.Count) { SetState(RunState.Won); return; }
+            if (WaveIndex >= graph.level.waves.waves.Count) { nextRoutes.Clear(); SetState(RunState.Won); return; }
             PreparationRemaining = graph.level.waves.waves[WaveIndex].preparationSeconds;
+            // 표시용 값은 상태를 알리기 전에 갖춘다. 구독자가 SetState 안에서 바로 읽는다.
+            RebuildNextRoutes(graph.level.waves.waves[WaveIndex]);
             SetState(RunState.Preparing);
         }
         void Update()
@@ -136,14 +195,14 @@ namespace DesertTower.LevelIntegration
             for (int i = actors.Count - 1; i >= 0; i--)
             {
                 var walker = actors[i];
-                if (!walker.actor || !walker.actor.Alive) { if (walker.actor) walker.actor.Halt(); Killed++; actors.RemoveAt(i); continue; }
+                if (!walker.actor || !walker.actor.Alive) { if (walker.actor) walker.actor.Halt(); Killed++; actors.RemoveAt(i); Notify(); continue; }
                 if (!Advance(walker)) return;
                 if (walker.arrived)
                 {
                     walker.actor.Halt();
                     if (!Core.TryAbsorb(walker.actor, walker.damage)) continue;
                     if (State != RunState.Running) return; // external core callback may stop/clean the run
-                    Absorbed++; walker.actor.Remove(); actors.Remove(walker);
+                    Absorbed++; walker.actor.Remove(); actors.Remove(walker); Notify();
                     if (Core.IsDefeated) { FinishLoss(); return; }
                 }
             }
@@ -167,7 +226,7 @@ namespace DesertTower.LevelIntegration
             var walker = new Walker { actor = actor, damage = entry.coreDamage };
             if (binding.SuggestedRoute) walker.legacy = new Queue<Vector3>(binding.SuggestedRoute.WorldPoints());
             else { walker.next = graph.Find(binding.Spawn); walker.goal = graph.Find(binding.Target); }
-            actors.Add(walker); TotalSpawned++; return SpawnOutcome.Spawned;
+            actors.Add(walker); TotalSpawned++; Notify(); return SpawnOutcome.Spawned;
         }
 
         void Despawn(GameObject instance)
@@ -196,7 +255,7 @@ namespace DesertTower.LevelIntegration
         }
         void FinishLoss() { SetState(RunState.Lost); foreach (var w in actors) if (w.actor) w.actor.Halt(); }
         void Fail(string error) { LastError = error; SetState(RunState.Error); foreach (var w in actors) if (w.actor) w.actor.Halt(); Debug.LogError(error, this); }
-        void SetState(RunState value) { State = value; onStateChanged.Invoke(); }
+        void SetState(RunState value) { State = value; onStateChanged.Invoke(); Notify(); }
         public void StopRun() { Cleanup(); if (State == RunState.Running || State == RunState.Preparing) SetState(RunState.Stopped); }
         void Cleanup() { foreach (var w in actors) if (w.actor) w.actor.Remove(); actors.Clear(); schedules.Clear(); }
     }

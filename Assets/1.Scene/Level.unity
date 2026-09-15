@@ -750,7 +750,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 1869011763}
     m_Modifications:
     - target: {fileID: 2008051816066845154, guid: d1835b17d5eb68d48b75b409723d7b07, type: 3}
       propertyPath: m_LocalPosition.x
@@ -770,7 +770,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2008051816066845154, guid: d1835b17d5eb68d48b75b409723d7b07, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 2008051816066845154, guid: d1835b17d5eb68d48b75b409723d7b07, type: 3}
       propertyPath: m_LocalRotation.y
@@ -799,8 +799,41 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2457742672045713457, guid: d1835b17d5eb68d48b75b409723d7b07, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 352644030}
   m_SourcePrefab: {fileID: 100100000, guid: d1835b17d5eb68d48b75b409723d7b07, type: 3}
+--- !u!4 &352644028 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2008051816066845154, guid: d1835b17d5eb68d48b75b409723d7b07, type: 3}
+  m_PrefabInstance: {fileID: 352644027}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &352644029 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2457742672045713457, guid: d1835b17d5eb68d48b75b409723d7b07, type: 3}
+  m_PrefabInstance: {fileID: 352644027}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &352644030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 352644029}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d830c1f3987c5c3ca0346a527ef2c043, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesertTower.LevelIntegration.Runtime::DesertTower.LevelIntegration.CoreReceiver
+  maximum: 100
+  absorptionPrefab: {fileID: 0}
+  onChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  onDefeated:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &357399259
 GameObject:
   m_ObjectHideFlags: 0
@@ -2726,6 +2759,7 @@ Transform:
   - {fileID: 357399260}
   - {fileID: 635200801}
   - {fileID: 1932910400}
+  - {fileID: 352644028}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1880977364
@@ -3465,6 +3499,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1869011763}
     m_Modifications:
+    - target: {fileID: 2544806748085938965, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -2.02661
+      objectReference: {fileID: 0}
+    - target: {fileID: 2544806748085938965, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 52.14218
+      objectReference: {fileID: 0}
+    - target: {fileID: 2544806748085938965, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.85
+      objectReference: {fileID: 0}
     - target: {fileID: 4608032317268764644, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
       propertyPath: m_Name
       value: GraphIntegration
@@ -3476,6 +3522,10 @@ PrefabInstance:
     - target: {fileID: 6497633374297665909, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
       propertyPath: coreReceiver
       value: 
+      objectReference: {fileID: 352644030}
+    - target: {fileID: 6497633374297665909, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
+      propertyPath: startAutomatically
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7329238922625864213, guid: 743a845e5f6553c489328f3c80800ca2, type: 3}
       propertyPath: level
@@ -3658,7 +3708,6 @@ SceneRoots:
   - {fileID: 1070608479}
   - {fileID: 1869011763}
   - {fileID: 1580012723}
-  - {fileID: 352644027}
   - {fileID: 3145070750162289095}
   - {fileID: 1858868255}
   - {fileID: 1239865109}

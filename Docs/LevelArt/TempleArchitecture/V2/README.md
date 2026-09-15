@@ -1,3 +1,7 @@
+> 최신 계단 틈·탑 패널·문양·조각상 수정은 [REPAIR-05.md](REPAIR-05.md)를 참고한다.
+
+> 최신 충돌·난간·내벽·장식 수정은 [REPAIR-04.md](REPAIR-04.md)를 참고한다. 아래 내용은 03 단계 기록이다.
+
 # Desert Temple — courtyard revision
 
 적용 씬: `Assets/TempleArt/ArchitectureV2/Level_TempleCourtyard.unity`
