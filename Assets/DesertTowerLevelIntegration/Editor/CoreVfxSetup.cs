@@ -17,6 +17,7 @@ namespace DesertTower.LevelIntegration.Editor
         const string LevelScene = "Assets/1.Scene/Level.unity";
         const string CoreBasePath = "Assets/2.Model/Prefabs/Core Base.prefab";
         const string DamageFlashPath = "Assets/Resources/VFX/Prefabs/VFX_Core_Damage_Flash.prefab";
+        const string AbsorptionPath = "Assets/Resources/VFX/Prefabs/VFX_Core_Damage_Enemy.prefab";
         const string DestructionPath = "Assets/Resources/VFX/Prefabs/VFX_Core_Destruction.prefab";
         const string CoreBaseName = "Core Base";
         /// <summary>
@@ -160,6 +161,7 @@ namespace DesertTower.LevelIntegration.Editor
         /// <summary>피격 섬광(onChanged)과 파괴 연출(onDefeated)을 한 번씩만 연결한다. 섬광은 외형 경계의 바닥 중심에서 난다.</summary>
         public static void Connect(CoreReceiver receiver, Transform visual)
         {
+            receiver.absorptionPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(AbsorptionPath);
             var shot = receiver.GetComponent<VfxOneShot>();
             if (shot == null) shot = Undo.AddComponent<VfxOneShot>(receiver.gameObject);
             shot.Prefab = AssetDatabase.LoadAssetAtPath<GameObject>(DamageFlashPath);

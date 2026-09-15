@@ -2424,6 +2424,10 @@ PrefabInstance:
       propertyPath: interval
       value: 1.6
       objectReference: {fileID: 0}
+    - target: {fileID: 3525879857054782480, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+      propertyPath: experience
+      value: 60
+      objectReference: {fileID: 0}
     - target: {fileID: 3868443114016356889, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
       propertyPath: moveSpeed
       value: 2.2
@@ -2495,6 +2499,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 658155196757490767, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6845969559114640935}
+    - targetCorrespondingSourceObject: {fileID: 658155196757490767, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8657929669409854010}
   m_SourcePrefab: {fileID: 100100000, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
 --- !u!1 &1931109115925317170 stripped
 GameObject:
@@ -2555,10 +2562,25 @@ MonoBehaviour:
   fuseAfterLanding: 0.35
   damage: 20
   blastRadius: 2.5
+  towerDisableDuration: 5
   damageMask:
     serializedVersion: 2
     m_Bits: 4294967295
   handOffset: {x: 0, y: -0.05, z: 0.05}
+--- !u!114 &8657929669409854010
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1931109115925317170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b8e6d2bffd2d64499806c36f91fb5ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SandGuard.Enemy.Runtime::SandGuard.Enemy.EnemyBossInfo
+  displayName: "\uC6B0\uB450\uBA38\uB9AC \uC790\uD788\uB974"
+  icon: {fileID: 0}
 --- !u!4 &1931742154583938694 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 657662337107258619, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}

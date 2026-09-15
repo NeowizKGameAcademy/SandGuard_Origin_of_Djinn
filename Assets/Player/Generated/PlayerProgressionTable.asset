@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f511bdf6ebe5579459b9586ccc0fded1, type: 3}
+  m_Name: PlayerProgressionTable
+  m_EditorClassIdentifier: SandGuard.Player.Runtime::SandGuard.Player.PlayerProgressionTable
+  startingSkillPoints: 1
+  steps:
+  - experience: 50
+    skillPoints: 2
+  - experience: 80
+    skillPoints: 2
+  - experience: 120
+    skillPoints: 2
+  - experience: 170
+    skillPoints: 3
+  - experience: 230
+    skillPoints: 3
+  - experience: 300
+    skillPoints: 3
+  - experience: 380
+    skillPoints: 3
+  - experience: 470
+    skillPoints: 3
+  - experience: 570
+    skillPoints: 3
+  healRatioOnLevelUp: 0
+  manaRatioOnLevelUp: 0
+  statGrowth:
+  - stat: 30
+    kind: 0
+    valuePerLevel: 10
+  - stat: 31
+    kind: 0
+    valuePerLevel: 5
+  - stat: 6
+    kind: 1
+    valuePerLevel: 0.03

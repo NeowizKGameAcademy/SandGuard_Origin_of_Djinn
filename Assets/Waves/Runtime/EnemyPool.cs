@@ -84,6 +84,7 @@ namespace SandGuard.Waves
             if (brain != null) { brain.enabled = true; brain.ResetForReuse(); }
             instance.GetComponent<EnemyMeleeAttack>()?.ResetForReuse();
             instance.GetComponent<EnemyVisuals>()?.ResetForReuse();
+            instance.GetComponent<EnemyBossInfo>()?.ResetForReuse();
         }
 
         void Release(EnemyHealth health)

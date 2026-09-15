@@ -20,5 +20,7 @@ namespace SandGuard.UI.HUD
             if (ratio > 0f) cooldownText.text = Mathf.Max(0f, remaining).ToString("0.0");
         }
         public void SetReady(bool ready) { if (ready) SetCooldown(0f, 1f); }
+        /// <summary>쿨타임 없이 지금 쓸 수 없는 상태(잠김, 공중 점프 소진). 링을 가득 덮고 숫자는 숨긴다.</summary>
+        public void SetUnavailable() { cooldownRing.fillAmount = 1f; cooldownText.gameObject.SetActive(false); }
     }
 }

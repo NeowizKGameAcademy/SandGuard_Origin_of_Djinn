@@ -150,6 +150,7 @@ GameObject:
   - component: {fileID: 8954350906348574593}
   - component: {fileID: 754703791412322535}
   - component: {fileID: 7747812448936567835}
+  - component: {fileID: 3525879857054782480}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -356,6 +357,7 @@ MonoBehaviour:
   objectiveArrivalDistance: 2.5
   turnSpeed: 540
   despawnOnArrival: 1
+  routeLeash: 6
 --- !u!114 &8954350906348574593
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -438,6 +440,22 @@ MonoBehaviour:
   onReturned:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &3525879857054782480
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 658155196757490767}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ee1cf2fafdd15e42958002733725e91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SandGuard.Enemy.Runtime::SandGuard.Enemy.EnemyExperienceDrop
+  experience: 10
+  orbCount: 3
+  orbPrefab: {fileID: 1066689136710956815, guid: 02aacf818b8bd8c44ac8c0021233034b, type: 3}
+  burstSpeed: {x: 2.2, y: 4.5}
 --- !u!1 &754763443989115474
 GameObject:
   m_ObjectHideFlags: 0

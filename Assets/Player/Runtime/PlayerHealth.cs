@@ -19,7 +19,8 @@ namespace SandGuard.Player
         /// <summary>부활 보호 중인지. 보호 중에는 피해를 거부하고 적의 대상에서 빠진다.</summary>
         public bool IsProtected => Time.time < protectedUntil;
         public float CurrentHealth { get; private set; }
-        public float MaxHealth => maxHealth;
+        /// <summary>인스펙터 기본값에 <see cref="PlayerStat.MaxHealth"/> 수정자(레벨 성장)를 얹은 최대 체력.</summary>
+        public float MaxHealth => stats != null ? Mathf.Max(1f, stats.Evaluate(PlayerStat.MaxHealth, maxHealth)) : maxHealth;
         public Guid EntityId { get; private set; }
         public string FactionId => factionId;
         public CombatTargetKind Kind => CombatTargetKind.Player;
@@ -35,7 +36,10 @@ namespace SandGuard.Player
         public event Action<Guid> Revived;
         public event Action<Guid> Despawned;
         bool notifying;
-        void Awake() { EntityId = Guid.NewGuid(); CurrentHealth = maxHealth; if (stats == null) stats = GetComponent<PlayerStats>(); }
+        float knownMaxHealth;
+        void Awake() { EntityId = Guid.NewGuid(); if (stats == null) stats = GetComponent<PlayerStats>(); CurrentHealth = knownMaxHealth = MaxHealth; }
+        void OnEnable() { if (stats != null) { stats.Changed += OnStatChanged; OnStatChanged(PlayerStat.MaxHealth); } }
+        void OnDisable() { if (stats != null) stats.Changed -= OnStatChanged; }
         /// <summary>수정자를 적용한 받는 피해 배수. 기본 1.</summary>
         public float DamageTakenMultiplier => stats != null ? stats.Evaluate(PlayerStat.DamageTaken, 1f) : 1f;
         void OnValidate()
@@ -62,7 +66,7 @@ namespace SandGuard.Player
             notifying = true;
             try
             {
-                if (previous != CurrentHealth) HealthChanged?.Invoke(new HealthChangedInfo(EntityId, previous, CurrentHealth, maxHealth, maxHealth));
+                if (previous != CurrentHealth) HealthChanged?.Invoke(new HealthChangedInfo(EntityId, previous, CurrentHealth, MaxHealth, MaxHealth));
                 Damaged?.Invoke(new DamageAppliedInfo(EntityId, damage, result));
                 if (killed)
                 {
@@ -79,18 +83,38 @@ namespace SandGuard.Player
             if (State != global::LifeState.Incapacitated || notifying || !isActiveAndEnabled) return false;
             float previous = CurrentHealth;
             State = global::LifeState.Alive;
-            CurrentHealth = maxHealth;
+            CurrentHealth = MaxHealth;
             protectedUntil = reviveProtection > 0f ? Time.time + reviveProtection : -1f;
             foreach (var collider in disableOnDeath) if (collider != null) collider.enabled = true;
             notifying = true;
             try
             {
-                HealthChanged?.Invoke(new HealthChangedInfo(EntityId, previous, CurrentHealth, maxHealth, maxHealth));
+                HealthChanged?.Invoke(new HealthChangedInfo(EntityId, previous, CurrentHealth, MaxHealth, MaxHealth));
                 StateChanged?.Invoke(new LifeStateChangedInfo(EntityId, global::LifeState.Incapacitated, State));
                 Revived?.Invoke(EntityId);
             }
             finally { notifying = false; }
             return true;
+        }
+        /// <summary>살아 있을 때 체력을 회복한다. 최대 체력을 넘지 않으며 실제 회복량을 돌려준다.</summary>
+        public float Heal(float amount)
+        {
+            if (float.IsNaN(amount) || amount <= 0f || State != global::LifeState.Alive) return 0f;
+            float previous = CurrentHealth;
+            CurrentHealth = Mathf.Min(MaxHealth, CurrentHealth + amount);
+            if (previous != CurrentHealth) HealthChanged?.Invoke(new HealthChangedInfo(EntityId, previous, CurrentHealth, MaxHealth, MaxHealth));
+            return CurrentHealth - previous;
+        }
+        // 최대 체력이 오르면 현재 체력은 그대로 두고(회복은 레벨업 설정이 따로 맡는다), 내려가면 새 최대치로 자른다.
+        void OnStatChanged(PlayerStat stat)
+        {
+            if (stat != PlayerStat.MaxHealth) return;
+            float previousMax = knownMaxHealth, max = MaxHealth;
+            if (previousMax == max) return;
+            knownMaxHealth = max;
+            float previous = CurrentHealth;
+            CurrentHealth = Mathf.Min(CurrentHealth, max);
+            HealthChanged?.Invoke(new HealthChangedInfo(EntityId, previous, CurrentHealth, previousMax, max));
         }
         public bool TryDespawn()
         {

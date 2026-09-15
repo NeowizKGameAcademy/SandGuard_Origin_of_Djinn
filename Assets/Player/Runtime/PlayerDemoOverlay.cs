@@ -12,10 +12,11 @@ namespace SandGuard.Player
         public bool showCrosshair = true;
         bool hasCrosshairComponent;
         PlayerSkillCaster caster;
+        PlayerProgression progression;
         void Start()
         {
             hasCrosshairComponent = FindAnyObjectByType<PlayerCrosshair>() != null;
-            if (motor != null) caster = motor.GetComponent<PlayerSkillCaster>();
+            if (motor != null) { caster = motor.GetComponent<PlayerSkillCaster>(); progression = motor.GetComponent<PlayerProgression>(); }
         }
         string SkillStatus()
         {
@@ -28,12 +29,12 @@ namespace SandGuard.Player
         {
             if (motor == null || motor.input == null) return;
             Vector2 mouse = Mouse.current != null ? Mouse.current.position.ReadValue() : new Vector2(-1, -1);
-            motor.input.SuppressCursorCapture = new Rect(16, 16, 490, 190).Contains(new Vector2(mouse.x, Screen.height - mouse.y));
+            motor.input.SuppressCursorCapture = new Rect(16, 16, 490, 216).Contains(new Vector2(mouse.x, Screen.height - mouse.y));
         }
         void OnDisable() { if (motor != null && motor.input != null) motor.input.SuppressCursorCapture = false; }
         void OnGUI()
         {
-            GUI.Box(new Rect(16, 16, 490, 190), "SandGuard | Player Test");
+            GUI.Box(new Rect(16, 16, 490, 216), "SandGuard | Player Test");
             GUI.Label(new Rect(28, 40, 430, 24), "WASD Move | Mouse Look | Space Jump (x2, hold on ground: Updraft) | LMB Fire");
             GUI.Label(new Rect(28, 64, 460, 24), "Shift Dash (10 MP) | Q/E/R Skills (if unlocked) | Esc Release Cursor");
             if (motor != null)
@@ -51,6 +52,14 @@ namespace SandGuard.Player
                     (motor.lifeSource as IDamageable)?.TakeDamage(new DamageInfo(25f, "Enemy", causeId: "test.button"));
                 if (GUI.Button(new Rect(200, 164, 160, 28), "Test: Refill mana"))
                     (motor.manaSource as IManaWallet)?.Gain(mana?.MaxMana ?? 0);
+                if (progression != null)
+                {
+                    GUI.enabled = true;
+                    string experience = progression.IsMaxLevel ? "MAX" : $"{progression.ExperienceInLevel}/{progression.ExperienceToNextLevel}";
+                    GUI.Label(new Rect(28, 200, 300, 24), $"Lv.{progression.Level} | XP {experience} | Skill points {progression.SkillPoints}");
+                    GUI.enabled = Cursor.lockState != CursorLockMode.Locked && Time.timeScale > 0f;
+                    if (GUI.Button(new Rect(340, 198, 150, 26), "Test: +50 XP")) progression.GainExperience(50);
+                }
                 GUI.enabled = true;
             }
             if (showCrosshair && !hasCrosshairComponent) GUI.Label(new Rect(Screen.width / 2f - 5f, Screen.height / 2f - 10f, 20f, 24f), "+");

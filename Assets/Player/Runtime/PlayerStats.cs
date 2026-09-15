@@ -37,7 +37,9 @@ namespace SandGuard.Player
         StormRadius,      // 폭풍 반경 m
         StormDuration,    // 폭풍 지속 초
         StormDamageRatio, // 폭풍 틱 피해 = 볼트 피해 × 이 값
-        StormSlow         // 폭풍 안 둔화 비율(0.6 = 속도 40%)
+        StormSlow,        // 폭풍 안 둔화 비율(0.6 = 속도 40%)
+        MaxHealth,        // 최대 체력. PlayerHealth 인스펙터 값에 얹는다 (레벨 성장)
+        MaxMana           // 최대 마나(개수, 반올림). PlayerManaWallet 인스펙터 값에 얹는다 (레벨 성장)
     }
 
     public enum StatModifierKind
