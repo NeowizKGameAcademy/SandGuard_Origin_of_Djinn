@@ -70,25 +70,19 @@ public class FindEnemy : MonoBehaviour
         Transform Closest_Target = null;
         ICombatTarget Closest_Combat = null; // [통합 추가]
 
-        // [통합 수정] 사거리 안 콜라이더 → 전투 대상. 트리거(사거리 표시 등)는 무시한다.
-        int Count = Physics.OverlapSphereNonAlloc(transform.position, Range.range, Range.detect_buffer, Target_Mask, QueryTriggerInteraction.Ignore);
-
-        for (int i = 0; i < Count; i++)
+        foreach (ICombatTarget enemy in Range.enemies)
         {
-            ICombatTarget Enemy = Range.detect_buffer[i].GetComponentInParent<ICombatTarget>();
-
-            // 전투 대상이 아니거나, 공격할 수 없거나(죽는 중 등), 같은 편이면 건너뛴다.
-            if (Enemy == null || !Enemy.IsTargetable || Enemy.FactionId == Faction)
+            if (enemy == null || !enemy.IsTargetable || enemy.FactionId == Faction)
                 continue;
 
-            Transform Enemy_Transform = ((Component)Enemy).transform;
+            Transform Enemy_Transform = ((Component)enemy).transform;
             float Distance = (Enemy_Transform.position - transform.position).sqrMagnitude;
 
             if (Distance < Closest_Distance)
             {
                 Closest_Distance = Distance;
                 Closest_Target = Enemy_Transform;
-                Closest_Combat = Enemy;
+                Closest_Combat = enemy;
             }
         }
 

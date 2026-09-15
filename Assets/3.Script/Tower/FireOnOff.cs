@@ -3,7 +3,9 @@ using UnityEngine;
 
 public class FireOnOff : MonoBehaviour
 {
+    [Header("Components")]
     [SerializeField] private DetectRange detectRange;
+    [SerializeField] private GameObject DamageRange;
 
     [Header("Particle")]
     [SerializeField] private ParticleSystem Flames;
@@ -17,6 +19,7 @@ public class FireOnOff : MonoBehaviour
     private float[] OnValues = { 150f, 40f, 100f, 4f };
     private float[] OffValues = { 0f, 0f, 0f, 0f };
 
+    [Header("Change Time")]
     [SerializeField] private float ChangeTime = 0.5f;
 
     private bool CurrentState;
@@ -41,6 +44,7 @@ public class FireOnOff : MonoBehaviour
             StopCoroutine(ChangeCoroutine);
 
         float[] target = active ? OnValues : OffValues;
+        DamageRange.SetActive(active);
 
         ChangeCoroutine = StartCoroutine(Flame_co(target));
     }
