@@ -3,23 +3,23 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // =====================================================================================
-// [í†µí•© ìˆ˜ì • 2026-09-14] ê²Œì„ì˜ ì‹¤ì œ ì (Assets/Enemy)ê³¼ ì—°ê²°í•˜ê¸° ìœ„í•œ ìˆ˜ì •ì…ë‹ˆë‹¤.
+// [ÅëÇÕ ¼öÁ¤ 2026-09-14] °ÔÀÓÀÇ ½ÇÁ¦ Àû(Assets/Enemy)°ú ¿¬°áÇÏ±â À§ÇÑ ¼öÁ¤ÀÔ´Ï´Ù.
 //
-// ë¬´ì—‡ì„ ë°”ê¿¨ë‚˜
-//   1) ì ì„ ì°¾ëŠ” ë°©ë²•: íƒœê·¸ "Enemy" ê²€ìƒ‰ â†’ ì‚¬ê±°ë¦¬ ì•ˆ ì½œë¼ì´ë”ì—ì„œ ICombatTarget(ê³µìš© ì „íˆ¬ ëŒ€ìƒ) ì°¾ê¸°
-//   2) ë³´ê´€í•˜ëŠ” ëŒ€ìƒ: Transformë§Œ â†’ ICombatTargetë„ í•¨ê»˜ ë³´ê´€(target ì†ì„±ì€ ê·¸ëŒ€ë¡œ Transformì„ ëŒë ¤ì¤Œ)
-//   3) ëŒ€ìƒ ìœ ì§€ ì¡°ê±´: ì˜¤ë¸Œì íŠ¸ í™œì„± ì—¬ë¶€ë§Œ â†’ ê³µê²© ê°€ëŠ¥ ì—¬ë¶€(IsTargetable)ê¹Œì§€ í™•ì¸
-//   4) ìƒˆ ì†ì„± aimPoint: ì ì˜ ëª¸í†µ ê¸°ì¤€ì (HitPosition). ì¡°ì¤€(FirePointAim)ì´ ë°œë°‘ ëŒ€ì‹  ì´ ì ì„ ë³¸ë‹¤.
+// ¹«¾ùÀ» ¹Ù²å³ª
+//   1) ÀûÀ» Ã£´Â ¹æ¹ı: ÅÂ±× "Enemy" °Ë»ö ¡æ »ç°Å¸® ¾È Äİ¶óÀÌ´õ¿¡¼­ ICombatTarget(°ø¿ë ÀüÅõ ´ë»ó) Ã£±â
+//   2) º¸°üÇÏ´Â ´ë»ó: Transform¸¸ ¡æ ICombatTargetµµ ÇÔ²² º¸°ü(target ¼Ó¼ºÀº ±×´ë·Î TransformÀ» µ¹·ÁÁÜ)
+//   3) ´ë»ó À¯Áö Á¶°Ç: ¿ÀºêÁ§Æ® È°¼º ¿©ºÎ¸¸ ¡æ °ø°İ °¡´É ¿©ºÎ(IsTargetable)±îÁö È®ÀÎ
+//   4) »õ ¼Ó¼º aimPoint: ÀûÀÇ ¸öÅë ±âÁØÁ¡(HitPosition). Á¶ÁØ(FirePointAim)ÀÌ ¹ß¹Ø ´ë½Å ÀÌ Á¡À» º»´Ù.
 //
-// ì™œ ë°”ê¿¨ë‚˜
-//   - ì‹¤ì œ ì  í”„ë¦¬íŒ¹ì€ íƒœê·¸ê°€ "Untagged"ë¼ì„œ íƒœê·¸ ê²€ìƒ‰ìœ¼ë¡œëŠ” í•œ ë§ˆë¦¬ë„ ì°¾ì§€ ëª»í•©ë‹ˆë‹¤.
-//     íƒœê·¸ëŠ” ì˜¤ë¸Œì íŠ¸ë‹¹ í•˜ë‚˜ë¿ì´ë¼, ì ë§ˆë‹¤ íƒœê·¸ë¥¼ ê°•ì œí•˜ëŠ” ëŒ€ì‹  ì „íˆ¬ ëŒ€ìƒ ì¸í„°í˜ì´ìŠ¤ë¡œ ì°¾ìŠµë‹ˆë‹¤.
-//   - ì‹¤ì œ ì ì€ ì²´ë ¥ì´ 0ì´ ë˜ë©´ "ì£½ëŠ” ì¤‘" ì—°ì¶œ ë™ì•ˆ ì˜¤ë¸Œì íŠ¸ê°€ ì¼œì ¸ ìˆìŠµë‹ˆë‹¤.
-//     activeInHierarchyë§Œ ë³´ë©´ ì£½ëŠ” ì ì„ ê³„ì† ì¡°ì¤€í•˜ë¯€ë¡œ IsTargetableë¡œ ê±°ë¦…ë‹ˆë‹¤.
-//   - ê°™ì€ í¸(í”Œë ˆì´ì–´ ë“±)ì€ ì¡°ì¤€í•˜ì§€ ì•Šë„ë¡ ì§„ì˜(FactionId)ì„ ë¹„êµí•©ë‹ˆë‹¤.
-//     íƒ€ì›Œ ì§„ì˜ì€ ë³¸ì²´ì— ë¶™ì€ ì²´ë ¥ ì»´í¬ë„ŒíŠ¸(ICombatTarget)ì—ì„œ ì½ê³ , ì—†ìœ¼ë©´ "Ally"ë¡œ ë´…ë‹ˆë‹¤.
+// ¿Ö ¹Ù²å³ª
+//   - ½ÇÁ¦ Àû ÇÁ¸®ÆÕÀº ÅÂ±×°¡ "Untagged"¶ó¼­ ÅÂ±× °Ë»öÀ¸·Î´Â ÇÑ ¸¶¸®µµ Ã£Áö ¸øÇÕ´Ï´Ù.
+//     ÅÂ±×´Â ¿ÀºêÁ§Æ®´ç ÇÏ³ª»ÓÀÌ¶ó, Àû¸¶´Ù ÅÂ±×¸¦ °­Á¦ÇÏ´Â ´ë½Å ÀüÅõ ´ë»ó ÀÎÅÍÆäÀÌ½º·Î Ã£½À´Ï´Ù.
+//   - ½ÇÁ¦ ÀûÀº Ã¼·ÂÀÌ 0ÀÌ µÇ¸é "Á×´Â Áß" ¿¬Ãâ µ¿¾È ¿ÀºêÁ§Æ®°¡ ÄÑÁ® ÀÖ½À´Ï´Ù.
+//     activeInHierarchy¸¸ º¸¸é Á×´Â ÀûÀ» °è¼Ó Á¶ÁØÇÏ¹Ç·Î IsTargetable·Î °Å¸¨´Ï´Ù.
+//   - °°Àº Æí(ÇÃ·¹ÀÌ¾î µî)Àº Á¶ÁØÇÏÁö ¾Êµµ·Ï Áø¿µ(FactionId)À» ºñ±³ÇÕ´Ï´Ù.
+//     Å¸¿ö Áø¿µÀº º»Ã¼¿¡ ºÙÀº Ã¼·Â ÄÄÆ÷³ÍÆ®(ICombatTarget)¿¡¼­ ÀĞ°í, ¾øÀ¸¸é "Ally"·Î º¾´Ï´Ù.
 //
-// ê¸°ì¡´ ì½”ë“œëŠ” ì§€ìš°ì§€ ì•Šê³  ì•„ë˜ì— ì£¼ì„ìœ¼ë¡œ ë‚¨ê²¼ìŠµë‹ˆë‹¤.
+// ±âÁ¸ ÄÚµå´Â Áö¿ìÁö ¾Ê°í ¾Æ·¡¿¡ ÁÖ¼®À¸·Î ³²°å½À´Ï´Ù.
 // =====================================================================================
 public class FindEnemy : MonoBehaviour
 {
@@ -28,7 +28,7 @@ public class FindEnemy : MonoBehaviour
     private float Auto_Aim_Range;
     [SerializeField] private float SearchTime = 0.2f;
 
-    // [í†µí•© ì¶”ê°€] ì  ì½œë¼ì´ë”ë¥¼ ëª¨ì„ ë ˆì´ì–´. ê¸°ë³¸ì€ ì „ë¶€.
+    // [ÅëÇÕ Ãß°¡] Àû Äİ¶óÀÌ´õ¸¦ ¸ğÀ» ·¹ÀÌ¾î. ±âº»Àº ÀüºÎ.
     [SerializeField] private LayerMask Target_Mask = ~0;
 
     private float Auto_Aim_Distance;
@@ -36,7 +36,7 @@ public class FindEnemy : MonoBehaviour
 
     private Transform Target_Transform;
 
-    // [í†µí•© ì¶”ê°€] ì¡°ì¤€ ì¤‘ì¸ ì „íˆ¬ ëŒ€ìƒê³¼, ì§„ì˜ ë¹„êµì— ì“°ëŠ” íƒ€ì›Œ ìì‹ ì˜ ì „íˆ¬ ì •ë³´
+    // [ÅëÇÕ Ãß°¡] Á¶ÁØ ÁßÀÎ ÀüÅõ ´ë»ó°ú, Áø¿µ ºñ±³¿¡ ¾²´Â Å¸¿ö ÀÚ½ÅÀÇ ÀüÅõ Á¤º¸
     private ICombatTarget Target_Combat;
     private ICombatTarget Owner;
     private readonly Collider[] Search_Buffer = new Collider[64];
@@ -44,9 +44,9 @@ public class FindEnemy : MonoBehaviour
     //Properties
     public Transform target => Target_Transform;
     public float range => Auto_Aim_Range;
-    // [í†µí•© ì¶”ê°€] ì¡°ì¤€ì . ëŒ€ìƒì´ ì—†ìœ¼ë©´ íƒ€ì›Œ ìœ„ì¹˜.
+    // [ÅëÇÕ Ãß°¡] Á¶ÁØÁ¡. ´ë»óÀÌ ¾øÀ¸¸é Å¸¿ö À§Ä¡.
     public Vector3 aimPoint => Target_Combat != null ? Target_Combat.HitPosition : (Target_Transform != null ? Target_Transform.position : transform.position);
-    // [í†µí•© ì¶”ê°€] ì¡°ì¤€ ì¤‘ì¸ ì „íˆ¬ ëŒ€ìƒ(ì—†ìœ¼ë©´ null)
+    // [ÅëÇÕ Ãß°¡] Á¶ÁØ ÁßÀÎ ÀüÅõ ´ë»ó(¾øÀ¸¸é null)
     public ICombatTarget targetCombat => Target_Combat;
 
     private string Faction => Owner != null ? Owner.FactionId : "Ally";
@@ -55,7 +55,7 @@ public class FindEnemy : MonoBehaviour
     {
         TryGetComponent(out Range);
         Auto_Aim_Range = Range.range;
-        Owner = GetComponentInParent<ICombatTarget>(); // [í†µí•© ì¶”ê°€]
+        Owner = GetComponentInParent<ICombatTarget>(); // [ÅëÇÕ Ãß°¡]
     }
 
     private void Update()
@@ -67,8 +67,8 @@ public class FindEnemy : MonoBehaviour
 
         if (Target_Transform != null)
         {
-            // [í†µí•© ìˆ˜ì •] ì£½ëŠ” ì¤‘ì´ê±°ë‚˜ í’€ë¡œ ëŒì•„ê°„ ì ì€ ì˜¤ë¸Œì íŠ¸ê°€ ì¼œì ¸ ìˆì–´ë„ ë†“ì•„ ì¤€ë‹¤.
-            /* ê¸°ì¡´ ì½”ë“œ
+            // [ÅëÇÕ ¼öÁ¤] Á×´Â ÁßÀÌ°Å³ª Ç®·Î µ¹¾Æ°£ ÀûÀº ¿ÀºêÁ§Æ®°¡ ÄÑÁ® ÀÖ¾îµµ ³õ¾Æ ÁØ´Ù.
+            /* ±âÁ¸ ÄÚµå
             if (!Target_Transform.gameObject.activeInHierarchy)
             {
                 Target_Transform = null;
@@ -87,7 +87,7 @@ public class FindEnemy : MonoBehaviour
             if (Target_Distance > Auto_Aim_Distance)
             {
                 Target_Transform = null;
-                Target_Combat = null; // [í†µí•© ì¶”ê°€]
+                Target_Combat = null; // [ÅëÇÕ Ãß°¡]
                 return;
             }
 
@@ -107,9 +107,9 @@ public class FindEnemy : MonoBehaviour
     {
         float Closest_Distance = Auto_Aim_Distance;
         Transform Closest_Target = null;
-        ICombatTarget Closest_Combat = null; // [í†µí•© ì¶”ê°€]
+        ICombatTarget Closest_Combat = null; // [ÅëÇÕ Ãß°¡]
 
-        /* ê¸°ì¡´ ì½”ë“œ: íƒœê·¸ "Enemy"ë¡œ ì°¾ê¸°. ì‹¤ì œ ì ì€ íƒœê·¸ê°€ ì—†ì–´ ì°¾ì§€ ëª»í•œë‹¤.
+        /* ±âÁ¸ ÄÚµå: ÅÂ±× "Enemy"·Î Ã£±â. ½ÇÁ¦ ÀûÀº ÅÂ±×°¡ ¾ø¾î Ã£Áö ¸øÇÑ´Ù.
         GameObject[] Enemies = GameObject.FindGameObjectsWithTag("Enemy");
 
         for (int i = 0; i < Enemies.Length; i++)
@@ -129,14 +129,14 @@ public class FindEnemy : MonoBehaviour
         }
         */
 
-        // [í†µí•© ìˆ˜ì •] ì‚¬ê±°ë¦¬ ì•ˆ ì½œë¼ì´ë” â†’ ì „íˆ¬ ëŒ€ìƒ. íŠ¸ë¦¬ê±°(ì‚¬ê±°ë¦¬ í‘œì‹œ ë“±)ëŠ” ë¬´ì‹œí•œë‹¤.
+        // [ÅëÇÕ ¼öÁ¤] »ç°Å¸® ¾È Äİ¶óÀÌ´õ ¡æ ÀüÅõ ´ë»ó. Æ®¸®°Å(»ç°Å¸® Ç¥½Ã µî)´Â ¹«½ÃÇÑ´Ù.
         int Count = Physics.OverlapSphereNonAlloc(transform.position, Auto_Aim_Range, Search_Buffer, Target_Mask, QueryTriggerInteraction.Ignore);
 
         for (int i = 0; i < Count; i++)
         {
             ICombatTarget Enemy = Search_Buffer[i].GetComponentInParent<ICombatTarget>();
 
-            // ì „íˆ¬ ëŒ€ìƒì´ ì•„ë‹ˆê±°ë‚˜, ê³µê²©í•  ìˆ˜ ì—†ê±°ë‚˜(ì£½ëŠ” ì¤‘ ë“±), ê°™ì€ í¸ì´ë©´ ê±´ë„ˆë›´ë‹¤.
+            // ÀüÅõ ´ë»óÀÌ ¾Æ´Ï°Å³ª, °ø°İÇÒ ¼ö ¾ø°Å³ª(Á×´Â Áß µî), °°Àº ÆíÀÌ¸é °Ç³Ê¶Ú´Ù.
             if (Enemy == null || !Enemy.IsTargetable || Enemy.FactionId == Faction)
                 continue;
 
@@ -152,6 +152,6 @@ public class FindEnemy : MonoBehaviour
         }
 
         Target_Transform = Closest_Target;
-        Target_Combat = Closest_Combat; // [í†µí•© ì¶”ê°€]
+        Target_Combat = Closest_Combat; // [ÅëÇÕ Ãß°¡]
     }
 }

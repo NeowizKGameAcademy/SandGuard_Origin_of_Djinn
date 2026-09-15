@@ -45,6 +45,17 @@ public class RangeController : MonoBehaviour
 
     [Header("Slow")]
     [SerializeField] private float SlowRatio = 0.5f;
+    private SphereCollider SlowRange;
+
+    private void OnEnable()
+    {
+        TryGetComponent(out SlowRange);
+
+        if (type.Equals(Type.Slow))
+        {
+            SlowRange.radius = DetectRange.range;
+        }
+    }
 
     // [통합 추가] 검사·요청 간격(초). 둔화는 이 간격의 2배 조금 넘게 걸어 두고 계속 갱신한다.
     [Header("Integration")]
