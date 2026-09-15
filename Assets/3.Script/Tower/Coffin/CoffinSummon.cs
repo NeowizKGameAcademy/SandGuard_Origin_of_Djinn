@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CoffinSummon : MonoBehaviour
@@ -10,14 +9,22 @@ public class CoffinSummon : MonoBehaviour
     [Header("Summon")]
     [SerializeField] private int summonNum;
     [SerializeField] private ObjectPooling CreaturePool;
+    [SerializeField] private float RespawnCoolDown = 5f;
 
     private Vector3[] summonPoints;
+    private Creature[] summonedCreatures;
 
     private void OnEnable()
     {
         TryGetComponent(out Range);
 
         SetPoints();
+        SummonAll();
+    }
+
+    private void OnDisable()
+    {
+        DespawnAll();
     }
 
     public void SetPoints()
@@ -26,6 +33,7 @@ public class CoffinSummon : MonoBehaviour
             return;
 
         summonPoints = new Vector3[summonNum];
+        summonedCreatures = new Creature[summonNum];
 
         float radius = Range.range * 0.5f;
         float angleStep = 360f / summonNum;
@@ -35,11 +43,64 @@ public class CoffinSummon : MonoBehaviour
             float angle = angleStep * i;
             float radian = angle * Mathf.Deg2Rad;
 
-            Vector3 offset = new Vector3( Mathf.Sin(radian), 0f, Mathf.Cos(radian));
+            Vector3 offset = new Vector3(
+                Mathf.Sin(radian),
+                0f,
+                Mathf.Cos(radian)
+            );
 
             summonPoints[i] = transform.position + offset * radius;
         }
     }
 
-    public void Summon() { }
+    public void SummonAll()
+    {
+        for (int i = 0; i < summonNum; i++)
+        {
+            Summon(i);
+        }
+    }
+
+    public void Summon(int index)
+    {
+        GameObject obj = CreaturePool.GetObject();
+
+        obj.transform.position = summonPoints[index];
+
+        Creature creature = obj.GetComponent<Creature>();
+
+        creature.Initialize(this, index);
+        summonedCreatures[index] = creature;
+
+        obj.SetActive(true);
+    }
+
+    private void DespawnAll()
+    {
+        if (summonedCreatures == null)
+            return;
+
+        for (int i = 0; i < summonedCreatures.Length; i++)
+        {
+            if (summonedCreatures[i] == null)
+                continue;
+
+            summonedCreatures[i].Despawn();
+            summonedCreatures[i] = null;
+        }
+    }
+
+    public void Respawn(int index)
+    {
+        summonedCreatures[index] = null;
+
+        StartCoroutine(RespawnCoroutine(index));
+    }
+
+    private IEnumerator RespawnCoroutine(int index)
+    {
+        yield return new WaitForSeconds(RespawnCoolDown);
+
+        Summon(index);
+    }
 }
