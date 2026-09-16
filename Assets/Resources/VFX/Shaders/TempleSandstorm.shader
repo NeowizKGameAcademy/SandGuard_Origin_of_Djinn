@@ -6,6 +6,7 @@ Shader "SandGuard/VFX/TempleSandstorm"
         _DarkColor ("Shadow sand", Color) = (0.24,0.13,0.055,1)
         _LightColor ("Sunlit sand", Color) = (0.83,0.62,0.32,1)
         _Opacity ("Density", Range(0,1)) = 0.9
+        _DensityFloor ("Minimum body density", Range(0,1)) = 0
         _FlowSpeed ("Flow speed", Float) = 1
         _Phase ("Layer phase", Float) = 0
         _StormTime ("Animation time", Float) = 0
@@ -29,7 +30,7 @@ Shader "SandGuard/VFX/TempleSandstorm"
             TEXTURE2D(_NoiseTex); SAMPLER(sampler_NoiseTex);
             CBUFFER_START(UnityPerMaterial)
                 float4 _DarkColor, _LightColor;
-                float _Opacity, _FlowSpeed, _Phase, _StormTime, _Swirl, _Streak, _WaveAmplitude;
+                float _Opacity, _DensityFloor, _FlowSpeed, _Phase, _StormTime, _Swirl, _Streak, _WaveAmplitude;
             CBUFFER_END
             struct A { float4 positionOS:POSITION; float2 uv:TEXCOORD0; float3 normalOS:NORMAL; };
             struct V { float4 positionCS:SV_POSITION; float2 uv:TEXCOORD0; float3 positionWS:TEXCOORD1; };
@@ -58,7 +59,7 @@ Shader "SandGuard/VFX/TempleSandstorm"
                 // 나선 띠: 둘레와 높이를 함께 타고 도는 밝기 띠가 소용돌이 구조를 읽히게 한다.
                 float density=saturate(n*.78+fine*.22+_Swirl*.16*sin((i.uv.x*14+i.uv.y*5)*6.2831853-t*.9));
                 float edge=smoothstep(0,.075,i.uv.y)*(1-smoothstep(.88,1,i.uv.y));
-                float alpha=smoothstep(.18,.7,density)*_Opacity*edge;
+                float alpha=lerp(_DensityFloor,1,smoothstep(.18,.7,density))*_Opacity*edge;
                 // The large shells use a geometric edge fade; depth testing still clips
                 // opaque structures. Avoid sampling capture-camera depth for this layer.
                 float light=saturate(density*.75+fine*.20+detail*.10+.10);

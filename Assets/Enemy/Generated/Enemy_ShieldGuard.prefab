@@ -2234,6 +2234,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2210441272607847904, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+      propertyPath: Cue
+      value: 
+      objectReference: {fileID: 11400000, guid: cda8236f7edcb514e93dfa9f85de6dc1, type: 2}
     - target: {fileID: 3525879857054782480, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
       propertyPath: experience
       value: 15
@@ -2262,6 +2266,14 @@ PrefabInstance:
       propertyPath: visualInstance
       value: 
       objectReference: {fileID: 3710198535133466813}
+    - target: {fileID: 5329342558828759534, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+      propertyPath: Cue
+      value: 
+      objectReference: {fileID: 11400000, guid: 5d815e26f2aafa94ea2d35ed30ea7681, type: 2}
+    - target: {fileID: 5329342558828759534, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+      propertyPath: Stride
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5845018073376050768, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
       propertyPath: m_Height
       value: 3.3256783
@@ -2324,6 +2336,8 @@ MonoBehaviour:
   frontHalfAngle: 60
   frontMultiplier: 0
   maxHealth: 30
+  shieldVisual: {fileID: 0}
+  debrisLifetime: 6
   guardVfx: {fileID: 8929661459040911821, guid: 443d163808b76b844bf439c8b3cc50d6, type: 3}
   guardVfxLifetime: 1
 --- !u!4 &5773393312463338340 stripped

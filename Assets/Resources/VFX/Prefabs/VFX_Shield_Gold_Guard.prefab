@@ -164,6 +164,54 @@ MonoBehaviour:
   Duration: 0.25
   Tint: {r: 1, g: 0.72, b: 0.18, a: 1}
   Phase: 0
+--- !u!1 &473564525309258229
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1241201460323097621}
+  - component: {fileID: 8954572541678604660}
+  m_Layer: 0
+  m_Name: Sfx
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1241201460323097621
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 473564525309258229}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6561801832420452418}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8954572541678604660
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 473564525309258229}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2bd5ad3d6c26d243a66a793301b2e53, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxEmitter
+  Cue: {fileID: 11400000, guid: 14896909aa5ed6e41a007e3360b22647, type: 2}
+  VolumeScale: 1
+  Delay: 0
+  Trigger: 0
 --- !u!1 &744095403231926115
 GameObject:
   m_ObjectHideFlags: 0
@@ -198,6 +246,7 @@ Transform:
   - {fileID: 6079198752633278429}
   - {fileID: 7722448742585222430}
   - {fileID: 4684863669287658509}
+  - {fileID: 1241201460323097621}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!198 &4422146680971091709

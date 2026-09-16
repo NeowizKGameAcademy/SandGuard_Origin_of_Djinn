@@ -1,0 +1,14 @@
+{
+  "name": "SandGuard.Audio.Editor",
+  "rootNamespace": "SandGuard.Audio.Editor",
+  "references": [
+    "SandGuard.Audio.Runtime",
+    "DesertTower.VFX.Runtime",
+    "DesertTower.Gameplay.Abstractions",
+    "SandGuard.Player.Runtime",
+    "SandGuard.Enemy.Runtime",
+    "DesertTower.LevelIntegration.Runtime",
+    "UnityEngine.UI"
+  ],
+  "includePlatforms": ["Editor"]
+}

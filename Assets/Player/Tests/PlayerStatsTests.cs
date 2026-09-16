@@ -153,7 +153,7 @@ namespace SandGuard.Player.Tests
             var stats = player.GetComponent<PlayerStats>();
             int published = 0; motor.Changed += _ => published++;
             yield return new WaitForSeconds(0.4f);
-            motor.dashCooldown = 1f;
+            motor.dashCooldown = 1f; motor.dashDuration = 0.3f; // 대시가 쿨다운보다 먼저 끝나야 두 번째 TryDash가 성공한다
             Assert.True(motor.TryDash().Succeeded);
             yield return new WaitForSeconds(0.05f);
             Assert.Greater(motor.DashCooldownRemaining, 0.8f);

@@ -36,6 +36,8 @@ namespace DesertTower.VFX.Editor
             CobraDestructionBuilder.Build();
             AssetDatabase.SaveAssets();
             VfxShowcaseBuilder.Build();
+            // 프리팹을 다시 만들면 소리 이미터가 사라지므로 오디오 배선을 다시 건다 (SfxEmitter 자식, 큐 참조만).
+            SandGuard.Audio.Editor.AudioWiring.WireVfxPrefabs();
             Debug.Log("[VFX] Build All done.");
         }
 

@@ -2206,6 +2206,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2210441272607847904, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+      propertyPath: Cue
+      value: 
+      objectReference: {fileID: 11400000, guid: 0df2207824139e74483e211ea72b1845, type: 2}
     - target: {fileID: 2233741487118629176, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
       propertyPath: windup
       value: 0.3
@@ -2234,6 +2238,10 @@ PrefabInstance:
       propertyPath: visualInstance
       value: 
       objectReference: {fileID: 4806954812179629323}
+    - target: {fileID: 5329342558828759534, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+      propertyPath: Stride
+      value: 0.7
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 7214952280387360872, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}

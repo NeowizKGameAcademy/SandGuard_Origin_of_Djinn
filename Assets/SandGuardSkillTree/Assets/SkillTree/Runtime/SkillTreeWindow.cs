@@ -7,6 +7,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
 using UnityEngine.UI;
+using SandGuard.GameFlow;
 
 namespace SandGuard.Skills.Unity
 {
@@ -44,10 +45,18 @@ namespace SandGuard.Skills.Unity
         {
             if(!session)session=GetComponent<SkillTreeSession>();
             if(!theme){Debug.LogError("Skill UI Theme를 지정하세요. 프리팹 생성 메뉴로 만들 수 있습니다.",this);enabled=false;return;}
+            RebuildLegacyLayoutForLampSkin();
             if(!modal)SkillWindowLayout.Build(this);
             modal.SetActive(false);prompt.SetActive(false);
             BindButtons();
             BuildRespecUI();
+        }
+        void RebuildLegacyLayoutForLampSkin()
+        {
+            if(!modal || !SkillLampSkin.Available || modal.transform.Find("Window/Lamp"))return;
+            var oldCanvas=modal.GetComponentInParent<Canvas>();
+            modal.SetActive(false);modal=null;
+            if(oldCanvas && oldCanvas.gameObject!=gameObject && oldCanvas.transform.IsChildOf(transform))Destroy(oldCanvas.gameObject);
         }
         void Start()
         {
@@ -64,6 +73,7 @@ namespace SandGuard.Skills.Unity
             var rect=SkillWindowLayout.Rect(parent,name,x,y,width,48);
             var image=rect.gameObject.AddComponent<Image>();image.color=new Color(.15f,.22f,.25f,1);
             var button=rect.gameObject.AddComponent<Button>();button.targetGraphic=image;button.onClick.AddListener(action);
+            if(SkillLampSkin.Available)SkillLampSkin.StyleButton(button);
             SkillWindowLayout.Label(rect,theme.font,"Label",text,21,8,0,width-16,48,TextAnchor.MiddleCenter).color=theme.gold;
             return button;
         }
@@ -136,13 +146,15 @@ namespace SandGuard.Skills.Unity
                 createdEventSystem=new GameObject("Skill UI EventSystem",typeof(EventSystem),typeof(InputSystemUIInputModule));
                 createdEventSystem.GetComponent<InputSystemUIInputModule>().AssignDefaultActions();
             }
-            modal.SetActive(true);prompt.SetActive(false);dirty=true;onOpened.Invoke();
+            modal.SetActive(true);prompt.SetActive(false);dirty=true;
+            GameManager.Instance.RequestPause(this);onOpened.Invoke();
         }
         public void Close()
         {
             if(!IsOpen)return;
             if(respecPanel)respecPanel.SetActive(false);
             IsOpen=false;if(modal)modal.SetActive(false);
+            if(GameManager.HasInstance)GameManager.Instance.ReleasePause(this);
             foreach(var entry in suspended)if(entry.Key)entry.Key.enabled=entry.Value;
             suspended.Clear();Cursor.lockState=previousLock;Cursor.visible=previousVisible;
             if(createdEventSystem){createdEventSystem.SetActive(false);Destroy(createdEventSystem);createdEventSystem=null;}
@@ -176,7 +188,11 @@ namespace SandGuard.Skills.Unity
             pointsLabel.text="보유 포인트  "+s.Points+" SP";
             var nodes=s.Catalog.All.Where(d=>d.Branch==branch).ToArray();
             if(selected==null || !nodes.Any(n=>n.Id==selected))selected=nodes.FirstOrDefault()?.Id;
-            for(int i=0;i<tabButtons.Length;i++)tabButtons[i].image.color=i==(int)branch?theme.cyan:theme.muted;
+            for(int i=0;i<tabButtons.Length;i++)
+            {
+                if(SkillLampSkin.Available)SkillLampSkin.StyleButton(tabButtons[i],i==(int)branch);
+                else tabButtons[i].image.color=i==(int)branch?theme.cyan:theme.muted;
+            }
             RebuildTree(nodes);
             var d=s.Catalog.Find(selected);
             if(d==null){detailTitle.text="등록된 스킬 없음";detailBody.text="이 계열의 스킬 데이터를 추가하세요.";detailIcon.enabled=false;buyButton.interactable=false;buyLabel.text="선택할 스킬 없음";}
@@ -195,7 +211,10 @@ namespace SandGuard.Skills.Unity
                 var slot=(EquipSlot)i;string id=s.Equipped(slot);var equipped=s.Catalog.Find(id);
                 slotLabels[i].text=equipped?.Name??"비어 있음";slotIcons[i].sprite=theme.Icon(id);slotIcons[i].enabled=slotIcons[i].sprite!=null;
                 bool compatible=d!=null && d.Kind==SkillKind.Active && d.Slots.Contains(slot) && s.IsLearned(d.Id) && lastEditing;
-                slotButtons[i].interactable=compatible;slotButtons[i].image.color=compatible?theme.cyan:theme.gold;
+                slotButtons[i].interactable=compatible;
+                if(SkillLampSkin.Available)slotButtons[i].image.color=compatible?theme.cyan:Color.white;
+                else slotButtons[i].image.color=compatible?theme.cyan:theme.gold;
+                var emptyMarker=slotButtons[i].transform.Find("Empty Marker");if(emptyMarker)emptyMarker.gameObject.SetActive(id==null);
                 removeButtons[i].interactable=id!=null && lastEditing;
             }
             statusLabel.text=feedback;
@@ -207,9 +226,13 @@ namespace SandGuard.Skills.Unity
             Func<string,int> rank=null;rank=id=>{if(ranks.TryGetValue(id,out int r))return r;var d=s.Catalog.Find(id);return ranks[id]=d.Prerequisites.Count==0?0:1+d.Prerequisites.Max(rank);};
             var positions=new Dictionary<string,Vector2>();
             var groups=nodes.GroupBy(d=>rank(d.Id)).ToArray();int maxRows=groups.Length==0?1:groups.Max(g=>g.Count());
-            float height=Mathf.Max(410,maxRows*180+40),width=Mathf.Max(900,groups.Length==0?900:(groups.Max(g=>g.Key)+1)*210+40);
+            float height=Mathf.Max(410,maxRows*180+40);float spacing=nodes.Length<=4?330:210;
+            float width=Mathf.Max(900,groups.Length==0?900:(groups.Max(g=>g.Key)+1)*spacing+40);
             treeContent.sizeDelta=new Vector2(width,height);
-            foreach(var group in groups){int row=0;foreach(var d in group)positions[d.Id]=new Vector2(115+group.Key*210,65+(row+++.5f)*((height-110)/group.Count()));}
+            // Keep the full node (ring + name + SP label) inside its row. The old 110 px
+            // vertical inset left only 150 px between two roots, so the first cost label
+            // was drawn underneath the next node's ring.
+            foreach(var group in groups){int row=0;foreach(var d in group)positions[d.Id]=new Vector2(200+group.Key*spacing,10+(row+++.5f)*((height-20)/group.Count()));}
             foreach(var d in nodes)foreach(var p in d.Prerequisites)
                 if(positions.TryGetValue(p,out var from))SkillWindowLayout.Line(treeContent,from,positions[d.Id],s.IsLearned(p)?theme.gold:theme.muted);
             foreach(var d in nodes)

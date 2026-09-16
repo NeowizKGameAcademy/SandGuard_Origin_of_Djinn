@@ -90,6 +90,7 @@ public static class TempleCourtyardBuilder
             Physics.SyncTransforms();
             if(!sourceSnapshot.SequenceEqual(Snapshot(temple)))throw new Exception("Original platform or stair geometry changed");
             TempleCourtyardSurfaces.Validate(temple);
+            TempleStairGapRepair.Apply(temple);
             PrefabUtility.SaveAsPrefabAsset(temple.gameObject,Root+"/DesertTemple_Courtyard.prefab");
             foreach(var c in Object.FindObjectsByType<Camera>(FindObjectsSortMode.None))c.enabled=false;
             overview=Cam("Courtyard - Overview",new Vector3(130,125,-165),new Vector3(0,16,0),88);
