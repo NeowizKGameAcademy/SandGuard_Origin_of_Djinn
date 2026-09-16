@@ -41,11 +41,15 @@ namespace DesertTower.VFX
             Apply();
         }
 
+        /// <summary>줄기가 칠 때마다. 소리(크랙·천둥) 연결용. 미리보기(animate=false)에서는 부르지 않는다.</summary>
+        public UnityEngine.Events.UnityEvent onStrike = new UnityEngine.Events.UnityEvent();
+
         void Strike(int i)
         {
             float d = duration * (0.7f + 0.6f * (float)rng.NextDouble());
             bolts[i] = new Vector4((float)rng.NextDouble(), (float)rng.NextDouble(), now, d);
             nextAt[i] = now + d + Mathf.Lerp(minInterval, maxInterval, (float)rng.NextDouble());
+            if (Application.isPlaying) onStrike.Invoke();
         }
 
         /// <summary>미리보기·촬영용: 시각 t 에 네 줄기가 막 친 상태로 둔다.</summary>

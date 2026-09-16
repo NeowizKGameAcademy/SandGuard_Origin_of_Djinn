@@ -608,6 +608,7 @@ GameObject:
   - component: {fileID: 237553168}
   - component: {fileID: 237553167}
   - component: {fileID: 237553170}
+  - component: {fileID: 237553171}
   m_Layer: 5
   m_Name: HowToPlay
   m_TagString: Untagged
@@ -730,6 +731,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MenuButtonSelected
   selected: {fileID: 2008022824}
+--- !u!114 &237553171
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 237553165}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2afc3ddde5250fb409d2687389ecbf22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxUiButton
+  HoverCue: {fileID: 11400000, guid: ff3cbcc4af4408548af2c45d0bdfda65, type: 2}
+  ClickCue: {fileID: 11400000, guid: 8bc56d84430b9474688873481e021fff, type: 2}
 --- !u!1 &269291546
 GameObject:
   m_ObjectHideFlags: 0
@@ -990,6 +1005,7 @@ GameObject:
   - component: {fileID: 443030128}
   - component: {fileID: 443030127}
   - component: {fileID: 443030130}
+  - component: {fileID: 443030131}
   m_Layer: 5
   m_Name: Quit
   m_TagString: Untagged
@@ -1112,6 +1128,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MenuButtonSelected
   selected: {fileID: 418633908}
+--- !u!114 &443030131
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 443030125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2afc3ddde5250fb409d2687389ecbf22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxUiButton
+  HoverCue: {fileID: 11400000, guid: ff3cbcc4af4408548af2c45d0bdfda65, type: 2}
+  ClickCue: {fileID: 11400000, guid: 8bc56d84430b9474688873481e021fff, type: 2}
 --- !u!1 &529600402
 GameObject:
   m_ObjectHideFlags: 0
@@ -1125,6 +1155,7 @@ GameObject:
   - component: {fileID: 529600405}
   - component: {fileID: 529600404}
   - component: {fileID: 529600407}
+  - component: {fileID: 529600408}
   m_Layer: 5
   m_Name: GameStart
   m_TagString: Untagged
@@ -1247,6 +1278,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MenuButtonSelected
   selected: {fileID: 1681612408}
+--- !u!114 &529600408
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 529600402}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2afc3ddde5250fb409d2687389ecbf22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxUiButton
+  HoverCue: {fileID: 11400000, guid: ff3cbcc4af4408548af2c45d0bdfda65, type: 2}
+  ClickCue: {fileID: 11400000, guid: 8bc56d84430b9474688873481e021fff, type: 2}
 --- !u!1 &829253059
 GameObject:
   m_ObjectHideFlags: 0
@@ -1469,6 +1514,62 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1071471582}
   m_CullTransparentMesh: 1
+--- !u!1 &1169749678
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1169749680}
+  - component: {fileID: 1169749679}
+  m_Layer: 0
+  m_Name: Sfx Music
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1169749679
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1169749678}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2659d33b152690f47864ddf655f8b6ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.MusicDirector
+  Menu: {fileID: 11400000, guid: 506fa31f8839ea940bd04bf2333144df, type: 2}
+  Preparation: {fileID: 11400000, guid: b2e7fcaa0ae92314d985f6240122626f, type: 2}
+  Combat: {fileID: 11400000, guid: d9a798f9eff97ea49b5fcd766a0996f5, type: 2}
+  Boss: {fileID: 11400000, guid: 242e29d1034a02b4185a3053c4bffe22, type: 2}
+  Danger: {fileID: 11400000, guid: afbc21a6d784c334aa41c7e46bf5dfd9, type: 2}
+  Victory: {fileID: 11400000, guid: f60a34b67fefecd489ad3678cd2bd591, type: 2}
+  Defeat: {fileID: 11400000, guid: eea18147354d880458a3a7aaa792c68f, type: 2}
+  WaveClearSting: {fileID: 11400000, guid: 705320a6f4668c242a734c43ca53f770, type: 2}
+  BossSting: {fileID: 11400000, guid: aeef515cff14e04478753d36687dfa05, type: 2}
+  MenuMode: 1
+  Crossfade: 1.5
+  DangerRatio: 0.3
+--- !u!4 &1169749680
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1169749678}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1240858905
 GameObject:
   m_ObjectHideFlags: 0
@@ -1482,6 +1583,7 @@ GameObject:
   - component: {fileID: 1240858908}
   - component: {fileID: 1240858907}
   - component: {fileID: 1240858910}
+  - component: {fileID: 1240858911}
   m_Layer: 5
   m_Name: Settings
   m_TagString: Untagged
@@ -1604,6 +1706,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MenuButtonSelected
   selected: {fileID: 328714868}
+--- !u!114 &1240858911
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1240858905}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2afc3ddde5250fb409d2687389ecbf22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxUiButton
+  HoverCue: {fileID: 11400000, guid: ff3cbcc4af4408548af2c45d0bdfda65, type: 2}
+  ClickCue: {fileID: 11400000, guid: 8bc56d84430b9474688873481e021fff, type: 2}
 --- !u!1 &1247478391
 GameObject:
   m_ObjectHideFlags: 0
@@ -2178,6 +2294,54 @@ RectTransform:
   m_AnchoredPosition: {x: 540, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1885138961
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1885138963}
+  - component: {fileID: 1885138962}
+  m_Layer: 0
+  m_Name: Sfx Ambience
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1885138962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1885138961}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2bd5ad3d6c26d243a66a793301b2e53, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxEmitter
+  Cue: {fileID: 11400000, guid: ba027284038bee247944655c59bdffd4, type: 2}
+  VolumeScale: 1
+  Delay: 0
+  Trigger: 0
+--- !u!4 &1885138963
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1885138961}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1945675131
 GameObject:
   m_ObjectHideFlags: 0
@@ -2374,3 +2538,5 @@ SceneRoots:
   - {fileID: 63500034}
   - {fileID: 182004528}
   - {fileID: 1609126317}
+  - {fileID: 1885138963}
+  - {fileID: 1169749680}

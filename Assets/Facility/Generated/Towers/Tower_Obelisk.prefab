@@ -100,7 +100,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DetectRange
   Range: 20
-  Detect_Range: {fileID: 0}
 --- !u!114 &5311971400325422931
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -232,6 +231,7 @@ Transform:
   - {fileID: 7698023806029355685}
   - {fileID: 3226353565896878627}
   - {fileID: 6812005347358298752}
+  - {fileID: 2285085077892661230}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!135 &7358846476709197149
@@ -268,7 +268,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DetectRange
   Range: 20
-  Detect_Range: {fileID: 0}
 --- !u!114 &7113206675939555038
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -350,6 +349,54 @@ MonoBehaviour:
   FitEffectsToBounds: 1
   EffectLifetime: 3
   PlayOnEnable: 0
+--- !u!1 &7466425501200555493
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2285085077892661230}
+  - component: {fileID: 7659522636450708184}
+  m_Layer: 0
+  m_Name: Sfx
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2285085077892661230
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7466425501200555493}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 430469449916791074}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7659522636450708184
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7466425501200555493}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2bd5ad3d6c26d243a66a793301b2e53, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxEmitter
+  Cue: {fileID: 11400000, guid: b40f95c5f942cef4685791df18127e27, type: 2}
+  VolumeScale: 1
+  Delay: 0
+  Trigger: 0
 --- !u!1 &8179424263034921586
 GameObject:
   m_ObjectHideFlags: 0

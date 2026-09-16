@@ -241,7 +241,7 @@ namespace SandGuard.Player.Tests
             float stepOffset = player.GetComponent<CharacterController>().stepOffset;
             int landings = 0; motor.Landed += _ => landings++;
             Assert.True(motor.TryDash().Succeeded);
-            for (float t = 0f; motor.IsDashing && t < 1f; t += Time.deltaTime)
+            for (float t = 0f; motor.IsDashing && t < motor.dashDuration + 0.5f; t += Time.deltaTime)
             {
                 yield return null;
                 Assert.AreEqual(height, player.transform.position.y, 0.005f, "Neither gravity nor ground snapping may lower the dash, including its last frame.");
@@ -270,7 +270,7 @@ namespace SandGuard.Player.Tests
             float height = player.transform.position.y;
             Assert.True(motor.TryDash().Succeeded);
             Assert.AreEqual(0f, motor.VerticalSpeed);
-            for (float t = 0f; motor.IsDashing && t < 1f; t += Time.deltaTime)
+            for (float t = 0f; motor.IsDashing && t < motor.dashDuration + 0.5f; t += Time.deltaTime)
             {
                 yield return null;
                 Assert.AreEqual(height, player.transform.position.y, 0.005f);

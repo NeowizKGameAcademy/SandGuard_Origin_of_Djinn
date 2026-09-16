@@ -1988,6 +1988,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2210441272607847904, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+      propertyPath: Cue
+      value: 
+      objectReference: {fileID: 11400000, guid: af0e1857c8103cf418479ab1a8242069, type: 2}
     - target: {fileID: 2233741487118629176, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
       propertyPath: range
       value: 2.3
@@ -2024,6 +2028,18 @@ PrefabInstance:
       propertyPath: visualInstance
       value: 
       objectReference: {fileID: 5466844964024133180}
+    - target: {fileID: 4938540437534239138, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+      propertyPath: Cue
+      value: 
+      objectReference: {fileID: 11400000, guid: bcfb688e6b7662e41b3884248a14116e, type: 2}
+    - target: {fileID: 5329342558828759534, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+      propertyPath: Cue
+      value: 
+      objectReference: {fileID: 11400000, guid: 5d815e26f2aafa94ea2d35ed30ea7681, type: 2}
+    - target: {fileID: 5329342558828759534, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+      propertyPath: Stride
+      value: 1.05
+      objectReference: {fileID: 0}
     - target: {fileID: 5845018073376050768, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
       propertyPath: m_Height
       value: 3.3256783

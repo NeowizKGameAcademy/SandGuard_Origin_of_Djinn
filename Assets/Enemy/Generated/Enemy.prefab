@@ -152,6 +152,8 @@ GameObject:
   - component: {fileID: 7747812448936567835}
   - component: {fileID: 3525879857054782480}
   - component: {fileID: 2623054650605264555}
+  - component: {fileID: 2971407348155670985}
+  - component: {fileID: 5329342558828759534}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -175,6 +177,7 @@ Transform:
   - {fileID: 657662337107258619}
   - {fileID: 2559420135679905138}
   - {fileID: 7830101432018393596}
+  - {fileID: 1333774972317400450}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &5845018073376050768
@@ -286,10 +289,34 @@ MonoBehaviour:
   recoverTime: 0.3
   onAttack:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2210441272607847904}
+        m_TargetAssemblyTypeName: SandGuard.Audio.SfxOneShot, SandGuard.Audio.Runtime
+        m_MethodName: Fire
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   onDied:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 4938540437534239138}
+        m_TargetAssemblyTypeName: SandGuard.Audio.SfxOneShot, SandGuard.Audio.Runtime
+        m_MethodName: Fire
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   visualInstance: {fileID: 8072864230749727486}
 --- !u!114 &2233741487118629176
 MonoBehaviour:
@@ -333,6 +360,10 @@ MonoBehaviour:
   loseRadius: 12
   blockerSearchRadius: 2
   attackCore: 1
+  playerPriority: 1
+  minionPriority: 2
+  towerPriority: 3
+  corePriority: 4
   targetMask:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -406,6 +437,7 @@ MonoBehaviour:
   health: {fileID: 1342337955418082952}
   vfxPrefab: {fileID: 5435970345610246943, guid: 9e74390d50ceb894a97f2e7b541e860c, type: 3}
   feet: {fileID: 0}
+  knockbackDamping: 12
 --- !u!114 &7747812448936567835
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -470,6 +502,41 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: DesertTower.LevelIntegration.SandGuard::DesertTower.LevelIntegration.SandGuardActorBridge
   coreDamage: 10
+--- !u!114 &2971407348155670985
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 658155196757490767}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3702bed727cc3b46b7db737b9f21828, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxHitReaction
+  HitCue: {fileID: 11400000, guid: 1048d0a79222d2149bbeb94ca2bc4d1e, type: 2}
+  DeathCue: {fileID: 11400000, guid: ba3a88f8d48ce704fb097cd9a6606690, type: 2}
+  AttachHit: 1
+--- !u!114 &5329342558828759534
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 658155196757490767}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0321197d2fbf69449a014f67911561ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxFootsteps
+  Cue: {fileID: 11400000, guid: fb9a0423cfc180a4481f304a13da408f, type: 2}
+  Stride: 0.8
+  MinSpeed: 0.6
+  RequireGround: 0
+  GroundProbe: 0.35
+  GroundMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!1 &754763443989115474
 GameObject:
   m_ObjectHideFlags: 0
@@ -2423,6 +2490,71 @@ Transform:
   - {fileID: 5338306008460824413}
   m_Father: {fileID: 7549425657096319636}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8382373869844252789
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1333774972317400450}
+  - component: {fileID: 2210441272607847904}
+  - component: {fileID: 4938540437534239138}
+  m_Layer: 0
+  m_Name: Sfx
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1333774972317400450
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8382373869844252789}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1570184085526154758}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2210441272607847904
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8382373869844252789}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d64b63acf4726fc48a936a84ac5ca2d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxOneShot
+  Cue: {fileID: 11400000, guid: deef710aa0a89f14da97bc38d05e5756, type: 2}
+  Anchor: {fileID: 0}
+  Attach: 0
+  VolumeScale: 1
+--- !u!114 &4938540437534239138
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8382373869844252789}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d64b63acf4726fc48a936a84ac5ca2d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxOneShot
+  Cue: {fileID: 11400000, guid: 5d3d2866b4e64ea459b79c0880a89c39, type: 2}
+  Anchor: {fileID: 0}
+  Attach: 0
+  VolumeScale: 1
 --- !u!1 &8636099088951731776
 GameObject:
   m_ObjectHideFlags: 0

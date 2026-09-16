@@ -2412,6 +2412,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2210441272607847904, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+      propertyPath: Cue
+      value: 
+      objectReference: {fileID: 11400000, guid: 6d8ec07b3829dc34ca1bbcc7faa4c1f1, type: 2}
     - target: {fileID: 2233741487118629176, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
       propertyPath: range
       value: 3
@@ -2452,6 +2456,18 @@ PrefabInstance:
       propertyPath: visualInstance
       value: 
       objectReference: {fileID: 5794487956627052239}
+    - target: {fileID: 4938540437534239138, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+      propertyPath: Cue
+      value: 
+      objectReference: {fileID: 11400000, guid: b89824905b9b76b49aae35f8dd4a0f4e, type: 2}
+    - target: {fileID: 5329342558828759534, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+      propertyPath: Cue
+      value: 
+      objectReference: {fileID: 11400000, guid: 5d815e26f2aafa94ea2d35ed30ea7681, type: 2}
+    - target: {fileID: 5329342558828759534, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+      propertyPath: Stride
+      value: 1.2
+      objectReference: {fileID: 0}
     - target: {fileID: 5845018073376050768, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
       propertyPath: m_Height
       value: 4.434238
@@ -2522,6 +2538,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: SandGuard.Enemy.Runtime::SandGuard.Enemy.EnemyShield
   frontHalfAngle: 60
   frontMultiplier: 0
+  maxHealth: 30
+  shieldVisual: {fileID: 0}
+  debrisLifetime: 6
   guardVfx: {fileID: 0}
   guardVfxLifetime: 1
 --- !u!114 &9088134297400010009
@@ -2541,6 +2560,7 @@ MonoBehaviour:
   localPosition: {x: 0, y: 1.15, z: 0.65}
   summonDuration: 0.35
   activeDuration: 20
+  maxUses: 1
   healthThreshold: 0.7
   cooldown: 8
   castRange: 8
@@ -2567,6 +2587,7 @@ MonoBehaviour:
   damageMask:
     serializedVersion: 2
     m_Bits: 4294967295
+  maxUses: 1
   handOffset: {x: 0, y: -0.05, z: 0.05}
 --- !u!114 &8657929669409854010
 MonoBehaviour:

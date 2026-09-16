@@ -68,6 +68,50 @@ namespace SandGuard.Audio.Editor.Synth
             Debug.Log($"SYNTH_SFX_BAKED count={recipes.Count} ok={ok} wav={WavDir} preview={PreviewDir}");
         }
 
+        public const string PlaceholderDir = "Assets/8.Audio/Placeholder";
+
+        /// <summary>
+        /// SfxCatalog의 모든 큐 중 클립 파일이 하나도 없는 것에 자리표시 클립을 굽는다.
+        /// 이미 Synth/Generated/Placeholder에 파일이 있는 큐는 건너뛴다. 담당자가 Generated에 파일을 넣어도 자리표시는 남지만
+        /// 큐 빌더가 Generated를 우선하므로 큐의 클립 목록을 비우면 다음 빌드에서 교체된다.
+        /// </summary>
+        [MenuItem("SandGuard/Audio/Bake Placeholder Clips")]
+        public static void BakePlaceholders()
+        {
+            var have = new System.Collections.Generic.HashSet<string>();
+            foreach (var dir in SfxCueBuilder.SourceDirs)
+            {
+                if (!Directory.Exists(dir)) continue;
+                foreach (var guid in AssetDatabase.FindAssets("t:AudioClip", new[] { dir }))
+                {
+                    var name = SfxCueBuilder.CueNameOf(Path.GetFileNameWithoutExtension(AssetDatabase.GUIDToAssetPath(guid)));
+                    if (name != null) have.Add(name);
+                }
+            }
+            int made = 0;
+            var loops = new System.Collections.Generic.List<string>();
+            foreach (var entry in SfxCatalog.Entries)
+            {
+                if (have.Contains(entry.Name)) continue;
+                var clip = PlaceholderRecipes.Render(entry.Kind, entry.Name);
+                bool longform = entry.Loop || entry.Kind == PlaceholderKind.Drone;
+                Dsp.Normalize(clip, longform ? -12 : -6);
+                Dsp.SoftClip(clip.L); if (clip.Stereo) Dsp.SoftClip(clip.R);
+                string wav = $"{PlaceholderDir}/SFX_{entry.Name}_01.wav";
+                WavWriter.Write(wav, clip);
+                if (longform) loops.Add(wav);
+                made++;
+            }
+            AssetDatabase.Refresh();
+            foreach (var entry in SfxCatalog.Entries)
+            {
+                string wav = $"{PlaceholderDir}/SFX_{entry.Name}_01.wav";
+                if (File.Exists(wav)) ApplyImportSettings(wav, entry.Loop || entry.Kind == PlaceholderKind.Drone);
+            }
+            AssetDatabase.SaveAssets();
+            Debug.Log($"SFX_PLACEHOLDERS_BAKED made={made} skipped={SfxCatalog.Entries.Length - made} dir={PlaceholderDir}");
+        }
+
         /// <summary>원샷: PCM + DecompressOnLoad(지연 없음). 루프: Vorbis 0.7 + CompressedInMemory(메모리 절약).</summary>
         static void ApplyImportSettings(string assetPath, bool loop)
         {
