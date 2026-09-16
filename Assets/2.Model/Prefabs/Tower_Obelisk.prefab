@@ -42,7 +42,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8523374225334838551}
-  - component: {fileID: 8189526740211319187}
   - component: {fileID: 1905544023675052405}
   m_Layer: 0
   m_Name: Slow Range
@@ -66,27 +65,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 9021732084228742961}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &8189526740211319187
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 779376680899890532}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 20
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &1905544023675052405
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -206,7 +184,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9021732084228742961}
-  - component: {fileID: 3058502884823442234}
   - component: {fileID: 3078056543466421550}
   m_Layer: 0
   m_Name: Tower (Obelisk)
@@ -233,27 +210,6 @@ Transform:
   - {fileID: 8523374225334838551}
   m_Father: {fileID: 5822985260895817241}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &3058502884823442234
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1794438971953435628}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 20
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &3078056543466421550
 MonoBehaviour:
   m_ObjectHideFlags: 0
