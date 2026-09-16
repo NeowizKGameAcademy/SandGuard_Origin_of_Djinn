@@ -18,7 +18,7 @@
 ## 만들기·연결
 
 - `SandGuard > Facility > Create Missing Assets` — `Assets/Facility/Generated/`에 `TowerAnchor.prefab`(받침대), `FireCobraTower.prefab`(화염 코브라), `FacilityCatalog.asset`, `FacilityBuildService.prefab`, `FacilityBuildMenu.prefab`을 만듭니다.
-- `SandGuard > Facility > Wire Into Player And Enemy Scene` — `PlayerAndEnemyTest.unity`의 모든 `LevelBuildSlot` 아래에 받침대를 놓고 서비스·메뉴를 넣습니다. 허용 시설 목록이 빈 슬롯에는 `cobra`를 넣습니다. `SandGuard > Player And Enemy > Rebuild Test Scene`도 같은 연결을 합니다.
+- 레벨 씬 연결은 `LevelTowerSlotSetup`이 `FacilitySetupBuilder.WireIntoScene`을 불러 처리합니다. 모든 `LevelBuildSlot` 아래에 받침대를 놓고 서비스·메뉴를 넣으며, 허용 시설 목록이 빈 슬롯에는 `cobra`를 넣습니다.
 
 ## 구성 (`Assets/Facility`)
 

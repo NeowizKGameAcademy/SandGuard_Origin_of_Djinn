@@ -33,10 +33,12 @@ namespace SandGuard.Player
         public Transform shotOrigin;
         [Min(0.02f)] public float attackInterval = 0.3f;
         [Min(0f)] public float damage = 10f;
+        [Min(0), Tooltip("일반 공격 한 발의 마나 비용. 0이면 소모하지 않는다")]
+        public int manaCost = 5;
         public string factionId = "Ally";
         [Tooltip("스탯 수정자. 비우면 같은 오브젝트에서 찾고, 없으면 위 기본값을 그대로 쓴다")]
         public PlayerStats stats;
-        [Tooltip("타격 시 마나 회복에 쓰는 IManaWallet. 비우면 같은 오브젝트에서 찾는다")]
+        [Tooltip("일반 공격 비용과 타격 시 마나 회복에 쓰는 IManaWallet. 비우면 같은 오브젝트에서 찾는다")]
         public MonoBehaviour manaSource;
         [Header("스킬 — 공통")]
         [Tooltip("빔·폭발·족쇄가 훑는 레이어")] public LayerMask skillMask = ~0;
@@ -119,6 +121,7 @@ namespace SandGuard.Player
             Hit?.Invoke(info);
         }
         bool pendingShot;
+        bool HasAttackMana => manaCost <= 0 || (Mana != null && Mana.CurrentMana >= manaCost);
         PlayerSpellcasting Casting => visuals != null && visuals.Spellcasting != null && visuals.Spellcasting.isActiveAndEnabled
             ? visuals.Spellcasting : null;
 
@@ -135,14 +138,14 @@ namespace SandGuard.Player
 
         void RequestShot()
         {
-            if (Available() && CooldownRemaining <= 0f) pendingShot = true;
+            if (Available() && HasAttackMana && CooldownRemaining <= 0f) pendingShot = true;
         }
 
         void Update()
         {
             CooldownRemaining = Mathf.Max(0f, CooldownRemaining - Time.deltaTime);
-            if (!Available()) pendingShot = false;
-            bool wantsShot = Available() && (pendingShot || (input != null && input.PrimaryAttackHeld));
+            if (!Available() || !HasAttackMana) pendingShot = false;
+            bool wantsShot = Available() && HasAttackMana && (pendingShot || (input != null && input.PrimaryAttackHeld));
             if (Casting != null) Casting.SetCasting(wantsShot);
             if (wantsShot && motor != null) motor.FaceCamera();
         }
@@ -162,6 +165,12 @@ namespace SandGuard.Player
         public bool TryFire()
         {
             if (!Available() || CooldownRemaining > 0f) return false;
+            if (!HasAttackMana)
+            {
+                pendingShot = false;
+                if (Casting != null) Casting.SetCasting(false);
+                return false;
+            }
             if (Casting != null)
             {
                 pendingShot = true;
@@ -169,6 +178,12 @@ namespace SandGuard.Player
                 if (!Casting.ReadyToFire) return false;
             }
             Aim(out Vector3 muzzle, out Vector3 direction, out Vector3 origin);
+            if (manaCost > 0 && !Mana.TrySpend(manaCost))
+            {
+                pendingShot = false;
+                if (Casting != null) Casting.SetCasting(false);
+                return false;
+            }
             if (PierceBeam) FireBeam(muzzle, direction, origin);
             else FireBolt(muzzle, direction, origin, null);
             CooldownRemaining = AttackInterval;

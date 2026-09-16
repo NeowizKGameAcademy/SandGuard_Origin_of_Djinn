@@ -1,0 +1,69 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cda2ba6ab5df9c249b01d99e290ae1b5, type: 3}
+  m_Name: Level_TestWaveSet
+  m_EditorClassIdentifier: DesertTower.Levels.Runtime::DesertTower.Levels.WaveSet
+  waves:
+  - label: Wave 1
+    preparationSeconds: 10
+    groups:
+    - spawnId: 8ca42bbaa0e6424086dec32cb6b1c6ff
+      targetId: 835bc8b2a0bc4807985b5eebbd309dd8
+      routeId: 
+      element: {fileID: 0}
+      enemyKey: bandit.swordsman
+      count: 2
+      delay: 0
+      interval: 1
+    - spawnId: 6ca1b69a93364dc0a8a5cfe841b4c3bb
+      targetId: 835bc8b2a0bc4807985b5eebbd309dd8
+      routeId: 
+      element: {fileID: 0}
+      enemyKey: bandit.assassin
+      count: 2
+      delay: 0
+      interval: 1
+    - spawnId: e01621156d5d496bad4a33a0b0e6c782
+      targetId: 835bc8b2a0bc4807985b5eebbd309dd8
+      routeId: 
+      element: {fileID: 0}
+      enemyKey: bandit.shieldguard
+      count: 2
+      delay: 0
+      interval: 1
+    - spawnId: 50dd3b485a11450c937f9325ec9e1d77
+      targetId: 835bc8b2a0bc4807985b5eebbd309dd8
+      routeId: 
+      element: {fileID: 0}
+      enemyKey: bandit.hammerbrute
+      count: 2
+      delay: 0
+      interval: 1
+    - spawnId: 8ca42bbaa0e6424086dec32cb6b1c6ff
+      targetId: 835bc8b2a0bc4807985b5eebbd309dd8
+      routeId: 
+      element: {fileID: 0}
+      enemyKey: bandit.chief
+      count: 1
+      delay: 0
+      interval: 1
+  - label: Wave 2
+    preparationSeconds: 10
+    groups:
+    - spawnId: 8ca42bbaa0e6424086dec32cb6b1c6ff
+      targetId: 835bc8b2a0bc4807985b5eebbd309dd8
+      routeId: 
+      element: {fileID: 0}
+      enemyKey: bandit.swordsman
+      count: 8
+      delay: 0
+      interval: 1

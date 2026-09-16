@@ -13,7 +13,7 @@ namespace SandGuard.Enemy
     /// 착지 시 떨어진 높이가 <see cref="fatalDropHeight"/> 이상이면 죽고, 아니면 가장 가까운 NavMesh 지점으로 걸어가 에이전트를 다시 붙인다.
     /// 막혀서 나아가지 못하면 그 지점으로 옮기고, 바닥 없이 <see cref="voidDepth"/>만큼 떨어지면 죽은 뒤 시체 없이 바로 제거된다.
     /// </summary>
-    /// <remarks>플레이어 낙사와는 다르다: 적은 밀려야만 떨어지고, 부활하지 않으며, 낙사는 플레이어의 처치 수단이다(피해 출처 <see cref="fallFactionId"/>).</remarks>
+    /// <remarks>플레이어 낙사와는 다르다: 적은 밀리거나 띄워져야만(<see cref="Launch"/>) 떨어지고, 부활하지 않으며, 낙사는 플레이어의 처치 수단이다(피해 출처 <see cref="fallFactionId"/>).</remarks>
     [DefaultExecutionOrder(-95)] // 모터(-100) 다음, 상태이상(-90) 전. 밀림은 EnemyRestraint → EnemyMotor.Displace → 여기로 온다.
     public sealed class EnemyFall : MonoBehaviour
     {
@@ -65,6 +65,7 @@ namespace SandGuard.Enemy
 
         NavMeshAgent agent;
         float verticalVelocity, pushedUntil, stuckTimer, lastDrop;
+        Vector3 launchDrift;
         Vector3 lastProgress;
         static readonly RaycastHit[] hits = new RaycastHit[16];
         const float PushHold = 0.1f; // 밀림이 이어지는 것으로 보는 시간. EnemyMotor.Displace와 같다
@@ -102,6 +103,21 @@ namespace SandGuard.Enemy
             if (GroundBelow(farProbe, ledgeDrop, out _)) return false;
             LeaveNavMesh();
             Push(push);
+            return true;
+        }
+
+        /// <summary>
+        /// 포물선으로 띄워 날린다. velocity의 y가 솟는 세기, xz가 날아가는 방향(m/s)이다.
+        /// 수직은 중력이 받고 수평은 벽에 막힐 때까지 유지된다. 낙하 높이는 정점부터 재므로 높이 띄울수록 착지가 아프다.
+        /// </summary>
+        public bool Launch(Vector3 velocity)
+        {
+            if (State != EnemyFallState.OnNavMesh || motor == null) return false;
+            if (health != null && !health.IsAlive) return false;
+            LeaveNavMesh();
+            launchDrift = new Vector3(velocity.x, 0f, velocity.z);
+            BeginFalling();
+            verticalVelocity = velocity.y; // BeginFalling이 0으로 두므로 그 뒤에 넣는다
             return true;
         }
 
@@ -155,6 +171,8 @@ namespace SandGuard.Enemy
 
         void Fall(float dt)
         {
+            if (transform.position.y > FallStartY) FallStartY = transform.position.y; // 띄워졌으면 정점부터 떨어진 높이를 잰다
+            if (launchDrift.sqrMagnitude > 1e-6f) Drift(dt);
             verticalVelocity += Physics.gravity.y * dt;
             float drop = -verticalVelocity * dt;
             if (GroundBelow(transform.position, drop + 0.05f, out RaycastHit ground))
@@ -168,8 +186,20 @@ namespace SandGuard.Enemy
             if (FallStartY - transform.position.y >= voidDepth) Die(true);
         }
 
+        /// <summary>날아가는 수평 속도를 적용한다. 벽에 막히면 수평 속도를 버리고 그 자리에서 수직으로만 떨어진다.</summary>
+        void Drift(float dt)
+        {
+            float speed = launchDrift.magnitude;
+            Vector3 direction = launchDrift / speed;
+            float step = speed * dt;
+            Vector3 center = transform.position + Vector3.up * (Height * 0.5f);
+            if (Blocked(center, direction, Radius + step)) { launchDrift = Vector3.zero; return; }
+            transform.position += direction * step;
+        }
+
         void Land()
         {
+            launchDrift = Vector3.zero;
             float drop = FallStartY - transform.position.y;
             lastDrop = drop;
             bool fatal = drop >= fatalDropHeight;
@@ -283,7 +313,7 @@ namespace SandGuard.Enemy
         public void ResetForReuse()
         {
             State = EnemyFallState.OnNavMesh;
-            verticalVelocity = 0f; pushedUntil = 0f; stuckTimer = 0f; lastDrop = 0f;
+            verticalVelocity = 0f; pushedUntil = 0f; stuckTimer = 0f; lastDrop = 0f; launchDrift = Vector3.zero;
             LastNavMeshPosition = transform.position;
         }
     }

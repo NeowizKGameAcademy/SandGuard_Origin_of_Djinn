@@ -29,6 +29,7 @@ namespace DesertTower.Levels.Editor
         Vector2 scroll;
         ToolMode mode;
         readonly List<Vector3> draft=new List<Vector3>();
+        readonly List<string> catalogKeys=new List<string>();
         List<LevelIssue> issues=new List<LevelIssue>();
         List<Vector3> pathPreview;
         UnityEditor.Editor inspector;
@@ -266,7 +267,7 @@ namespace DesertTower.Levels.Editor
                             }
                             routeProperty.stringValue=selected>0 ? available[selected-1].id : "";
                         }
-                        EditorGUILayout.PropertyField(group.FindPropertyRelative("element"),new GUIContent("게임 키 / 표시 정의 (선택)"));
+                        ElementReference(group);
                         EditorGUILayout.PropertyField(group.FindPropertyRelative("count"),new GUIContent("출현 수"));
                         EditorGUILayout.PropertyField(group.FindPropertyRelative("delay"),new GUIContent("시작 지연 (초)"));
                         EditorGUILayout.PropertyField(group.FindPropertyRelative("interval"),new GUIContent("출현 간격 (초)"));
@@ -279,7 +280,8 @@ namespace DesertTower.Levels.Editor
                         g.FindPropertyRelative("spawnId").stringValue=root.Markers.FirstOrDefault(m=>m.kind==MarkerKind.EnemySpawn)?.id ?? "";
                         g.FindPropertyRelative("targetId").stringValue=root.Markers.FirstOrDefault(m=>m.kind==MarkerKind.Core)?.id ?? "";
                         g.FindPropertyRelative("routeId").stringValue="";
-                        g.FindPropertyRelative("element").objectReferenceValue=null; g.FindPropertyRelative("count").intValue=8;
+                        g.FindPropertyRelative("element").objectReferenceValue=null; g.FindPropertyRelative("enemyKey").stringValue="";
+                        g.FindPropertyRelative("count").intValue=8;
                         g.FindPropertyRelative("delay").floatValue=0; g.FindPropertyRelative("interval").floatValue=1;
                     }
                 }
@@ -290,6 +292,34 @@ namespace DesertTower.Levels.Editor
                 w.FindPropertyRelative("label").stringValue="Wave "+array.arraySize; w.FindPropertyRelative("preparationSeconds").floatValue=20; w.FindPropertyRelative("groups").ClearArray();
             }
             serialized.ApplyModifiedProperties();
+        }
+
+        /// <summary>적 종류는 게임 카탈로그가 공급하는 목록에서 고른다. 편집기는 키 문자열만 저장하고
+        /// 프리팹은 모른다. 카탈로그가 없으면 예전처럼 요소 에셋을 직접 지정한다.</summary>
+        void ElementReference(SerializedProperty group)
+        {
+            var keyProperty=group.FindPropertyRelative("enemyKey");
+            var catalog=root.elementCatalog;
+            if(!catalog)
+            {
+                EditorGUILayout.PropertyField(group.FindPropertyRelative("element"),new GUIContent("적 종류 (요소 에셋)"));
+                EditorGUILayout.HelpBox("LevelRoot의 Element Catalog를 지정하면 이름으로 고를 수 있습니다.",MessageType.Info);
+                return;
+            }
+            catalog.CollectKeys(catalogKeys);
+            var names=new string[catalogKeys.Count+1];
+            // 0번은 미지정. 저장된 키가 목록에 없으면 지워지지 않도록 그 자리에 보여 준다.
+            names[0]=string.IsNullOrWhiteSpace(keyProperty.stringValue) ? "미지정" : "목록에 없음: "+keyProperty.stringValue;
+            for(int i=0;i<catalogKeys.Count;i++) names[i+1]=catalog.DisplayNameFor(catalogKeys[i]);
+            int index=catalogKeys.IndexOf(keyProperty.stringValue)+1;
+            EditorGUI.BeginChangeCheck();
+            int selected=EditorGUILayout.Popup("적 종류",index,names);
+            if(EditorGUI.EndChangeCheck())
+            {
+                keyProperty.stringValue=selected>0 ? catalogKeys[selected-1] : "";
+                // 목록에서 고르면 예전 요소 에셋 참조는 더 읽지 않는다.
+                if(selected>0) group.FindPropertyRelative("element").objectReferenceValue=null;
+            }
         }
 
         void MarkerReference(SerializedProperty property,MarkerKind kind,string label)

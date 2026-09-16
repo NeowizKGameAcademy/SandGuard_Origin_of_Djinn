@@ -151,6 +151,7 @@ GameObject:
   - component: {fileID: 754703791412322535}
   - component: {fileID: 7747812448936567835}
   - component: {fileID: 3525879857054782480}
+  - component: {fileID: 2623054650605264555}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -456,6 +457,19 @@ MonoBehaviour:
   orbCount: 3
   orbPrefab: {fileID: 1066689136710956815, guid: 02aacf818b8bd8c44ac8c0021233034b, type: 3}
   burstSpeed: {x: 2.2, y: 4.5}
+--- !u!114 &2623054650605264555
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 658155196757490767}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 363f3fced0d2527f846aa6359e4e77a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesertTower.LevelIntegration.SandGuard::DesertTower.LevelIntegration.SandGuardActorBridge
+  coreDamage: 10
 --- !u!1 &754763443989115474
 GameObject:
   m_ObjectHideFlags: 0

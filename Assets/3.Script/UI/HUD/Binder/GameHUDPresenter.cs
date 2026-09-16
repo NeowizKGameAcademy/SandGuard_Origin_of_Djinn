@@ -8,7 +8,7 @@ namespace SandGuard.UI.HUD
     /// <summary>
     /// 씬의 게임 상태를 GameHUD 뷰에 옮긴다. 시작할 때 소스를 한 번 찾고(비어 있는 칸만), 매 프레임 값이 바뀐 칸만 다시 그린다.
     /// 플레이어: 체력·마나·레벨·경험치, Q/E/R 스킬(해금·쿨타임), 대시 쿨타임·공중 점프. 코어 안정도, 웨이브 번호, 보스(EnemyBossInfo).
-    /// 찾지 못한 칸(플레이어 단독 씬의 코어·웨이브 등)은 숨긴다. 미니맵은 아직 시스템이 없어 숨긴다. F(타워 계열) 슬롯은 잠김.
+    /// 찾지 못한 칸(플레이어 단독 씬의 코어·웨이브 등)은 숨긴다. 미니맵 내용은 MinimapController가 채운다. F(타워 계열) 슬롯은 잠김.
     /// 플레이어를 찾으면 같은 오브젝트의 HUDDebugController 더미 값을 끈다. 못 찾으면(HUD.unity) 더미가 그대로 보인다.
     /// </summary>
     [DefaultExecutionOrder(-100)]
@@ -47,7 +47,7 @@ namespace SandGuard.UI.HUD
             if (core == null) core = FindCore();
             if (wave == null) wave = FindWave();
             if (hud == null) return;
-            hud.Minimap.SetVisible(false);
+            hud.Minimap.SetVisible(true); // 지도는 같은 오브젝트의 MinimapController가 채운다
             if (player == null) return;
             hud.CoreStatus.SetVisible(core != null);
             hud.Wave.gameObject.SetActive(wave != null);
@@ -134,16 +134,8 @@ namespace SandGuard.UI.HUD
 
         void RefreshWave()
         {
-            int number = wave is IWaveStateReader reader ? reader.WaveNumber
-                : wave is WaveDirector director ? WaveNumberOf(director) : -1;
+            int number = wave is IWaveStateReader reader ? reader.WaveNumber : -1;
             if (number >= 0 && number != waveNumber) hud.Wave.SetWave(waveNumber = number);
-        }
-
-        // 계약(IWaveStateReader.WaveNumber)과 같이 첫 준비 단계부터 1로 보인다.
-        static int WaveNumberOf(WaveDirector director)
-        {
-            int total = director.graph != null && director.graph.level != null && director.graph.level.waves != null ? director.graph.level.waves.waves.Count : 0;
-            return total == 0 ? 0 : Mathf.Clamp(director.WaveIndex + 1, 1, total);
         }
 
         void RefreshBoss()
@@ -161,7 +153,7 @@ namespace SandGuard.UI.HUD
                 hud.BossStatus.SetHealth(bossHp = boss.Health.CurrentHealth, bossMax = boss.Health.MaxHealth);
         }
 
-        static MonoBehaviour FindCore()
+        internal static MonoBehaviour FindCore()
         {
             var receiver = FindAnyObjectByType<CoreReceiver>();
             if (receiver != null) return receiver;
@@ -170,11 +162,6 @@ namespace SandGuard.UI.HUD
             return null;
         }
 
-        static MonoBehaviour FindWave()
-        {
-            var integration = FindAnyObjectByType<WaveDirector>();
-            if (integration != null) return integration;
-            return FindAnyObjectByType<SandGuard.Waves.WaveDirector>();
-        }
+        static MonoBehaviour FindWave() { return FindAnyObjectByType<WaveDirector>(); }
     }
 }

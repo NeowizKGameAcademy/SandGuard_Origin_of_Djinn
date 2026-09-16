@@ -1,0 +1,40 @@
+TREADS_FLUSH_T7_CORE forward=True reverse=True
+CORE_deck deck sweep PASS
+T1_deck deck sweep PASS
+TREADS_FLUSH_L3_NE_T8 forward=True reverse=True
+TREADS_FLUSH_L3_NW_T8 forward=True reverse=True
+TREADS_FLUSH_ENTRY_NE_T1 forward=True reverse=True
+L3_SE_deck deck sweep PASS
+B_SW_deck deck sweep PASS
+TREADS_FLUSH_ENTRY_NW_T4 forward=True reverse=True
+TREADS_FLUSH_T6_L3_NW forward=True reverse=True
+TREADS_FLUSH_T4_B_NW forward=True reverse=True
+B_NE_deck deck sweep PASS
+T7_deck deck sweep PASS
+TREADS_FLUSH_L3_SW_T7 forward=True reverse=True
+T2_deck deck sweep PASS
+L3_SW_deck deck sweep PASS
+TREADS_FLUSH_T8_CORE forward=True reverse=True
+T5_deck deck sweep PASS
+TREADS_FLUSH_B_SW_T6 forward=True reverse=True
+TREADS_FLUSH_T5_L3_NE forward=True reverse=True
+TREADS_FLUSH_T3_B_SW forward=True reverse=True
+TREADS_FLUSH_T6_L3_SW forward=True reverse=True
+TREADS_FLUSH_ENTRY_SE_T2 forward=True reverse=True
+TREADS_FLUSH_B_NE_T5 forward=True reverse=True
+L3_NW_deck deck sweep PASS
+B_NW_deck deck sweep PASS
+TREADS_FLUSH_ENTRY_SW_T3 forward=True reverse=True
+T3_deck deck sweep PASS
+TREADS_FLUSH_T2_B_SE forward=True reverse=True
+TREADS_FLUSH_T1_B_NE forward=True reverse=True
+TREADS_FLUSH_B_SE_T5 forward=True reverse=True
+TREADS_FLUSH_B_NW_T6 forward=True reverse=True
+TREADS_FLUSH_T5_L3_SE forward=True reverse=True
+B_SE_deck deck sweep PASS
+T6_deck deck sweep PASS
+L3_NE_deck deck sweep PASS
+T4_deck deck sweep PASS
+T8_deck deck sweep PASS
+TREADS_FLUSH_L3_SE_T7 forward=True reverse=True
+SUMMARY decks=17, passages=22, wall pushes=92, maximum wall rise=0, repeated jump rise=1.54583347, failures=0

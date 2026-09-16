@@ -13,6 +13,12 @@ namespace DesertTower.Levels
         [Tooltip("Optional guide. Legacy groups may leave spawn/target empty and resolve them from this guide.")]
         public string routeId;
         [FormerlySerializedAs("actor")] public LevelElementDefinition element;
+        [Tooltip("게임 카탈로그의 키. 목록에서 고르면 여기에 담긴다.")]
+        public string enemyKey;
+
+        /// <summary>쓸 키. 목록에서 고른 값이 우선이고, 없으면 기존 요소 에셋의 키를 쓴다.</summary>
+        public string ResolvedKey => !string.IsNullOrWhiteSpace(enemyKey) ? enemyKey
+            : element ? element.gameKey : null;
         [Min(1)] public int count = 8;
         [Min(0)] public float delay;
         [Min(.05f)] public float interval = 1;

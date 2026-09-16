@@ -22,6 +22,10 @@ namespace SandGuard.Player.Tests
             public float SlowFactor { get; private set; } public float SlowUntil = -1f; public float RestrainDuration;
             public bool IsRestrained => RestrainDuration > 0f;
             public void Displace(Vector3 delta) { transform.position += delta; TotalDisplacement += delta; DisplaceCalls++; }
+            public Vector3 Knock; public int KnockCalls;
+            public void Knockback(Vector3 velocity) { Knock = velocity; KnockCalls++; }
+            public Vector3 Launched; public int LaunchCalls;
+            public bool Launch(Vector3 velocity) { Launched = velocity; LaunchCalls++; return true; }
             public void Slow(float factor, float duration) { SlowFactor = Mathf.Max(SlowFactor, factor); SlowUntil = Time.time + duration; }
             public void Restrain(float duration) => RestrainDuration = Mathf.Max(RestrainDuration, duration);
             void Update() { if (SlowUntil >= 0f && Time.time >= SlowUntil) { SlowFactor = 0f; SlowUntil = -1f; } }

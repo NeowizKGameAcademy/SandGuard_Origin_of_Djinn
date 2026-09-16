@@ -14,6 +14,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: DesertTower.LevelIntegration.Runtime::DesertTower.LevelIntegration.PrefabCatalog
   entries:
   - key: enemy.basic
+    displayName: 
     role: 0
     prefab: {fileID: 1263845989488090087, guid: a98828a28b3e0e54da621c5124fc2fdb, type: 3}
-    coreDamage: 10
+  - key: bandit.swordsman
+    displayName: "\uAC80\uBCD1"
+    role: 0
+    prefab: {fileID: 2975496949134449010, guid: bd056c96070707e4e95037cf0d0c77ef, type: 3}
+  - key: bandit.assassin
+    displayName: "\uC554\uC0B4\uC790"
+    role: 0
+    prefab: {fileID: 6231369605046583478, guid: ae2c5109b509e1d4da161fc871ac6b88, type: 3}
+  - key: bandit.shieldguard
+    displayName: "\uBC29\uD328\uBCD1"
+    role: 0
+    prefab: {fileID: 5772900462070000592, guid: 2ab566d1fb89341428cd0eb907057933, type: 3}
+  - key: bandit.hammerbrute
+    displayName: "\uB9DD\uCE58\uBCD1"
+    role: 0
+    prefab: {fileID: 4452854485148653075, guid: 64076bbcfe0def0498fae015a5d0f70a, type: 3}
+  - key: bandit.chief
+    displayName: "\uC6B0\uB450\uBA38\uB9AC \uC790\uD788\uB974"
+    role: 0
+    prefab: {fileID: 1931109115925317170, guid: 6eb24250a7a53b5488476e063c65a040, type: 3}

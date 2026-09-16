@@ -21,13 +21,34 @@ namespace SandGuard.Enemy
 
         Guid entityId = Guid.NewGuid();
         Collider[] colliders;
+        Collider body;
         Coroutine removal;
         readonly System.Collections.Generic.List<IDamageModifier> modifiers = new System.Collections.Generic.List<IDamageModifier>();
 
         public Guid EntityId => entityId;
         public string FactionId => factionId;
         public CombatTargetKind Kind => CombatTargetKind.Enemy;
-        public Vector3 HitPosition => transform.TransformPoint(hitOffset);
+        /// <summary>조준점. hitOffset은 사람 크기 기준이라 모델 배율을 곱한다. 곱하지 않으면 4m 넘는 우두머리의 무릎을 겨냥한다.</summary>
+        public Vector3 HitPosition => transform.TransformPoint(hitOffset * BodyScale);
+        EnemyVisuals visuals;
+        bool visualsLooked;
+        float BodyScale
+        {
+            get
+            {
+                if (!visualsLooked) { visuals = GetComponent<EnemyVisuals>(); visualsLooked = true; }
+                return visuals ? visuals.BodyScale : 1f;
+            }
+        }
+        /// <summary>몸통 충돌체 윗면의 중앙. 체력바 위치. 충돌체가 없거나 꺼져 있으면 기준점의 두 배 높이.</summary>
+        public Vector3 TopPosition
+        {
+            get
+            {
+                if (body != null && body.enabled) { Bounds b = body.bounds; return new Vector3(b.center.x, b.max.y, b.center.z); }
+                return transform.TransformPoint(hitOffset * 2f);
+            }
+        }
         public bool IsTargetable => State == LifeState.Alive;
         public IDamageable DamageReceiver => this;
         ILifeState ICombatTarget.LifeState => this;
@@ -50,6 +71,7 @@ namespace SandGuard.Enemy
         {
             CurrentHealth = maxHealth;
             colliders = GetComponentsInChildren<Collider>(true);
+            body = GetComponent<Collider>();
         }
 
         public DamageResult TakeDamage(DamageInfo damage)
@@ -71,6 +93,7 @@ namespace SandGuard.Enemy
             if (killed) { State = LifeState.Dying; SetCombatEnabled(false); } // 알림을 받는 쪽은 항상 최종 상태를 본다.
             var result = DamageResult.Applied(applied, killed);
             if (applied > 0f) HealthChanged?.Invoke(new HealthChangedInfo(entityId, previous, CurrentHealth, maxHealth, maxHealth));
+            if (applied > 0f && !killed) EnemyHealthBars.Show(this); // 피해를 받은 적만 체력바를 띄운다.
             Damaged?.Invoke(new DamageAppliedInfo(entityId, damage, result));
             if (killed)
             {
@@ -117,6 +140,7 @@ namespace SandGuard.Enemy
             State = LifeState.Alive;
             CurrentHealth = maxHealth;
             SetCombatEnabled(true);
+            GetComponent<EnemyShield>()?.ResetForReuse();
         }
 
         void SetCombatEnabled(bool value)

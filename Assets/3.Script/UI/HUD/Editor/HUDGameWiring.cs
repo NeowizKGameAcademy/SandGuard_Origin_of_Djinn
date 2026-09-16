@@ -35,6 +35,7 @@ namespace SandGuard.UI.HUD.Editor
             if (AssetDatabase.LoadAssetAtPath<Sprite>(HUDSkillIconGenerator.Burst) == null) HUDSkillIconGenerator.Generate();
             ApplyKoreanFont();
             WireGameHUDPrefab();
+            HUDLayoutSync.SyncFromHUDScene(); // HUD.unity에서 맞춘 배치를 GameHUD 프리팹에 옮긴다
             BuildCanvasPrefab();
             WireChiefBoss();
             foreach (var scene in Scenes) WireScene(scene);
@@ -92,6 +93,14 @@ namespace SandGuard.UI.HUD.Editor
                 SetIcon(controller.CombatSkills.F, HUDSkillIconGenerator.Tower);
                 SetIcon(controller.MovementSkills.Dash, HUDSkillIconGenerator.Dash);
                 SetIcon(controller.MovementSkills.DoubleJump, HUDSkillIconGenerator.Jump);
+                // 미니맵: 카메라·마커는 런타임에 MinimapController가 만든다. 마커 스프라이트만 여기서 건다.
+                var minimap = root.GetComponent<MinimapController>();
+                if (minimap == null) minimap = root.AddComponent<MinimapController>();
+                Set(minimap, "hud", controller);
+                Set(minimap, "playerMarker", HUDShapeSprites.ArrowSprite());
+                Set(minimap, "enemyMarker", HUDShapeSprites.CircleSprite());
+                Set(minimap, "coreMarker", HUDShapeSprites.DiamondSprite());
+                Set(minimap, "bossMarker", HUDShapeSprites.DiamondSprite());
                 PrefabUtility.SaveAsPrefabAsset(root, GameHUDPath);
             }
             finally { PrefabUtility.UnloadPrefabContents(root); }
@@ -129,9 +138,13 @@ namespace SandGuard.UI.HUD.Editor
             var root = PrefabUtility.LoadPrefabContents(ChiefPath);
             try
             {
-                if (root.GetComponent<EnemyBossInfo>() != null) return;
-                root.AddComponent<EnemyBossInfo>().displayName = "우두머리 자히르"; // EnemyCatalog의 이름
-                PrefabUtility.SaveAsPrefabAsset(root, ChiefPath);
+                var info = root.GetComponent<EnemyBossInfo>();
+                bool changed = false;
+                if (info == null) { info = root.AddComponent<EnemyBossInfo>(); info.displayName = "우두머리 자히르"; changed = true; } // GamePrefabCatalog의 이름
+                // 초상화는 HUDBossPortraitGenerator가 만든다(그래픽 장치 필요). 이미 있으면 여기서 건다.
+                var portrait = AssetDatabase.LoadAssetAtPath<Sprite>(HUDBossPortraitGenerator.ChiefPath);
+                if (portrait != null && info.icon != portrait) { info.icon = portrait; changed = true; }
+                if (changed) PrefabUtility.SaveAsPrefabAsset(root, ChiefPath);
             }
             finally { PrefabUtility.UnloadPrefabContents(root); }
         }

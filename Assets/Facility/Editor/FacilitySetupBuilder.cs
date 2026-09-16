@@ -30,7 +30,6 @@ namespace SandGuard.Facility.Editor
         const string BuildCompleteVfxPath = "Assets/Resources/VFX/Prefabs/VFX_Build_Complete.prefab";
         const string BuildPoofVfxPath = "Assets/Resources/VFX/Prefabs/VFX_Build_Poof.prefab";
         const string FontPath = "Assets/9.Font/public/static/alternative/Pretendard-Medium.ttf";
-        const string PlayerAndEnemyScene = "Assets/PlayerAndEnemy/Generated/PlayerAndEnemyTest.unity";
         /// <summary>받침대 모델 폭(4m)을 슬롯 자리 크기에 맞추는 기준.</summary>
         const float BaseModelWidth = 4f;
         public const string CobraId = "cobra";
@@ -253,7 +252,7 @@ namespace SandGuard.Facility.Editor
             if (catalog == null) { catalog = ScriptableObject.CreateInstance<FacilityCatalog>(); AssetDatabase.CreateAsset(catalog, CatalogPath); }
             var cobra = catalog.Find(CobraId);
             if (cobra == null) { cobra = new FacilityDefinition { id = CobraId }; catalog.facilities.Insert(0, cobra); }
-            cobra.displayName = "화염 코브라"; cobra.prefab = AssetDatabase.LoadAssetAtPath<GameObject>(CobraPrefabPath);
+            cobra.displayName = "화염 코브라"; cobra.prefab = AssetDatabase.LoadAssetAtPath<GameObject>(TowerBodyPath("Cobra"));
             cobra.icon = sprites.TryGetValue("UI_Icon_Cobra", out var icon) ? icon : null;
             EditorUtility.SetDirty(catalog);
 
@@ -292,46 +291,23 @@ namespace SandGuard.Facility.Editor
         /// <summary>담당자 받침(Tower Base.prefab)의 프리팹 변형 + FacilityAnchor. 슬롯마다 이것을 놓는다.</summary>
         public const string TowerBaseAnchorPath = TowersFolder + "/TowerBaseAnchor.prefab";
         public const string ObeliskId = "obelisk";
-        public static string TowerBodyPath(string kind) => TowersFolder + "/Tower_" + kind + ".prefab";
+        public static string TowerBodyPath(string kind) => "Assets/2.Model/Prefabs/Tower (" + kind + ").prefab";
 
         /// <summary>
         /// 건설 흐름에 담당자 타워를 쓴다.
-        /// ① Tower.unity의 본체(Tower (Cobra), Tower (Obelisk))를 복제해 임시 프리팹으로 저장한다. 담당자가 공식 프리팹을 만들면 카탈로그 경로만 바꾼다.
+        /// ① 공식 타워 프리팹을 직접 참조한다. 이후 원본 수정도 건설에 반영된다.
         /// ② 받침 앵커 = Tower Base.prefab의 변형 + FacilityAnchor. 사거리 원은 본체가 있을 때만 켠다(본체 없이 켜면 ShowRange가 오류).
         /// ③ 카탈로그: 화염 코브라 40, 모래시계 오벨리스크 55(임시 비용).
         /// Tower.unity와 Tower Base.prefab은 저장하지 않는다.
         /// </summary>
-        [MenuItem("SandGuard/Facility/Create Tower Build Assets (from Tower.unity)")]
+        [MenuItem("SandGuard/Facility/Create Tower Build Assets (from Prefabs)")]
         public static void CreateTowerBuildAssets()
         {
             Directory.CreateDirectory(TowersFolder);
             AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
-            var scene = EditorSceneManager.OpenScene(TeamTowerScenePath, OpenSceneMode.Single);
-            var saved = new List<string>();
-            foreach (var root in scene.GetRootGameObjects())
-            {
-                if (root.name != "Tower Base") continue;
-                foreach (Transform child in root.transform)
-                {
-                    if (!child.name.StartsWith(TeamTowerBodyPrefix)) continue;
-                    string kind = child.name.Substring(TeamTowerBodyPrefix.Length).TrimEnd(')').Trim();
-                    var copy = Object.Instantiate(child.gameObject);
-                    try
-                    {
-                        copy.name = child.name;
-                        copy.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
-                        copy.transform.localScale = Vector3.one;
-                        // 건설 연출("짠" 등장). 서비스가 Play()를 부르므로 켜질 때 자동 재생은 끈다.
-                        var popIn = copy.GetComponent<VfxPopIn>(); if (popIn == null) popIn = copy.AddComponent<VfxPopIn>();
-                        popIn.PoofPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(BuildPoofVfxPath);
-                        popIn.RevealPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(BuildCompleteVfxPath);
-                        popIn.PlayOnEnable = false;
-                        PrefabUtility.SaveAsPrefabAsset(copy, TowerBodyPath(kind));
-                        saved.Add(kind);
-                    }
-                    finally { Object.DestroyImmediate(copy); }
-                }
-            }
+            foreach (var kind in new[] { "Cobra", "Obelisk" })
+                if (AssetDatabase.LoadAssetAtPath<GameObject>(TowerBodyPath(kind)) == null)
+                    throw new System.InvalidOperationException("타워 프리팹이 없습니다: " + TowerBodyPath(kind));
 
             var baseInstance = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(TeamTowerPrefabPath));
             try
@@ -352,7 +328,7 @@ namespace SandGuard.Facility.Editor
             Upsert(catalog, 1, ObeliskId, "모래시계 오벨리스크", TowerBodyPath("Obelisk"), 55, Art + "/UI/UI_Icon_Crystal.png");
             EditorUtility.SetDirty(catalog);
             AssetDatabase.SaveAssets();
-            Debug.Log("FACILITY_TOWER_ASSETS_READY bodies=" + string.Join(",", saved));
+            Debug.Log("FACILITY_TOWER_ASSETS_READY bodies=Cobra,Obelisk");
         }
 
         static void Upsert(FacilityCatalog catalog, int index, string id, string displayName, string prefabPath, int cost, string iconPath)
@@ -406,18 +382,6 @@ namespace SandGuard.Facility.Editor
             return count;
         }
 
-        [MenuItem("SandGuard/Facility/Wire Into Player And Enemy Scene")]
-        public static void WirePlayerAndEnemyScene()
-        {
-            if (!File.Exists(PlayerAndEnemyScene)) { Debug.LogError("씬이 없습니다: " + PlayerAndEnemyScene); return; }
-            var scene = EditorSceneManager.OpenScene(PlayerAndEnemyScene, OpenSceneMode.Single);
-            WireIntoScene(scene);
-            EditorSceneManager.SaveScene(scene);
-            AssetDatabase.SaveAssets();
-        }
-
-        /// <summary>배치 모드용: 에셋 생성 + 통합 씬 연결.</summary>
-        public static void BuildAndWire() { Build(); WirePlayerAndEnemyScene(); }
 
         static void ImportModel(string path, Material material)
         {

@@ -88,6 +88,8 @@ namespace SandGuard.Player
         [Min(1f), Tooltip("하강 중 중력 배수. 포물선의 뒷부분을 빠르게 만든다")] public float fallGravityMultiplier = 2f;
         [Min(1f), Tooltip("상승 중 점프 버튼을 떼면 적용하는 중력 배수 (짧게 누르면 낮게 뛴다)")] public float lowJumpGravityMultiplier = 2.5f;
         [Min(0), Tooltip("공중 추가 점프 횟수(기본값). 스킬 ① 더블 점프가 ExtraAirJumps 수정자로 올린다")] public int extraAirJumps = 0;
+        [Min(0), Tooltip("공중 추가 점프 1회당 마나 비용. 0이면 무료이며 지상 점프에는 적용하지 않는다")]
+        public int airJumpManaCost = 0;
         [Min(0f), Tooltip("모서리에서 떨어진 직후에도 지상 점프를 허용하는 시간")] public float coyoteTime = 0.1f;
         [Min(0f), Tooltip("착지 직전에 누른 점프를 기억하는 시간")] public float jumpBufferTime = 0.12f;
         [Header("접지")]
@@ -122,6 +124,7 @@ namespace SandGuard.Player
         void OnValidate()
         {
             dashManaCost = Mathf.Max(0, dashManaCost);
+            airJumpManaCost = Mathf.Max(0, airJumpManaCost);
             if (float.IsNaN(dashCooldown) || float.IsInfinity(dashCooldown)) dashCooldown = 1f;
             dashCooldown = Mathf.Max(0f, dashCooldown);
             if (float.IsNaN(dashDuration) || float.IsInfinity(dashDuration)) dashDuration = 0.2f;
@@ -161,16 +164,21 @@ namespace SandGuard.Player
         {
             if (!JumpAvailability().Succeeded || IsDashing) return false;
             if (!(IsGrounded || coyoteTimer > 0f)) return false;
-            Jump(true, fullHeight);
-            return true;
+            return Jump(true, fullHeight);
         }
-        void Jump(bool groundJump, bool fullHeight)
+        bool Jump(bool groundJump, bool fullHeight)
         {
+            if (!groundJump && airJumpManaCost > 0 && (Mana == null || !Mana.TrySpend(airJumpManaCost)))
+            {
+                jumpBufferTimer = 0f;
+                return false;
+            }
             if (!groundJump) RemainingAirJumps--;
             verticalVelocity = Mathf.Sqrt(2f * gravity * JumpHeight);
             IsGrounded = false; coyoteTimer = 0f; jumpBufferTimer = 0f; freeAscent = fullHeight;
             LastJumpWasAirJump = !groundJump;
             Jumped?.Invoke();
+            return true;
         }
         /// <summary>상승 기류 같은 발사형 도약. 인자는 목표 높이(m).</summary>
         public event Action<float> Launched;
@@ -230,7 +238,13 @@ namespace SandGuard.Player
         {
             var common = CommonAvailability();
             if (!common.Succeeded) return common;
-            return !IsDashing && !Anchored && (IsGrounded || coyoteTimer > 0f || (RemainingAirJumps > 0 && (SkillTreeAirJumpAllowed==null || SkillTreeAirJumpAllowed()))) ? ActionResult.Success() : ActionResult.Fail(ActionFailure.Locked);
+            if (IsDashing || Anchored) return ActionResult.Fail(ActionFailure.Locked);
+            if (IsGrounded || coyoteTimer > 0f) return ActionResult.Success();
+            if (RemainingAirJumps <= 0 || (SkillTreeAirJumpAllowed != null && !SkillTreeAirJumpAllowed()))
+                return ActionResult.Fail(ActionFailure.Locked);
+            if (airJumpManaCost <= 0) return ActionResult.Success();
+            if (Mana == null) return ActionResult.Fail(ActionFailure.NotFound);
+            return Mana.CurrentMana >= airJumpManaCost ? ActionResult.Success() : ActionResult.Fail(ActionFailure.InsufficientMana);
         }
         ActionResult DashAvailability()
         {
@@ -312,7 +326,7 @@ namespace SandGuard.Player
             {
                 bool groundJump = IsGrounded || coyoteTimer > 0f;
                 if (groundJump && DeferGroundJumps) jumpBufferTimer = 0f; // 상승 기류가 탭/홀드를 가른 뒤 TryJump로 점프시킨다
-                else if (groundJump || (RemainingAirJumps > 0 && (SkillTreeAirJumpAllowed==null || SkillTreeAirJumpAllowed()))) { Jump(groundJump, false); jumpedThisFrame = true; }
+                else if (groundJump || (RemainingAirJumps > 0 && (SkillTreeAirJumpAllowed==null || SkillTreeAirJumpAllowed()))) jumpedThisFrame = Jump(groundJump, false);
             }
             jumpBufferTimer = Mathf.Max(0f, jumpBufferTimer - dt);
 

@@ -45,10 +45,13 @@ namespace SandGuard.Enemy
                 (animator.IsInTransition(0) && animator.GetNextAnimatorStateInfo(0).IsName("Dead"))) return;
             Quaternion rotation;
             Vector3 grip;
+            var shield = health != null ? health.GetComponent<EnemyShield>() : null;
+            if (shieldFrame != null && shield != null && shield.IsBroken) { CloseFingers(); return; }
             if (shieldFrame != null)
             {
                 rotation = Quaternion.LookRotation(transform.forward, transform.up) * Quaternion.Inverse(leftGripBasis);
-                grip = chest.position + transform.TransformDirection(shieldOffset * (characterHeight / 1.8f));
+                // 오프셋은 모델 공간 값이라 모델 스케일을 따라야 한다(손바닥 오프셋이 lossyScale을 쓰는 것과 같은 이유).
+                grip = chest.position + transform.TransformVector(shieldOffset * (characterHeight / 1.8f));
             }
             else if (supportGrip != null && primaryGrip != null)
             {
@@ -78,7 +81,7 @@ namespace SandGuard.Enemy
                 }
             }
             Vector3? elbowHint = shieldFrame != null
-                ? upper.position + transform.TransformDirection(new Vector3(-.16f, -.35f, -.3f) * (characterHeight / 1.8f))
+                ? upper.position + transform.TransformVector(new Vector3(-.16f, -.35f, -.3f) * (characterHeight / 1.8f))
                 : (Vector3?)null;
             SolveArm(upper, lower, hand, wristTarget, elbowHint);
             hand.rotation = rotation;

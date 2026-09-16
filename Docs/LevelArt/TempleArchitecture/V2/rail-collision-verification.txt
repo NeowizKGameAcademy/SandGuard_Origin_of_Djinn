@@ -1,0 +1,244 @@
+BEFORE TREADS_FLUSH_T7_CORE/Left direction=-1 PASS shortfall=0.0375 supported=True actual=(2.7550, 39.7557, 34.1863) target=(2.6800, 39.3115, 34.2237) lateral=0.3250
+BEFORE TREADS_FLUSH_T7_CORE/Left direction=1 PASS shortfall=0.0375 supported=True actual=(2.7550, 53.0876, 12.0637) target=(2.6800, 52.6885, 12.0263) lateral=0.3250
+BEFORE inward wall ray FAIL TREADS_FLUSH_T7_CORE/Right t=0.2
+BEFORE inward wall ray FAIL TREADS_FLUSH_T7_CORE/Right t=0.5
+BEFORE inward wall ray FAIL TREADS_FLUSH_T7_CORE/Right t=0.8
+BEFORE TREADS_FLUSH_T7_CORE/Right direction=-1 FAIL shortfall=21.5556 supported=True actual=(-2.7550, 52.3895, 12.6681) target=(-2.6800, 39.3115, 34.2237) lateral=-0.3250
+BEFORE TREADS_FLUSH_T7_CORE/Right direction=1 FAIL shortfall=18.3166 supported=True actual=(-2.7550, 41.7381, 30.3429) target=(-2.6800, 52.6885, 12.0263) lateral=-0.3250
+BEFORE TREADS_FLUSH_L3_NE_T8/Left direction=-1 PASS shortfall=0.0361 supported=True actual=(-17.6062, 27.4430, -27.2383) target=(-17.6814, 26.9915, -27.2739) lateral=0.3250
+BEFORE TREADS_FLUSH_L3_NE_T8/Left direction=1 PASS shortfall=0.0101 supported=True actual=(-6.2334, 37.0997, -36.5712) target=(-6.2007, 37.0085, -36.5468) lateral=0.4395
+BEFORE inward wall ray FAIL TREADS_FLUSH_L3_NE_T8/Right t=0.2
+BEFORE inward wall ray FAIL TREADS_FLUSH_L3_NE_T8/Right t=0.5
+BEFORE inward wall ray FAIL TREADS_FLUSH_L3_NE_T8/Right t=0.8
+BEFORE TREADS_FLUSH_L3_NE_T8/Right direction=-1 FAIL shortfall=14.0353 supported=True actual=(-10.1777, 36.6214, -40.3209) target=(-21.0493, 26.9915, -31.4436) lateral=-0.3250
+BEFORE TREADS_FLUSH_L3_NE_T8/Right direction=1 FAIL shortfall=14.3556 supported=True actual=(-20.7836, 27.3677, -31.7548) target=(-9.5686, 37.0085, -40.7165) lateral=-0.3248
+BEFORE TREADS_FLUSH_L3_NW_T8/Left direction=-1 PASS shortfall=0.0378 supported=True actual=(21.0670, 27.4441, -31.5257) target=(21.0493, 26.9915, -31.4436) lateral=0.3250
+BEFORE TREADS_FLUSH_L3_NW_T8/Left direction=1 PASS shortfall=0.0378 supported=True actual=(9.6451, 37.4098, -40.7511) target=(9.5686, 37.0085, -40.7165) lateral=0.3250
+BEFORE inward wall ray FAIL TREADS_FLUSH_L3_NW_T8/Right t=0.2
+BEFORE inward wall ray FAIL TREADS_FLUSH_L3_NW_T8/Right t=0.5
+BEFORE inward wall ray FAIL TREADS_FLUSH_L3_NW_T8/Right t=0.8
+BEFORE TREADS_FLUSH_L3_NW_T8/Right direction=-1 FAIL shortfall=14.0337 supported=True actual=(6.7169, 36.6203, -36.0335) target=(17.6814, 26.9915, -27.2739) lateral=-0.3250
+BEFORE TREADS_FLUSH_L3_NW_T8/Right direction=1 FAIL shortfall=14.5187 supported=True actual=(17.4483, 27.2570, -27.3658) target=(6.2007, 37.0085, -36.5468) lateral=-0.3250
+BEFORE TREADS_FLUSH_ENTRY_NE_T1/Left direction=-1 PASS shortfall=0.0352 supported=True actual=(-74.7974, 0.6016, -71.6083) target=(-74.7692, 0.1915, -71.6862) lateral=0.3250
+BEFORE TREADS_FLUSH_ENTRY_NE_T1/Left direction=1 FAIL shortfall=7.5409 supported=True actual=(-74.6761, 0.2409, -71.5329) target=(-69.3137, 1.8085, -66.2308) lateral=0.3575
+BEFORE inward wall ray FAIL TREADS_FLUSH_ENTRY_NE_T1/Right t=0.2
+BEFORE inward wall ray FAIL TREADS_FLUSH_ENTRY_NE_T1/Right t=0.5
+BEFORE inward wall ray FAIL TREADS_FLUSH_ENTRY_NE_T1/Right t=0.8
+BEFORE TREADS_FLUSH_ENTRY_NE_T1/Right direction=-1 FAIL shortfall=4.5149 supported=True actual=(-68.4407, 1.1709, -71.6298) target=(-71.6863, 0.1915, -74.7692) lateral=-0.3250
+BEFORE TREADS_FLUSH_ENTRY_NE_T1/Right direction=1 FAIL shortfall=7.4753 supported=True actual=(-71.4636, 0.2749, -74.6526) target=(-66.2308, 1.8085, -69.3137) lateral=-0.3250
+BEFORE TREADS_FLUSH_ENTRY_NW_T4/Left direction=-1 PASS shortfall=0.0352 supported=True actual=(71.6083, 0.6016, -74.7973) target=(71.6863, 0.1915, -74.7692) lateral=0.3250
+BEFORE TREADS_FLUSH_ENTRY_NW_T4/Left direction=1 FAIL shortfall=7.4610 supported=True actual=(71.4711, 0.2576, -74.6248) target=(66.2308, 1.8085, -69.3137) lateral=0.3500
+BEFORE inward wall ray FAIL TREADS_FLUSH_ENTRY_NW_T4/Right t=0.2
+BEFORE inward wall ray FAIL TREADS_FLUSH_ENTRY_NW_T4/Right t=0.5
+BEFORE inward wall ray FAIL TREADS_FLUSH_ENTRY_NW_T4/Right t=0.8
+BEFORE TREADS_FLUSH_ENTRY_NW_T4/Right direction=-1 FAIL shortfall=4.5151 supported=True actual=(71.6296, 1.1709, -68.4405) target=(74.7692, 0.1915, -71.6862) lateral=-0.3250
+BEFORE TREADS_FLUSH_ENTRY_NW_T4/Right direction=1 FAIL shortfall=7.4021 supported=True actual=(74.6008, 0.2903, -71.4118) target=(69.3137, 1.8085, -66.2308) lateral=-0.3250
+BEFORE TREADS_FLUSH_T6_L3_NW/Left direction=-1 PASS shortfall=0.0425 supported=True actual=(41.2943, 15.4499, -7.1743) target=(41.2577, 14.9915, -7.0963) lateral=0.3250
+BEFORE TREADS_FLUSH_T6_L3_NW/Left direction=1 PASS shortfall=0.0133 supported=True actual=(32.9788, 25.1016, -18.7193) target=(33.0016, 25.0085, -18.7519) lateral=0.4375
+BEFORE inward wall ray FAIL TREADS_FLUSH_T6_L3_NW/Right t=0.2
+BEFORE inward wall ray FAIL TREADS_FLUSH_T6_L3_NW/Right t=0.5
+BEFORE inward wall ray FAIL TREADS_FLUSH_T6_L3_NW/Right t=0.8
+BEFORE TREADS_FLUSH_T6_L3_NW/Right direction=-1 FAIL shortfall=12.4870 supported=True actual=(29.6049, 23.8512, -14.1445) target=(36.8838, 14.9915, -3.9981) lateral=-0.3250
+BEFORE TREADS_FLUSH_T6_L3_NW/Right direction=1 FAIL shortfall=14.4149 supported=True actual=(36.8983, 15.0017, -3.8472) target=(28.6278, 25.0085, -15.6537) lateral=-0.3246
+BEFORE inward wall ray FAIL TREADS_FLUSH_T4_B_NW/Left t=0.2
+BEFORE inward wall ray FAIL TREADS_FLUSH_T4_B_NW/Left t=0.5
+BEFORE inward wall ray FAIL TREADS_FLUSH_T4_B_NW/Left t=0.8
+BEFORE TREADS_FLUSH_T4_B_NW/Left direction=-1 PASS shortfall=0.0784 supported=True actual=(63.5034, 2.0250, -31.3468) target=(63.4210, 2.0000, -31.2763) lateral=0.3250
+BEFORE TREADS_FLUSH_T4_B_NW/Left direction=1 PASS shortfall=0.0784 supported=True actual=(65.9792, 2.0250, -56.1049) target=(65.9124, 2.0000, -56.1904) lateral=0.3250
+BEFORE TREADS_FLUSH_T4_B_NW/Right direction=-1 PASS shortfall=0.0784 supported=True actual=(58.0527, 2.0241, -31.8919) target=(58.0876, 2.0000, -31.8096) lateral=-0.3571
+BEFORE TREADS_FLUSH_T4_B_NW/Right direction=1 PASS shortfall=0.0784 supported=True actual=(60.5286, 2.0240, -56.6500) target=(60.5790, 2.0000, -56.7238) lateral=-0.3572
+BEFORE TREADS_FLUSH_L3_SW_T7/Left direction=-1 PASS shortfall=0.0362 supported=True actual=(17.6061, 27.4431, 27.2383) target=(17.6814, 26.9915, 27.2739) lateral=0.3250
+BEFORE TREADS_FLUSH_L3_SW_T7/Left direction=1 PASS shortfall=0.0097 supported=True actual=(6.2325, 37.1000, 36.5707) target=(6.2007, 37.0085, 36.5467) lateral=0.4386
+BEFORE inward wall ray FAIL TREADS_FLUSH_L3_SW_T7/Right t=0.2
+BEFORE inward wall ray FAIL TREADS_FLUSH_L3_SW_T7/Right t=0.5
+BEFORE inward wall ray FAIL TREADS_FLUSH_L3_SW_T7/Right t=0.8
+BEFORE TREADS_FLUSH_L3_SW_T7/Right direction=-1 FAIL shortfall=14.0353 supported=True actual=(10.1777, 36.6214, 40.3209) target=(21.0493, 26.9916, 31.4436) lateral=-0.3250
+BEFORE TREADS_FLUSH_L3_SW_T7/Right direction=1 FAIL shortfall=14.3556 supported=True actual=(20.7836, 27.3677, 31.7548) target=(9.5686, 37.0085, 40.7165) lateral=-0.3248
+BEFORE TREADS_FLUSH_T8_CORE/Left direction=-1 PASS shortfall=0.0375 supported=True actual=(-2.7550, 39.7557, -34.1863) target=(-2.6800, 39.3115, -34.2237) lateral=0.3250
+BEFORE TREADS_FLUSH_T8_CORE/Left direction=1 PASS shortfall=0.0375 supported=True actual=(-2.7550, 53.0876, -12.0637) target=(-2.6800, 52.6885, -12.0263) lateral=0.3250
+BEFORE inward wall ray FAIL TREADS_FLUSH_T8_CORE/Right t=0.2
+BEFORE inward wall ray FAIL TREADS_FLUSH_T8_CORE/Right t=0.5
+BEFORE inward wall ray FAIL TREADS_FLUSH_T8_CORE/Right t=0.8
+BEFORE TREADS_FLUSH_T8_CORE/Right direction=-1 FAIL shortfall=21.5556 supported=True actual=(2.7550, 52.3895, -12.6681) target=(2.6800, 39.3115, -34.2237) lateral=-0.3250
+BEFORE TREADS_FLUSH_T8_CORE/Right direction=1 FAIL shortfall=20.5971 supported=True actual=(2.7552, 40.3638, -32.6234) target=(2.6800, 52.6885, -12.0263) lateral=-0.3248
+BEFORE TREADS_FLUSH_B_SW_T6/Left direction=-1 PASS shortfall=0.0407 supported=True actual=(59.0344, 3.4368, 17.8706) target=(58.9968, 2.9915, 17.9471) lateral=0.3250
+BEFORE TREADS_FLUSH_B_SW_T6/Left direction=1 PASS shortfall=0.0407 supported=True actual=(49.3473, 13.4054, 4.1946) target=(49.2625, 13.0085, 4.2047) lateral=0.3250
+BEFORE inward wall ray FAIL TREADS_FLUSH_B_SW_T6/Right t=0.2
+BEFORE inward wall ray FAIL TREADS_FLUSH_B_SW_T6/Right t=0.5
+BEFORE inward wall ray FAIL TREADS_FLUSH_B_SW_T6/Right t=0.8
+BEFORE TREADS_FLUSH_B_SW_T6/Right direction=-1 PASS shortfall=0.0407 supported=True actual=(54.5586, 3.0980, 21.0409) target=(54.6229, 2.9915, 21.0453) lateral=-0.3501
+BEFORE TREADS_FLUSH_B_SW_T6/Right direction=1 FAIL shortfall=16.3691 supported=True actual=(54.2891, 3.3584, 20.7038) target=(44.8887, 13.0085, 7.3029) lateral=-0.3250
+BEFORE TREADS_FLUSH_T5_L3_NE/Left direction=-1 PASS shortfall=0.0433 supported=True actual=(-36.7975, 15.4506, -3.9901) target=(-36.8838, 14.9915, -3.9981) lateral=0.3250
+BEFORE TREADS_FLUSH_T5_L3_NE/Left direction=1 PASS shortfall=0.0433 supported=True actual=(-28.5916, 25.4068, -15.5750) target=(-28.6278, 25.0085, -15.6537) lateral=0.3250
+BEFORE inward wall ray FAIL TREADS_FLUSH_T5_L3_NE/Right t=0.2
+BEFORE inward wall ray FAIL TREADS_FLUSH_T5_L3_NE/Right t=0.5
+BEFORE inward wall ray FAIL TREADS_FLUSH_T5_L3_NE/Right t=0.8
+BEFORE TREADS_FLUSH_T5_L3_NE/Right direction=-1 FAIL shortfall=6.7599 supported=True actual=(-37.4054, 19.8403, -12.6516) target=(-41.2577, 14.9915, -7.0963) lateral=-0.3325
+BEFORE TREADS_FLUSH_T5_L3_NE/Right direction=1 FAIL shortfall=13.4286 supported=True actual=(-40.8249, 15.6989, -7.8372) target=(-33.0016, 25.0085, -18.7519) lateral=-0.3249
+BEFORE TREADS_FLUSH_T3_B_SW/Left direction=-1 PASS shortfall=0.0784 supported=True actual=(65.9472, 2.0247, 56.1081) target=(65.9124, 2.0000, 56.1904) lateral=0.3571
+BEFORE TREADS_FLUSH_T3_B_SW/Left direction=1 PASS shortfall=0.0785 supported=True actual=(63.4715, 2.0247, 31.3501) target=(63.4210, 2.0000, 31.2763) lateral=0.3571
+BEFORE inward wall ray FAIL TREADS_FLUSH_T3_B_SW/Right t=0.2
+BEFORE inward wall ray FAIL TREADS_FLUSH_T3_B_SW/Right t=0.5
+BEFORE inward wall ray FAIL TREADS_FLUSH_T3_B_SW/Right t=0.8
+BEFORE TREADS_FLUSH_T3_B_SW/Right direction=-1 PASS shortfall=0.0784 supported=True actual=(60.4966, 2.0250, 56.6532) target=(60.5790, 2.0000, 56.7238) lateral=-0.3250
+BEFORE TREADS_FLUSH_T3_B_SW/Right direction=1 PASS shortfall=0.0784 supported=True actual=(58.0208, 2.0250, 31.8951) target=(58.0876, 2.0000, 31.8096) lateral=-0.3250
+BEFORE TREADS_FLUSH_T6_L3_SW/Left direction=-1 PASS shortfall=0.0433 supported=True actual=(36.7975, 15.4506, 3.9901) target=(36.8838, 14.9915, 3.9981) lateral=0.3250
+BEFORE TREADS_FLUSH_T6_L3_SW/Left direction=1 PASS shortfall=0.0433 supported=True actual=(28.5916, 25.4068, 15.5750) target=(28.6278, 25.0085, 15.6537) lateral=0.3250
+BEFORE inward wall ray FAIL TREADS_FLUSH_T6_L3_SW/Right t=0.2
+BEFORE inward wall ray FAIL TREADS_FLUSH_T6_L3_SW/Right t=0.5
+BEFORE inward wall ray FAIL TREADS_FLUSH_T6_L3_SW/Right t=0.8
+BEFORE TREADS_FLUSH_T6_L3_SW/Right direction=-1 FAIL shortfall=13.4799 supported=True actual=(33.5200, 24.5530, 18.1344) target=(41.2577, 14.9915, 7.0963) lateral=-0.3339
+BEFORE TREADS_FLUSH_T6_L3_SW/Right direction=1 FAIL shortfall=13.8347 supported=True actual=(41.0595, 15.4142, 7.5058) target=(33.0016, 25.0085, 18.7519) lateral=-0.3250
+BEFORE TREADS_FLUSH_ENTRY_SE_T2/Left direction=-1 PASS shortfall=0.0352 supported=True actual=(-71.6083, 0.6016, 74.7973) target=(-71.6863, 0.1915, 74.7692) lateral=0.3250
+BEFORE TREADS_FLUSH_ENTRY_SE_T2/Left direction=1 FAIL shortfall=7.4610 supported=True actual=(-71.4711, 0.2576, 74.6248) target=(-66.2308, 1.8085, 69.3137) lateral=0.3500
+BEFORE inward wall ray FAIL TREADS_FLUSH_ENTRY_SE_T2/Right t=0.2
+BEFORE inward wall ray FAIL TREADS_FLUSH_ENTRY_SE_T2/Right t=0.5
+BEFORE inward wall ray FAIL TREADS_FLUSH_ENTRY_SE_T2/Right t=0.8
+BEFORE TREADS_FLUSH_ENTRY_SE_T2/Right direction=-1 FAIL shortfall=4.5150 supported=True actual=(-71.6297, 1.1709, 68.4406) target=(-74.7692, 0.1915, 71.6862) lateral=-0.3250
+BEFORE TREADS_FLUSH_ENTRY_SE_T2/Right direction=1 FAIL shortfall=7.4021 supported=True actual=(-74.6008, 0.2903, 71.4118) target=(-69.3137, 1.8085, 66.2308) lateral=-0.3250
+BEFORE TREADS_FLUSH_B_NE_T5/Left direction=-1 PASS shortfall=0.0407 supported=True actual=(-59.0344, 3.4368, -17.8706) target=(-58.9968, 2.9915, -17.9471) lateral=0.3250
+BEFORE TREADS_FLUSH_B_NE_T5/Left direction=1 PASS shortfall=0.0407 supported=True actual=(-49.3473, 13.4054, -4.1946) target=(-49.2625, 13.0085, -4.2047) lateral=0.3250
+BEFORE inward wall ray FAIL TREADS_FLUSH_B_NE_T5/Right t=0.2
+BEFORE inward wall ray FAIL TREADS_FLUSH_B_NE_T5/Right t=0.5
+BEFORE inward wall ray FAIL TREADS_FLUSH_B_NE_T5/Right t=0.8
+BEFORE TREADS_FLUSH_B_NE_T5/Right direction=-1 FAIL shortfall=16.0353 supported=True actual=(-45.2930, 12.6158, -8.0034) target=(-54.6229, 2.9915, -21.0453) lateral=-0.3250
+BEFORE TREADS_FLUSH_B_NE_T5/Right direction=1 FAIL shortfall=16.7376 supported=True actual=(-54.5019, 3.1351, -21.0046) target=(-44.8887, 13.0085, -7.3029) lateral=-0.3249
+BEFORE TREADS_FLUSH_ENTRY_SW_T3/Left direction=-1 PASS shortfall=0.0352 supported=True actual=(74.7974, 0.6016, 71.6083) target=(74.7693, 0.1915, 71.6862) lateral=0.3250
+BEFORE TREADS_FLUSH_ENTRY_SW_T3/Left direction=1 FAIL shortfall=7.5410 supported=True actual=(74.6761, 0.2409, 71.5329) target=(69.3138, 1.8085, 66.2307) lateral=0.3575
+BEFORE inward wall ray FAIL TREADS_FLUSH_ENTRY_SW_T3/Right t=0.2
+BEFORE inward wall ray FAIL TREADS_FLUSH_ENTRY_SW_T3/Right t=0.5
+BEFORE inward wall ray FAIL TREADS_FLUSH_ENTRY_SW_T3/Right t=0.8
+BEFORE TREADS_FLUSH_ENTRY_SW_T3/Right direction=-1 FAIL shortfall=4.5151 supported=True actual=(68.4406, 1.1710, 71.6296) target=(71.6863, 0.1915, 74.7692) lateral=-0.3250
+BEFORE TREADS_FLUSH_ENTRY_SW_T3/Right direction=1 FAIL shortfall=7.4753 supported=True actual=(71.4636, 0.2749, 74.6526) target=(66.2308, 1.8085, 69.3137) lateral=-0.3250
+BEFORE TREADS_FLUSH_T2_B_SE/Left direction=-1 PASS shortfall=0.0784 supported=True actual=(-60.5288, 2.0240, 56.6500) target=(-60.5790, 2.0000, 56.7238) lateral=0.3574
+BEFORE TREADS_FLUSH_T2_B_SE/Left direction=1 PASS shortfall=0.0784 supported=True actual=(-58.0531, 2.0241, 31.8919) target=(-58.0876, 2.0000, 31.8096) lateral=0.3575
+BEFORE inward wall ray FAIL TREADS_FLUSH_T2_B_SE/Right t=0.2
+BEFORE inward wall ray FAIL TREADS_FLUSH_T2_B_SE/Right t=0.5
+BEFORE inward wall ray FAIL TREADS_FLUSH_T2_B_SE/Right t=0.8
+BEFORE TREADS_FLUSH_T2_B_SE/Right direction=-1 PASS shortfall=0.0784 supported=True actual=(-65.9792, 2.0250, 56.1049) target=(-65.9124, 2.0000, 56.1904) lateral=-0.3250
+BEFORE TREADS_FLUSH_T2_B_SE/Right direction=1 PASS shortfall=0.0784 supported=True actual=(-63.5034, 2.0250, 31.3468) target=(-63.4210, 2.0000, 31.2763) lateral=-0.3250
+BEFORE inward wall ray FAIL TREADS_FLUSH_T1_B_NE/Left t=0.2
+BEFORE inward wall ray FAIL TREADS_FLUSH_T1_B_NE/Left t=0.5
+BEFORE inward wall ray FAIL TREADS_FLUSH_T1_B_NE/Left t=0.8
+BEFORE TREADS_FLUSH_T1_B_NE/Left direction=-1 PASS shortfall=0.0784 supported=True actual=(-58.0208, 2.0250, -31.8951) target=(-58.0876, 2.0000, -31.8096) lateral=0.3250
+BEFORE TREADS_FLUSH_T1_B_NE/Left direction=1 PASS shortfall=0.0784 supported=True actual=(-60.4966, 2.0250, -56.6532) target=(-60.5790, 2.0000, -56.7238) lateral=0.3250
+BEFORE TREADS_FLUSH_T1_B_NE/Right direction=-1 PASS shortfall=0.0784 supported=True actual=(-63.4712, 2.0243, -31.3500) target=(-63.4210, 2.0000, -31.2763) lateral=-0.3574
+BEFORE TREADS_FLUSH_T1_B_NE/Right direction=1 PASS shortfall=0.0784 supported=True actual=(-65.9470, 2.0247, -56.1081) target=(-65.9124, 2.0000, -56.1904) lateral=-0.3574
+BEFORE TREADS_FLUSH_B_SE_T5/Left direction=-1 PASS shortfall=0.0407 supported=True actual=(-54.5382, 3.4368, 21.0554) target=(-54.6229, 2.9915, 21.0453) lateral=0.3250
+BEFORE TREADS_FLUSH_B_SE_T5/Left direction=1 PASS shortfall=0.0407 supported=True actual=(-44.8510, 13.4054, 7.3794) target=(-44.8887, 13.0085, 7.3029) lateral=0.3250
+BEFORE inward wall ray FAIL TREADS_FLUSH_B_SE_T5/Right t=0.2
+BEFORE inward wall ray FAIL TREADS_FLUSH_B_SE_T5/Right t=0.5
+BEFORE inward wall ray FAIL TREADS_FLUSH_B_SE_T5/Right t=0.8
+BEFORE TREADS_FLUSH_B_SE_T5/Right direction=-1 FAIL shortfall=16.0389 supported=True actual=(-49.7872, 12.6179, 4.8156) target=(-58.9968, 2.9915, 17.9471) lateral=-0.3250
+BEFORE TREADS_FLUSH_B_SE_T5/Right direction=1 FAIL shortfall=16.5672 supported=True actual=(-58.8999, 3.2405, 17.6806) target=(-49.2626, 13.0085, 4.2047) lateral=-0.3250
+BEFORE TREADS_FLUSH_B_NW_T6/Left direction=-1 PASS shortfall=0.0407 supported=True actual=(54.5382, 3.4368, -21.0554) target=(54.6229, 2.9915, -21.0453) lateral=0.3250
+BEFORE TREADS_FLUSH_B_NW_T6/Left direction=1 PASS shortfall=0.0407 supported=True actual=(44.8510, 13.4054, -7.3794) target=(44.8887, 13.0085, -7.3029) lateral=0.3250
+BEFORE inward wall ray FAIL TREADS_FLUSH_B_NW_T6/Right t=0.2
+BEFORE inward wall ray FAIL TREADS_FLUSH_B_NW_T6/Right t=0.5
+BEFORE inward wall ray FAIL TREADS_FLUSH_B_NW_T6/Right t=0.8
+BEFORE TREADS_FLUSH_B_NW_T6/Right direction=-1 FAIL shortfall=16.5981 supported=True actual=(49.4439, 12.9505, -4.3736) target=(58.9968, 2.9915, -17.9471) lateral=-0.3497
+BEFORE TREADS_FLUSH_B_NW_T6/Right direction=1 FAIL shortfall=16.2041 supported=True actual=(58.6900, 3.4565, -17.3843) target=(49.2626, 13.0085, -4.2047) lateral=-0.3250
+BEFORE TREADS_FLUSH_T5_L3_SE/Left direction=-1 PASS shortfall=0.0424 supported=True actual=(-41.2943, 15.4499, 7.1743) target=(-41.2577, 14.9915, 7.0963) lateral=0.3250
+BEFORE TREADS_FLUSH_T5_L3_SE/Left direction=1 PASS shortfall=0.0134 supported=True actual=(-32.9789, 25.1016, 18.7192) target=(-33.0016, 25.0085, 18.7519) lateral=0.4375
+BEFORE inward wall ray FAIL TREADS_FLUSH_T5_L3_SE/Right t=0.2
+BEFORE inward wall ray FAIL TREADS_FLUSH_T5_L3_SE/Right t=0.5
+BEFORE inward wall ray FAIL TREADS_FLUSH_T5_L3_SE/Right t=0.8
+BEFORE TREADS_FLUSH_T5_L3_SE/Right direction=-1 FAIL shortfall=13.5607 supported=True actual=(-28.9842, 24.6098, 15.0207) target=(-36.8838, 14.9915, 3.9981) lateral=-0.3250
+BEFORE TREADS_FLUSH_T5_L3_SE/Right direction=1 FAIL shortfall=14.0723 supported=True actual=(-36.7006, 15.2475, 4.1270) target=(-28.6278, 25.0085, 15.6537) lateral=-0.3250
+BEFORE TREADS_FLUSH_L3_SE_T7/Left direction=-1 PASS shortfall=0.0378 supported=True actual=(-21.0670, 27.4441, 31.5257) target=(-21.0493, 26.9916, 31.4436) lateral=0.3250
+BEFORE TREADS_FLUSH_L3_SE_T7/Left direction=1 PASS shortfall=0.0378 supported=True actual=(-9.6451, 37.4099, 40.7511) target=(-9.5686, 37.0085, 40.7165) lateral=0.3250
+BEFORE inward wall ray FAIL TREADS_FLUSH_L3_SE_T7/Right t=0.2
+BEFORE inward wall ray FAIL TREADS_FLUSH_L3_SE_T7/Right t=0.5
+BEFORE inward wall ray FAIL TREADS_FLUSH_L3_SE_T7/Right t=0.8
+BEFORE TREADS_FLUSH_L3_SE_T7/Right direction=-1 FAIL shortfall=14.0338 supported=True actual=(-6.7168, 36.6203, 36.0335) target=(-17.6814, 26.9915, 27.2739) lateral=-0.3250
+BEFORE TREADS_FLUSH_L3_SE_T7/Right direction=1 FAIL shortfall=14.4906 supported=True actual=(-17.4265, 27.2760, 27.3834) target=(-6.2007, 37.0085, 36.5467) lateral=-0.3250
+BEFORE SUMMARY wall rays=132 missed=66 edge walks=88 failed=39
+AFTER TREADS_FLUSH_T7_CORE/Left direction=-1 PASS shortfall=0.0375 supported=True actual=(2.7550, 39.7557, 34.1863) target=(2.6800, 39.3115, 34.2237) lateral=0.3250
+AFTER TREADS_FLUSH_T7_CORE/Left direction=1 PASS shortfall=0.0375 supported=True actual=(2.7550, 53.0876, 12.0637) target=(2.6800, 52.6885, 12.0263) lateral=0.3250
+AFTER TREADS_FLUSH_T7_CORE/Right direction=-1 PASS shortfall=0.0375 supported=True actual=(-2.7550, 39.7557, 34.1863) target=(-2.6800, 39.3115, 34.2237) lateral=-0.3250
+AFTER TREADS_FLUSH_T7_CORE/Right direction=1 PASS shortfall=0.0375 supported=True actual=(-2.7550, 53.0876, 12.0637) target=(-2.6800, 52.6885, 12.0263) lateral=-0.3250
+AFTER TREADS_FLUSH_L3_NE_T8/Left direction=-1 PASS shortfall=0.0361 supported=True actual=(-17.6062, 27.4430, -27.2383) target=(-17.6814, 26.9915, -27.2739) lateral=0.3250
+AFTER TREADS_FLUSH_L3_NE_T8/Left direction=1 PASS shortfall=0.0101 supported=True actual=(-6.2334, 37.0997, -36.5712) target=(-6.2007, 37.0085, -36.5468) lateral=0.4395
+AFTER TREADS_FLUSH_L3_NE_T8/Right direction=-1 PASS shortfall=0.0378 supported=True actual=(-21.0670, 27.4441, -31.5257) target=(-21.0493, 26.9915, -31.4436) lateral=-0.3250
+AFTER TREADS_FLUSH_L3_NE_T8/Right direction=1 PASS shortfall=0.0378 supported=True actual=(-9.6451, 37.4099, -40.7511) target=(-9.5686, 37.0085, -40.7165) lateral=-0.3250
+AFTER TREADS_FLUSH_L3_NW_T8/Left direction=-1 PASS shortfall=0.0378 supported=True actual=(21.0670, 27.4441, -31.5257) target=(21.0493, 26.9915, -31.4436) lateral=0.3250
+AFTER TREADS_FLUSH_L3_NW_T8/Left direction=1 PASS shortfall=0.0378 supported=True actual=(9.6451, 37.4099, -40.7511) target=(9.5686, 37.0085, -40.7165) lateral=0.3250
+AFTER TREADS_FLUSH_L3_NW_T8/Right direction=-1 PASS shortfall=0.0361 supported=True actual=(17.6062, 27.4430, -27.2383) target=(17.6814, 26.9915, -27.2739) lateral=-0.3250
+AFTER TREADS_FLUSH_L3_NW_T8/Right direction=1 PASS shortfall=0.0096 supported=True actual=(6.2324, 37.1000, -36.5707) target=(6.2007, 37.0085, -36.5468) lateral=-0.4386
+AFTER TREADS_FLUSH_ENTRY_NE_T1/Left direction=-1 PASS shortfall=0.0352 supported=True actual=(-74.7744, 0.2315, -71.6312) target=(-74.7692, 0.1915, -71.6862) lateral=0.3575
+AFTER TREADS_FLUSH_ENTRY_NE_T1/Left direction=1 PASS shortfall=0.0354 supported=True actual=(-69.3689, 1.8337, -66.2257) target=(-69.3137, 1.8085, -66.2308) lateral=0.3574
+AFTER TREADS_FLUSH_ENTRY_NE_T1/Right direction=-1 PASS shortfall=0.0350 supported=True actual=(-71.6308, 0.2314, -74.7752) target=(-71.6863, 0.1915, -74.7692) lateral=-0.3566
+AFTER TREADS_FLUSH_ENTRY_NE_T1/Right direction=1 PASS shortfall=0.0352 supported=True actual=(-66.2256, 1.8337, -69.3687) target=(-66.2308, 1.8085, -69.3137) lateral=-0.3575
+AFTER TREADS_FLUSH_ENTRY_NW_T4/Left direction=-1 PASS shortfall=0.0350 supported=True actual=(71.6309, 0.2314, -74.7751) target=(71.6863, 0.1915, -74.7692) lateral=0.3567
+AFTER TREADS_FLUSH_ENTRY_NW_T4/Left direction=1 PASS shortfall=0.0352 supported=True actual=(66.2256, 1.8337, -69.3687) target=(66.2308, 1.8085, -69.3137) lateral=0.3575
+AFTER TREADS_FLUSH_ENTRY_NW_T4/Right direction=-1 PASS shortfall=0.0352 supported=True actual=(74.7744, 0.2315, -71.6312) target=(74.7692, 0.1915, -71.6862) lateral=-0.3575
+AFTER TREADS_FLUSH_ENTRY_NW_T4/Right direction=1 PASS shortfall=0.0354 supported=True actual=(69.3689, 1.8331, -66.2257) target=(69.3137, 1.8085, -66.2308) lateral=-0.3574
+AFTER TREADS_FLUSH_T6_L3_NW/Left direction=-1 PASS shortfall=0.0425 supported=True actual=(41.2943, 15.4499, -7.1743) target=(41.2577, 14.9915, -7.0963) lateral=0.3250
+AFTER TREADS_FLUSH_T6_L3_NW/Left direction=1 PASS shortfall=0.0133 supported=True actual=(32.9788, 25.1016, -18.7193) target=(33.0016, 25.0085, -18.7519) lateral=0.4375
+AFTER TREADS_FLUSH_T6_L3_NW/Right direction=-1 PASS shortfall=0.0433 supported=True actual=(36.7975, 15.4505, -3.9901) target=(36.8838, 14.9915, -3.9981) lateral=-0.3250
+AFTER TREADS_FLUSH_T6_L3_NW/Right direction=1 PASS shortfall=0.0658 supported=True actual=(28.6046, 25.3910, -15.5566) target=(28.6278, 25.0085, -15.6537) lateral=-0.3250
+AFTER TREADS_FLUSH_T4_B_NW/Left direction=-1 PASS shortfall=0.0779 supported=True actual=(63.4712, 2.0240, -31.3495) target=(63.4210, 2.0000, -31.2763) lateral=0.3574
+AFTER TREADS_FLUSH_T4_B_NW/Left direction=1 PASS shortfall=0.0784 supported=True actual=(65.9471, 2.0241, -56.1081) target=(65.9124, 2.0000, -56.1904) lateral=0.3573
+AFTER TREADS_FLUSH_T4_B_NW/Right direction=-1 PASS shortfall=0.0785 supported=True actual=(58.0531, 2.0241, -31.8920) target=(58.0876, 2.0000, -31.8096) lateral=-0.3574
+AFTER TREADS_FLUSH_T4_B_NW/Right direction=1 PASS shortfall=0.0784 supported=True actual=(60.5287, 2.0240, -56.6500) target=(60.5790, 2.0000, -56.7238) lateral=-0.3573
+AFTER TREADS_FLUSH_L3_SW_T7/Left direction=-1 PASS shortfall=0.0362 supported=True actual=(17.6061, 27.4430, 27.2383) target=(17.6814, 26.9915, 27.2739) lateral=0.3250
+AFTER TREADS_FLUSH_L3_SW_T7/Left direction=1 PASS shortfall=0.0097 supported=True actual=(6.2325, 37.1000, 36.5707) target=(6.2007, 37.0085, 36.5467) lateral=0.4386
+AFTER TREADS_FLUSH_L3_SW_T7/Right direction=-1 PASS shortfall=0.0378 supported=True actual=(21.0670, 27.4441, 31.5257) target=(21.0493, 26.9916, 31.4436) lateral=-0.3250
+AFTER TREADS_FLUSH_L3_SW_T7/Right direction=1 PASS shortfall=0.0589 supported=True actual=(9.6615, 37.3955, 40.7378) target=(9.5686, 37.0085, 40.7165) lateral=-0.3250
+AFTER TREADS_FLUSH_T8_CORE/Left direction=-1 PASS shortfall=0.0375 supported=True actual=(-2.7550, 39.7557, -34.1863) target=(-2.6800, 39.3115, -34.2237) lateral=0.3250
+AFTER TREADS_FLUSH_T8_CORE/Left direction=1 PASS shortfall=0.0375 supported=True actual=(-2.7550, 53.0876, -12.0637) target=(-2.6800, 52.6885, -12.0263) lateral=0.3250
+AFTER TREADS_FLUSH_T8_CORE/Right direction=-1 PASS shortfall=0.0375 supported=True actual=(2.7550, 39.7557, -34.1863) target=(2.6800, 39.3115, -34.2237) lateral=-0.3250
+AFTER TREADS_FLUSH_T8_CORE/Right direction=1 PASS shortfall=0.0375 supported=True actual=(2.7550, 53.0876, -12.0637) target=(2.6800, 52.6885, -12.0263) lateral=-0.3250
+AFTER TREADS_FLUSH_B_SW_T6/Left direction=-1 PASS shortfall=0.0407 supported=True actual=(59.0344, 3.4368, 17.8706) target=(58.9968, 2.9915, 17.9471) lateral=0.3250
+AFTER TREADS_FLUSH_B_SW_T6/Left direction=1 PASS shortfall=0.0407 supported=True actual=(49.3473, 13.4054, 4.1946) target=(49.2625, 13.0085, 4.2047) lateral=0.3250
+AFTER TREADS_FLUSH_B_SW_T6/Right direction=-1 PASS shortfall=0.0407 supported=True actual=(54.5382, 3.4369, 21.0554) target=(54.6229, 2.9915, 21.0453) lateral=-0.3250
+AFTER TREADS_FLUSH_B_SW_T6/Right direction=1 PASS shortfall=0.0407 supported=True actual=(44.8510, 13.4054, 7.3794) target=(44.8887, 13.0085, 7.3029) lateral=-0.3250
+AFTER TREADS_FLUSH_T5_L3_NE/Left direction=-1 PASS shortfall=0.0433 supported=True actual=(-36.7975, 15.4505, -3.9901) target=(-36.8838, 14.9915, -3.9981) lateral=0.3250
+AFTER TREADS_FLUSH_T5_L3_NE/Left direction=1 PASS shortfall=0.0433 supported=True actual=(-28.5916, 25.4068, -15.5750) target=(-28.6278, 25.0085, -15.6537) lateral=0.3250
+AFTER TREADS_FLUSH_T5_L3_NE/Right direction=-1 PASS shortfall=0.0425 supported=True actual=(-41.2943, 15.4499, -7.1743) target=(-41.2577, 14.9915, -7.0963) lateral=-0.3250
+AFTER TREADS_FLUSH_T5_L3_NE/Right direction=1 PASS shortfall=0.0133 supported=True actual=(-32.9788, 25.1016, -18.7193) target=(-33.0016, 25.0085, -18.7519) lateral=-0.4375
+AFTER TREADS_FLUSH_T3_B_SW/Left direction=-1 PASS shortfall=0.0784 supported=True actual=(65.9473, 2.0247, 56.1081) target=(65.9124, 2.0000, 56.1904) lateral=0.3571
+AFTER TREADS_FLUSH_T3_B_SW/Left direction=1 PASS shortfall=0.0785 supported=True actual=(63.4712, 2.0247, 31.3501) target=(63.4210, 2.0000, 31.2763) lateral=0.3574
+AFTER TREADS_FLUSH_T3_B_SW/Right direction=-1 PASS shortfall=0.0784 supported=True actual=(60.5289, 2.0247, 56.6499) target=(60.5790, 2.0000, 56.7238) lateral=-0.3574
+AFTER TREADS_FLUSH_T3_B_SW/Right direction=1 PASS shortfall=0.0784 supported=True actual=(58.0530, 2.0247, 31.8919) target=(58.0876, 2.0000, 31.8096) lateral=-0.3574
+AFTER TREADS_FLUSH_T6_L3_SW/Left direction=-1 PASS shortfall=0.0433 supported=True actual=(36.7975, 15.4505, 3.9901) target=(36.8838, 14.9915, 3.9981) lateral=0.3250
+AFTER TREADS_FLUSH_T6_L3_SW/Left direction=1 PASS shortfall=0.0433 supported=True actual=(28.5916, 25.4068, 15.5750) target=(28.6278, 25.0085, 15.6537) lateral=0.3250
+AFTER TREADS_FLUSH_T6_L3_SW/Right direction=-1 PASS shortfall=0.0424 supported=True actual=(41.2943, 15.4499, 7.1743) target=(41.2577, 14.9915, 7.0963) lateral=-0.3250
+AFTER TREADS_FLUSH_T6_L3_SW/Right direction=1 PASS shortfall=0.0133 supported=True actual=(32.9788, 25.1017, 18.7193) target=(33.0016, 25.0085, 18.7519) lateral=-0.4375
+AFTER TREADS_FLUSH_ENTRY_SE_T2/Left direction=-1 PASS shortfall=0.0350 supported=True actual=(-71.6309, 0.2315, 74.7751) target=(-71.6863, 0.1915, 74.7692) lateral=0.3567
+AFTER TREADS_FLUSH_ENTRY_SE_T2/Left direction=1 PASS shortfall=0.0352 supported=True actual=(-66.2256, 1.8337, 69.3687) target=(-66.2308, 1.8085, 69.3137) lateral=0.3575
+AFTER TREADS_FLUSH_ENTRY_SE_T2/Right direction=-1 PASS shortfall=0.0352 supported=True actual=(-74.7744, 0.2315, 71.6312) target=(-74.7692, 0.1915, 71.6862) lateral=-0.3575
+AFTER TREADS_FLUSH_ENTRY_SE_T2/Right direction=1 PASS shortfall=0.0354 supported=True actual=(-69.3689, 1.8331, 66.2257) target=(-69.3137, 1.8085, 66.2308) lateral=-0.3574
+AFTER TREADS_FLUSH_B_NE_T5/Left direction=-1 PASS shortfall=0.0407 supported=True actual=(-59.0344, 3.4368, -17.8706) target=(-58.9968, 2.9915, -17.9471) lateral=0.3250
+AFTER TREADS_FLUSH_B_NE_T5/Left direction=1 PASS shortfall=0.0407 supported=True actual=(-49.3473, 13.4054, -4.1946) target=(-49.2625, 13.0085, -4.2047) lateral=0.3250
+AFTER TREADS_FLUSH_B_NE_T5/Right direction=-1 PASS shortfall=0.0407 supported=True actual=(-54.5382, 3.4368, -21.0554) target=(-54.6229, 2.9915, -21.0453) lateral=-0.3250
+AFTER TREADS_FLUSH_B_NE_T5/Right direction=1 PASS shortfall=0.0407 supported=True actual=(-44.8510, 13.4054, -7.3794) target=(-44.8887, 13.0085, -7.3029) lateral=-0.3250
+AFTER TREADS_FLUSH_ENTRY_SW_T3/Left direction=-1 PASS shortfall=0.0350 supported=True actual=(74.7752, 0.2315, 71.6308) target=(74.7693, 0.1915, 71.6862) lateral=0.3566
+AFTER TREADS_FLUSH_ENTRY_SW_T3/Left direction=1 PASS shortfall=0.0354 supported=True actual=(69.3689, 1.8337, 66.2257) target=(69.3138, 1.8085, 66.2307) lateral=0.3575
+AFTER TREADS_FLUSH_ENTRY_SW_T3/Right direction=-1 PASS shortfall=0.0350 supported=True actual=(71.6308, 0.2314, 74.7752) target=(71.6863, 0.1915, 74.7692) lateral=-0.3566
+AFTER TREADS_FLUSH_ENTRY_SW_T3/Right direction=1 PASS shortfall=0.0354 supported=True actual=(66.2257, 1.8337, 69.3689) target=(66.2308, 1.8085, 69.3137) lateral=-0.3575
+AFTER TREADS_FLUSH_T2_B_SE/Left direction=-1 PASS shortfall=0.0784 supported=True actual=(-60.5288, 2.0240, 56.6500) target=(-60.5790, 2.0000, 56.7238) lateral=0.3573
+AFTER TREADS_FLUSH_T2_B_SE/Left direction=1 PASS shortfall=0.0784 supported=True actual=(-58.0530, 2.0241, 31.8919) target=(-58.0876, 2.0000, 31.8096) lateral=0.3574
+AFTER TREADS_FLUSH_T2_B_SE/Right direction=-1 PASS shortfall=0.0145 supported=True actual=(-65.9534, 2.0247, 56.1718) target=(-65.9124, 2.0000, 56.1904) lateral=-0.3574
+AFTER TREADS_FLUSH_T2_B_SE/Right direction=1 PASS shortfall=0.0779 supported=True actual=(-63.4711, 2.0247, 31.3495) target=(-63.4210, 2.0000, 31.2763) lateral=-0.3574
+AFTER TREADS_FLUSH_T1_B_NE/Left direction=-1 PASS shortfall=0.0784 supported=True actual=(-58.0529, 2.0247, -31.8918) target=(-58.0876, 2.0000, -31.8096) lateral=0.3573
+AFTER TREADS_FLUSH_T1_B_NE/Left direction=1 PASS shortfall=0.0784 supported=True actual=(-60.5287, 2.0247, -56.6500) target=(-60.5790, 2.0000, -56.7238) lateral=0.3572
+AFTER TREADS_FLUSH_T1_B_NE/Right direction=-1 PASS shortfall=0.0784 supported=True actual=(-63.5034, 2.3999, -31.3468) target=(-63.4210, 2.0000, -31.2763) lateral=-0.3250
+AFTER TREADS_FLUSH_T1_B_NE/Right direction=1 PASS shortfall=0.0784 supported=True actual=(-65.9792, 2.3998, -56.1049) target=(-65.9124, 2.0000, -56.1904) lateral=-0.3250
+AFTER TREADS_FLUSH_B_SE_T5/Left direction=-1 PASS shortfall=0.0407 supported=True actual=(-54.5382, 3.4369, 21.0554) target=(-54.6229, 2.9915, 21.0453) lateral=0.3250
+AFTER TREADS_FLUSH_B_SE_T5/Left direction=1 PASS shortfall=0.0407 supported=True actual=(-44.8510, 13.4054, 7.3794) target=(-44.8887, 13.0085, 7.3029) lateral=0.3250
+AFTER TREADS_FLUSH_B_SE_T5/Right direction=-1 PASS shortfall=0.0407 supported=True actual=(-59.0344, 3.4368, 17.8706) target=(-58.9968, 2.9915, 17.9471) lateral=-0.3250
+AFTER TREADS_FLUSH_B_SE_T5/Right direction=1 PASS shortfall=0.0407 supported=True actual=(-49.3473, 13.4054, 4.1946) target=(-49.2626, 13.0085, 4.2047) lateral=-0.3250
+AFTER TREADS_FLUSH_B_NW_T6/Left direction=-1 PASS shortfall=0.0407 supported=True actual=(54.5382, 3.4368, -21.0554) target=(54.6229, 2.9915, -21.0453) lateral=0.3250
+AFTER TREADS_FLUSH_B_NW_T6/Left direction=1 PASS shortfall=0.0569 supported=True actual=(44.8604, 13.3957, -7.3927) target=(44.8887, 13.0085, -7.3029) lateral=0.3250
+AFTER TREADS_FLUSH_B_NW_T6/Right direction=-1 PASS shortfall=0.0407 supported=True actual=(59.0344, 3.4368, -17.8706) target=(58.9968, 2.9915, -17.9471) lateral=-0.3250
+AFTER TREADS_FLUSH_B_NW_T6/Right direction=1 PASS shortfall=0.0407 supported=True actual=(49.3473, 13.4054, -4.1946) target=(49.2626, 13.0085, -4.2047) lateral=-0.3250
+AFTER TREADS_FLUSH_T5_L3_SE/Left direction=-1 PASS shortfall=0.0424 supported=True actual=(-41.2943, 15.4499, 7.1743) target=(-41.2577, 14.9915, 7.0963) lateral=0.3250
+AFTER TREADS_FLUSH_T5_L3_SE/Left direction=1 PASS shortfall=0.0134 supported=True actual=(-32.9789, 25.1016, 18.7192) target=(-33.0016, 25.0085, 18.7519) lateral=0.4375
+AFTER TREADS_FLUSH_T5_L3_SE/Right direction=-1 PASS shortfall=0.0433 supported=True actual=(-36.7975, 15.4505, 3.9901) target=(-36.8838, 14.9915, 3.9981) lateral=-0.3250
+AFTER TREADS_FLUSH_T5_L3_SE/Right direction=1 PASS shortfall=0.0433 supported=True actual=(-28.5916, 25.4068, 15.5750) target=(-28.6278, 25.0085, 15.6537) lateral=-0.3250
+AFTER TREADS_FLUSH_L3_SE_T7/Left direction=-1 PASS shortfall=0.0378 supported=True actual=(-21.0670, 27.4441, 31.5257) target=(-21.0493, 26.9916, 31.4436) lateral=0.3250
+AFTER TREADS_FLUSH_L3_SE_T7/Left direction=1 PASS shortfall=0.0378 supported=True actual=(-9.6451, 37.4099, 40.7511) target=(-9.5686, 37.0085, 40.7165) lateral=0.3250
+AFTER TREADS_FLUSH_L3_SE_T7/Right direction=-1 PASS shortfall=0.0362 supported=True actual=(-17.6061, 27.4431, 27.2383) target=(-17.6814, 26.9915, 27.2739) lateral=-0.3250
+AFTER TREADS_FLUSH_L3_SE_T7/Right direction=1 PASS shortfall=0.0096 supported=True actual=(-6.2325, 37.1000, 36.5707) target=(-6.2007, 37.0085, 36.5467) lateral=-0.4386
+AFTER SUMMARY wall rays=132 missed=0 edge walks=88 failed=0

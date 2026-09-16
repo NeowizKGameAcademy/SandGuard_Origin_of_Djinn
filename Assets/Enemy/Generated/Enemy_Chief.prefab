@@ -2540,7 +2540,7 @@ MonoBehaviour:
   vfxPrefab: {fileID: 5241151560336676957, guid: 0c9aa1c929206cd43b101304158273d8, type: 3}
   localPosition: {x: 0, y: 1.15, z: 0.65}
   summonDuration: 0.35
-  activeDuration: 4
+  activeDuration: 20
   cooldown: 8
   castRange: 8
 --- !u!114 &6845969559114640935
@@ -2580,7 +2580,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: SandGuard.Enemy.Runtime::SandGuard.Enemy.EnemyBossInfo
   displayName: "\uC6B0\uB450\uBA38\uB9AC \uC790\uD788\uB974"
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 2ec0c6124c825014daada877699b5f8a, type: 3}
 --- !u!4 &1931742154583938694 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 657662337107258619, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}

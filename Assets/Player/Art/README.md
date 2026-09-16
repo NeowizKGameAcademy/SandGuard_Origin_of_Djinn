@@ -57,7 +57,7 @@
 
 ## 붙였다 떼는 효과와 타격 시 마나
 
-스킬 노드와 버프는 모두 `IPlayerEffect`(`Apply`/`Remove`)를 따르고, 플레이어 루트의 `PlayerEffects`가 붙은 효과 목록을 관리합니다(`Apply`·`Remove`·`RemoveAll`·`Changed`, 같은 효과는 한 번만). `PlayerEffect` 베이스는 `AddStat`으로 넣은 수정자와 `Subscribe`로 건 이벤트 구독을 기록했다가 Remove 때 역순으로 되돌리므로, 파생 효과는 OnApply만 쓰면 떼는 코드가 자동으로 대칭이 됩니다. 리스펙은 `RemoveAll` 뒤 다시 `Apply`입니다. 프리팹 기본값은 스킬트리의 기본 상태(공중 점프 0, 공중 대시 0, 지상 대시만)이며 ① 더블 점프는 `Effects/DoubleJumpEffect`(ExtraAirJumps +1), ④ 공중 대시는 `Effects/AirDashEffect`(AirDashes +1, 접지하면 다시 참)로 붙입니다. 스킬트리가 붙기 전까지 테스트 씬(PlayerTest·PlayerArtPreview·PlayerAndEnemyTest)의 Test HUD에 있는 `PlayerStarterEffects`가 시작 시 두 효과를 붙여 예전처럼 2단 점프·공중 대시를 씁니다.
+스킬 노드와 버프는 모두 `IPlayerEffect`(`Apply`/`Remove`)를 따르고, 플레이어 루트의 `PlayerEffects`가 붙은 효과 목록을 관리합니다(`Apply`·`Remove`·`RemoveAll`·`Changed`, 같은 효과는 한 번만). `PlayerEffect` 베이스는 `AddStat`으로 넣은 수정자와 `Subscribe`로 건 이벤트 구독을 기록했다가 Remove 때 역순으로 되돌리므로, 파생 효과는 OnApply만 쓰면 떼는 코드가 자동으로 대칭이 됩니다. 리스펙은 `RemoveAll` 뒤 다시 `Apply`입니다. 프리팹 기본값은 스킬트리의 기본 상태(공중 점프 0, 공중 대시 0, 지상 대시만)이며 ① 더블 점프는 `Effects/DoubleJumpEffect`(ExtraAirJumps +1), ④ 공중 대시는 `Effects/AirDashEffect`(AirDashes +1, 접지하면 다시 참)로 붙입니다. 스킬트리가 붙기 전까지 테스트 씬(PlayerTest·PlayerArtPreview)의 Test HUD에 있는 `PlayerStarterEffects`가 시작 시 두 효과를 붙여 예전처럼 2단 점프·공중 대시를 씁니다.
 
 명중 사건: `PlayerProjectile.Hit`은 실제로 피해가 적용된 경우에만(벽·아군·보호 대상 제외) `PlayerHitInfo`(대상, 적용 피해, 처치 여부, 위치, 방향, 원인)를 알리고, `PlayerBasicAttack.Hit`이 이를 플레이어 단위 이벤트로 모읍니다. ⑩ 마나 순환은 `Effects/ManaOnHitEffect`가 `ManaPerHit` 스탯을 +3 붙이는 것이고, 회복은 공격 컴포넌트가 명중마다 `ManaPerHit`만큼 `IManaWallet.Gain`을 불러 수행합니다(최대치에서 잘림). 꿰뚫은 적마다 한 번씩 세며, 광역 스킬이 명중으로 칠지는 스킬 정의에서 정합니다. 검증: `PlayerEffectsTests`.
 

@@ -76,12 +76,42 @@ namespace SandGuard.Player.Tests
             yield return null;
         }
 
+        [UnityTest] public IEnumerator AirJumpCostBlocksWithoutConsumingJumpAndZeroIsFree()
+        {
+            var player = Player(new Vector3(0, 20f, 0));
+            var motor = player.GetComponent<PlayerMotor>();
+            var mana = player.GetComponent<PlayerManaWallet>();
+            motor.extraAirJumps = 2;
+            motor.airJumpManaCost = 5;
+            motor.Teleport(player.transform.position);
+            mana.TrySpend(mana.CurrentMana - 5);
+            int jumps = 0;
+            motor.Jumped += () => jumps++;
+            yield return null;
+            Keys(Key.Space); yield return new WaitForSeconds(.05f);
+            Assert.AreEqual(1, jumps);
+            Assert.AreEqual(0, mana.CurrentMana);
+            int remaining = motor.RemainingAirJumps;
+            Keys(); yield return null;
+            Keys(Key.Space); yield return new WaitForSeconds(.05f);
+            Assert.AreEqual(1, jumps, "Insufficient mana blocks the extra jump.");
+            Assert.AreEqual(remaining, motor.RemainingAirJumps);
+            motor.airJumpManaCost = 0;
+            Keys(); yield return null;
+            Keys(Key.Space); yield return new WaitForSeconds(.05f);
+            Assert.AreEqual(2, jumps, "Zero cost permits an extra jump without mana.");
+            Assert.AreEqual(0, mana.CurrentMana);
+        }
+
         [UnityTest] public IEnumerator JumpFlipFallAndLandUseSeparateStates()
         {
             Cube(new Vector3(0, -0.5f, 0), new Vector3(60, 1, 60));
             var player = Player(Vector3.zero);
             var motor = player.GetComponent<PlayerMotor>();
             var visuals = player.GetComponent<PlayerVisuals>();
+            var mana = player.GetComponent<PlayerManaWallet>();
+            motor.airJumpManaCost = 5;
+            int initialMana = mana.CurrentMana;
             player.GetComponent<PlayerEffects>().Apply(new SandGuard.Player.Effects.DoubleJumpEffect()); // 기본값은 공중 점프 0
             float landedSpeed = -1f; int landings = 0, hardLandings = 0;
             motor.Landed += speed => { landedSpeed = speed; landings++; };
@@ -95,6 +125,7 @@ namespace SandGuard.Player.Tests
             Keys(Key.Space); yield return new WaitForSeconds(0.15f);
             Assert.False(motor.IsGrounded);
             Assert.False(motor.LastJumpWasAirJump);
+            Assert.AreEqual(initialMana, mana.CurrentMana, "Ground jumps remain free.");
             Assert.Greater(motor.VerticalSpeed, 0f);
             Assert.True(State(animator).IsName("Jump"), "Ground jump uses the jump-up clip, not the flip.");
             AssertClip(animator, "Jump Up");
@@ -103,6 +134,7 @@ namespace SandGuard.Player.Tests
             Keys(); yield return null;
             Keys(Key.Space); yield return new WaitForSeconds(0.1f);
             Assert.True(motor.LastJumpWasAirJump);
+            Assert.AreEqual(initialMana - 5, mana.CurrentMana, "Only the air jump spends mana.");
             Assert.True(State(animator).IsName("Double Jump"), "Air jump uses the flip.");
             AssertClip(animator, "Flip");
             yield return new WaitForSeconds(0.15f);

@@ -3,7 +3,7 @@ import bpy, bmesh, json, math
 from pathlib import Path
 from mathutils import Vector, Matrix
 
-ROOT=Path('C:/course/unity/SandGuard')
+ROOT=Path(__file__).resolve().parents[3]
 OUT=ROOT/'Assets/DesertTowerLevels/TrimSheet'
 DOC=ROOT/'Docs/LevelArt/TrimSheet'
 bpy.ops.wm.read_factory_settings(use_empty=True)
@@ -113,6 +113,15 @@ for obj,chain,ds in prepared:
             continuity[vertex]=coord.copy()
     obj['source_group']=obj.parent.name; obj['uv_metres_per_sheet']=metres_per_sheet
     obj['uv_seam']='underside and end caps only'
+
+# Source mirrored rails can have inward winding. Flip after UV assignment so
+# existing per-corner UV coordinates are preserved along with all positions.
+for obj,_,_ in prepared:
+    check=bmesh.new(); check.from_mesh(obj.data)
+    if check.calc_volume(signed=True)*obj.matrix_world.determinant()<0:
+        bmesh.ops.reverse_faces(check,faces=list(check.faces))
+        check.normal_update(); check.to_mesh(obj.data); obj.data.update()
+    check.free()
 
 for o in original: bpy.data.objects.remove(o,do_unlink=True)
 image.pack()

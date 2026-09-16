@@ -89,6 +89,15 @@ namespace SandGuard.Enemy.Tests
             yield return null;
             Assert.Greater(enemy.transform.position.x - before.x, 1f, "Displace moves the enemy sideways on the NavMesh.");
             yield return Until(() => motor.Velocity.magnitude > 0.5f, 3f, "The enemy resumes walking after the push ends.");
+
+            // 넉백: 방향과 세기만 한 번 주면 받는 쪽이 감속하며 스스로 민다.
+            before = enemy.transform.position;
+            displaceable.Knockback(new Vector3(6f, 0f, 0f));
+            Assert.AreEqual(6f, restraint.KnockbackVelocity.x, 0.0001f, "The knockback keeps the given speed until it decays.");
+            displaceable.Knockback(new Vector3(2f, 0f, 0f));
+            Assert.AreEqual(6f, restraint.KnockbackVelocity.x, 0.0001f, "A weaker knockback never replaces a stronger one.");
+            yield return Until(() => restraint.KnockbackVelocity == Vector3.zero, 3f, "The knockback decays to a stop on its own.");
+            Assert.Greater(enemy.transform.position.x - before.x, 1f, "One Knockback call keeps pushing over several frames.");
         }
     }
 }
