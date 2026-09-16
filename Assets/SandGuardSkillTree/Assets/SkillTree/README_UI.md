@@ -52,3 +52,8 @@ Space 슬롯은 추가 공중 점프용이며 기본 지상 점프를 대체하�
 순수 C# 구매·장착 테스트 34개 및 Unity 6000.2.8f1 라이브러리 기준 Core / Runtime / Editor 컴파일을 검사했습니다. PNG 알파 채널, 프레임 크기, 프리팹·데이터·스크립트 GUID 참조도 정적 검사합니다.
 
 별도 Unity 에디터는 라이선스 IPC 연결 단계에서 시작을 완료하지 못했습니다. **실제 Unity 가져오기, 프리팹 역직렬화, Play Mode 및 화면 렌더링은 미검증**입니다. 적용 후 위의 미리보기 메뉴로 먼저 확인하세요. 오류가 발생하면 Console의 첫 오류를 기준으로 확인할 수 있습니다.
+# 램프 테마 디자인
+
+`Resources/SandGuardLampSkin`에 제공받은 스프라이트 시트와 완성 예시를 보관합니다. `SkillLampSkin`이 프레임, 버튼, 램프 장식, 노드 링과 사막 배경을 런타임에 잘라 사용하므로 UI 문구와 실제 스킬 아이콘은 계속 Unity UI에서 편집할 수 있습니다.
+
+기존 `SkillTreeUI` 프리팹을 사용하는 씬도 플레이를 시작하면 소유 중인 구형 스킬 Canvas만 새 레이아웃으로 재구성합니다. 공유 `GameHUDCanvas`는 삭제하거나 교체하지 않습니다. 새 프리팹이 필요하면 Unity 메뉴의 `SandGuard > Skills > Create Styled UI Prefabs`를 실행하세요.

@@ -21,8 +21,8 @@ namespace CartoonFX
 
         [Header("Text")]
         [SerializeField] string text;
-        [SerializeField] float size = 1f;
-        [SerializeField] float letterSpacing = 0.44f;
+        [SerializeField] float size = 0.8f;
+        [SerializeField] float letterSpacing = 0.33f;
 
         [Header("Colors")]
         [SerializeField] Color backgroundColor = new Color(0, 0, 0, 1);
