@@ -16,11 +16,77 @@ namespace SandGuard.Enemy
         public float frontHalfAngle = 60f;
         [Range(0f, 1f), Tooltip("정면 피해 배율. 0이면 완전히 막고, 0.5면 절반만 받는다")]
         public float frontMultiplier = 0f;
+        [Min(1f), Tooltip("방패가 흡수할 수 있는 피해량")]
+        public float maxHealth = 30f;
+        [Tooltip("떨어뜨릴 방패 외형. 비어 있으면 TowerShield_Placement를 찾는다")]
+        public Transform shieldVisual;
+        [Min(0.1f)] public float debrisLifetime = 6f;
         [Tooltip("정면으로 받았을 때의 연출(VFX_Shield_Front_Guard). +Z가 공격해 온 쪽을 향한다")]
         public GameObject guardVfx;
         [Min(0.1f)] public float guardVfxLifetime = 1f;
 
         public int GuardCount { get; private set; }
+        public float CurrentHealth { get; private set; }
+        public bool IsBroken => CurrentHealth <= 0f;
+        GameObject debris;
+
+        void Awake() => ResetForReuse();
+
+        public void ResetForReuse()
+        {
+            CurrentHealth = Mathf.Max(1f, maxHealth);
+            GuardCount = 0;
+            if (shieldVisual != null) shieldVisual.gameObject.SetActive(true);
+            ClearDebris();
+        }
+
+        void OnDisable() => ClearDebris();
+
+        void ClearDebris()
+        {
+            if (debris != null) { debris.SetActive(false); Destroy(debris); }
+            debris = null;
+        }
+
+        void DropShield(Vector3 direction)
+        {
+            if (shieldVisual == null)
+                foreach (var child in GetComponentsInChildren<Transform>(true))
+                    if (child.name == "TowerShield_Placement") { shieldVisual = child; break; }
+            if (shieldVisual == null) return;
+
+            // Keep the attached original for pool reuse; its world-space copy becomes debris.
+            debris = Instantiate(shieldVisual.gameObject, shieldVisual.position, shieldVisual.rotation);
+            debris.name = "BrokenEnemyShield";
+            debris.transform.localScale = shieldVisual.lossyScale;
+            shieldVisual.gameObject.SetActive(false);
+            foreach (var child in debris.GetComponentsInChildren<Transform>(true)) child.gameObject.layer = 2; // Ignore Raycast
+            foreach (var collider in debris.GetComponentsInChildren<Collider>()) collider.enabled = false;
+            var box = debris.AddComponent<BoxCollider>();
+            var bounds = new Bounds(Vector3.zero, Vector3.zero);
+            bool first = true;
+            foreach (var renderer in debris.GetComponentsInChildren<Renderer>())
+            {
+                Bounds local = renderer.localBounds;
+                for (int i = 0; i < 8; i++)
+                {
+                    Vector3 corner = local.center + Vector3.Scale(local.extents,
+                        new Vector3((i & 1) == 0 ? -1 : 1, (i & 2) == 0 ? -1 : 1, (i & 4) == 0 ? -1 : 1));
+                    Vector3 point = debris.transform.InverseTransformPoint(renderer.transform.TransformPoint(corner));
+                    if (first) { bounds = new Bounds(point, Vector3.zero); first = false; }
+                    else bounds.Encapsulate(point);
+                }
+            }
+            box.center = bounds.center;
+            box.size = first ? new Vector3(.6f, 1f, .1f) : Vector3.Max(bounds.size, Vector3.one * .02f);
+            var body = debris.AddComponent<Rigidbody>();
+            body.mass = 3f;
+            body.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+            body.linearVelocity = direction.normalized * 1.5f + Vector3.up * .5f;
+            body.angularVelocity = transform.right * 3f;
+            foreach (var collider in GetComponentsInChildren<Collider>(true)) Physics.IgnoreCollision(box, collider);
+            Destroy(debris, Mathf.Max(.1f, debrisLifetime));
+        }
         /// <summary>모델이 EnemyScaleBuilder로 커진 배율. 사람 크기 기준으로 만든 연출을 몸에 맞출 때 쓴다.</summary>
         float BodyScale { get { var visuals = GetComponent<EnemyVisuals>(); return visuals ? visuals.BodyScale : 1f; } }
         /// <summary>정면 공격을 방패로 받았다(막았거나 줄였다).</summary>
@@ -37,7 +103,11 @@ namespace SandGuard.Enemy
 
         public float ModifyIncoming(DamageInfo damage, float amount)
         {
-            if (!damage.HitDirection.HasValue || !IsFrontal(damage.HitDirection.Value)) return amount;
+            if (IsBroken || amount <= 0f || !damage.HitDirection.HasValue || !IsFrontal(damage.HitDirection.Value)) return amount;
+            float absorbed = Mathf.Min(CurrentHealth, amount * (1f - Mathf.Clamp01(frontMultiplier)));
+            if (absorbed <= 0f) return amount;
+            CurrentHealth = Mathf.Max(0f, CurrentHealth - absorbed);
+            if (IsBroken) DropShield(damage.HitDirection.Value);
             GuardCount++;
             if (guardVfx != null)
             {
@@ -49,7 +119,7 @@ namespace SandGuard.Enemy
                 PrefabPool.Release(effect, guardVfxLifetime);
             }
             Guarded?.Invoke(damage);
-            return amount * frontMultiplier;
+            return amount - absorbed;
         }
     }
 }

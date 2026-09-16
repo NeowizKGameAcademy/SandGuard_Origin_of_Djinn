@@ -41,22 +41,58 @@ public static class TempleCourtyardSurfaces
             var go=new GameObject(p.name);go.transform.SetParent(root,false);
             go.AddComponent<MeshCollider>().sharedMesh=mesh;go.isStatic=true;
         }
-        // The existing rail solids are separate from the smooth walking surfaces.
-        var rail=temple.GetComponentsInChildren<MeshFilter>(true).Where(f=>f.name.StartsWith("RAILS_REBUILT")).ToArray();
+        ApplyRails(temple);
+        var railGo=new GameObject("Preserved rail collision");railGo.transform.SetParent(root,false);
+        railGo.AddComponent<MeshCollider>();
+        RebuildRailCollision(temple);
+    }
+    // Use the repaired, separated rail shells. The hidden legacy parent meshes have
+    // inward-facing left rails and internal end caps which trap the character capsule.
+    public static void RebuildRailCollision(Transform temple) {
+        var collider=temple.Find("Source Level walking collision/Preserved rail collision").GetComponent<MeshCollider>();
+        var rail=temple.GetComponentsInChildren<MeshFilter>(true)
+            .Where(f=>(f.name=="Left"||f.name=="Right")&&f.transform.parent.name.StartsWith("RAILS_REBUILT")).ToArray();
+        if(rail.Length!=44)throw new Exception("Expected 44 separated rail shells, got "+rail.Length);
+        var routes=Reference().parts.ToDictionary(p=>p.name);
         var vertices=new List<Vector3>();var triangles=new List<int>();
         foreach(var f in rail) using(var data=Mesh.AcquireReadOnlyMeshData(f.sharedMesh)) {
             int offset=vertices.Count;
             var v=new Unity.Collections.NativeArray<Vector3>(data[0].vertexCount,Unity.Collections.Allocator.Temp);
-            data[0].GetVertices(v);vertices.AddRange(v.ToArray().Select(f.transform.TransformPoint));v.Dispose();
+            data[0].GetVertices(v);
+            var local=v.ToArray().Select(p=>collider.transform.InverseTransformPoint(f.transform.TransformPoint(p))).ToArray();v.Dispose();
+            var route=routes[f.transform.parent.name.Replace("RAILS_REBUILT_","TREADS_FLUSH_")];
+            // The shallow entry ramps otherwise let the capsule start an automatic
+            // step onto the rail, then wedge against its side. Keep their collision
+            // crest above stepOffset + capsule radius; retain the tapered endpoints.
+            for(int i=0;route.name.StartsWith("TREADS_FLUSH_ENTRY_")&&i<local.Length;i++) {
+                var world=collider.transform.TransformPoint(local[i]);
+                float floorY=route.outline[0].y-(route.normal.x*(world.x-route.outline[0].x)+route.normal.z*(world.z-route.outline[0].z))/route.normal.y;
+                if(world.y-floorY>.3f)local[i]+=collider.transform.InverseTransformVector(Vector3.up*.4f);
+            }
+            vertices.AddRange(local);
+            var shell=new List<int>();
             for(int s=0;s<data[0].subMeshCount;s++){
                 var ids=new Unity.Collections.NativeArray<int>(data[0].GetSubMesh(s).indexCount,Unity.Collections.Allocator.Temp);
-                data[0].GetIndices(ids,s);triangles.AddRange(ids.ToArray().Select(i=>i+offset));ids.Dispose();
+                data[0].GetIndices(ids,s);shell.AddRange(ids.ToArray());ids.Dispose();
+            }
+            var center=local.Aggregate(Vector3.zero,(a,b)=>a+b)/local.Length;
+            double volume=0;
+            for(int i=0;i<shell.Count;i+=3)
+                volume+=Vector3.Dot(local[shell[i]]-center,Vector3.Cross(local[shell[i+1]]-center,local[shell[i+2]]-center));
+            if(Math.Abs(volume)<.0001)throw new Exception("Degenerate rail shell: "+f.transform.parent.name+"/"+f.name);
+            for(int i=0;i<shell.Count;i+=3) {
+                int a=offset+shell[i],b=offset+shell[i+(volume>0?1:2)],c=offset+shell[i+(volume>0?2:1)];
+                // These rails are convex prisms, but the visual meshes also retain
+                // cross-section caps at the taper joins. Those internal walls snag
+                // capsules ascending the shallow entry ramps. Keep only hull faces.
+                var normal=Vector3.Cross(vertices[b]-vertices[a],vertices[c]-vertices[a]).normalized;
+                if(local.Any(p=>Vector3.Dot(normal,p-vertices[a])>.001f))continue;
+                triangles.Add(a);triangles.Add(b);triangles.Add(c);
             }
         }
-        var rm=new Mesh{name="Preserved rail solids",indexFormat=IndexFormat.UInt32};rm.SetVertices(vertices);rm.SetTriangles(triangles,0);rm.RecalculateBounds();
-        var railGo=new GameObject("Preserved rail collision");railGo.transform.SetParent(root,false);
-        railGo.AddComponent<MeshCollider>().sharedMesh=SaveMesh(Root+"/OriginalRailCollision.asset",rm);
-        ApplyRails(temple);
+        var rm=new Mesh{name="Outward facing rail shells",indexFormat=IndexFormat.UInt32};rm.SetVertices(vertices);rm.SetTriangles(triangles,0);rm.RecalculateBounds();
+        var saved=SaveMesh(Root+"/OriginalRailCollision.asset",rm);
+        collider.sharedMesh=null;collider.sharedMesh=saved;
     }
     static void ApplyRails(Transform temple) {
         const string Trim="Assets/DesertTowerLevels/TrimSheet";

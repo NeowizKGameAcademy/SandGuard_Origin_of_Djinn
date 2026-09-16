@@ -7,8 +7,9 @@ namespace SandGuard.Enemy
 {
     /// <summary>주변의 적대 대상을 모아 PriorityTargetPolicy로 하나를 고른다. 길이 막혀 있으면 막은 시설을 최우선 후보에 넣는다.</summary>
     /// <remarks>
-    /// 우선순위: 차단 시설 0, 플레이어·소환수 1, 타워 2, 코어 3. 벽은 길을 막았을 때만 후보가 된다.
-    /// 후보마다 NavMesh 경로를 확인해 갈 수 없는 대상은 고르지 않는다. 현재 대상은 계속 상대할 수 있으면 유지한다.
+    /// 기본 우선순위: 차단 시설 0, 플레이어 1, 미니언 2, 타워 3, 코어 4. 종류별 값은 인스펙터(프리팹 변형)에서 적마다 바꿀 수 있다. 벽은 길을 막았을 때만 후보가 된다.
+    /// 후보마다 NavMesh 경로를 확인해 갈 수 없는 대상은 고르지 않는다. 현재 대상은 계속 상대할 수 있으면 유지하되,
+    /// 더 높은 순위(작은 값)의 대상이 공격 가능해지면 그쪽으로 바꾼다. 차단 시설은 이 갈아타기에 끼지 않는다.
     /// </remarks>
     public sealed class EnemyTargetSelector : MonoBehaviour, ITargetSelector
     {
@@ -22,6 +23,10 @@ namespace SandGuard.Enemy
         public float blockerSearchRadius = 2f;
         [Tooltip("코어가 공격 가능하면 사거리 안에서 공격한다. 도착 즉시 흡수 방식이면 끈다")]
         public bool attackCore = true;
+        [Header("어그로 순위 (작을수록 먼저, 1 이상)"), Min(1)] public int playerPriority = 1;
+        [Min(1)] public int minionPriority = 2;
+        [Min(1), Tooltip("길을 막은 타워는 이 값과 무관하게 0순위(차단 시설)로 다룬다")] public int towerPriority = 3;
+        [Min(1)] public int corePriority = 4;
         public LayerMask targetMask = ~0;
         [Min(4)] public int maxColliders = 32;
 
@@ -60,6 +65,7 @@ namespace SandGuard.Enemy
             if (currentId.HasValue && !entries.ContainsKey(currentId.Value) && current.Collider != null
                 && (current.Priority == 0 || Vector3.Distance(transform.position, current.Target.HitPosition) <= loseRadius))
                 Consider(current.Target, current.Collider, current.Priority);
+            if (currentId.HasValue) YieldToHigherPriority(currentId.Value);
 
             Guid? chosen = policy.Select(currentId, candidates);
             if (chosen.HasValue && entries.TryGetValue(chosen.Value, out Entry entry))
@@ -97,13 +103,32 @@ namespace SandGuard.Enemy
         {
             switch (kind)
             {
-                case CombatTargetKind.Player:
-                case CombatTargetKind.Minion: return 1;
-                case CombatTargetKind.Tower: return blockers ? 0 : 2;
+                case CombatTargetKind.Player: return Mathf.Max(1, playerPriority);
+                case CombatTargetKind.Minion: return Mathf.Max(1, minionPriority);
+                case CombatTargetKind.Tower: return blockers ? 0 : Mathf.Max(1, towerPriority);
                 case CombatTargetKind.Wall: return blockers ? 0 : -1;
-                case CombatTargetKind.Core: return attackCore ? 3 : -1;
+                case CombatTargetKind.Core: return attackCore ? Mathf.Max(1, corePriority) : -1;
                 default: return -1;
             }
+        }
+
+        /// <summary>
+        /// 순위가 더 높은(값이 작은) 대상이 공격 가능하면 현재 대상의 유지를 풀어 정책이 그쪽을 고르게 한다.
+        /// 차단 시설(0)은 길을 뚫는 특수 후보라 현재 대상을 밀어내지도, 밀려나지도 않는다.
+        /// </summary>
+        void YieldToHigherPriority(Guid currentId)
+        {
+            int currentIndex = -1, best = int.MaxValue;
+            for (int i = 0; i < candidates.Count; i++)
+            {
+                var candidate = candidates[i];
+                if (candidate.EntityId == currentId) { currentIndex = i; continue; }
+                if (candidate.IsEligible && candidate.Priority > 0 && candidate.Priority < best) best = candidate.Priority;
+            }
+            if (currentIndex < 0) return;
+            var c = candidates[currentIndex];
+            if (c.Priority > 0 && c.Priority > best)
+                candidates[currentIndex] = new TargetCandidate(c.EntityId, c.IsEligible, false, c.Priority, c.DistanceSquared);
         }
 
         void Consider(ICombatTarget target, Collider collider, int priority)

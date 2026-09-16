@@ -112,6 +112,58 @@ namespace SandGuard.Enemy.Tests
             Assert.AreSame(dummy, enemy.GetComponent<EnemyBrain>().CurrentTarget);
         }
 
+        [UnityTest] public IEnumerator RanksPlayerThenMinionThenTowerThenCore()
+        {
+            Bake(new Vector3(20, 1, 30));
+            // 더 가까운 미니언·타워보다 먼 플레이어를 먼저 고르고, 하나씩 죽을 때마다 다음 순위로 넘어간다.
+            var player = Target("Player", CombatTargetKind.Player, new Vector3(-4.5f, 1, 4), Vector3.one, 30f);
+            var minion = Target("Minion", CombatTargetKind.Minion, new Vector3(-1.5f, 1, 4), Vector3.one, 30f);
+            var tower = Target("Tower", CombatTargetKind.Tower, new Vector3(1.5f, 1, 4), Vector3.one, 30f);
+            var core = Core(new Vector3(4.5f, 1, 4));
+            yield return new WaitForSeconds(.7f);
+            var enemy = Enemy(Vector3.zero);
+            var brain = enemy.GetComponent<EnemyBrain>();
+            foreach (var expected in new[] { player, minion, tower, core })
+            {
+                yield return Until(() => expected.HitCount > 0, 15f, "Enemy must attack " + expected.name + " next in priority order.");
+                Assert.AreSame(expected, brain.CurrentTarget);
+                foreach (var other in new[] { player, minion, tower, core })
+                    if (other != expected && other.gameObject.activeSelf) Assert.AreEqual(0, other.HitCount, other.name + " must wait its turn.");
+                expected.TakeDamage(new DamageInfo(1000f, "Enemy"));
+                yield return new WaitForSeconds(.7f);
+            }
+        }
+
+        [UnityTest] public IEnumerator SwitchesFromTowerToPlayerWhoEntersRange()
+        {
+            Bake(new Vector3(16, 1, 30));
+            Core(new Vector3(0, 1, 18));
+            var tower = Target("Tower", CombatTargetKind.Tower, new Vector3(0, 1, 4), Vector3.one, 1000f);
+            yield return new WaitForSeconds(.7f);
+            var enemy = Enemy(Vector3.zero);
+            var brain = enemy.GetComponent<EnemyBrain>();
+            yield return Until(() => tower.HitCount > 0, 15f, "Enemy must attack the tower while nothing better is around.");
+            var player = Target("Player", CombatTargetKind.Player, enemy.transform.position + new Vector3(3f, 1, -1f), Vector3.one, 30f);
+            yield return Until(() => ReferenceEquals(brain.CurrentTarget, player), 5f, "A player entering range must take the tower's place as the target.");
+            yield return Until(() => player.HitCount > 0, 10f, "Enemy must walk over and hit the player.");
+            Assert.AreSame(player, brain.CurrentTarget);
+        }
+
+        [UnityTest] public IEnumerator PerEnemyPriorityOverrideCanPreferTowerOverPlayer()
+        {
+            Bake(new Vector3(16, 1, 30));
+            Core(new Vector3(0, 1, 18));
+            var player = Target("Player", CombatTargetKind.Player, new Vector3(-1.5f, 1, 4), Vector3.one, 30f);
+            var tower = Target("Tower", CombatTargetKind.Tower, new Vector3(1.5f, 1, 4), Vector3.one, 30f);
+            yield return new WaitForSeconds(.7f);
+            var enemy = Enemy(Vector3.zero);
+            var selector = enemy.GetComponent<EnemyTargetSelector>();
+            selector.towerPriority = 1; selector.playerPriority = 3; // 이 적만 타워를 먼저 노린다.
+            yield return Until(() => tower.HitCount > 0, 15f, "An enemy with tower priority 1 must attack the tower first.");
+            Assert.AreSame(tower, enemy.GetComponent<EnemyBrain>().CurrentTarget);
+            Assert.AreEqual(0, player.HitCount, "The player must not draw this enemy while the tower stands.");
+        }
+
         [UnityTest] public IEnumerator ChiefStopsAtRangeForAttackableTargets() => StopsAtRange("Enemy_Chief", 3f);
         [UnityTest] public IEnumerator HammerBruteStopsAtRangeForAttackableTargets() => StopsAtRange("Enemy_HammerBrute", 2.3f);
 

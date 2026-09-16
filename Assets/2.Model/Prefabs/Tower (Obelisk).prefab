@@ -64,7 +64,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 09153b3a9c4378e4b87caee75fecf309, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::RangeController
   type: 1
   DetectRange: {fileID: 6310251084391081439}
@@ -175,7 +175,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f076b6f6d31ff644e9a3afdb04e79f4b, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::TowerOnOff
   detectRange: {fileID: 6310251084391081439}
   meshRenderer: {fileID: 7822748913691543983}
@@ -194,6 +194,10 @@ GameObject:
   - component: {fileID: 5449316330342491862}
   - component: {fileID: 719308396248604302}
   - component: {fileID: 6310251084391081439}
+  - component: {fileID: 7113206675939555038}
+  - component: {fileID: 8524411623010240741}
+  - component: {fileID: 3435737258744239480}
+  - component: {fileID: 7135931007325160239}
   m_Layer: 0
   m_Name: Tower (Obelisk)
   m_TagString: Untagged
@@ -250,7 +254,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8d84d375c5a312545b715be04b98d296, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::DetectRange
   Range: 20
 --- !u!1 &5365876196027343574
@@ -374,3 +378,84 @@ Transform:
   - {fileID: 6888808534278542538}
   m_Father: {fileID: 5449316330342491862}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7113206675939555038
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4581147062361068087}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d5708071aaef944d9e8bd26d63eb7ef, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: SandGuard.Facility.Runtime::SandGuard.Facility.FacilityHealth
+  maxHealth: 150
+  factionId: Ally
+  definitionId: tower.obelisk
+  kind: 3
+  removeDelay: 0.5
+  removal: 1
+  onDied:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!65 &8524411623010240741
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4581147062361068087}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 4.2, y: 7.8, z: 4.2}
+  m_Center: {x: 0, y: 3.9, z: 0}
+--- !u!114 &3435737258744239480
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4581147062361068087}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b31776cfc2a65d46a263f98631912dd, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::TowerDisableReceiver
+  Stop_Behaviours: []
+  Disabled_Vfx: {fileID: 0}
+--- !u!114 &7135931007325160239
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4581147062361068087}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc33edca7f46a8444aabbc92f9ee5d01, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: DesertTower.VFX.Runtime::DesertTower.VFX.VfxPopIn
+  PoofPrefab: {fileID: 3837854254998827864, guid: d5c9e15cee4fa8540994a7e0b79d8d88, type: 3}
+  RevealPrefab: {fileID: 3512970272418113126, guid: 8a12a735b8f61c04d8d156ac30658d6e, type: 3}
+  RevealDelay: 0.2
+  PunchScale: 1.25
+  PunchDuration: 0.18
+  FlashColor: {r: 1, g: 0.95, b: 0.75, a: 1}
+  FlashDuration: 0.22
+  Shake: 0.08
+  ShakeDuration: 0.15
+  ReferenceSize: 2.2
+  FitEffectsToBounds: 1
+  EffectLifetime: 3
+  PlayOnEnable: 0

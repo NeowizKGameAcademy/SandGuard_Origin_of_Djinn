@@ -45,6 +45,8 @@ namespace SandGuard.Enemy
                 (animator.IsInTransition(0) && animator.GetNextAnimatorStateInfo(0).IsName("Dead"))) return;
             Quaternion rotation;
             Vector3 grip;
+            var shield = health != null ? health.GetComponent<EnemyShield>() : null;
+            if (shieldFrame != null && shield != null && shield.IsBroken) { CloseFingers(); return; }
             if (shieldFrame != null)
             {
                 rotation = Quaternion.LookRotation(transform.forward, transform.up) * Quaternion.Inverse(leftGripBasis);

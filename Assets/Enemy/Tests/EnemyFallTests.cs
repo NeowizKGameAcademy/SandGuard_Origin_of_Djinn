@@ -104,6 +104,37 @@ namespace SandGuard.Enemy.Tests
             Assert.Greater(enemy.transform.position.z, 1.5f, "The push moved the enemy up to the wall.");
         }
 
+        [UnityTest] public IEnumerator LaunchArcsOverTheGroundAndMeasuresTheDropFromTheApex()
+        {
+            Bake(("Ground", new Vector3(0, -0.5f, 0), new Vector3(40, 1, 40)));
+            var enemy = Enemy(Vector3.zero);
+            var fall = enemy.GetComponent<EnemyFall>(); var motor = enemy.GetComponent<EnemyMotor>(); var health = enemy.GetComponent<EnemyHealth>();
+            float landedDrop = -1f; bool landedFatal = true;
+            fall.Landed += (drop, fatal) => { landedDrop = drop; landedFatal = fatal; };
+            yield return null;
+            Assert.True(motor.IsOnNavMesh);
+
+            IDisplaceable displaceable = enemy.GetComponent<IDisplaceable>();
+            Assert.True(displaceable.Launch(new Vector3(6f, 9f, 0f)), "One Launch call takes the enemy off the NavMesh.");
+            Assert.AreEqual(EnemyFallState.Falling, fall.State); Assert.True(motor.IsDetached); Assert.AreEqual(1, fall.FallCount);
+            Assert.False(displaceable.Launch(new Vector3(6f, 9f, 0f)), "An enemy already in the air is not launched again.");
+
+            float apex = 0f;
+            yield return Until(() =>
+            {
+                apex = Mathf.Max(apex, enemy.transform.position.y);
+                return fall.State != EnemyFallState.Falling;
+            }, 8f, "The launched enemy comes back down and lands.");
+            Assert.Greater(apex, 3f, "The vertical part lifts the enemy (the apex is about 4 m for 9 m/s).");
+            Assert.Greater(enemy.transform.position.x, 6f, "The horizontal part carries the enemy along a parabola, not straight up.");
+            Assert.Less(Mathf.Abs(enemy.transform.position.z), 1f, "Nothing pushes the enemy sideways.");
+            Assert.Greater(landedDrop, 3f, "The drop is measured from the apex, not from the launch height.");
+            Assert.False(landedFatal, "A 4 m apex stays under fatalDropHeight (5 m).");
+            Assert.True(health.IsAlive);
+            yield return Until(() => fall.State == EnemyFallState.OnNavMesh, 6f, "The enemy reattaches where it landed.");
+            Assert.AreEqual(1, fall.ReturnCount); Assert.False(motor.IsDetached);
+        }
+
         [UnityTest] public IEnumerator ShortDropLandsOnTheLowerNavMeshAndReattaches()
         {
             Bake(("Ground", new Vector3(0, -0.5f, 0), new Vector3(30, 1, 30)), ("Platform", new Vector3(0, 1.5f, 0), new Vector3(6, 3, 6)));

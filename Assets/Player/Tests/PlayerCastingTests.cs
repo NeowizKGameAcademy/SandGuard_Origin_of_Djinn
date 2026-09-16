@@ -73,6 +73,25 @@ namespace SandGuard.Player.Tests
             yield return null;
         }
 
+        [UnityTest] public IEnumerator BasicAttackSpendsManaOnlyOnReleaseAndStopsWhenEmpty()
+        {
+            var wallet = player.GetComponent<PlayerManaWallet>();
+            Assert.AreEqual(5, attack.manaCost);
+            wallet.TrySpend(wallet.CurrentMana - 5);
+            Fire(true);
+            yield return new WaitForSeconds(.8f);
+            Fire(false);
+            Assert.AreEqual(1, fired, "Five mana pays for exactly one shot while held.");
+            Assert.AreEqual(0, wallet.CurrentMana);
+            Assert.False(attack.TryFire());
+            attack.manaCost = 0;
+            Fire(true);
+            yield return new WaitForSeconds(.5f);
+            Fire(false);
+            Assert.Greater(fired, 1, "Setting the Inspector cost to zero allows free attacks.");
+            Assert.AreEqual(0, wallet.CurrentMana);
+        }
+
         [UnityTest] public IEnumerator MovingCastUsesPalmKeepsLegsAndRestoresLamp()
         {
             var hand = animator.GetBoneTransform(HumanBodyBones.RightHand);

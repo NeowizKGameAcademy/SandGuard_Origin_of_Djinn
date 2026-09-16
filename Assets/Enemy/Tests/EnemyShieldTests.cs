@@ -82,6 +82,40 @@ namespace SandGuard.Enemy.Tests
             Assert.True(health.TakeDamage(From(Vector3.forward)).WasApplied, "A disabled modifier is skipped.");
         }
 
+        [UnityTest] public IEnumerator ShieldBreaksDropsAndRestoresForReuse()
+        {
+            var enemy = Enemy("Enemy_ShieldGuard", Vector3.zero, 0f);
+            yield return null;
+            var shield = enemy.GetComponent<EnemyShield>();
+            var health = enemy.GetComponent<EnemyHealth>();
+            shield.maxHealth = 10f;
+            shield.ResetForReuse();
+            float originalHealth = health.CurrentHealth;
+            health.TakeDamage(From(Vector3.left, 1f));
+            Assert.AreEqual(10f, shield.CurrentHealth, "Flank hits do not wear the shield.");
+            health.TakeDamage(From(Vector3.back, 6f));
+            Assert.AreEqual(4f, shield.CurrentHealth);
+            var breaking = health.TakeDamage(From(Vector3.back, 7f));
+            Assert.AreEqual(3f, breaking.AppliedDamage, .001f, "Excess damage reaches the body.");
+            Assert.True(shield.IsBroken);
+            Assert.NotNull(shield.shieldVisual);
+            Assert.False(shield.shieldVisual.gameObject.activeSelf);
+            var debris = GameObject.Find("BrokenEnemyShield");
+            Assert.NotNull(debris);
+            Assert.IsNull(debris.transform.parent);
+            Assert.True(debris.GetComponent<Rigidbody>().useGravity);
+            Assert.NotNull(debris.GetComponent<BoxCollider>());
+            health.TakeDamage(From(Vector3.back, 2f));
+            Assert.AreEqual(originalHealth - 6f, health.CurrentHealth, .001f);
+            Assert.AreEqual(2, shield.GuardCount, "Broken shields cannot block again.");
+            health.ResetForReuse();
+            Assert.AreEqual(10f, shield.CurrentHealth);
+            Assert.True(shield.shieldVisual.gameObject.activeSelf);
+            Assert.False(debris.activeSelf);
+            Assert.AreEqual(DamageStatus.Protected, health.TakeDamage(From(Vector3.back, 10f)).Status);
+            Assert.True(shield.IsBroken, "Exact depletion also breaks the shield.");
+        }
+
         [UnityTest] public IEnumerator EnemiesWithoutAShieldTakeFrontalHits()
         {
             var enemy = Enemy("Enemy", Vector3.zero, 0f);

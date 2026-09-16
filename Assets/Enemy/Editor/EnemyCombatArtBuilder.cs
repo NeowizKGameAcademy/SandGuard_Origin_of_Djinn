@@ -31,6 +31,8 @@ namespace SandGuard.Enemy.Editor
             public float Height, MoveSpeed = 3.5f, AttackSpeed = 1f, Windup, Interval = 1.2f;
             public float? MoveTimeScale;
             public float? AttackRange;
+            /// <summary>어그로 순위(플레이어, 미니언, 타워, 코어). 작을수록 먼저 노린다. null이면 기본 프리팹 값을 따른다.</summary>
+            public (int player, int minion, int tower, int core)? Priorities;
             public (string asset, HumanBodyBones bone, float scale)[] Gear;
         }
 
@@ -368,6 +370,11 @@ namespace SandGuard.Enemy.Editor
                 var attack = root.GetComponent<EnemyMeleeAttack>(); attack.windup = spec.Windup; attack.interval = spec.Interval;
                 // 캐릭터별 지정 사거리를 적용하고, 미지정 시 기본 프리팹(Swordsman)을 따른다.
                 attack.range = spec.AttackRange ?? AssetDatabase.LoadAssetAtPath<GameObject>(BasePrefab).GetComponent<EnemyMeleeAttack>().range;
+                if (spec.Priorities is (int player, int minion, int tower, int core))
+                {
+                    var selector = root.GetComponent<EnemyTargetSelector>();
+                    selector.playerPriority = player; selector.minionPriority = minion; selector.towerPriority = tower; selector.corePriority = core;
+                }
                 root.GetComponent<EnemyMotor>().moveSpeed = spec.MoveSpeed;
                 root.GetComponent<UnityEngine.AI.NavMeshAgent>().speed = spec.MoveSpeed;
                 root.GetComponent<EnemyHealth>().removeDelay = deathLength + .3f;

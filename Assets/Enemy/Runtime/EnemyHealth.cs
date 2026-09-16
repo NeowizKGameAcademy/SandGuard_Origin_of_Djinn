@@ -140,6 +140,7 @@ namespace SandGuard.Enemy
             State = LifeState.Alive;
             CurrentHealth = maxHealth;
             SetCombatEnabled(true);
+            GetComponent<EnemyShield>()?.ResetForReuse();
         }
 
         void SetCombatEnabled(bool value)

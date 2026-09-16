@@ -45,8 +45,40 @@ Shader "SandGuard/Architecture/Courtyard Rail Stone"
    }
    ENDHLSL
   }
-  UsePass "Universal Render Pipeline/Lit/ShadowCaster"
-  UsePass "Universal Render Pipeline/Lit/DepthOnly"
-  UsePass "Universal Render Pipeline/Lit/DepthNormals"
+  Pass {
+   Name "ShadowCaster"
+   Tags {"LightMode"="ShadowCaster"}
+   ZWrite On ZTest LEqual ColorMask 0
+   HLSLPROGRAM
+   #pragma target 4.5
+   #pragma vertex ShadowVert
+   #pragma fragment ShadowFrag
+   #pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW
+   #include "Assets/TempleArt/ArchitectureV2/CourtyardStonePasses.hlsl"
+   ENDHLSL
+  }
+  Pass {
+   Name "DepthOnly"
+   Tags {"LightMode"="DepthOnly"}
+   ZWrite On ColorMask R
+   HLSLPROGRAM
+   #pragma target 4.5
+   #pragma vertex DepthVert
+   #pragma fragment DepthFrag
+   #include "Assets/TempleArt/ArchitectureV2/CourtyardStonePasses.hlsl"
+   ENDHLSL
+  }
+  Pass {
+   Name "DepthNormals"
+   Tags {"LightMode"="DepthNormals"}
+   ZWrite On
+   HLSLPROGRAM
+   #pragma target 4.5
+   #pragma vertex NormalsVert
+   #pragma fragment NormalsFrag
+   #pragma multi_compile_fragment _ _GBUFFER_NORMALS_OCT
+   #include "Assets/TempleArt/ArchitectureV2/CourtyardStonePasses.hlsl"
+   ENDHLSL
+  }
  }
 }

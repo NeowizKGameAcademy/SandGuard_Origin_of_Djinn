@@ -1912,6 +1912,7 @@ MonoBehaviour:
   fallGravityMultiplier: 2
   lowJumpGravityMultiplier: 2.5
   extraAirJumps: 0
+  airJumpManaCost: 0
   coyoteTime: 0.1
   jumpBufferTime: 0.12
   groundStickSpeed: 4
@@ -2046,6 +2047,7 @@ MonoBehaviour:
   shotOrigin: {fileID: 5475696462340052794}
   attackInterval: 0.3
   damage: 10
+  manaCost: 5
   factionId: Ally
   stats: {fileID: 6961237080123456789}
   manaSource: {fileID: 2246301817342103262}
