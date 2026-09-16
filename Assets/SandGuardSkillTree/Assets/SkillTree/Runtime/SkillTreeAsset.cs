@@ -10,7 +10,7 @@ namespace SandGuard.Skills.Unity
         [TextArea] public string description;
         public SkillBranch branch;
         public SkillKind kind;
-        [Min(0)] public int cost=2;
+        [Min(0)] public int cost=1;
         public List<string> prerequisites=new List<string>();
         public List<EquipSlot> allowedSlots=new List<EquipSlot>();
     }
@@ -31,17 +31,17 @@ namespace SandGuard.Skills.Unity
         public static SkillTreeAsset CreateDemo()
         {
             var asset=CreateInstance<SkillTreeAsset>();
-            asset.Add("move.dash","대시",SkillBranch.Movement,2,SkillKind.Active,"",EquipSlot.Shift);
-            asset.Add("move.jump","더블 점프",SkillBranch.Movement,2,SkillKind.Active,"",EquipSlot.Space);
-            asset.Add("move.recall","흔적 귀환",SkillBranch.Movement,6,SkillKind.Active,"move.dash",EquipSlot.Shift,EquipSlot.Q,EquipSlot.E,EquipSlot.R);
-            asset.Add("attack.pierce","관통탄",SkillBranch.Attack,2,SkillKind.Active,"",EquipSlot.Q,EquipSlot.E,EquipSlot.R);
-            asset.Add("attack.burst","모래 폭발",SkillBranch.Attack,4,SkillKind.Active,"attack.pierce",EquipSlot.Q,EquipSlot.E,EquipSlot.R);
-            asset.Add("attack.vortex","모래 소용돌이",SkillBranch.Attack,6,SkillKind.Active,"attack.burst",EquipSlot.Q,EquipSlot.E,EquipSlot.R);
-            asset.Add("attack.storm","사막 폭풍",SkillBranch.Attack,9,SkillKind.Active,"attack.vortex",EquipSlot.Q,EquipSlot.E,EquipSlot.R);
-            asset.Add("tower.cobra","화염 코브라 해금",SkillBranch.Tower,2,SkillKind.Passive,"");
-            asset.Add("tower.obelisk","모래시계 오벨리스크 해금",SkillBranch.Tower,4,SkillKind.Passive,"tower.cobra");
-            asset.Add("tower.skeleton","해골 소환진 해금",SkillBranch.Tower,4,SkillKind.Passive,"tower.cobra");
-            asset.Add("tower.anubis","아누비스 해금",SkillBranch.Tower,6,SkillKind.Passive,"tower.skeleton");
+            asset.Add("move.dash","대시",SkillBranch.Movement,1,SkillKind.Active,"",EquipSlot.Shift);
+            asset.Add("move.jump","더블 점프",SkillBranch.Movement,1,SkillKind.Active,"",EquipSlot.Space);
+            asset.Add("move.recall","흔적 귀환",SkillBranch.Movement,3,SkillKind.Active,"move.dash",EquipSlot.Shift,EquipSlot.Q,EquipSlot.E,EquipSlot.R);
+            asset.Add("attack.pierce","관통탄",SkillBranch.Attack,1,SkillKind.Active,"",EquipSlot.Q,EquipSlot.E,EquipSlot.R);
+            asset.Add("attack.burst","모래 폭발",SkillBranch.Attack,2,SkillKind.Active,"attack.pierce",EquipSlot.Q,EquipSlot.E,EquipSlot.R);
+            asset.Add("attack.vortex","모래 소용돌이",SkillBranch.Attack,3,SkillKind.Active,"attack.burst",EquipSlot.Q,EquipSlot.E,EquipSlot.R);
+            asset.Add("attack.storm","사막 폭풍",SkillBranch.Attack,3,SkillKind.Active,"attack.vortex",EquipSlot.Q,EquipSlot.E,EquipSlot.R);
+            asset.Add("tower.cobra","화염 코브라 해금",SkillBranch.Tower,1,SkillKind.Passive,"");
+            asset.Add("tower.obelisk","모래시계 오벨리스크 해금",SkillBranch.Tower,2,SkillKind.Passive,"tower.cobra");
+            asset.Add("tower.skeleton","해골 소환진 해금",SkillBranch.Tower,2,SkillKind.Passive,"tower.cobra");
+            asset.Add("tower.anubis","아누비스 해금",SkillBranch.Tower,3,SkillKind.Passive,"tower.skeleton");
             return asset;
         }
         void Add(string id,string label,SkillBranch branch,int cost,SkillKind kind,string previous,params EquipSlot[] slots)
