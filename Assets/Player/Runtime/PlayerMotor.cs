@@ -18,11 +18,11 @@ namespace SandGuard.Player
         [Header("대시")]
         [Min(0)] public int dashManaCost = 10;
         [Min(0f)] public float dashCooldown = 1f;
-        [Min(0.01f)] public float dashDuration = 2f;
+        [Min(0.01f)] public float dashDuration = 0.3f;
         [Min(0.01f)] public float dashDistance = 4f;
-        [Tooltip("대시 속도 곡선. 가로 = 대시 진행(0~1), 세로 = 상대 속도. 곡선 아래 넓이로 정규화하므로 모양만 정하면 되고 총 거리는 dashDistance를 유지한다. 기본: 15%까지 가속해 정점, 이후 긴 꼬리로 부드럽게 감속(끝 기울기 0)")]
+        [Tooltip("대시 속도 곡선. 가로 = 대시 진행(0~1), 세로 = 상대 속도. 곡선 아래 넓이로 정규화하므로 모양만 정하면 되고 총 거리는 dashDistance를 유지한다. 기본: 12%까지 급가속, 절반 지나 감속, 끝에서 거의 정지")]
         public AnimationCurve dashProfile = new AnimationCurve(
-            new Keyframe(0f, 0.1f, 0f, 6f), new Keyframe(0.15f, 1f, 0f, 0f), new Keyframe(0.33f, 0.72f, -1.5f, -1.5f), new Keyframe(0.65f, 0.28f, -0.6f, -0.6f), new Keyframe(1f, 0.08f, 0f, 0f));
+            new Keyframe(0f, 0.25f, 0f, 9f), new Keyframe(0.12f, 1f, 0f, 0f), new Keyframe(0.5f, 0.9f, -0.8f, -0.8f), new Keyframe(1f, 0.05f, -1.2f, 0f));
         const int DashProfileSamples = 32;
         float[] dashProgressTable; // 정규화 누적 거리 F(t), t = i / DashProfileSamples
         float dashProfilePeak; // 곡선 최고값. DashSpeedFactor 정규화용
@@ -352,9 +352,10 @@ namespace SandGuard.Player
                 dashRemaining = Mathf.Max(0f, dashRemaining - step);
                 if (dashRemaining <= 0f)
                 {
-                    // 대시가 끝나면 그 방향의 이동 속도로 이어 준다. 멈췄다가 다시 가속하지 않는다.
-                    localVelocity = new Vector2(Vector3.Dot(dashDirection, right), Vector3.Dot(dashDirection, forward)) * MoveSpeed;
-                    horizontalVelocity = dashDirection * MoveSpeed;
+                    // 대시가 끝나면 곡선의 마지막 속도를 그대로 이어받는다. 이동 속도로 바로 덮어쓰지 않고, 다음 프레임부터 평소 가감속이 입력 속도로 맞춘다.
+                    float exitSpeed = step > 0f ? displacement.magnitude / step : 0f;
+                    localVelocity = new Vector2(Vector3.Dot(dashDirection, right), Vector3.Dot(dashDirection, forward)) * exitSpeed;
+                    horizontalVelocity = dashDirection * exitSpeed;
                 }
                 else { localVelocity = Vector2.zero; horizontalVelocity = Vector3.zero; }
             }

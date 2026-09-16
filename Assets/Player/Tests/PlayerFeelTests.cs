@@ -142,17 +142,21 @@ namespace SandGuard.Player.Tests
             Assert.Less(speeds[speeds.Count - 1], peak * 0.6f, "The dash is clearly slowing down when it ends.");
         }
 
-        [UnityTest] public IEnumerator DashKeepsMovingAfterItEndsInsteadOfStopping()
+        [UnityTest] public IEnumerator DashHandsOverItsExitSpeedInsteadOfSnappingToRunSpeed()
         {
             Cube(new Vector3(0, -0.5f, 0), new Vector3(40, 1, 40));
             var player = Player(Vector3.zero);
             var motor = player.GetComponent<PlayerMotor>();
             yield return new WaitForSeconds(0.15f);
             Assert.True(motor.TryDash().Succeeded);
-            yield return new WaitUntil(() => !motor.IsDashing);
+            var speeds = new List<float>();
+            while (motor.IsDashing) { yield return null; speeds.Add(Vector3.ProjectOnPlane(motor.Velocity, Vector3.up).magnitude); }
+            // 마지막 프레임은 대시가 도중에 끝나 일부만 대시 이동이므로, 마지막 두 프레임 중 큰 값을 곡선의 끝 속도로 본다
+            float exit = Mathf.Max(speeds[speeds.Count - 1], speeds.Count > 1 ? speeds[speeds.Count - 2] : 0f);
             yield return null;
-            float speed = Vector3.ProjectOnPlane(motor.Velocity, Vector3.up).magnitude;
-            Assert.Greater(speed, motor.moveSpeed * 0.5f, "Momentum must carry over when the dash ends.");
+            float after = Vector3.ProjectOnPlane(motor.Velocity, Vector3.up).magnitude;
+            Assert.LessOrEqual(after, exit + 0.01f, "입력이 없으면 대시가 끝난 뒤 속도가 올라가지 않는다. 이동 속도로 바로 덮어쓰지 않고 곡선의 마지막 속도를 이어받는다.");
+            Assert.Less(after, motor.moveSpeed * 0.5f, "곡선 끝은 거의 정지라 달리기 속도로 튀지 않는다.");
             Assert.Greater(player.transform.position.z, motor.dashDistance * 0.9f);
         }
 
