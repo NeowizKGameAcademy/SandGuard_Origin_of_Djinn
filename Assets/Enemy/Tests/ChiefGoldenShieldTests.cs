@@ -86,28 +86,29 @@ namespace SandGuard.Enemy.Tests
             var bombRules = prefab.GetComponent<ChiefBombThrowSkill>();
             Assert.AreEqual(20f, shieldRules.activeDuration, "황금 방패는 20초 유지된다");
             Assert.AreEqual(1, shieldRules.maxUses, "황금 방패는 한 번만 쓴다");
-            Assert.AreEqual(0.5f, shieldRules.healthThreshold, "황금 방패는 체력의 절반을 잃은 뒤 쓴다");
+            Assert.AreEqual(0.7f, shieldRules.healthThreshold, "황금 방패는 체력이 70% 이하일 때 쓴다");
             Assert.AreEqual(1, bombRules.maxUses, "철거 폭탄은 한 번만 던진다");
         }
 
-        [UnityTest] public IEnumerator ShieldWaitsUntilHalfHealthIsLost()
+        [UnityTest] public IEnumerator ShieldWaitsUntilSeventyPercentHealth()
         {
-            skill.healthThreshold = 0.5f;
+            skill.healthThreshold = 0.7f;
             brain.AIEnabled = true;
             float max = health.MaxHealth;
             Assert.False(skill.TryUse(target), "체력이 가득하면 시전하지 않는다");
             brain.Think();
             Assert.AreEqual(ChiefGoldenShieldSkill.Phase.Ready, skill.State, "브레인도 체력이 충분하면 방패를 꺼내지 않는다");
 
-            health.TakeDamage(new DamageInfo(max * 0.4f, "World"));
-            Assert.Greater(health.CurrentHealth, max * 0.5f);
-            Assert.False(skill.TryUse(target), "절반보다 덜 잃었으면 아직 시전하지 않는다");
+            health.TakeDamage(new DamageInfo(max * 0.2f, "World"));
+            Assert.Greater(health.CurrentHealth, max * 0.7f);
+            Assert.False(skill.IsHealthLowEnough);
+            Assert.False(skill.TryUse(target), "체력이 70%보다 높으면 아직 시전하지 않는다");
 
             health.TakeDamage(new DamageInfo(max * 0.15f, "World"));
-            Assert.LessOrEqual(health.CurrentHealth, max * 0.5f);
+            Assert.LessOrEqual(health.CurrentHealth, max * 0.7f);
             chief.GetComponent<EnemyMeleeAttack>().Cancel(); // 첫 판단에서 시작한 휘두르기는 시전을 막으므로 끊는다
             brain.Think();
-            Assert.AreEqual(ChiefGoldenShieldSkill.Phase.Summoning, skill.State, "절반을 잃으면 다음 판단에서 방패를 꺼낸다");
+            Assert.AreEqual(ChiefGoldenShieldSkill.Phase.Summoning, skill.State, "체력이 70% 이하가 되면 다음 판단에서 방패를 꺼낸다");
             yield return null;
         }
 

@@ -15,8 +15,8 @@ namespace SandGuard.Enemy
         [Min(.01f)] public float activeDuration = 20f;
         [Min(0), Tooltip("한 생애에 쓸 수 있는 횟수. 0이면 제한 없이 쿨다운마다 다시 쓴다")]
         public int maxUses = 1;
-        [Range(0f, 1f), Tooltip("남은 체력 비율이 이 값 이하가 되어야 시전한다. 0.5면 체력의 절반을 잃은 뒤. 1이면 조건 없음")]
-        public float healthThreshold = 0.5f;
+        [Range(0f, 1f), Tooltip("남은 체력 비율이 이 값 이하가 되어야 시전한다. 0.7이면 체력이 70% 이하일 때. 1이면 조건 없음")]
+        public float healthThreshold = 0.7f;
         [Min(0f)] public float cooldown = 8f;
         [Min(.1f)] public float castRange = 8f;
         public enum Phase { Ready, Summoning, Active, Dismissing, Cooldown }

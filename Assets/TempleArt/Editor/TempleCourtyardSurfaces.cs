@@ -18,6 +18,7 @@ public static class TempleCourtyardSurfaces
         var scene=UnityEditor.SceneManagement.EditorSceneManager.OpenScene(Root+"/Level_TempleCourtyard.unity");
         var temple=Object.FindObjectsByType<Transform>(FindObjectsSortMode.None).First(t=>t.name=="DesertTemple_V7"||t.name=="DesertTemple_V6");
         Build(temple);Validate(temple);
+        TempleStairGapRepair.Apply(temple);
         PrefabUtility.SaveAsPrefabAsset(temple.gameObject,Root+"/DesertTemple_Courtyard.prefab");
         UnityEditor.SceneManagement.EditorSceneManager.SaveScene(scene);AssetDatabase.SaveAssets();
         TempleTraversalVerification.Run();
