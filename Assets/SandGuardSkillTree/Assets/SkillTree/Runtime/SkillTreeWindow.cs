@@ -7,6 +7,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
 using UnityEngine.UI;
+using SandGuard.GameFlow;
 
 namespace SandGuard.Skills.Unity
 {
@@ -145,13 +146,15 @@ namespace SandGuard.Skills.Unity
                 createdEventSystem=new GameObject("Skill UI EventSystem",typeof(EventSystem),typeof(InputSystemUIInputModule));
                 createdEventSystem.GetComponent<InputSystemUIInputModule>().AssignDefaultActions();
             }
-            modal.SetActive(true);prompt.SetActive(false);dirty=true;onOpened.Invoke();
+            modal.SetActive(true);prompt.SetActive(false);dirty=true;
+            GameManager.Instance.RequestPause(this);onOpened.Invoke();
         }
         public void Close()
         {
             if(!IsOpen)return;
             if(respecPanel)respecPanel.SetActive(false);
             IsOpen=false;if(modal)modal.SetActive(false);
+            if(GameManager.HasInstance)GameManager.Instance.ReleasePause(this);
             foreach(var entry in suspended)if(entry.Key)entry.Key.enabled=entry.Value;
             suspended.Clear();Cursor.lockState=previousLock;Cursor.visible=previousVisible;
             if(createdEventSystem){createdEventSystem.SetActive(false);Destroy(createdEventSystem);createdEventSystem=null;}
