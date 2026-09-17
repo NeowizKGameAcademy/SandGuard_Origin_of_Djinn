@@ -20,9 +20,9 @@ namespace SandGuard.Player
         [Min(0f)] public float dashCooldown = 1f;
         [Min(0.01f)] public float dashDuration = 0.3f;
         [Min(0.01f)] public float dashDistance = 4f;
-        [Tooltip("대시 속도 곡선. 가로 = 대시 진행(0~1), 세로 = 상대 속도. 곡선 아래 넓이로 정규화하므로 모양만 정하면 되고 총 거리는 dashDistance를 유지한다. 기본: 12%까지 급가속, 절반 지나 감속, 끝에서 거의 정지")]
+        [Tooltip("대시 속도 곡선. 가로 = 대시 진행(0~1), 세로 = 상대 속도. 곡선 아래 넓이로 정규화하므로 모양만 정하면 되고 총 거리는 dashDistance를 유지한다. 기본: 12%까지 급가속, 절반 지나 감속, 끝은 달리기 속도 근처(정점의 30%)라 멈추지 않고 이동으로 이어진다")]
         public AnimationCurve dashProfile = new AnimationCurve(
-            new Keyframe(0f, 0.25f, 0f, 9f), new Keyframe(0.12f, 1f, 0f, 0f), new Keyframe(0.5f, 0.9f, -0.8f, -0.8f), new Keyframe(1f, 0.05f, -1.2f, 0f));
+            new Keyframe(0f, 0.25f, 0f, 9f), new Keyframe(0.12f, 1f, 0f, 0f), new Keyframe(0.5f, 0.9f, -0.8f, -0.8f), new Keyframe(1f, 0.3f, -1.2f, 0f));
         const int DashProfileSamples = 32;
         float[] dashProgressTable; // 정규화 누적 거리 F(t), t = i / DashProfileSamples
         float dashProfilePeak; // 곡선 최고값. DashSpeedFactor 정규화용
@@ -47,6 +47,7 @@ namespace SandGuard.Player
         bool Alive => lifeSource == null || (lifeSource as ILifeState)?.State == global::LifeState.Alive;
         float dashRemaining;
         Vector3 dashDirection;
+        bool dashMomentum; // 대시가 넘긴 속도로 아직 미끄러지는 중. 입력이 들어오거나 멈추면 풀린다
         public Vector3 DashDirection => dashDirection;
         /// <summary>지금 대시 속도가 정점 대비 얼마인지(0~1). dashProfile을 그대로 따르므로 카메라·VFX가 이동과 같은 박자로 움직인다. 대시 중이 아니면 0, 곡선이 없으면(등속) 1.</summary>
         public float DashSpeedFactor
@@ -82,6 +83,7 @@ namespace SandGuard.Player
         [Min(0.01f), Tooltip("지상에서 입력을 떼면 멈추는 속도. 가속보다 크게 두면 멈춤이 즉각적이다")] public float groundDeceleration = 90f;
         [Min(0.01f)] public float airAcceleration = 18f;
         [Min(0.01f)] public float airDeceleration = 8f;
+        [Min(0.01f), Tooltip("대시가 끝난 뒤 입력이 없을 때 넘겨받은 속도가 풀리는 감속. 지상·공중 감속보다 작을 때만 적용되어 대시 끝이 미끄러지듯 이어진다")] public float dashExitDeceleration = 20f;
         [Header("점프")]
         [Min(0.1f)] public float jumpHeight = 1.5f;
         [Min(0.1f)] public float gravity = 25f;
@@ -316,6 +318,7 @@ namespace SandGuard.Player
             Vector2 stick = Anchored || HardLandingLocked ? Vector2.zero : Vector2.ClampMagnitude(Input.Move, 1f);
             bool steering = stick.sqrMagnitude > 0.0001f;
             float rate = IsGrounded ? (steering ? groundAcceleration : groundDeceleration) : (steering ? airAcceleration : airDeceleration);
+            if (dashMomentum) { if (steering || localVelocity == Vector2.zero) dashMomentum = false; else rate = Mathf.Min(rate, dashExitDeceleration); }
             localVelocity = Vector2.MoveTowards(localVelocity, stick * MoveSpeed, rate * dt);
             if (HardLandingLocked) localVelocity = Vector2.zero;
             horizontalVelocity = forward * localVelocity.y + right * localVelocity.x;
@@ -352,10 +355,11 @@ namespace SandGuard.Player
                 dashRemaining = Mathf.Max(0f, dashRemaining - step);
                 if (dashRemaining <= 0f)
                 {
-                    // 대시가 끝나면 곡선의 마지막 속도를 그대로 이어받는다. 이동 속도로 바로 덮어쓰지 않고, 다음 프레임부터 평소 가감속이 입력 속도로 맞춘다.
+                    // 대시가 끝나면 곡선의 마지막 속도를 그대로 이어받는다. 이동 속도로 바로 덮어쓰지 않고, 입력이 있으면 평소 가감속이, 없으면 dashExitDeceleration이 이어서 푼다.
                     float exitSpeed = step > 0f ? displacement.magnitude / step : 0f;
                     localVelocity = new Vector2(Vector3.Dot(dashDirection, right), Vector3.Dot(dashDirection, forward)) * exitSpeed;
                     horizontalVelocity = dashDirection * exitSpeed;
+                    dashMomentum = exitSpeed > 0f;
                 }
                 else { localVelocity = Vector2.zero; horizontalVelocity = Vector3.zero; }
             }

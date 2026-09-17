@@ -1894,7 +1894,7 @@ MonoBehaviour:
       outWeight: 0
     - serializedVersion: 3
       time: 1
-      value: 0.05
+      value: 0.3
       inSlope: -1.2
       outSlope: 0
       tangentMode: 0
@@ -1910,6 +1910,7 @@ MonoBehaviour:
   groundDeceleration: 90
   airAcceleration: 18
   airDeceleration: 8
+  dashExitDeceleration: 20
   jumpHeight: 1.5
   gravity: 25
   fallGravityMultiplier: 2

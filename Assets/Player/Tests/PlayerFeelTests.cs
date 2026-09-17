@@ -142,7 +142,7 @@ namespace SandGuard.Player.Tests
             Assert.Less(speeds[speeds.Count - 1], peak * 0.6f, "The dash is clearly slowing down when it ends.");
         }
 
-        [UnityTest] public IEnumerator DashHandsOverItsExitSpeedInsteadOfSnappingToRunSpeed()
+        [UnityTest] public IEnumerator DashFlowsIntoRunSpeedAndCoastsInsteadOfStopping()
         {
             Cube(new Vector3(0, -0.5f, 0), new Vector3(40, 1, 40));
             var player = Player(Vector3.zero);
@@ -155,8 +155,12 @@ namespace SandGuard.Player.Tests
             float exit = Mathf.Max(speeds[speeds.Count - 1], speeds.Count > 1 ? speeds[speeds.Count - 2] : 0f);
             yield return null;
             float after = Vector3.ProjectOnPlane(motor.Velocity, Vector3.up).magnitude;
-            Assert.LessOrEqual(after, exit + 0.01f, "입력이 없으면 대시가 끝난 뒤 속도가 올라가지 않는다. 이동 속도로 바로 덮어쓰지 않고 곡선의 마지막 속도를 이어받는다.");
-            Assert.Less(after, motor.moveSpeed * 0.5f, "곡선 끝은 거의 정지라 달리기 속도로 튀지 않는다.");
+            Assert.LessOrEqual(after, exit + 0.01f, "대시가 끝난 뒤 속도가 올라가지 않는다. 이동 속도로 덮어쓰지 않고 곡선의 마지막 속도를 이어받는다.");
+            Assert.Greater(after, motor.moveSpeed * 0.5f, "곡선 끝이 달리기 속도 근처라 멈추지 않고 이동으로 이어진다.");
+            yield return new WaitForSeconds(0.1f);
+            float later = Vector3.ProjectOnPlane(motor.Velocity, Vector3.up).magnitude;
+            Assert.Less(later, after, "입력이 없으면 서서히 줄어든다.");
+            Assert.Greater(later, 0f, "지상 감속이 아니라 dashExitDeceleration으로 풀리므로 0.1초 뒤에도 아직 미끄러지는 중이다.");
             Assert.Greater(player.transform.position.z, motor.dashDistance * 0.9f);
         }
 

@@ -36,7 +36,7 @@ namespace SandGuard.Skills.Unity
         readonly Dictionary<Behaviour,bool> suspended=new Dictionary<Behaviour,bool>();
         SkillAltarAnchor current;
         SkillBranch branch;
-        string selected, feedback="해금한 스킬을 선택한 뒤 아래 슬롯에 장착하세요.";
+        string selected, feedback="이동 스킬은 구매 즉시 사용할 수 있습니다. 공격 스킬은 슬롯에 장착하세요.";
         bool dirty=true, previousVisible, bound;
         CursorLockMode previousLock;
         GameObject createdEventSystem;
@@ -167,7 +167,9 @@ namespace SandGuard.Skills.Unity
         {
             if(!IsOpen)return;
             session.Service.EditingAllowed=session.editingAllowed;
-            var r=session.Service.Learn(selected);feedback=r.Success?"구매 완료 — 사용할 슬롯을 선택하세요.":Reason(r.Failure);dirty=true;
+            var r=session.Service.Learn(selected);
+            var skill=session.Service.Catalog.Find(selected);
+            feedback=r.Success?(skill.Branch==SkillBranch.Movement?"구매 완료 — 이동 스킬이 즉시 활성화되었습니다.":"구매 완료 — 사용할 슬롯을 선택하세요."):Reason(r.Failure);dirty=true;
         }
         void Equip(EquipSlot slot)
         {
@@ -202,7 +204,13 @@ namespace SandGuard.Skills.Unity
                 detailIcon.color=s.IsLearned(d.Id)?theme.gold:theme.cyan;
                 string prereq=d.Prerequisites.Count==0?"없음":string.Join("\n",d.Prerequisites.Select(p=>s.Catalog.Find(p).Name+(s.IsLearned(p)?"  ✓":"  (미해금)")));
                 string desc=string.IsNullOrWhiteSpace(d.Description) || d.Description.StartsWith("테스트용")?DefaultDescription(d.Id):d.Description;
-                detailBody.text=desc+"\n\n선행 스킬  "+prereq+"\n\n필요 포인트  "+d.Cost+" SP\n\n"+(d.Kind==SkillKind.Passive?"패시브 / 시설 해금 · 슬롯 불필요":"사용 슬롯  "+string.Join(" · ",d.Slots));
+                string usage=d.Branch==SkillBranch.Movement
+                    ? d.Id=="move.updraft"?"자동 활성화 · 지상 Space 길게 누르기"
+                    : d.Id=="move.jump"?"자동 장착 · Space"
+                    : d.Id=="move.dash"?"자동 장착 · Shift"
+                    : "구매 시 빈 Q/E/R 슬롯에 자동 장착"
+                    : d.Kind==SkillKind.Passive?"패시브 / 시설 해금 · 슬롯 불필요":"사용 슬롯  "+string.Join(" · ",d.Slots);
+                detailBody.text=desc+"\n\n선행 스킬  "+prereq+"\n\n필요 포인트  "+d.Cost+" SP\n\n"+usage;
                 var can=s.CanLearn(d.Id);buyButton.interactable=can.Success;
                 buyLabel.text=s.IsLearned(d.Id)?"해금 완료":can.Success?d.Cost+" SP로 구매":Reason(can.Failure);
             }
@@ -210,12 +218,13 @@ namespace SandGuard.Skills.Unity
             {
                 var slot=(EquipSlot)i;string id=s.Equipped(slot);var equipped=s.Catalog.Find(id);
                 slotLabels[i].text=equipped?.Name??"비어 있음";slotIcons[i].sprite=theme.Icon(id);slotIcons[i].enabled=slotIcons[i].sprite!=null;
-                bool compatible=d!=null && d.Kind==SkillKind.Active && d.Slots.Contains(slot) && s.IsLearned(d.Id) && lastEditing;
+                bool fixedMovement=slot==EquipSlot.Shift || slot==EquipSlot.Space;
+                bool compatible=!fixedMovement && d!=null && d.Kind==SkillKind.Active && d.Slots.Contains(slot) && s.IsLearned(d.Id) && lastEditing;
                 slotButtons[i].interactable=compatible;
                 if(SkillLampSkin.Available)slotButtons[i].image.color=compatible?theme.cyan:Color.white;
                 else slotButtons[i].image.color=compatible?theme.cyan:theme.gold;
                 var emptyMarker=slotButtons[i].transform.Find("Empty Marker");if(emptyMarker)emptyMarker.gameObject.SetActive(id==null);
-                removeButtons[i].interactable=id!=null && lastEditing;
+                removeButtons[i].interactable=!fixedMovement && id!=null && lastEditing;
             }
             statusLabel.text=feedback;
         }
@@ -248,7 +257,7 @@ namespace SandGuard.Skills.Unity
         }
         static string DefaultDescription(string id)
         {
-            switch(id){case "move.dash":return "바라보는 방향으로 빠르게 이동합니다.";case "move.jump":return "공중에서 한 번 더 점프합니다.";case "move.recall":return "흔적을 남기고, 제한 시간 안에 다시 사용하면 귀환합니다.";case "attack.pierce":return "전방으로 적을 관통하는 마법탄을 발사합니다.";case "attack.burst":return "모래 폭발로 범위 안의 적을 공격합니다.";case "attack.vortex":return "모래 소용돌이로 적의 움직임을 제어합니다.";case "attack.storm":return "거대한 모래 폭풍으로 넓은 범위를 공격합니다.";default:return "구매하면 해당 스킬 또는 시설을 해금합니다.";}
+            switch(id){case "move.dash":return "바라보는 방향으로 빠르게 이동합니다.";case "move.jump":return "공중에서 한 번 더 점프합니다.";case "move.updraft":return "지상에서 Space를 길게 눌러 충전하고, 놓으면 높이 도약합니다.";case "move.recall":return "흔적을 남기고, 제한 시간 안에 다시 사용하면 귀환합니다.";case "attack.pierce":return "전방으로 적을 관통하는 마법탄을 발사합니다.";case "attack.burst":return "모래 폭발로 범위 안의 적을 공격합니다.";case "attack.vortex":return "모래 소용돌이로 적의 움직임을 제어합니다.";case "attack.storm":return "거대한 모래 폭풍으로 넓은 범위를 공격합니다.";default:return "구매하면 해당 스킬 또는 시설을 해금합니다.";}
         }
     }
 }

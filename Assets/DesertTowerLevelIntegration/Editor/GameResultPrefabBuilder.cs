@@ -13,6 +13,63 @@ namespace DesertTower.LevelIntegration.Editor
         const string PrefabPath = "Assets/2.Model/Prefabs/HUD/GameResultCanvas.prefab";
         const string ArtPath = "Assets/4.Sprite/UI/GameScene/Result/ResultCards.png";
         const string LevelPath = "Assets/1.Scene/Level.unity";
+        const string PreviewPath = "Assets/1.Scene/GameResultPreview.unity";
+
+        [MenuItem("Tools/SandGuard/Adjust Game Result Layout")]
+        public static void AdjustLayout()
+        {
+            var root = PrefabUtility.LoadPrefabContents(PrefabPath);
+            try
+            {
+                var card = root.transform.Find("Overlay/Result Card");
+                var subtitle = card.Find("Subtitle").GetComponent<TMP_Text>();
+                subtitle.fontSize = 16;
+                subtitle.color = new Color(.13f,.09f,.05f);
+                subtitle.rectTransform.anchoredPosition = new Vector2(0,84);
+                for (int i=0;i<3;i++)
+                {
+                    var names = new[] { "클리어 시간", "방어한 웨이브", "처치한 적" };
+                    var stat = card.Find("Stat " + names[i]).GetComponent<RectTransform>();
+                    stat.anchoredPosition = new Vector2(-45,25-i*91);
+                    stat.sizeDelta = new Vector2(200,44);
+                    var value = card.Find("Value " + names[i]).GetComponent<RectTransform>();
+                    value.anchoredPosition = new Vector2(120,25-i*91);
+                    value.sizeDelta = new Vector2(110,44);
+                }
+                PrefabUtility.SaveAsPrefabAsset(root,PrefabPath);
+            }
+            finally { Object.DestroyImmediate(root); }
+            Debug.Log("[GameResult] Result text layout adjusted.");
+        }
+
+        [MenuItem("Tools/SandGuard/Build Game Result Preview Scene")]
+        public static void BuildPreviewScene()
+        {
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
+            if (!prefab) throw new System.InvalidOperationException("Build Game Result UI prefab first: " + PrefabPath);
+            var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Additive);
+            var cameraObject = new GameObject("Preview Camera", typeof(Camera), typeof(AudioListener));
+            SceneManager.MoveGameObjectToScene(cameraObject, scene);
+            var camera = cameraObject.GetComponent<Camera>();
+            camera.clearFlags = CameraClearFlags.SolidColor;
+            camera.backgroundColor = new Color(.055f,.04f,.035f);
+            var instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, scene);
+            instance.name = "GameResultCanvas — Inspector: Show Failure";
+            var screen = instance.GetComponent<GameResultScreen>();
+            var serialized = new SerializedObject(screen);
+            serialized.FindProperty("previewOnly").boolValue = true;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            var preview = instance.AddComponent<GameResultPreview>();
+            var previewData = new SerializedObject(preview);
+            Set(previewData, "screen", screen);
+            previewData.ApplyModifiedPropertiesWithoutUndo();
+            screen.ShowPreview(false);
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene, PreviewPath);
+            EditorSceneManager.CloseScene(scene, true);
+            AssetDatabase.SaveAssets();
+            Debug.Log("[GameResult] Preview scene saved: " + PreviewPath);
+        }
 
         [MenuItem("Tools/SandGuard/Build Game Result UI")]
         public static void Build()
@@ -30,7 +87,7 @@ namespace DesertTower.LevelIntegration.Editor
             var raw = card.gameObject.AddComponent<RawImage>(); raw.texture = art; raw.uvRect = new Rect(0,0,.5f,1); raw.raycastTarget = false;
             var gold = new Color(1f,.88f,.66f); var dark = new Color(.13f,.09f,.05f);
             var title = Label("Title",card.transform,"CLEAR",72,gold,new Vector2(0,163),new Vector2(490,96),false);
-            var subtitle = Label("Subtitle",card.transform,"사막의 평화가 다시 찾아왔습니다!",24,gold,new Vector2(0,101),new Vector2(540,44),false);
+            var subtitle = Label("Subtitle",card.transform,"사막의 평화가 다시 찾아왔습니다!",16,dark,new Vector2(0,84),new Vector2(540,44),false);
             string[] names = { "클리어 시간", "방어한 웨이브", "처치한 적" };
             string[] placeholders = { "00:00", "0 / 0", "0" };
             TMP_Text[] statNames = new TMP_Text[3];
@@ -38,8 +95,8 @@ namespace DesertTower.LevelIntegration.Editor
             for (int i=0;i<3;i++)
             {
                 float y = 25 - i*91;
-                statNames[i] = Label("Stat " + names[i],card.transform,names[i],26,dark,new Vector2(-111,y),new Vector2(255,44),true);
-                values[i] = Label("Value " + names[i],card.transform,placeholders[i],29,dark,new Vector2(155,y),new Vector2(160,44),false);
+                statNames[i] = Label("Stat " + names[i],card.transform,names[i],26,dark,new Vector2(-45,y),new Vector2(200,44),true);
+                values[i] = Label("Value " + names[i],card.transform,placeholders[i],29,dark,new Vector2(120,y),new Vector2(110,44),false);
             }
             var retry = HitButton("Retry",card.transform,new Vector2(-151,-303),new Vector2(255,74));
             var menu = HitButton("Main Menu",card.transform,new Vector2(151,-303),new Vector2(255,74));
