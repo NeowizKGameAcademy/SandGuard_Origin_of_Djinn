@@ -12,7 +12,7 @@ public class CoffinSummon : MonoBehaviour
     [SerializeField] private float RespawnCoolDown = 5f;
 
     private Vector3[] summonPoints;
-    private Creature[] summonedCreatures;
+    private CreatureController[] summonedCreatures;
 
     private void OnEnable()
     {
@@ -33,7 +33,7 @@ public class CoffinSummon : MonoBehaviour
             return;
 
         summonPoints = new Vector3[summonNum];
-        summonedCreatures = new Creature[summonNum];
+        summonedCreatures = new CreatureController[summonNum];
 
         float radius = Range.range * 0.3f;
         float angleStep = 360f / summonNum;
@@ -67,7 +67,7 @@ public class CoffinSummon : MonoBehaviour
 
         obj.transform.position = summonPoints[index];
 
-        Creature creature = obj.GetComponent<Creature>();
+        CreatureController creature = obj.GetComponent<CreatureController>();
 
         creature.Initialize(this, index, summonPoints[index]);
         summonedCreatures[index] = creature;

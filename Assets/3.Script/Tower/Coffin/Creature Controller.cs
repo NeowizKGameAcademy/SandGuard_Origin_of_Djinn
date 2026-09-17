@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Creature : MonoBehaviour
+public class CreatureController : MonoBehaviour
 {
     protected CoffinSummon owner;
     protected int summonIndex;

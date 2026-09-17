@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class CreatureMove : Creature
+public class CreatureMove : CreatureController
 {
     [SerializeField] private FindEnemy enemy;
 
