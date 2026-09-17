@@ -36,24 +36,18 @@ public class AnubisSkill : MonoBehaviour
 
     private void UseSkill()
     {
-        Collider[] hits = Physics.OverlapSphere(
-            transform.position,
-            skillRange,
-            targetMask
-        );
+        Collider[] hits = Physics.OverlapSphere(transform.position, skillRange,targetMask);
 
         foreach (Collider hit in hits)
         {
-            ICombatTarget target =
-                hit.GetComponentInParent<ICombatTarget>();
+            ICombatTarget target = hit.GetComponentInParent<ICombatTarget>();
 
             if (target == null || !target.IsTargetable)
                 continue;
 
             Transform targetTransform = ((Component)target).transform;
 
-            Vector3 direction =
-                targetTransform.position - transform.position;
+            Vector3 direction = targetTransform.position - transform.position;
 
             direction.y = 0f;
 
@@ -62,23 +56,17 @@ public class AnubisSkill : MonoBehaviour
 
             direction.Normalize();
 
-            // 아누비스 뒤쪽이면 제외
             if (Vector3.Dot(transform.forward, direction) <= 0f)
                 continue;
 
-            IDisplaceable displaceable =
-                targetTransform.GetComponentInParent<IDisplaceable>();
+            IDisplaceable displaceable = targetTransform.GetComponentInParent<IDisplaceable>();
 
             if (displaceable == null)
                 continue;
 
-            Vector3 launchVelocity =
-                direction * horizontalPower +
-                Vector3.up * verticalPower;
+            Vector3 launchVelocity = direction * horizontalPower + Vector3.up * verticalPower;
 
             displaceable.Launch(launchVelocity);
         }
     }
-
-    
 }
