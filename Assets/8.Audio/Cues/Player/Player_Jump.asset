@@ -13,14 +13,14 @@ MonoBehaviour:
   m_Name: Player_Jump
   m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxCue
   clips:
-  - {fileID: 8300000, guid: db81b9d83c82cdb438158d7451d19d92, type: 3}
-  volume: 0.5
+  - {fileID: 8300000, guid: 7676729a1e583bb4cb00854ef7cb7efb, type: 3}
+  volume: 0.7
   volumeJitterDb: 1
   pitch: 1
   pitchJitter: 0.04
   mixerGroup: {fileID: -6147871996741235955, guid: 1fae13e4ac1874e45988f79fc0bae7ec, type: 2}
   priority: 128
-  spatial: 1
+  spatial: 0
   minDistance: 2
   maxDistance: 20
   rolloff: 0
