@@ -80,26 +80,34 @@ namespace SandGuard.Player.Tests
         {
             var player = Player(new Vector3(0, 20f, 0));
             var motor = player.GetComponent<PlayerMotor>();
+            var visuals = player.GetComponent<PlayerVisuals>();
             var mana = player.GetComponent<PlayerManaWallet>();
             motor.extraAirJumps = 2;
             motor.airJumpManaCost = 5;
             motor.Teleport(player.transform.position);
             mana.TrySpend(mana.CurrentMana - 5);
             int jumps = 0;
+            int groundSfxEvents = 0, airSfxEvents = 0;
             motor.Jumped += () => jumps++;
+            visuals.onJumped.AddListener(() => groundSfxEvents++);
+            visuals.onAirJumped.AddListener(() => airSfxEvents++);
             yield return null;
             Keys(Key.Space); yield return new WaitForSeconds(.05f);
             Assert.AreEqual(1, jumps);
+            Assert.AreEqual(0, groundSfxEvents);
+            Assert.AreEqual(1, airSfxEvents);
             Assert.AreEqual(0, mana.CurrentMana);
             int remaining = motor.RemainingAirJumps;
             Keys(); yield return null;
             Keys(Key.Space); yield return new WaitForSeconds(.05f);
             Assert.AreEqual(1, jumps, "Insufficient mana blocks the extra jump.");
+            Assert.AreEqual(1, airSfxEvents, "Blocked jumps must stay silent.");
             Assert.AreEqual(remaining, motor.RemainingAirJumps);
             motor.airJumpManaCost = 0;
             Keys(); yield return null;
             Keys(Key.Space); yield return new WaitForSeconds(.05f);
             Assert.AreEqual(2, jumps, "Zero cost permits an extra jump without mana.");
+            Assert.AreEqual(2, airSfxEvents);
             Assert.AreEqual(0, mana.CurrentMana);
         }
 
@@ -113,9 +121,11 @@ namespace SandGuard.Player.Tests
             motor.airJumpManaCost = 5;
             int initialMana = mana.CurrentMana;
             player.GetComponent<PlayerEffects>().Apply(new SandGuard.Player.Effects.DoubleJumpEffect()); // 기본값은 공중 점프 0
-            float landedSpeed = -1f; int landings = 0, hardLandings = 0;
+            float landedSpeed = -1f; int landings = 0, hardLandings = 0, groundSfxEvents = 0, airSfxEvents = 0;
             motor.Landed += speed => { landedSpeed = speed; landings++; };
             visuals.onHardLanded.AddListener(() => hardLandings++);
+            visuals.onJumped.AddListener(() => groundSfxEvents++);
+            visuals.onAirJumped.AddListener(() => airSfxEvents++);
             yield return new WaitForSeconds(0.4f);
             var animator = player.GetComponentInChildren<Animator>();
             Assert.True(motor.IsGrounded);
@@ -125,6 +135,8 @@ namespace SandGuard.Player.Tests
             Keys(Key.Space); yield return new WaitForSeconds(0.15f);
             Assert.False(motor.IsGrounded);
             Assert.False(motor.LastJumpWasAirJump);
+            Assert.AreEqual(1, groundSfxEvents);
+            Assert.AreEqual(0, airSfxEvents);
             Assert.AreEqual(initialMana, mana.CurrentMana, "Ground jumps remain free.");
             Assert.Greater(motor.VerticalSpeed, 0f);
             Assert.True(State(animator).IsName("Jump"), "Ground jump uses the jump-up clip, not the flip.");
@@ -134,6 +146,8 @@ namespace SandGuard.Player.Tests
             Keys(); yield return null;
             Keys(Key.Space); yield return new WaitForSeconds(0.1f);
             Assert.True(motor.LastJumpWasAirJump);
+            Assert.AreEqual(1, groundSfxEvents);
+            Assert.AreEqual(1, airSfxEvents);
             Assert.AreEqual(initialMana - 5, mana.CurrentMana, "Only the air jump spends mana.");
             Assert.True(State(animator).IsName("Double Jump"), "Air jump uses the flip.");
             AssertClip(animator, "Flip");

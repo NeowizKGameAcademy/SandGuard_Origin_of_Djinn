@@ -28,6 +28,7 @@ namespace DesertTower.LevelIntegration
         public int TotalSpawned { get; private set; }
         public int Killed { get; private set; }
         public int Absorbed { get; private set; }
+        public float RunElapsedSeconds { get; private set; }
         public float PreparationRemaining { get; private set; }
         public string LastError { get; private set; }
 
@@ -185,7 +186,7 @@ namespace DesertTower.LevelIntegration
             if (errors.Count > 0) { Fail(string.Join("\n", errors)); return; }
             if (Core.IsDefeated) { Fail("코어를 초기화하거나 씬을 다시 시작하세요."); return; }
             Cleanup(); random = new System.Random(randomSeed);
-            TotalSpawned = Killed = Absorbed = 0; WaveIndex = -1; LastError = null;
+            TotalSpawned = Killed = Absorbed = 0; RunElapsedSeconds = 0; WaveIndex = -1; LastError = null;
             NextWave();
         }
         /// <summary>남은 준비 시간을 건너뛰고 바로 전투로 들어간다. 시작 전이면 시작부터 한다.
@@ -209,6 +210,7 @@ namespace DesertTower.LevelIntegration
         {
             if (State != RunState.Preparing && State != RunState.Running) return;
             if (Time.timeScale <= 0) return;
+            RunElapsedSeconds += Time.deltaTime;
             if (Core == null || !coreReceiver) { Fail("코어 연결이 사라졌습니다."); return; }
             if (Core.IsDefeated) { FinishLoss(); return; }
             if (State == RunState.Preparing)
