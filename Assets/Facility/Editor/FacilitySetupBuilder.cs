@@ -291,7 +291,9 @@ namespace SandGuard.Facility.Editor
         /// <summary>담당자 받침(Tower Base.prefab)의 프리팹 변형 + FacilityAnchor. 슬롯마다 이것을 놓는다.</summary>
         public const string TowerBaseAnchorPath = TowersFolder + "/TowerBaseAnchor.prefab";
         public const string ObeliskId = "obelisk";
-        public static string TowerBodyPath(string kind) => "Assets/2.Model/Prefabs/Tower (" + kind + ").prefab";
+        public const string SkeletonId = "skeleton";
+        public const string AnubisId = "anubis";
+        public static string TowerBodyPath(string kind) => "Assets/2.Model/Prefabs/Tower_" + kind + ".prefab";
 
         /// <summary>
         /// 건설 흐름에 담당자 타워를 쓴다.
@@ -324,8 +326,11 @@ namespace SandGuard.Facility.Editor
 
             var catalog = AssetDatabase.LoadAssetAtPath<FacilityCatalog>(CatalogPath);
             if (catalog == null) { catalog = ScriptableObject.CreateInstance<FacilityCatalog>(); AssetDatabase.CreateAsset(catalog, CatalogPath); }
-            Upsert(catalog, 0, CobraId, "화염 코브라", TowerBodyPath("Cobra"), 40, Art + "/UI/UI_Icon_Cobra.png");
-            Upsert(catalog, 1, ObeliskId, "모래시계 오벨리스크", TowerBodyPath("Obelisk"), 55, Art + "/UI/UI_Icon_Crystal.png");
+            const string towerIconFolder = "Assets/4.Sprite/UI/Facility/TowerIcons";
+            Upsert(catalog, 0, CobraId, "코브라 타워", TowerBodyPath("Cobra"), 40, towerIconFolder + "/TowerIcon_1_Cobra.png");
+            Upsert(catalog, 1, ObeliskId, "오벨리스크", TowerBodyPath("Obelisk"), 55, towerIconFolder + "/TowerIcon_2_Obelisk.png");
+            Upsert(catalog, 2, SkeletonId, "스켈레톤 관", "Assets/2.Model/Prefabs/Tower_Coffin.prefab", 70, towerIconFolder + "/TowerIcon_3_Skeleton.png");
+            Upsert(catalog, 3, AnubisId, "아누비스 석상", "Assets/2.Model/Prefabs/Tower Anubis.prefab", 85, towerIconFolder + "/TowerIcon_4_Anubis.png");
             EditorUtility.SetDirty(catalog);
             AssetDatabase.SaveAssets();
             Debug.Log("FACILITY_TOWER_ASSETS_READY bodies=Cobra,Obelisk");
@@ -336,6 +341,7 @@ namespace SandGuard.Facility.Editor
             var definition = catalog.Find(id);
             if (definition == null) { definition = new FacilityDefinition { id = id }; catalog.facilities.Insert(Mathf.Min(index, catalog.facilities.Count), definition); }
             definition.displayName = displayName;
+            definition.requiredSkillId = "tower." + id;
             definition.prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
             definition.manaCost = cost;
             definition.maxHealth = 150f;
@@ -356,8 +362,13 @@ namespace SandGuard.Facility.Editor
             foreach (var slot in level.BuildSlots)
             {
                 // 허용 목록이 비었거나 예전 기본값(코브라만)이면 건설 가능한 타워를 모두 허용한다. 기획자가 정한 목록은 그대로 둔다.
-                bool automatic = slot.allowedFacilityIds.Count == 0 || (slot.allowedFacilityIds.Count == 1 && slot.allowedFacilityIds[0] == CobraId);
-                if (automatic) { slot.allowedFacilityIds.Clear(); slot.allowedFacilityIds.Add(CobraId); slot.allowedFacilityIds.Add(ObeliskId); }
+                bool automatic = slot.allowedFacilityIds.Count == 0 || slot.allowedFacilityIds.All(id => id == CobraId || id == ObeliskId || id == SkeletonId || id == AnubisId);
+                if (automatic)
+                {
+                    slot.allowedFacilityIds.Clear();
+                    slot.allowedFacilityIds.Add(CobraId); slot.allowedFacilityIds.Add(ObeliskId);
+                    slot.allowedFacilityIds.Add(SkeletonId); slot.allowedFacilityIds.Add(AnubisId);
+                }
                 EditorUtility.SetDirty(slot);
                 foreach (var previous in slot.GetComponentsInChildren<FacilityAnchor>(true)) Object.DestroyImmediate(previous.gameObject);
                 var anchor = (GameObject)PrefabUtility.InstantiatePrefab(anchorPrefab, scene);

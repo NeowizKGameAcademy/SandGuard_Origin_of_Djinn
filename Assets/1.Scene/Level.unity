@@ -711,6 +711,8 @@ MonoBehaviour:
   allowedFacilityIds:
   - cobra
   - obelisk
+  - skeleton
+  - anubis
   footprint: {x: 4, y: 4}
   available: 1
 --- !u!1 &17975418
@@ -5583,6 +5585,8 @@ MonoBehaviour:
   allowedFacilityIds:
   - cobra
   - obelisk
+  - skeleton
+  - anubis
   footprint: {x: 4, y: 4}
   available: 1
 --- !u!1001 &359434510
@@ -10562,6 +10566,8 @@ MonoBehaviour:
   allowedFacilityIds:
   - cobra
   - obelisk
+  - skeleton
+  - anubis
   footprint: {x: 4, y: 4}
   available: 1
 --- !u!1 &666992427
@@ -12920,6 +12926,8 @@ MonoBehaviour:
   allowedFacilityIds:
   - cobra
   - obelisk
+  - skeleton
+  - anubis
   footprint: {x: 4, y: 4}
   available: 1
 --- !u!1 &814965706
@@ -15566,6 +15574,8 @@ MonoBehaviour:
   allowedFacilityIds:
   - cobra
   - obelisk
+  - skeleton
+  - anubis
   footprint: {x: 4, y: 4}
   available: 1
 --- !u!1001 &970470950
@@ -19302,6 +19312,8 @@ MonoBehaviour:
   allowedFacilityIds:
   - cobra
   - obelisk
+  - skeleton
+  - anubis
   footprint: {x: 4, y: 4}
   available: 1
 --- !u!1 &1217874065
@@ -24037,6 +24049,8 @@ MonoBehaviour:
   allowedFacilityIds:
   - cobra
   - obelisk
+  - skeleton
+  - anubis
   footprint: {x: 4, y: 4}
   available: 1
 --- !u!1 &1554678845
@@ -28564,6 +28578,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2572080734907543233, guid: e4240e248898d2c4788c6c96a492eb98, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 1216
+      objectReference: {fileID: 0}
+    - target: {fileID: 2572080734907543233, guid: e4240e248898d2c4788c6c96a492eb98, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 408
+      objectReference: {fileID: 0}
     - target: {fileID: 3796054922813002677, guid: e4240e248898d2c4788c6c96a492eb98, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -28579,6 +28601,14 @@ PrefabInstance:
     - target: {fileID: 6740954383904229479, guid: e4240e248898d2c4788c6c96a492eb98, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7116677375724729328, guid: e4240e248898d2c4788c6c96a492eb98, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 284
+      objectReference: {fileID: 0}
+    - target: {fileID: 7116677375724729328, guid: e4240e248898d2c4788c6c96a492eb98, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 284
       objectReference: {fileID: 0}
     - target: {fileID: 8267912350492090461, guid: e4240e248898d2c4788c6c96a492eb98, type: 3}
       propertyPath: m_sharedMaterial
@@ -31109,6 +31139,8 @@ MonoBehaviour:
   allowedFacilityIds:
   - cobra
   - obelisk
+  - skeleton
+  - anubis
   footprint: {x: 4, y: 4}
   available: 1
 --- !u!1 &1938395073
