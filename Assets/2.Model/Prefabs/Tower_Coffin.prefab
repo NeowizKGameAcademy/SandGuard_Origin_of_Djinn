@@ -41,6 +41,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5041819191949463475}
+  - component: {fileID: 4027866758884893396}
   - component: {fileID: 5932724634778524864}
   - component: {fileID: 5930303140960779812}
   m_Layer: 0
@@ -68,6 +69,26 @@ Transform:
   - {fileID: 5393140600039714089}
   m_Father: {fileID: 7419908579025864962}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4027866758884893396
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 670984707786945641}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcdd94ce2f020834c894010bf3855ed3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TowerStatus
+  MaxHP: 200
+  CurrentHP: 0
+  DetectRange: 20
+  TickDamage: 10
+  TickInterval: 1
+  SlowRatio: 0.3
+  CreatureNum: 7
+  SummonDistance: 0.3
 --- !u!114 &5932724634778524864
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -80,6 +101,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d84d375c5a312545b715be04b98d296, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DetectRange
+  Status: {fileID: 0}
   Range: 20
 --- !u!114 &5930303140960779812
 MonoBehaviour:
@@ -94,7 +116,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CoffinSummon
   Range: {fileID: 0}
-  summonNum: 7
+  Status: {fileID: 0}
   CreaturePool: {fileID: 1971729169330750020}
   RespawnCoolDown: 5
 --- !u!1 &1381179908074863463

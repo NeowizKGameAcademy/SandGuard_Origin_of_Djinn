@@ -4,15 +4,39 @@ using UnityEngine;
 
 public class TowerStatus : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    [Header("Basic Status")]
+    [SerializeField] private float MaxHP = 200f;
+    [SerializeField] private float CurrentHP;
+    [SerializeField] private float DetectRange = 20f;
+
+    [Header("Cobra Status")]
+    [SerializeField] private float TickDamage = 10f;
+    [SerializeField] private float TickInterval = 1f;
+
+    [Header("Obelisk Status")]
+    [SerializeField] private float SlowRatio = 0.3f;
+
+    [Header("Coffin Status")]
+    [SerializeField] private int CreatureNum = 7;
+    [SerializeField] private float SummonDistance = 0.3f;
+
+    //Properties
+    public float maxHP => MaxHP;
+    public float curHP => CurrentHP;
+    public float detectRange => DetectRange;
+    public float tickDamage => TickDamage;
+    public float tickInterval => TickInterval;
+    public float slowRatio => SlowRatio;
+    public int creatureNum => CreatureNum;
+    public float summonDistance => SummonDistance;
+
+    private void OnEnable()
     {
-        
+        CurrentHP = MaxHP;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        
+        DetectRange = Mathf.Clamp(DetectRange, 0f, 50f);
     }
 }

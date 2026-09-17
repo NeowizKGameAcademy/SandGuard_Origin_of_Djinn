@@ -40,17 +40,20 @@ public class RangeController : MonoBehaviour
 
     [SerializeField] private Type type;
 
+    [Header("Status")]
+    [SerializeField] private TowerStatus Status;
+
     [Header("Detect")]
     [SerializeField] private DetectRange DetectRange;
 
     [Header("Slow")]
-    [SerializeField] private float SlowRatio = 0.5f;
+    [SerializeField] private float SlowRatio;
 
     // [통합 추가] 검사·요청 간격(초). 둔화는 이 간격의 2배 조금 넘게 걸어 두고 계속 갱신한다.
     [Header("Integration")]
-    [SerializeField] private float Tick_Interval = 0.25f;
+    [SerializeField] private float Tick_Interval;
     // [통합 추가] Fire: 한 번 검사할 때 주는 피해(임시 수치. 0.25초마다 5 = 초당 20)
-    [SerializeField] private float Fire_Damage = 5f;
+    [SerializeField] private float Fire_Damage;
     // [통합 추가] 피해 원인 ID. 적 쪽 방어 규칙이 "tower." 접두사로 타워 공격을 구분한다.
     [SerializeField] private string Cause_Id = "tower.fire";
     // [통합 추가] 적 콜라이더를 모을 레이어. 기본은 전부.
@@ -67,8 +70,14 @@ public class RangeController : MonoBehaviour
     // [통합 추가] 범위 모양(이 오브젝트의 콜라이더)과 타워 자신의 전투 정보(진영·ID)
     private void Awake()
     {
+        TryGetComponent(out Status);
         TryGetComponent(out Area);
         Owner = GetComponentInParent<ICombatTarget>();
+
+        SlowRatio = Status.slowRatio;
+
+        Tick_Interval = Status.tickInterval;
+        Fire_Damage = Status.tickDamage;
     }
 
     // [통합 추가] 트리거 콜백 대신 주기적으로 범위 안 적을 찾아 요청을 보낸다.

@@ -78,6 +78,7 @@ GameObject:
   m_Component:
   - component: {fileID: 559005201874876587}
   - component: {fileID: 5266200475067860405}
+  - component: {fileID: 5651857099929563370}
   - component: {fileID: 3477409069980780067}
   - component: {fileID: 7057216676064026827}
   - component: {fileID: 3911644756337111258}
@@ -133,6 +134,26 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 94
   m_CollisionDetection: 0
+--- !u!114 &5651857099929563370
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2280082227556136165}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcdd94ce2f020834c894010bf3855ed3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TowerStatus
+  MaxHP: 200
+  CurrentHP: 0
+  DetectRange: 20
+  TickDamage: 10
+  TickInterval: 1
+  SlowRatio: 0.3
+  CreatureNum: 7
+  SummonDistance: 0.3
 --- !u!114 &3477409069980780067
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -145,6 +166,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d84d375c5a312545b715be04b98d296, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DetectRange
+  Status: {fileID: 0}
   Range: 20
 --- !u!114 &7057216676064026827
 MonoBehaviour:
@@ -15068,6 +15090,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RangeController
   type: 0
+  Status: {fileID: 0}
   DetectRange: {fileID: 3477409069980780067}
   SlowRatio: 0.5
   Tick_Interval: 0.25

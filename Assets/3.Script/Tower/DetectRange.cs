@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class DetectRange : MonoBehaviour
 {
+
+
+    [SerializeField] private TowerStatus Status;
+
     [SerializeField] private float Range = 20f;
 
     public bool IsDetecting => Detect_Count > 0;
@@ -18,14 +22,15 @@ public class DetectRange : MonoBehaviour
 
     private ICombatTarget Owner;
 
-    private void Awake()
+    private void OnEnable()
     {
+        TryGetComponent(out Status);
         Owner = GetComponentInParent<ICombatTarget>();
     }
 
     private void Update()
     {
-        Range = Mathf.Clamp(Range, 0f, 50f);
+        Range = Status.detectRange;
 
         CountEnemies();
     }
@@ -57,5 +62,10 @@ public class DetectRange : MonoBehaviour
         Vector3 center = transform.position;
 
         return (other.ClosestPoint(center) - center).sqrMagnitude <= Range * Range;
+    }
+
+    public bool Contains(Vector3 position)
+    {
+        return (position - transform.position).sqrMagnitude <= 7.5f * 7.5f;
     }
 }

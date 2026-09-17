@@ -14,6 +14,8 @@ public class AnubisController : MonoBehaviour
     [SerializeField] private float StopDistance = 1.5f;
     [SerializeField] private float RotateSpeed = 0.5f;
 
+    public float distance => StopDistance;
+
     private void OnEnable()
     {
         TryGetComponent(out enemy);

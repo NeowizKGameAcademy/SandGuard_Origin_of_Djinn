@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class AnubisSkill : MonoBehaviour
 {
+    [SerializeField] private FindEnemy findEnemy;
     [SerializeField] private AnubisStatus status;
+    [SerializeField] private AnubisController controller;
 
     [Header("Skill")]
     [SerializeField] private float skillRange = 15f;
@@ -21,7 +23,9 @@ public class AnubisSkill : MonoBehaviour
 
     private void OnEnable()
     {
+        TryGetComponent(out findEnemy);
         TryGetComponent(out status);
+        TryGetComponent(out controller);
     }
     private void Update()
     {
@@ -36,7 +40,18 @@ public class AnubisSkill : MonoBehaviour
 
     private void UseSkill()
     {
-        Collider[] hits = Physics.OverlapSphere(transform.position, skillRange,targetMask);
+        if (findEnemy.target == null)
+            return;
+
+        Vector3 targetDirection =
+            findEnemy.target.position - transform.position;
+
+        targetDirection.y = 0f;
+
+        if (targetDirection.sqrMagnitude > controller.distance * controller.distance)
+            return;
+
+        Collider[] hits = Physics.OverlapSphere(transform.position, skillRange, targetMask);
 
         foreach (Collider hit in hits)
         {
@@ -47,7 +62,8 @@ public class AnubisSkill : MonoBehaviour
 
             Transform targetTransform = ((Component)target).transform;
 
-            Vector3 direction = targetTransform.position - transform.position;
+            Vector3 direction =
+                targetTransform.position - transform.position;
 
             direction.y = 0f;
 

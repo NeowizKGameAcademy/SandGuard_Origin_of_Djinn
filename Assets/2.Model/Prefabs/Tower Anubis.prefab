@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3769913684679723408}
+  - component: {fileID: 8204775370006679525}
   - component: {fileID: 561771609500174286}
   m_Layer: 0
   m_Name: Tower (Anubis)
@@ -36,6 +37,26 @@ Transform:
   - {fileID: 9060510929309044411}
   m_Father: {fileID: 8318035740673722136}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8204775370006679525
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 870966564151246436}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcdd94ce2f020834c894010bf3855ed3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TowerStatus
+  MaxHP: 200
+  CurrentHP: 0
+  DetectRange: 20
+  TickDamage: 10
+  TickInterval: 1
+  SlowRatio: 0.3
+  CreatureNum: 7
+  SummonDistance: 0.3
 --- !u!114 &561771609500174286
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -522,10 +543,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5116c20b2ef68bd4cb88447849570df8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AnubisSkill
+  findEnemy: {fileID: 0}
   status: {fileID: 0}
+  controller: {fileID: 0}
   skillRange: 15
   skillCooldown: 5
-  horizontalPower: 30
+  horizontalPower: 8
   verticalPower: 8
   targetMask:
     serializedVersion: 2
