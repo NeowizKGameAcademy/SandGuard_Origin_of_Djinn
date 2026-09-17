@@ -92,7 +92,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 10
@@ -128,6 +128,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2624446252337354497}
     m_Modifications:
+    - target: {fileID: 383168335128361547, guid: 24ee074b2ac84d24cae34ae3eeb6f74b, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4291424511
+      objectReference: {fileID: 0}
+    - target: {fileID: 383168335128361547, guid: 24ee074b2ac84d24cae34ae3eeb6f74b, type: 3}
+      propertyPath: m_TextStyleHashCode
+      value: -1183493901
+      objectReference: {fileID: 0}
+    - target: {fileID: 1519459833075398405, guid: 24ee074b2ac84d24cae34ae3eeb6f74b, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 1274732785150258582, guid: 9a6b3d0b4eb136f48bc0872b1cc4e94f, type: 2}
+    - target: {fileID: 1519459833075398405, guid: 24ee074b2ac84d24cae34ae3eeb6f74b, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4291424511
+      objectReference: {fileID: 0}
+    - target: {fileID: 1519459833075398405, guid: 24ee074b2ac84d24cae34ae3eeb6f74b, type: 3}
+      propertyPath: m_TextStyleHashCode
+      value: -1183493901
+      objectReference: {fileID: 0}
     - target: {fileID: 1559058044627614659, guid: 24ee074b2ac84d24cae34ae3eeb6f74b, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -211,6 +231,10 @@ PrefabInstance:
     - target: {fileID: 1564022875136723282, guid: 24ee074b2ac84d24cae34ae3eeb6f74b, type: 3}
       propertyPath: m_Name
       value: GameHUD
+      objectReference: {fileID: 0}
+    - target: {fileID: 5982461491913147629, guid: 24ee074b2ac84d24cae34ae3eeb6f74b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8320833860020470909, guid: 24ee074b2ac84d24cae34ae3eeb6f74b, type: 3}
       propertyPath: m_AnchoredPosition.x
