@@ -308,6 +308,8 @@ GameObject:
   - component: {fileID: 3594823806607372025}
   - component: {fileID: 6960889325576943016}
   - component: {fileID: 4112450732697401626}
+  - component: {fileID: 1500577165480423584}
+  - component: {fileID: 104360067080639713}
   m_Layer: 0
   m_Name: Character
   m_TagString: Untagged
@@ -416,6 +418,43 @@ MonoBehaviour:
   recoilDistance: 0.09
   armExtension: 0.88
   palmBasis: {x: -0.032703333, y: 0.020078251, z: 0.03779126, w: 0.99854857}
+--- !u!114 &1500577165480423584
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 804539470226826799}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03e00a1276e442b4888e8d7dc67a5651, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxAnimationEvents
+  SwingCue: {fileID: 0}
+  ImpactCue: {fileID: 0}
+  BodyFallCue: {fileID: 11400000, guid: ba0a21ea84d4bd648886763c1409f951, type: 2}
+  FootstepCue: {fileID: 0}
+  ThrowCue: {fileID: 0}
+  Anchor: {fileID: 0}
+--- !u!114 &104360067080639713
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 804539470226826799}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: 
+  m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxAnimatorState
+  StateName: Falling
+  Layer: 0
+  Animator: {fileID: 0}
+  EnterCue: {fileID: 0}
+  ExitCue: {fileID: 0}
+  LoopCue: {fileID: 11400000, guid: c9aa4afd41dcb114bbddee0041d05b95, type: 2}
+  MinDwell: 0.05
 --- !u!1 &866775805765661313
 GameObject:
   m_ObjectHideFlags: 0
@@ -1860,22 +1899,22 @@ MonoBehaviour:
   stats: {fileID: 6961237080123456789}
   dashManaCost: 10
   dashCooldown: 1
-  dashDuration: 0.3
-  dashDistance: 4
+  dashDuration: 0.2
+  dashDistance: 8
   dashProfile:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0.25
+      value: 0.5
       inSlope: 0
-      outSlope: 9
+      outSlope: 20
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 0.12
+      time: 0.05
       value: 1
       inSlope: 0
       outSlope: 0
@@ -1884,18 +1923,18 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 0.5
-      value: 0.9
-      inSlope: -0.8
-      outSlope: -0.8
+      time: 0.88
+      value: 1
+      inSlope: 0
+      outSlope: 0
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
       time: 1
-      value: 0.3
-      inSlope: -1.2
+      value: 0.15
+      inSlope: -6
       outSlope: 0
       tangentMode: 0
       weightedMode: 0
@@ -1905,12 +1944,13 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   airDashes: 0
+  groundedDashLiftAngle: 10
   moveSpeed: 5
   groundAcceleration: 60
   groundDeceleration: 90
   airAcceleration: 18
   airDeceleration: 8
-  dashExitDeceleration: 20
+  dashExitDeceleration: 60
   jumpHeight: 1.5
   gravity: 25
   fallGravityMultiplier: 2
@@ -2628,9 +2668,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: SandGuard.Player.Runtime::SandGuard.Player.PlayerDashCameraFeel
   motor: {fileID: 4530710521625350886}
   rig: {fileID: 5269684110936986897}
-  widenDegrees: 4
+  widenDegrees: 8
   riseSmoothTime: 0.02
-  fallSmoothTime: 0.08
+  fallSmoothTime: 0.18
+  rollDegrees: 2.5
 --- !u!114 &2894622140253906091
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2745,6 +2786,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxFootsteps
   Cue: {fileID: 11400000, guid: cb4ac18c3c406884da518252f6e6b7de, type: 2}
+  Mode: 1
+  Animator: {fileID: 3594823806607372025}
+  LiftHeight: 0.08
+  PlantHeight: 0.03
   Stride: 0.75
   MinSpeed: 0.6
   RequireGround: 1
@@ -2752,6 +2797,7 @@ MonoBehaviour:
   GroundMask:
     serializedVersion: 2
     m_Bits: 4294967295
+  PlayAtFoot: 1
 --- !u!1 &4692874630212477141
 GameObject:
   m_ObjectHideFlags: 0

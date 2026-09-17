@@ -424,6 +424,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1398052035753569935}
   - component: {fileID: 3016282574838916975}
+  - component: {fileID: 1290694456020292569}
   m_Layer: 0
   m_Name: Circle Effect
   m_TagString: Untagged
@@ -469,6 +470,23 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1290694456020292569
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6680422308508648322}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bdb87b0ef36e7c843819f121c5ef1857, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxAnimatorLoop
+  Cue: {fileID: 11400000, guid: b3c3c6b3e525450458cf76ba0708e733, type: 2}
+  Animator: {fileID: 3016282574838916975}
+  Layer: 0
+  StateName: Ground
+  Phase: 0
 --- !u!1 &8303710635462050349
 GameObject:
   m_ObjectHideFlags: 0

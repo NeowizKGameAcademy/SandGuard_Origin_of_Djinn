@@ -1,0 +1,79 @@
+bake 0s  old=Assets/DesertTowerLevels/Navigation/Navigation 39.asset
+new asset Assets/DesertTowerLevels/Navigation/Navigation 40.asset
+NE Spawn (76.49, 2.00, 76.92): navmesh at (76.49, 0.83, 76.92) (dy -1.17)
+   -> T1 (60.93, 2.16, 24.22): PathComplete len=57
+   -> Core: PathComplete len=183
+NW Spawn (-76.64, 2.00, 78.04): navmesh at (-76.64, 0.86, 78.04) (dy -1.14)
+   -> T4 (-63.16, 2.07, 21.64): PathComplete len=61
+   -> Core: PathComplete len=184
+SE Spawn (78.27, 2.00, -77.61): navmesh at (78.27, 0.86, -77.61) (dy -1.14)
+   -> T2 (60.82, 2.13, -24.53): PathComplete len=59
+   -> Core: PathComplete len=184
+SW Spawn (-76.81, 2.00, -78.05): navmesh at (-76.81, 0.85, -78.05) (dy -1.15)
+   -> T3 (-61.39, 2.41, -24.96): PathComplete len=58
+   -> Core: PathComplete len=184
+band |x|,|z| 70..110: onMesh=7560 connectedToT1=5751 disconnected=1809
+  connected outside-wall points around -180deg: n=83 maxCheb=106 e.g. (-106.00, 3.21, -4.00)
+  connected outside-wall points around -165deg: n=145 maxCheb=102 e.g. (-102.00, 3.10, -14.00)
+  connected outside-wall points around -150deg: n=161 maxCheb=96 e.g. (-96.00, 3.03, -72.00)
+  connected outside-wall points around -135deg: n=206 maxCheb=96 e.g. (-96.00, 3.16, -88.00)
+  connected outside-wall points around -120deg: n=225 maxCheb=110 e.g. (-72.00, 3.12, -96.00)
+  connected outside-wall points around -105deg: n=235 maxCheb=110 e.g. (-44.00, 2.27, -110.00)
+  connected outside-wall points around -90deg: n=222 maxCheb=110 e.g. (-14.00, 1.79, -110.00)
+  connected outside-wall points around -75deg: n=169 maxCheb=110 e.g. (12.00, 1.17, -90.00)
+  connected outside-wall points around -60deg: n=243 maxCheb=110 e.g. (32.00, 0.83, -76.00)
+  connected outside-wall points around -45deg: n=382 maxCheb=110 e.g. (60.00, 0.84, -78.00)
+  connected outside-wall points around -30deg: n=207 maxCheb=104 e.g. (76.00, 0.83, -58.00)
+  connected outside-wall points around -15deg: n=204 maxCheb=110 e.g. (76.00, 0.83, -30.00)
+  connected outside-wall points around 0deg: n=222 maxCheb=110 e.g. (76.00, 0.83, -10.00)
+  connected outside-wall points around 15deg: n=217 maxCheb=110 e.g. (76.00, 0.83, 12.00)
+  connected outside-wall points around 30deg: n=190 maxCheb=102 e.g. (76.00, 0.83, 32.00)
+  connected outside-wall points around 45deg: n=216 maxCheb=98 e.g. (60.00, 0.83, 76.20)
+  connected outside-wall points around 60deg: n=252 maxCheb=110 e.g. (32.00, 0.83, 76.00)
+  connected outside-wall points around 75deg: n=203 maxCheb=110 e.g. (12.00, 0.83, 76.00)
+  connected outside-wall points around 90deg: n=187 maxCheb=110 e.g. (-12.00, 1.67, 92.00)
+  connected outside-wall points around 105deg: n=212 maxCheb=110 e.g. (-44.00, 2.08, 108.00)
+  connected outside-wall points around 120deg: n=241 maxCheb=110 e.g. (-74.00, 2.99, 98.00)
+  connected outside-wall points around 135deg: n=311 maxCheb=110 e.g. (-110.00, 2.49, 86.00)
+  connected outside-wall points around 150deg: n=296 maxCheb=110 e.g. (-110.00, 2.33, 46.00)
+  connected outside-wall points around 165deg: n=233 maxCheb=110 e.g. (-110.00, 3.19, 20.00)
+  connected outside-wall points around 180deg: n=109 maxCheb=108 e.g. (-108.00, 3.14, 6.00)
+  disconnected points around -180deg: n=137 minCheb=70
+  disconnected points around -135deg: n=460 minCheb=70
+  disconnected points around -90deg: n=110 minCheb=70
+  disconnected points around -45deg: n=220 minCheb=70
+  disconnected points around 0deg: n=107 minCheb=70
+  disconnected points around 45deg: n=394 minCheb=70
+  disconnected points around 90deg: n=134 minCheb=70
+  disconnected points around 135deg: n=204 minCheb=70
+  disconnected points around 180deg: n=43 minCheb=70
+
+== finish ==
+NE Spawn y 2.00 -> 0.83
+   path to T1 PathComplete: (76,0.8,77) > (63,2.0,59) > (61,2.0,24)
+NW Spawn y 2.00 -> 0.86
+   path to T4 PathComplete: (-77,0.9,78) > (-63,2.0,59) > (-63,2.0,59) > (-63,2.0,22)
+SE Spawn y 2.00 -> 0.86
+   path to T2 PathComplete: (78,0.9,-78) > (69,2.0,-66) > (63,2.0,-59) > (61,2.1,-25)
+SW Spawn y 2.00 -> 0.85
+   path to T3 PathComplete: (-77,0.9,-78) > (-63,2.0,-59) > (-61,2.1,-25)
+ValidateGraph: OK
+
+== spawn push ==
+surface collect=Volume size=(240.00, 80.00, 240.00) mask=-5 (barrier layer 2 excluded: True)
+new navmesh Assets/DesertTowerLevels/Navigation/Navigation 41.asset (old Assets/DesertTowerLevels/Navigation/Navigation 40.asset)
+NE Spawn -> (81.79, 0.96, 82.25) r=116.0
+   T1: PathComplete (82,82) > (69,66) > (63,59) > (61,24)
+   Core: PathComplete
+NW Spawn -> (-81.28, 0.99, 82.76) r=116.0
+   T4: PathComplete (-81,83) > (-77,77) > (-63,59) > (-63,59) > (-63,22)
+   Core: PathComplete
+SE Spawn -> (82.37, 0.99, -81.68) r=116.0
+   T2: PathComplete (82,-82) > (69,-66) > (63,-59) > (61,-25)
+   Core: PathComplete
+SW Spawn -> (-81.36, 1.05, -82.68) r=116.0
+   T3: PathComplete (-81,-83) > (-63,-59) > (-61,-25)
+   Core: PathComplete
+across barrier r100->r110: PathComplete
+ValidateGraph: OK
+deleted Assets/DesertTowerLevels/Navigation/Navigation 40.asset

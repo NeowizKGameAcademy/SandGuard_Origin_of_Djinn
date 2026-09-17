@@ -140,19 +140,20 @@ namespace SandGuard.Player.Tests
             float baseFov = rig.BaseFieldOfView;
             Assert.AreEqual(baseFov, camera.fieldOfView, 0.001f);
             Assert.True(motor.TryDash().Succeeded);
-            float peak = 0f, peakTime = 0f, elapsed = 0f;
+            float peak = 0f, elapsed = 0f, fovAtThird = -1f;
             while (motor.IsDashing)
             {
                 yield return null;
                 elapsed += Time.deltaTime;
-                if (camera.fieldOfView > peak) { peak = camera.fieldOfView; peakTime = elapsed; }
+                if (camera.fieldOfView > peak) peak = camera.fieldOfView;
+                if (fovAtThird < 0f && elapsed >= motor.dashDuration * 0.3f) fovAtThird = camera.fieldOfView;
                 Ray centre = camera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
                 Assert.Less(Vector3.Angle(centre.direction, camera.transform.forward), 0.01f, "Widening the view never moves the centre aim ray.");
             }
             Assert.That(peak, Is.InRange(baseFov + dash.widenDegrees * 0.4f, baseFov + dash.widenDegrees + 0.01f), "The dash widens the field of view up to widenDegrees.");
-            Assert.Less(peakTime, motor.dashDuration * 0.7f, "The widest point comes with the fast start of the dash, not the end.");
-            Assert.Less(camera.fieldOfView, baseFov + dash.widenDegrees * 0.75f, "By the end of the dash the view has narrowed again with the deceleration.");
-            for (float t = 0f; t < 0.4f; t += Time.deltaTime)
+            Assert.Greater(fovAtThird, baseFov + dash.widenDegrees * 0.7f, "대시 30% 지점에 이미 거의 다 넓어져 있다(짧은 riseSmoothTime). 사다리꼴 정점이라 그 뒤로는 유지된다.");
+            Assert.Greater(camera.fieldOfView, baseFov + dash.widenDegrees * 0.5f, "사다리꼴 곡선이라 대시가 끝나는 순간까지 넓게 유지된다. 복귀는 종료 뒤 fallSmoothTime이 맡는다.");
+            for (float t = 0f; t < 0.8f; t += Time.deltaTime)
             {
                 yield return null;
                 Assert.GreaterOrEqual(camera.fieldOfView, baseFov - 0.001f, "The return never undershoots the base field of view (no recoil).");
