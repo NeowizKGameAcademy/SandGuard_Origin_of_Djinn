@@ -143,6 +143,7 @@ namespace SandGuard.UI.HUD
 
             if (wave is WaveDirector director)
             {
+                hud.Wave.SetRemainingEnemiesVisible(director.State == RunState.Running);
                 if (director.State == RunState.Running && lastWaveState != RunState.Running && number != announcedWave)
                 {
                     announcedWave = number;

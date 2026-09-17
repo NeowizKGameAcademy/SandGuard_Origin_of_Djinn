@@ -16,7 +16,9 @@ namespace SandGuard.UI.HUD
         private void Awake()
         {
             if (canvasGroup == null) canvasGroup = GetComponent<CanvasGroup>();
-            HideImmediate();
+            // This object is saved inactive in the prefab. Calling HideImmediate here would
+            // deactivate it again while ShowWave is activating it, preventing the coroutine.
+            if (canvasGroup != null) canvasGroup.alpha = 0f;
         }
 
         public void ShowWave(int wave)
