@@ -78,7 +78,7 @@ namespace SandGuard.Skills.Unity
                 view.removeButtons[i]=Button(win,t,"Remove "+keys[i],"X",x+218,720,36,28,out var removeLabel);
                 removeLabel.fontSize=18;removeLabel.fontStyle=FontStyle.Bold;removeLabel.color=t.gold;
             }
-            Label(win,t.font,"Footer","F / Esc 닫기    ·    스킬 선택 → 슬롯 클릭으로 장착    ·    × 장착 해제",17,120,811,1240,27,TextAnchor.MiddleCenter);
+            Label(win,t.font,"Footer","F / Esc 닫기    ·    이동은 구매 시 자동 장착    ·    공격은 슬롯 클릭으로 장착",17,120,811,1240,27,TextAnchor.MiddleCenter);
             var hint=Panel(canvasObject.transform,t,"Interaction Prompt",0,0,360,58);hint.anchorMin=hint.anchorMax=hint.pivot=new Vector2(.5f,.5f);hint.anchoredPosition=new Vector2(0,-220);
             view.prompt=hint.gameObject;view.promptLabel=Label(hint,t.font,"Text","F   스킬 제단",25,10,4,340,50,TextAnchor.MiddleCenter);
             hint.gameObject.SetActive(false);

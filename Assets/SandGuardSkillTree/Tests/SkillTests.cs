@@ -56,6 +56,21 @@ static class SkillTests
         Throws(()=>new SkillCatalog(new[]{D("a",slots:new[]{(EquipSlot)99})}),"invalid slot definition rejected");
         var multi=new SkillService(catalog,50);multi.Learn("a");Check(multi.Learn("c").Failure==SkillFailure.Prerequisite,"all prerequisites required");
         multi.Learn("b");Check(multi.Learn("c").Success,"all prerequisites satisfied");
+        var movement=new SkillService(new SkillCatalog(new[]{
+            new SkillDefinition("move.dash","대시","",1,SkillKind.Active,SkillBranch.Movement,Array.Empty<string>(),new[]{EquipSlot.Shift}),
+            new SkillDefinition("move.jump","더블 점프","",1,SkillKind.Active,SkillBranch.Movement,Array.Empty<string>(),new[]{EquipSlot.Space}),
+            new SkillDefinition("move.updraft","차지 점프","",2,SkillKind.Passive,SkillBranch.Movement,new[]{"move.jump"},Array.Empty<EquipSlot>()),
+            new SkillDefinition("move.recall","흔적 귀환","",3,SkillKind.Active,SkillBranch.Movement,new[]{"move.dash"},new[]{EquipSlot.Shift,EquipSlot.Q,EquipSlot.E,EquipSlot.R})}),10);
+        Check(movement.Learn("move.dash").Success && movement.Equipped(EquipSlot.Shift)=="move.dash","dash auto equips on purchase");
+        Check(movement.Learn("move.jump").Success && movement.Equipped(EquipSlot.Space)=="move.jump","double jump auto equips on purchase");
+        Check(movement.Learn("move.updraft").Success && movement.IsLearned("move.updraft"),"charge jump unlocks without a slot");
+        Check(movement.Learn("move.recall").Success && movement.Equipped(EquipSlot.Q)=="move.recall","recall auto equips to a free key");
+        Check(movement.Restore(new SkillSnapshot(3,new[]{"move.dash","move.jump","move.updraft","move.recall"},
+            new Dictionary<EquipSlot,string>{{EquipSlot.Shift,"move.recall"}})).Success
+            && movement.Equipped(EquipSlot.Shift)=="move.dash"
+            && movement.Equipped(EquipSlot.Space)=="move.jump"
+            && movement.Equipped(EquipSlot.Q)=="move.recall","legacy movement loadout migrates to automatic keys");
+        Check(movement.Respec().Success && movement.Equipped(EquipSlot.Shift)==null && !movement.IsLearned("move.updraft"),"respec removes automatic movement unlocks");
         Console.WriteLine("TOTAL: "+passed+" passed");
     }
 }

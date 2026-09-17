@@ -1,12 +1,13 @@
 using UnityEngine;
 
-public class CreatureMove : Creature
+public class CreatureMove : CreatureController
 {
     [SerializeField] private FindEnemy enemy;
 
     [Header("Move")]
     [SerializeField] private float MoveSpeed = 5f;
     [SerializeField] private float StopDistance = 1.5f;
+    [SerializeField] private float RotateSpeed = 0.5f;
 
     private void OnEnable()
     {
@@ -29,23 +30,22 @@ public class CreatureMove : Creature
         targetPosition.y = transform.position.y;
 
         float distance = (targetPosition - transform.position).sqrMagnitude;
+        Vector3 direction = (targetPosition - transform.position).normalized;
+        Quaternion targetRotation = Quaternion.LookRotation(direction);
 
         if (distance <= StopDistance * StopDistance)
             return;
 
-        transform.position = Vector3.MoveTowards(
-            transform.position,
-            targetPosition,
-            MoveSpeed * Time.deltaTime
-        );
+        transform.position = Vector3.MoveTowards(transform.position, targetPosition, MoveSpeed * Time.deltaTime);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * RotateSpeed);
     }
 
     private void Return()
     {
-        transform.position = Vector3.MoveTowards(
-            transform.position,
-            summonPoint,
-            MoveSpeed * Time.deltaTime
-        );
+        Vector3 direction = (summonPoint - transform.position).normalized;
+        Quaternion targetRotation = Quaternion.LookRotation(direction);
+
+        transform.position = Vector3.MoveTowards(transform.position, summonPoint, MoveSpeed * 2f * Time.deltaTime);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * RotateSpeed * 5f);
     }
 }
