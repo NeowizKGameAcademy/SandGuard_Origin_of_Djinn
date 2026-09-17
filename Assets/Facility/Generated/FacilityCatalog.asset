@@ -14,16 +14,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: SandGuard.Facility.Runtime::SandGuard.Facility.FacilityCatalog
   facilities:
   - id: cobra
-    displayName: "\uD654\uC5FC \uCF54\uBE0C\uB77C"
-    prefab: {fileID: 5945987979383059694, guid: 95720a27c649d7547a02f336818f0eb0, type: 3}
-    icon: {fileID: 21300000, guid: 0d34d3c1d6150564281fcb872ae3fd17, type: 3}
+    requiredSkillId: tower.cobra
+    displayName: "\uCF54\uBE0C\uB77C \uD0C0\uC6CC"
+    prefab: {fileID: 4802331615216252121, guid: 14d3dfb518ce1754090d6396734ed7ad, type: 3}
+    icon: {fileID: 21300000, guid: e7963cdbc535370428f2f9b9787588a5, type: 3}
     manaCost: 40
     maxHealth: 150
     maxUpgradeLevel: 3
   - id: obelisk
-    displayName: "\uBAA8\uB798\uC2DC\uACC4 \uC624\uBCA8\uB9AC\uC2A4\uD06C"
-    prefab: {fileID: 4581147062361068087, guid: 7c6ab4bbb68ab2c46b199f23ddff9097, type: 3}
-    icon: {fileID: 21300000, guid: 8c7c05a5b8a0e3c4a98b4ba99d466016, type: 3}
+    requiredSkillId: tower.obelisk
+    displayName: "\uC624\uBCA8\uB9AC\uC2A4\uD06C"
+    prefab: {fileID: 723750724092311395, guid: a86f94438f5186c4595aa0f2b6610b21, type: 3}
+    icon: {fileID: 21300000, guid: 5c0c3ecf37c2acf4e8c71994975c7b6b, type: 3}
     manaCost: 55
+    maxHealth: 150
+    maxUpgradeLevel: 3
+  - id: skeleton
+    requiredSkillId: tower.skeleton
+    displayName: "\uC2A4\uCF08\uB808\uD1A4 \uAD00"
+    prefab: {fileID: 3935623193798183890, guid: 9f69a47af3f18784ebfff89bae16c384, type: 3}
+    icon: {fileID: 21300000, guid: 67cd0ecfe23084749aa20de609cb1284, type: 3}
+    manaCost: 70
+    maxHealth: 150
+    maxUpgradeLevel: 3
+  - id: anubis
+    requiredSkillId: tower.anubis
+    displayName: "\uC544\uB204\uBE44\uC2A4 \uC11D\uC0C1"
+    prefab: {fileID: 2479293385062625072, guid: 5f1fdeaae3bc6aa41a07aa466058e5c0, type: 3}
+    icon: {fileID: 21300000, guid: 419ec9425c7b1314bbfb9d64004a3c02, type: 3}
+    manaCost: 85
     maxHealth: 150
     maxUpgradeLevel: 3

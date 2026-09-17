@@ -197,7 +197,7 @@ namespace SandGuard.Facility
             var catalog = service.catalog;
             int count = catalog != null ? catalog.facilities.Count : 0;
             float width = count * tileSize.x + Mathf.Max(0, count - 1) * tileSpacing;
-            panel.sizeDelta = new Vector2(width + 40f, tileSize.y + 80f);
+            panel.sizeDelta = new Vector2(width + 40f, tileSize.y + 90f);
             for (int i = 0; i < count; i++)
             {
                 var definition = catalog.facilities[i];
@@ -206,14 +206,17 @@ namespace SandGuard.Facility
                 tile.SetParent(panel, false);
                 tile.anchorMin = tile.anchorMax = new Vector2(.5f, 0f); tile.pivot = new Vector2(.5f, 0f);
                 tile.sizeDelta = tileSize;
-                tile.anchoredPosition = new Vector2(-width / 2f + tileSize.x / 2f + i * (tileSize.x + tileSpacing), 40f);
+                tile.anchoredPosition = new Vector2(-width / 2f + tileSize.x / 2f + i * (tileSize.x + tileSpacing), 50f);
                 Image(tile, "Disc", discSprite, Vector2.zero, tileSize, new Color(1f, 1f, 1f, .92f));
                 Image(tile, "Icon", definition.icon, Vector2.zero, tileSize * .72f, unlocked?Color.white:new Color(.3f,.3f,.3f,.7f));
                 if (i < numberSprites.Length && numberSprites[i] != null)
                     Image(tile, "Number", numberSprites[i], new Vector2(-tileSize.x * .38f, tileSize.y * .38f), new Vector2(40f, 40f), Color.white);
-                var label = Label(tile, !unlocked ? definition.displayName + "  [잠김]" : definition.manaCost > 0 ? definition.displayName + "  " + definition.manaCost : definition.displayName, 18, FontStyle.Normal);
-                label.rectTransform.anchoredPosition = new Vector2(0f, -22f);
-                label.rectTransform.sizeDelta = new Vector2(tileSize.x + 40f, 26f);
+                var nameLabel = Label(tile, definition.displayName, 15, FontStyle.Bold);
+                nameLabel.rectTransform.anchoredPosition = new Vector2(0f, -18f);
+                nameLabel.rectTransform.sizeDelta = new Vector2(tileSize.x + 8f, 22f);
+                var detailLabel = Label(tile, !unlocked ? "[잠김]" : definition.manaCost > 0 ? "마나 " + definition.manaCost : "", 14, FontStyle.Normal);
+                detailLabel.rectTransform.anchoredPosition = new Vector2(0f, -39f);
+                detailLabel.rectTransform.sizeDelta = new Vector2(tileSize.x, 20f);
                 tiles.Add(tile.gameObject);
             }
         }
