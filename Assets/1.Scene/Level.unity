@@ -5344,7 +5344,7 @@ Light:
   serializedVersion: 11
   m_Type: 2
   m_Color: {r: 0.3, g: 0.95, b: 0.9, a: 1}
-  m_Intensity: 0
+  m_Intensity: 1.0152768
   m_Range: 320
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -14995,6 +14995,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 5525765563399246173, guid: 816e2d13663af754db4ce076b0caeb8f, type: 3}
+      propertyPath: hardLandingSpeed
+      value: 35
+      objectReference: {fileID: 0}
     - target: {fileID: 6778567520666740832, guid: 816e2d13663af754db4ce076b0caeb8f, type: 3}
       propertyPath: m_LocalScale.x
       value: 1
@@ -23964,8 +23968,16 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1869011763}
     m_Modifications:
+    - target: {fileID: 3171370330538329055, guid: 18b568f2cd017d74ea7c430ce4dc5c73, type: 3}
+      propertyPath: interactionRadius
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 4600811650275185798, guid: 18b568f2cd017d74ea7c430ce4dc5c73, type: 3}
       propertyPath: Range
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4600811650275185798, guid: 18b568f2cd017d74ea7c430ce4dc5c73, type: 3}
+      propertyPath: Gain_Amount
       value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 4771769703887535178, guid: 18b568f2cd017d74ea7c430ce4dc5c73, type: 3}

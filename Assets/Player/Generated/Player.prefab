@@ -1963,7 +1963,7 @@ MonoBehaviour:
   updraft: {fileID: 3259997000000000001}
   verticalSpeedParameter: VerticalSpeed
   hardLandParameter: HardLand
-  hardLandingSpeed: 20
+  hardLandingSpeed: 30
   moveXParameter: MoveX
   moveZParameter: MoveZ
   reactionBlendTime: 0.1
@@ -2038,10 +2038,10 @@ MonoBehaviour:
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName:
+          m_ObjectArgumentAssemblyTypeName: 
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument:
+          m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
   onAirJumped:
@@ -2053,10 +2053,10 @@ MonoBehaviour:
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName:
+          m_ObjectArgumentAssemblyTypeName: 
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument:
+          m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
   onLanded:
@@ -3248,7 +3248,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d64b63acf4726fc48a936a84ac5ca2d3, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxOneShot
   Cue: {fileID: 11400000, guid: d124d1f2e9332fe4fa03157680b0d27b, type: 2}
   Anchor: {fileID: 0}
@@ -3264,7 +3264,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d64b63acf4726fc48a936a84ac5ca2d3, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxOneShot
   Cue: {fileID: 11400000, guid: 53ae94731a1652f49939faedc53b74b4, type: 2}
   Anchor: {fileID: 0}
