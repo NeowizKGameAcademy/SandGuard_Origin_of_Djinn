@@ -50,7 +50,7 @@
 
 | 자리 | 컴포넌트 | 큐 |
 |---|---|---|
-| `Player.prefab` 자식 `Sfx` | `SfxOneShot` ← `onFired` / `onLevelUp` / `onDashStarted` / `onLanded` / `onHardLanded` / `onRespawned` | ManaBolt_Fire, LevelUp, Dash, Land, HardLand, Revive |
+| `Player.prefab` 자식 `Sfx` | `SfxOneShot` ← `onFired` / `onJumped` / `onAirJumped` / `onLevelUp` / `onDashStarted` / `onLanded` / `onHardLanded` / `onRespawned` | ManaBolt_Fire, Jump, AirJump, LevelUp, Dash, Land, HardLand, Revive |
 | `Player.prefab` | `SfxHitReaction`, `SfxFootsteps`(CharacterController 접지, 보폭 0.75) | Player_Hit / Player_Death, Player_Footstep_Sand |
 | `Player.prefab` 자식 `Sfx` | `SfxLoopToggle` ← `PlayerUpdraft.onChargeStarted/onCharging/onChargeCancelled/onLaunched` | Player_Updraft_Charge_Loop (세기에 따라 피치 상승) |
 | `Enemy.prefab` + 변형 5종 | `SfxOneShot` ← `EnemyVisuals.onAttack` / `onDied`, `SfxHitReaction`, `SfxFootsteps` | 변형별 휘두름·사망 음성·발소리(경/중)·보폭 오버라이드 |
@@ -63,7 +63,7 @@
 
 `DesertTower > VFX > Build All`이 끝날 때 `AudioWiring.WireVfxPrefabs()`를 불러 VFX 프리팹을 다시 만들어도 이미터가 유지된다.
 
-이벤트로 내는 소리는 VFX에 다시 붙이지 않는다(대시·착지·발사·피격·레벨업). 그래서 한 동작에 소리가 두 번 나지 않는다.
+이벤트로 내는 소리는 VFX에 다시 붙이지 않는다(점프·대시·착지·발사·피격·레벨업). 그래서 한 동작에 소리가 두 번 나지 않는다. 점프 소리는 `PlayerMotor.Jumped` → `PlayerVisuals.onJumped/onAirJumped`에서 내며, 이동 VFX의 속도 감지에 의존하지 않는다.
 
 배치 설정·검증: `Unity.exe -batchmode -nographics -projectPath . -executeMethod SandGuard.Audio.Editor.AudioWiring.All -quit` → 로그의 `AUDIO_WIRED` 줄.
 테스트: `-runTests -testPlatform PlayMode -assemblyNames SandGuard.Audio.Tests` (오디오 장치 없이 돈다. 14개).

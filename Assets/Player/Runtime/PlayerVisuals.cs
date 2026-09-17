@@ -54,6 +54,8 @@ namespace SandGuard.Player
         public UnityEvent onDamaged = new UnityEvent();
         public UnityEvent onIncapacitated = new UnityEvent();
         public UnityEvent onDashStarted = new UnityEvent();
+        public UnityEvent onJumped = new UnityEvent();
+        public UnityEvent onAirJumped = new UnityEvent();
         public UnityEvent onLanded = new UnityEvent();
         public UnityEvent onHardLanded = new UnityEvent();
         [SerializeField, HideInInspector] GameObject visualInstance;
@@ -131,6 +133,8 @@ namespace SandGuard.Player
         void OnDash() => onDashStarted.Invoke();
         void OnJump()
         {
+            if (motor.LastJumpWasAirJump) onAirJumped.Invoke();
+            else onJumped.Invoke();
             // 지상 점프는 Jump, 공중 점프는 DoubleJump(플립). 옛 컨트롤러처럼 DoubleJump가 없으면 둘 다 Jump로 재생한다.
             if (motor.LastJumpWasAirJump && HasParameter(doubleJumpTrigger, AnimatorControllerParameterType.Trigger))
                 animator.SetTrigger(doubleJumpTrigger);

@@ -19,7 +19,7 @@ namespace SandGuard.Audio.Editor
     /// 오디오 컴포넌트를 프리팹·씬에 멱등하게 꽂는다. CombatVfxWiring의 소리판. 프리팹을 다시 만들었으면 다시 실행한다.
     /// 큐는 참조만 넣는다. 클립·볼륨·거리는 담당자가 큐 에셋에서 바꾼다. 컴포넌트에 이미 큐가 있으면 바꾸지 않는다.
     ///
-    ///   Player.prefab      onFired 마나탄 / onLevelUp / onDashStarted / onLanded / onHardLanded / onRespawned / 피격·사망 / 발소리 / 상승 기류 충전 루프
+    ///   Player.prefab      onFired 마나탄 / onJumped·onAirJumped / onLevelUp / onDashStarted / onLanded / onHardLanded / onRespawned / 피격·사망 / 발소리 / 상승 기류 충전 루프
     ///   Enemy.prefab(+변형) 피격·사망 / onAttack 휘두름 / onDied 음성 / 발소리. 변형별 큐 오버라이드
     ///   Chief_Bomb, ExperienceOrb, Tower_Obelisk   이미터
     ///   VFX 프리팹         VfxTable에 따라 자식 Sfx 이미터
@@ -45,7 +45,7 @@ namespace SandGuard.Audio.Editor
             ("Assets/Enemy/Generated/Enemy_Chief.prefab", "Enemy_Chief_Swing", "Enemy_Voice_Chief_Death", "Enemy_Footstep_Heavy", 1.2f),
         };
 
-        /// <summary>VFX 프리팹 → 큐. 이벤트로 이미 내는 소리(대시·착지·발사·피격·레벨업)는 여기 넣지 않아 두 번 나지 않는다.</summary>
+        /// <summary>VFX 프리팹 → 큐. 이벤트로 이미 내는 소리(점프·대시·착지·발사·피격·레벨업)는 여기 넣지 않아 두 번 나지 않는다.</summary>
         static readonly (string prefab, string cue, SfxEmitterTrigger trigger)[] VfxTable =
         {
             ("VFX_ManaBolt_Projectile", "Player_ManaBolt_Flight_Loop", SfxEmitterTrigger.OnEnable),
@@ -56,8 +56,6 @@ namespace SandGuard.Audio.Editor
             ("VFX_Sand_Vortex", "Player_SandVortex_Loop", SfxEmitterTrigger.WhileParticlesEmit),
             ("VFX_Sand_Storm", "Player_SandStorm_Loop", SfxEmitterTrigger.WhileParticlesEmit),
             ("VFX_Updraft_Launch", "Player_Updraft_Launch", SfxEmitterTrigger.OnEnable),
-            ("VFX_AirJump_Ring", "Player_AirJump", SfxEmitterTrigger.OnEnable),
-            ("VFX_Jump_Dust", "Player_Jump", SfxEmitterTrigger.OnEnable),
             ("VFX_Mana_Charge", "Player_ManaCharge_Loop", SfxEmitterTrigger.WhileParticlesEmit),
             ("VFX_Mana_Charge_Complete", "Player_ManaCharge_Complete", SfxEmitterTrigger.OnEnable),
             ("VFX_Enemy_Spawn", "Enemy_Spawn", SfxEmitterTrigger.OnEnable),
@@ -131,6 +129,8 @@ namespace SandGuard.Audio.Editor
                     if (v.Prefab != null && v.Prefab.name.Contains("Staff_Cast") && v.Anchor != null) staffTip = v.Anchor;
 
                 Listen(visuals?.onFired, OneShot(holder, "Player_ManaBolt_Fire", staffTip));
+                Listen(visuals?.onJumped, OneShot(holder, "Player_Jump"));
+                Listen(visuals?.onAirJumped, OneShot(holder, "Player_AirJump"));
                 Listen(progression?.onLevelUp, OneShot(holder, "Player_LevelUp"));
                 Listen(visuals?.onDashStarted, OneShot(holder, "Player_Dash"));
                 Listen(visuals?.onLanded, OneShot(holder, "Player_Land"));
