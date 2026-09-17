@@ -107,9 +107,26 @@ namespace SandGuard.Skills
             int cost=Catalog.Find(id).Cost;
             if(RefundPoints>int.MaxValue-cost)return Fail(SkillFailure.Invalid);
             changing=true;bool ok;
-            try{ok=wallet.TryChange(-cost,()=>{learned.Add(id);RefundPoints+=cost;});}finally{changing=false;}
+            try{ok=wallet.TryChange(-cost,()=>{learned.Add(id);RefundPoints+=cost;AutoEquipMovement(id);});}finally{changing=false;}
             if(!ok)return Fail(SkillFailure.Points);
             Notify();return r;
+        }
+        void AutoEquipMovement(string id)
+        {
+            var d=Catalog.Find(id);
+            if(d==null || d.Branch!=SkillBranch.Movement || d.Kind!=SkillKind.Active)return;
+            // Movement has dedicated keys. Recall takes the first free combat key so buying it
+            // is immediately useful without stealing an already equipped attack.
+            if(id=="move.dash" && d.Slots.Contains(EquipSlot.Shift)){loadout[EquipSlot.Shift]=id;return;}
+            if(id=="move.jump" && d.Slots.Contains(EquipSlot.Space)){loadout[EquipSlot.Space]=id;return;}
+            if(id=="move.recall")
+            {
+                foreach(var slot in new[]{EquipSlot.Q,EquipSlot.E,EquipSlot.R})
+                    if(d.Slots.Contains(slot) && !loadout.ContainsKey(slot)){loadout[slot]=id;return;}
+                // Keep the newly purchased skill usable even when every combat slot is full.
+                foreach(var slot in new[]{EquipSlot.Q,EquipSlot.E,EquipSlot.R})
+                    if(d.Slots.Contains(slot)){loadout[slot]=id;return;}
+            }
         }
         public SkillResult Equip(EquipSlot slot,string id)
         {
@@ -157,7 +174,11 @@ namespace SandGuard.Skills
             changing=true;
             try{if(!wallet.Reset(state.Points))return Fail(SkillFailure.Busy);generation=wallet.Generation;
                 learned.Clear();foreach(var id in set)learned.Add(id);RefundPoints=0;
-                loadout.Clear();foreach(var p in state.Loadout)loadout.Add(p.Key,p.Value);}
+                loadout.Clear();foreach(var p in state.Loadout)loadout.Add(p.Key,p.Value);
+                // Older saves can contain purchased movement skills without their automatic slot.
+                if(set.Contains("move.dash"))AutoEquipMovement("move.dash");
+                if(set.Contains("move.jump"))AutoEquipMovement("move.jump");
+                if(set.Contains("move.recall") && !loadout.ContainsValue("move.recall"))AutoEquipMovement("move.recall");}
             finally{changing=false;}
             Notify();return Fail(SkillFailure.None);
         }

@@ -29,6 +29,15 @@ MonoBehaviour:
     cost: 1
     prerequisites: []
     allowedSlots: 04000000
+  - id: move.updraft
+    displayName: 차지 점프
+    description: 지상에서 Space를 길게 눌러 충전하고, 놓으면 높이 도약합니다. 구매 즉시 활성화됩니다.
+    branch: 0
+    kind: 1
+    cost: 2
+    prerequisites:
+    - move.jump
+    allowedSlots: []
   - id: move.recall
     displayName: 흔적 귀환
     description: 

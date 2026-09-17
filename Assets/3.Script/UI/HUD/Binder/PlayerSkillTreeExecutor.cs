@@ -15,7 +15,7 @@ namespace SandGuard.UI.HUD
         [Min(0)] public int pierceManaCost=8,recallManaCost=12;
         [Min(.1f)] public float pierceCooldown=2f,recallCooldown=10f,recallWindow=6f;
         public LayerMask recallObstacles=~0;
-        PlayerMotor motor;PlayerSkillCaster caster;PlayerBasicAttack attack;PlayerInputReader input;
+        PlayerMotor motor;PlayerUpdraft updraft;PlayerSkillCaster caster;PlayerBasicAttack attack;PlayerInputReader input;
         CharacterController controller;PlayerHealth health;IManaWallet mana;
         SkillService service;
         float pierceReady,recallReady,markExpiry;
@@ -39,10 +39,10 @@ namespace SandGuard.UI.HUD
         }
         void Awake()
         {
-            motor=GetComponent<PlayerMotor>();caster=GetComponent<PlayerSkillCaster>();attack=GetComponent<PlayerBasicAttack>();
+            motor=GetComponent<PlayerMotor>();updraft=GetComponent<PlayerUpdraft>();caster=GetComponent<PlayerSkillCaster>();attack=GetComponent<PlayerBasicAttack>();
             input=GetComponent<PlayerInputReader>();controller=GetComponent<CharacterController>();health=GetComponent<PlayerHealth>();mana=GetComponent<IManaWallet>();
             // Install gates before any gameplay input. Missing/disabled service fails closed.
-            if(motor){motor.SkillTreeDashAllowed=()=>Allowed("move.dash");motor.SkillTreeAirJumpAllowed=()=>Allowed("move.jump");motor.SkillTreeDashInput=()=>Use(EquipSlot.Shift);}
+            if(motor){motor.SkillTreeDashAllowed=()=>Allowed("move.dash");motor.SkillTreeAirJumpAllowed=()=>Allowed("move.jump");motor.SkillTreeDashInput=()=>{TryExecute("move.dash",out var reason);LastResult=reason;};}
             if(caster){caster.SkillTreeAllowed=i=>i>=0 && i<3 && Allowed(AttackIds[i]);caster.SkillTreeInput=i=>{if(i>=0 && i<3)Use((EquipSlot)i);};}
             if(attack)attack.SkillTreePierceAllowed=()=>Allowed("attack.pierce");
         }
@@ -72,7 +72,16 @@ namespace SandGuard.UI.HUD
         void Sync()
         {
             if(!Allowed("move.recall"))ClearMark();
-
+            if(updraft)
+            {
+                bool unlocked=Allowed("move.updraft");
+                if(updraft.unlocked!=unlocked)
+                {
+                    updraft.unlocked=unlocked;
+                    if(!unlocked)updraft.Cancel();
+                    updraft.RefreshDeferral();
+                }
+            }
         }
         bool Allowed(string id)=>SkillLoadoutAccess.CanUse(service,id,this && isActiveAndEnabled && session && session.isActiveAndEnabled);
         bool Ready=>isActiveAndEnabled && input && input.isActiveAndEnabled && input.AcceptsInput && Time.timeScale>0 && !SkillTreeWindow.AnyOpen && (!health || health.CurrentHealth>0);
@@ -142,7 +151,7 @@ namespace SandGuard.UI.HUD
             if(id=="move.recall"){state=new SkillHUDState(Ready && (marked || motor.IsGrounded && mana.CurrentMana>=recallManaCost),marked?0:Mathf.Max(0,recallReady-Time.time),recallWindow+recallCooldown);return true;}
             return false;
         }
-        void OnDisable(){ClearMark();}
+        void OnDisable(){ClearMark();if(updraft){updraft.unlocked=false;updraft.Cancel();updraft.RefreshDeferral();}}
         void OnDestroy(){if(service!=null)service.Changed-=Sync;ClearMark();/* Gates intentionally remain fail-closed until a replacement bridge installs them. */}
     }
 }

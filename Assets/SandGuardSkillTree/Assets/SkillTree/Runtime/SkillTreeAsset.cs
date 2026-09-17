@@ -33,6 +33,7 @@ namespace SandGuard.Skills.Unity
             var asset=CreateInstance<SkillTreeAsset>();
             asset.Add("move.dash","대시",SkillBranch.Movement,1,SkillKind.Active,"",EquipSlot.Shift);
             asset.Add("move.jump","더블 점프",SkillBranch.Movement,1,SkillKind.Active,"",EquipSlot.Space);
+            asset.Add("move.updraft","차지 점프",SkillBranch.Movement,2,SkillKind.Passive,"move.jump");
             asset.Add("move.recall","흔적 귀환",SkillBranch.Movement,3,SkillKind.Active,"move.dash",EquipSlot.Shift,EquipSlot.Q,EquipSlot.E,EquipSlot.R);
             asset.Add("attack.pierce","관통탄",SkillBranch.Attack,1,SkillKind.Active,"",EquipSlot.Q,EquipSlot.E,EquipSlot.R);
             asset.Add("attack.burst","모래 폭발",SkillBranch.Attack,2,SkillKind.Active,"attack.pierce",EquipSlot.Q,EquipSlot.E,EquipSlot.R);

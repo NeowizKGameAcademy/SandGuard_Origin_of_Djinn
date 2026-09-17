@@ -18,6 +18,7 @@ namespace DesertTower.LevelIntegration
         [SerializeField] Button retryButton, mainMenuButton;
         [SerializeField] string mainMenuScene = "MainScene";
         [SerializeField] string retrySceneOverride;
+        [SerializeField] bool previewOnly;
 
         float previousTimeScale = 1f;
         CursorLockMode previousCursorLock;
@@ -27,13 +28,14 @@ namespace DesertTower.LevelIntegration
 
         void Awake()
         {
-            if (overlay) overlay.SetActive(false);
+            if (overlay && !previewOnly) overlay.SetActive(false);
             if (retryButton) retryButton.onClick.AddListener(Retry);
             if (mainMenuButton) mainMenuButton.onClick.AddListener(MainMenu);
         }
 
         void Start()
         {
+            if (previewOnly) return;
             if (!director) director = FindFirstObjectByType<WaveDirector>();
             if (!director) { Debug.LogWarning("GameResultScreen: WaveDirector not found.", this); return; }
             director.onStateChanged.AddListener(Refresh);
@@ -53,10 +55,11 @@ namespace DesertTower.LevelIntegration
             if (!director || showing || (director.State != RunState.Won && director.State != RunState.Lost)) return;
             bool won = director.State == RunState.Won;
             if (title) { title.text = won ? "CLEAR" : "FAILED"; title.color = won ? new Color(1f,.84f,.47f) : new Color(1f,.34f,.27f); }
-            if (subtitle) subtitle.text = won ? "사막의 평화가 다시 찾아왔습니다!" : "마석코어가 무너졌습니다...";
+            if (subtitle) { subtitle.text = won ? "사막의 평화가 다시 찾아왔습니다!" : "마석코어가 무너졌습니다..."; subtitle.color = won ? new Color(.13f,.09f,.05f) : new Color(1f,.85f,.65f); }
             if (timeLabel) { int seconds = Mathf.FloorToInt(director.RunElapsedSeconds); timeLabel.text = $"{seconds / 60:00}:{seconds % 60:00}"; }
             if (waveLabel) waveLabel.text = $"{director.WaveNumber} / {director.TotalWaves}";
             if (killsLabel) killsLabel.text = director.Killed.ToString("N0");
+            if (statNames != null && statNames.Length > 0 && statNames[0]) statNames[0].text = won ? "클리어 시간" : "경과 시간";
             var statColor = won ? new Color(.13f,.09f,.05f) : new Color(1f,.85f,.65f);
             if (statNames != null) foreach (var label in statNames) if (label) label.color = statColor;
             if (timeLabel) timeLabel.color = statColor;
@@ -75,6 +78,25 @@ namespace DesertTower.LevelIntegration
                 createdEventSystem.GetComponent<InputSystemUIInputModule>().AssignDefaultActions();
             }
             showing = true;
+            if (overlay) overlay.SetActive(true);
+        }
+
+        /// <summary>Preview scene only: populate editable sample values without pausing gameplay.</summary>
+        public void ShowPreview(bool failed)
+        {
+            if (!previewOnly) return;
+            if (title) { title.text = failed ? "FAILED" : "CLEAR"; title.color = failed ? new Color(1f,.34f,.27f) : new Color(1f,.84f,.47f); }
+            if (subtitle) { subtitle.text = failed ? "마석코어가 무너졌습니다..." : "사막의 평화가 다시 찾아왔습니다!"; subtitle.color = failed ? new Color(1f,.85f,.65f) : new Color(.13f,.09f,.05f); }
+            if (timeLabel) timeLabel.text = failed ? "08:14" : "12:36";
+            if (waveLabel) waveLabel.text = failed ? "3 / 5" : "5 / 5";
+            if (killsLabel) killsLabel.text = failed ? "198" : "327";
+            if (statNames != null && statNames.Length > 0 && statNames[0]) statNames[0].text = failed ? "경과 시간" : "클리어 시간";
+            var color = failed ? new Color(1f,.85f,.65f) : new Color(.13f,.09f,.05f);
+            if (statNames != null) foreach (var label in statNames) if (label) label.color = color;
+            if (timeLabel) timeLabel.color = color;
+            if (waveLabel) waveLabel.color = color;
+            if (killsLabel) killsLabel.color = color;
+            if (cardArtwork) cardArtwork.uvRect = failed ? new Rect(.5f,0,.5f,1) : new Rect(0,0,.5f,1);
             if (overlay) overlay.SetActive(true);
         }
 
