@@ -14,6 +14,8 @@ namespace SandGuard.Audio.Editor
         public float Min = 2f, Max = 35f;
         public float Volume = 0.8f;
         public int MaxVoices = 4;
+        /// <summary>재생 확률 (1 = 항상). 기합처럼 가끔만 낼 소리용.</summary>
+        public float Chance = 1f;
         public string Note;
         public bool Loop => Name.EndsWith("_Loop");
         public string Category => Name.Substring(0, Name.IndexOf('_'));
@@ -23,6 +25,7 @@ namespace SandGuard.Audio.Editor
         public CueEntry Flat() { Spatial = false; return this; }
         public CueEntry Vol(float v) { Volume = v; return this; }
         public CueEntry Voices(int n) { MaxVoices = n; return this; }
+        public CueEntry Odds(float chance) { Chance = chance; return this; }
     }
 
     /// <summary>
@@ -60,10 +63,12 @@ namespace SandGuard.Audio.Editor
             E("Player_Xp_Drop", PlaceholderKind.Ping, "경험치 조각 드롭 짤랑").At(2, 25).Vol(0.4f).Voices(6),
             E("Player_ManaCharge_Loop", PlaceholderKind.Loop, "코어 근처 마나 충전").At(3, 30),
             E("Player_ManaCharge_Complete", PlaceholderKind.Ping, "마나 충전 완료 차임").At(3, 30),
-            E("Player_Voice_Cast", PlaceholderKind.Voice, "시전 기합 (음성 모델)").At(2, 25).Vol(0.6f),
-            E("Player_Voice_Jump", PlaceholderKind.Voice, "점프 기합").At(2, 25).Vol(0.5f),
-            E("Player_Voice_Hit", PlaceholderKind.Voice, "피격 음성").Flat().Vol(0.7f),
-            E("Player_Voice_Death", PlaceholderKind.Voice, "사망 음성").Flat(),
+            E("Player_Voice_Cast", PlaceholderKind.Voice, "시전 기합 (기본 공격·Q/E/R 스킬). 매번 나면 지겨우니 확률 20%").At(2, 25).Vol(0.6f).Odds(0.2f),
+            E("Player_Voice_Jump", PlaceholderKind.Voice, "점프·공중 점프 기합. 확률 30%").At(2, 25).Vol(0.5f).Odds(0.3f),
+            E("Player_Voice_Dash", PlaceholderKind.Voice, "대시 기합. 확률 40%").At(2, 25).Vol(0.5f).Odds(0.4f),
+            E("Player_Voice_HardLand", PlaceholderKind.Voice, "무거운 착지 신음. 항상").Flat().Vol(0.6f),
+            E("Player_Voice_Hit", PlaceholderKind.Voice, "피격 음성. 항상").Flat().Vol(0.7f),
+            E("Player_Voice_Death", PlaceholderKind.Voice, "사망 음성. 항상").Flat(),
             E("Player_Fall_Loop", PlaceholderKind.Loop, "낙하 바람 (Falling 상태 동안)").Flat().Vol(0.5f).Voices(1),
             E("Player_BodyFall", PlaceholderKind.Impact, "사망 클립에서 몸이 바닥에 닿는 '쿵'").Flat().Vol(0.7f).Voices(1),
             E("Player_SandShackle_Release", PlaceholderKind.Whoosh, "모래 족쇄 풀림 (방출 정지)").At(2, 30),

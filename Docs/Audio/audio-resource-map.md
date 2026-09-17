@@ -1,6 +1,6 @@
 # AudioResource 대응 결과
 
-생성: 2026-09-17 11:01. 표: `Assets/8.Audio/Editor/AudioResourceMap.cs`.
+생성: 2026-09-17 15:56. 표: `Assets/8.Audio/Editor/AudioResourceMap.cs`.
 
 ## 대응된 큐
 
@@ -28,10 +28,12 @@
 - `Enemy_Chief_Bomb_Explosion` ← 폭발, 폭발2
 - `Enemy_Hit` ← 피격음, 피격음2, 피격음3_auda
 
-## 클립이 없는 큐 (66개) — 담당자가 채울 것
+## 클립이 없는 큐 (70개) — 담당자가 채울 것
 
 - `Core_Destroy_Charge`: 코어 파괴 충전 상승음 (0~0.2초)
 - `Core_Destroy_Debris`: 코어 파편 착지 (1.1초)
+- `Core_Hit`: 코어 피격 균열 + 경고음
+- `Core_Hum_Loop`: 코어 크리스탈 험
 - `Core_Warning`: 코어 안정도 경고 (30 이하)
 - `Enemy_Assassin_Swing`: 단검 빠른 2연 whoosh
 - `Enemy_BodyFall`: 사망 클립에서 몸이 바닥에 닿는 '쿵' (전 종류 공용)
@@ -48,7 +50,7 @@
 - `Enemy_Swordsman_Swing`: 검 휘두름 + 기합
 - `Enemy_Voice_Chief_Death`: 족장 사망 음성 (길게)
 - `Env_Altar_Loop`: 스킬 제단 룬 공명
-- `Env_Lightning`: 마법 번개 크랙 + 지연 천둥
+- `Env_Menu_Ambience_Loop`: 메인 메뉴 앰비언스
 - `Env_StormWall_Loop`: 외곽 모래폭풍 벽 (거리 기반은 후속)
 - `Env_Torch_Loop`: 횃불 타닥
 - `Facility_Cobra_Destroy_Debris`: 코브라 파편 착지 (파괴 0.9초 뒤)
@@ -82,10 +84,12 @@
 - `Player_SandVortex_Loop`: 소용돌이 회전 바람
 - `Player_Updraft_Charge_Loop`: 상승 기류 충전(세기에 따라 피치 상승)
 - `Player_Updraft_Launch`: 상승 기류 발사 모래 기둥
-- `Player_Voice_Cast`: 시전 기합 (음성 모델)
-- `Player_Voice_Death`: 사망 음성
-- `Player_Voice_Hit`: 피격 음성
-- `Player_Voice_Jump`: 점프 기합
+- `Player_Voice_Cast`: 시전 기합 (기본 공격·Q/E/R 스킬). 매번 나면 지겨우니 확률 20%
+- `Player_Voice_Dash`: 대시 기합. 확률 40%
+- `Player_Voice_Death`: 사망 음성. 항상
+- `Player_Voice_HardLand`: 무거운 착지 신음. 항상
+- `Player_Voice_Hit`: 피격 음성. 항상
+- `Player_Voice_Jump`: 점프·공중 점프 기합. 확률 30%
 - `Player_Xp_Drop`: 경험치 조각 드롭 짤랑
 - `UI_Cooldown_Ready`: 스킬 쿨다운 완료
 - `UI_Health_Low_Loop`: 체력 20% 이하 심장 박동
@@ -97,13 +101,13 @@
 - `Wave_Clear`: 웨이브 클리어 팡파르 (VFX_Wave_Clear)
 - `Wave_Countdown_Tick`: 카운트다운 틱
 
-## AudioResource에 있지만 쓰지 않은 파일 (21개)
+## AudioResource에 있지만 쓰지 않은 파일 (23개)
 
 - UI버튼 클릭음_auda
 - 강한착지음
-- 기본 사막환경 배경음
+- 기본 사막환경 배경음_auda
 - 기본공격_auda
-- 대쉬 효과음_auda
+- 대쉬 효과음
 - 더블점프_auda
 - 레벨업_auda
 - 마나부족스킬잠금건설불가_auda
@@ -114,7 +118,9 @@
 - 적 사망음2_auda
 - 적 사망음3_auda
 - 점프_auda
+- 추락바람소리
 - 코브라타워 화염방사_auda
+- 코어핑
 - 타워 건설음_auda
 - 타워파괴2_auda
 - 폭발

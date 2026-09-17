@@ -10,21 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 54a03e5cbec6ac7459a523d1564d4bb0, type: 3}
-  m_Name: Core_Hum_Loop
+  m_Name: Player_Voice_Dash
   m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxCue
   clips: []
-  volume: 0.563
+  volume: 0.5
   volumeJitterDb: 1
   pitch: 1
-  pitchJitter: 0.04
-  mixerGroup: {fileID: -6147871996741235955, guid: 1fae13e4ac1874e45988f79fc0bae7ec, type: 2}
+  pitchJitter: 0.06
+  mixerGroup: {fileID: 2660427401046656595, guid: 1fae13e4ac1874e45988f79fc0bae7ec, type: 2}
   priority: 128
   spatial: 1
-  minDistance: 6
-  maxDistance: 60
+  minDistance: 2
+  maxDistance: 25
   rolloff: 0
-  loop: 1
-  maxVoices: 1
+  loop: 0
+  maxVoices: 4
   minInterval: 0.02
-  chance: 1
-  loopFade: 1
+  chance: 0.4
+  loopFade: 0.3

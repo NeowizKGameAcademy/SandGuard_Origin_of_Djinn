@@ -72,9 +72,9 @@ namespace SandGuard.Audio
             PrefabPool.Instance.Prewarm(p.voiceTemplate, count);
         }
 
-        public static SfxVoice Play(SfxCue cue, Vector3 position) => Instance.Start(cue, position, null, false);
-        public static SfxVoice PlayAttached(SfxCue cue, Transform target) => target == null ? null : Instance.Start(cue, target.position, target, false);
-        public static SfxVoice PlayLoop(SfxCue cue, Transform target) => target == null ? null : Instance.Start(cue, target.position, target, true);
+        public static SfxVoice Play(SfxCue cue, Vector3 position) => Instance.SpawnVoice(cue, position, null, false);
+        public static SfxVoice PlayAttached(SfxCue cue, Transform target) => target == null ? null : Instance.SpawnVoice(cue, target.position, target, false);
+        public static SfxVoice PlayLoop(SfxCue cue, Transform target) => target == null ? null : Instance.SpawnVoice(cue, target.position, target, true);
         public static void Stop(SfxVoice voice) { if (voice != null && voice.Active) voice.StopLoop(); }
 
         /// <summary>2D 원샷. UI 클릭·화면 피격·스팅어.</summary>
@@ -91,7 +91,8 @@ namespace SandGuard.Audio
             p.LastFlatClip = clip; p.FlatPlays++;
         }
 
-        SfxVoice Start(SfxCue cue, Vector3 position, Transform follow, bool loop)
+        /// <summary>(이름을 Start로 두면 Unity가 "Start는 매개변수를 가질 수 없다"고 경고한다.)</summary>
+        SfxVoice SpawnVoice(SfxCue cue, Vector3 position, Transform follow, bool loop)
         {
             if (!loop && !Admit(cue)) return null;
             var clip = PickClip(cue);
@@ -117,13 +118,14 @@ namespace SandGuard.Audio
             return voice;
         }
 
-        /// <summary>같은 프레임 중복과 최소 간격을 거른다. 클립이 없으면 조용히 거부한다.</summary>
+        /// <summary>같은 프레임 중복·최소 간격·재생 확률을 거른다. 클립이 없으면 조용히 거부한다.</summary>
         bool Admit(SfxCue cue)
         {
             if (cue == null || !cue.HasClips) return false;
             int frame = Time.frameCount;
             if (lastFrame.TryGetValue(cue, out int f) && f == frame) return false;
             if (cue.minInterval > 0f && lastTime.TryGetValue(cue, out float t) && Time.unscaledTime - t < cue.minInterval && frame != f) return false;
+            if (cue.chance < 1f && Random.value >= cue.chance) return false; // 기합처럼 가끔만 내는 소리
             lastFrame[cue] = frame; lastTime[cue] = Time.unscaledTime;
             return true;
         }

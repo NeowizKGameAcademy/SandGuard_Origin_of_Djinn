@@ -11,6 +11,8 @@ namespace SandGuard.Audio
     {
         public SfxCue HitCue;
         public SfxCue DeathCue;
+        [Tooltip("피격 음성(신음). 타격음과 함께 난다")] public SfxCue HitVoiceCue;
+        [Tooltip("사망 음성. 사망음과 함께 난다")] public SfxCue DeathVoiceCue;
         [Tooltip("피격음을 몸에 붙여 같이 움직이게 한다. 끄면 맞은 자리에 남는다")] public bool AttachHit = true;
 
         IDamageEvents events; ILifeState life; ICombatTarget target;
@@ -39,18 +41,30 @@ namespace SandGuard.Audio
         void OnDamaged(DamageAppliedInfo info)
         {
             HitCount++;
-            if (HitCue == null) return;
-            if (!HitCue.spatial) { SfxPlayer.Play2D(HitCue); return; }
-            if (AttachHit) SfxPlayer.PlayAttached(HitCue, transform);
-            else SfxPlayer.Play(HitCue, info.Damage.HitPosition ?? (target != null ? target.HitPosition : transform.position));
+            Vector3 at = info.Damage.HitPosition ?? (target != null ? target.HitPosition : transform.position);
+            PlayHit(HitCue, at);
+            PlayHit(HitVoiceCue, at);
+        }
+
+        void PlayHit(SfxCue cue, Vector3 at)
+        {
+            if (cue == null) return;
+            if (!cue.spatial) SfxPlayer.Play2D(cue);
+            else if (AttachHit) SfxPlayer.PlayAttached(cue, transform);
+            else SfxPlayer.Play(cue, at);
         }
 
         void OnDied(DeathInfo info)
         {
             DeathCount++;
-            if (DeathCue == null) return;
-            if (!DeathCue.spatial) SfxPlayer.Play2D(DeathCue);
-            else SfxPlayer.Play(DeathCue, target != null ? target.HitPosition : transform.position);
+            PlayAt(DeathCue); PlayAt(DeathVoiceCue);
+        }
+
+        void PlayAt(SfxCue cue)
+        {
+            if (cue == null) return;
+            if (!cue.spatial) SfxPlayer.Play2D(cue);
+            else SfxPlayer.Play(cue, target != null ? target.HitPosition : transform.position);
         }
     }
 }

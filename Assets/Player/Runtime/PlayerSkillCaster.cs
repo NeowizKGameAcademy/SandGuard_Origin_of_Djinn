@@ -62,6 +62,8 @@ namespace SandGuard.Player
         public float Cooldown(int slot) => slot == Burst ? burstCooldown : slot == Vortex ? vortexCooldown : stormCooldown;
         /// <summary>(슬롯, 시전 지점) 시전 성공마다.</summary>
         public event Action<int, Vector3> Cast;
+        /// <summary>인스펙터 연결용(소리 등). <see cref="Cast"/>와 같은 순간에 부른다.</summary>
+        public UnityEngine.Events.UnityEvent onCast = new UnityEngine.Events.UnityEvent();
         public PlayerSandVortex LastVortex { get; private set; }
         public PlayerSandStorm LastStorm { get; private set; }
         public Vector3 LastCastPoint { get; private set; }
@@ -114,6 +116,7 @@ namespace SandGuard.Player
             cooldowns[slot] = Cooldown(slot);
             LastCastPoint = point;
             Cast?.Invoke(slot, point);
+            onCast.Invoke();
             return ActionResult.Success();
         }
 

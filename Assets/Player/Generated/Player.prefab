@@ -309,7 +309,7 @@ GameObject:
   - component: {fileID: 6960889325576943016}
   - component: {fileID: 4112450732697401626}
   - component: {fileID: 1500577165480423584}
-  - component: {fileID: 104360067080639713}
+  - component: {fileID: 7299716480259567645}
   m_Layer: 0
   m_Name: Character
   m_TagString: Untagged
@@ -436,7 +436,7 @@ MonoBehaviour:
   FootstepCue: {fileID: 0}
   ThrowCue: {fileID: 0}
   Anchor: {fileID: 0}
---- !u!114 &104360067080639713
+--- !u!114 &7299716480259567645
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -445,7 +445,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 804539470226826799}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 4d3b5c76e78c9de4094ae8a7e1dfe2e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxAnimatorState
   StateName: Falling
@@ -2048,6 +2048,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 8900168980621931674}
+        m_TargetAssemblyTypeName: SandGuard.Audio.SfxOneShot, SandGuard.Audio.Runtime
+        m_MethodName: Fire
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   onDamaged:
     m_PersistentCalls:
       m_Calls: []
@@ -2058,6 +2070,18 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 8552188291577873618}
+        m_TargetAssemblyTypeName: SandGuard.Audio.SfxOneShot, SandGuard.Audio.Runtime
+        m_MethodName: Fire
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 7431166921125456363}
         m_TargetAssemblyTypeName: SandGuard.Audio.SfxOneShot, SandGuard.Audio.Runtime
         m_MethodName: Fire
         m_Mode: 0
@@ -2084,10 +2108,34 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 7622029886869395889}
+        m_TargetAssemblyTypeName: SandGuard.Audio.SfxOneShot, SandGuard.Audio.Runtime
+        m_MethodName: Fire
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   onAirJumped:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 7000000000000000002}
+        m_TargetAssemblyTypeName: SandGuard.Audio.SfxOneShot, SandGuard.Audio.Runtime
+        m_MethodName: Fire
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 7622029886869395889}
         m_TargetAssemblyTypeName: SandGuard.Audio.SfxOneShot, SandGuard.Audio.Runtime
         m_MethodName: Fire
         m_Mode: 0
@@ -2118,6 +2166,18 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1699619845310132874}
+        m_TargetAssemblyTypeName: SandGuard.Audio.SfxOneShot, SandGuard.Audio.Runtime
+        m_MethodName: Fire
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 492785368682030996}
         m_TargetAssemblyTypeName: SandGuard.Audio.SfxOneShot, SandGuard.Audio.Runtime
         m_MethodName: Fire
         m_Mode: 0
@@ -2714,6 +2774,21 @@ MonoBehaviour:
   stormSlow: 0.6
   stormPrefab: {fileID: 895128081417247708, guid: 15a92a70bb563134bb9012fb6dd562a4, type: 3}
   stormVfxRadius: 1
+  onCast:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 8900168980621931674}
+        m_TargetAssemblyTypeName: SandGuard.Audio.SfxOneShot, SandGuard.Audio.Runtime
+        m_MethodName: Fire
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &8186172269289657213
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2772,6 +2847,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxHitReaction
   HitCue: {fileID: 11400000, guid: 2f4547033d2d7f848810cdb9aba04d43, type: 2}
   DeathCue: {fileID: 11400000, guid: 8713c03492d4c7741b52c5e5644d556c, type: 2}
+  HitVoiceCue: {fileID: 11400000, guid: a7bd64657f9b04c4598855c054fa270d, type: 2}
+  DeathVoiceCue: {fileID: 11400000, guid: 9322ebab22a1ff34cbfa3365a36cfcc9, type: 2}
   AttachHit: 1
 --- !u!114 &2522104697291278904
 MonoBehaviour:
@@ -3214,6 +3291,10 @@ GameObject:
   - component: {fileID: 1699619845310132874}
   - component: {fileID: 1083630012516363217}
   - component: {fileID: 7986955969444994833}
+  - component: {fileID: 8900168980621931674}
+  - component: {fileID: 7622029886869395889}
+  - component: {fileID: 7431166921125456363}
+  - component: {fileID: 492785368682030996}
   m_Layer: 0
   m_Name: Sfx
   m_TagString: Untagged
@@ -3381,6 +3462,70 @@ MonoBehaviour:
   EndCue: {fileID: 0}
   Anchor: {fileID: 0}
   PitchRise: 0.5
+--- !u!114 &8900168980621931674
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5464598391117406770}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d64b63acf4726fc48a936a84ac5ca2d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxOneShot
+  Cue: {fileID: 11400000, guid: dbf27e088523b224ea10dd01bc6324f1, type: 2}
+  Anchor: {fileID: 0}
+  Attach: 0
+  VolumeScale: 1
+--- !u!114 &7622029886869395889
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5464598391117406770}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d64b63acf4726fc48a936a84ac5ca2d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxOneShot
+  Cue: {fileID: 11400000, guid: 7577dd53a509fc54a8f25787c43c5687, type: 2}
+  Anchor: {fileID: 0}
+  Attach: 0
+  VolumeScale: 1
+--- !u!114 &7431166921125456363
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5464598391117406770}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d64b63acf4726fc48a936a84ac5ca2d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxOneShot
+  Cue: {fileID: 11400000, guid: af107ce5430f63e46a11cddb37b94e94, type: 2}
+  Anchor: {fileID: 0}
+  Attach: 0
+  VolumeScale: 1
+--- !u!114 &492785368682030996
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5464598391117406770}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d64b63acf4726fc48a936a84ac5ca2d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxOneShot
+  Cue: {fileID: 11400000, guid: 175a7bb0a65949a439be6d91c9b61924, type: 2}
+  Anchor: {fileID: 0}
+  Attach: 0
+  VolumeScale: 1
 --- !u!1 &5699341838829093906
 GameObject:
   m_ObjectHideFlags: 0

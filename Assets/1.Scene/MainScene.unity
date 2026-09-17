@@ -2384,6 +2384,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxEmitter
   Cue: {fileID: 11400000, guid: ba027284038bee247944655c59bdffd4, type: 2}
+  BeginCue: {fileID: 0}
+  EndCue: {fileID: 0}
   VolumeScale: 1
   Delay: 0
   Trigger: 0
@@ -2588,7 +2590,16 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1943330921254792669, guid: 896f41643f5cb7d4f9c51e1d98cb5d8c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1962493343}
+    - targetCorrespondingSourceObject: {fileID: 1627597367733447881, guid: 896f41643f5cb7d4f9c51e1d98cb5d8c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1962493342}
+    - targetCorrespondingSourceObject: {fileID: 1376523500012387222, guid: 896f41643f5cb7d4f9c51e1d98cb5d8c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1962493341}
   m_SourcePrefab: {fileID: 100100000, guid: 896f41643f5cb7d4f9c51e1d98cb5d8c, type: 3}
 --- !u!224 &1962493336 stripped
 RectTransform:
@@ -2606,6 +2617,63 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a662abb6f46b81418996d4f1702631c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HowToPlayPopup
+--- !u!1 &1962493338 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1376523500012387222, guid: 896f41643f5cb7d4f9c51e1d98cb5d8c, type: 3}
+  m_PrefabInstance: {fileID: 1962493335}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1962493339 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1627597367733447881, guid: 896f41643f5cb7d4f9c51e1d98cb5d8c, type: 3}
+  m_PrefabInstance: {fileID: 1962493335}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1962493340 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1943330921254792669, guid: 896f41643f5cb7d4f9c51e1d98cb5d8c, type: 3}
+  m_PrefabInstance: {fileID: 1962493335}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1962493341
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1962493338}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2afc3ddde5250fb409d2687389ecbf22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxUiButton
+  HoverCue: {fileID: 11400000, guid: ff3cbcc4af4408548af2c45d0bdfda65, type: 2}
+  ClickCue: {fileID: 11400000, guid: 8bc56d84430b9474688873481e021fff, type: 2}
+--- !u!114 &1962493342
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1962493339}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2afc3ddde5250fb409d2687389ecbf22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxUiButton
+  HoverCue: {fileID: 11400000, guid: ff3cbcc4af4408548af2c45d0bdfda65, type: 2}
+  ClickCue: {fileID: 11400000, guid: 8bc56d84430b9474688873481e021fff, type: 2}
+--- !u!114 &1962493343
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1962493340}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2afc3ddde5250fb409d2687389ecbf22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxUiButton
+  HoverCue: {fileID: 11400000, guid: ff3cbcc4af4408548af2c45d0bdfda65, type: 2}
+  ClickCue: {fileID: 11400000, guid: 8bc56d84430b9474688873481e021fff, type: 2}
 --- !u!1 &2008022824
 GameObject:
   m_ObjectHideFlags: 0
