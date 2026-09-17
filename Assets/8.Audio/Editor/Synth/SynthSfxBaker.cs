@@ -79,7 +79,7 @@ namespace SandGuard.Audio.Editor.Synth
         public static void BakePlaceholders()
         {
             var have = new System.Collections.Generic.HashSet<string>();
-            foreach (var dir in SfxCueBuilder.SourceDirs)
+            foreach (var dir in new[] { SfxCueBuilder.GeneratedDir, WavDir, PlaceholderDir })
             {
                 if (!Directory.Exists(dir)) continue;
                 foreach (var guid in AssetDatabase.FindAssets("t:AudioClip", new[] { dir }))

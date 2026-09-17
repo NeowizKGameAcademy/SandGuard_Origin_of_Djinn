@@ -1,0 +1,122 @@
+# AudioResource 대응 결과
+
+생성: 2026-09-17 11:01. 표: `Assets/8.Audio/Editor/AudioResourceMap.cs`.
+
+## 대응된 큐
+
+- `UI_Click` ← UI버튼 클릭음_auda
+- `Player_HardLand` ← 강한착지음_auda
+- `Env_DesertWind_Loop` ← 기본 사막환경 배경음_auda
+- `Player_ManaBolt_Fire` ← 기본공격_auda
+- `Player_Dash` ← 대쉬 효과음_auda
+- `Player_AirJump` ← 더블점프_auda
+- `Player_LevelUp` ← 레벨업_auda
+- `UI_Fail` ← 마나부족스킬잠금건설불가_auda
+- `Music_Menu_Loop` ← 메인화면 배경음
+- `Player_Footstep_Sand` ← 발걸음2_auda, 발자국 사운드, 플레이어 발걸음 _auda
+- `Enemy_ShieldBlock` ← 방패타격음_auda
+- `Wave_Start` ← 웨이브 시작음_auda
+- `Music_Preparation_Loop` ← 인게임 배경음
+- `Music_Combat_Loop` ← 인게임 배경음
+- `Enemy_Death` ← 적 사망음1_auda, 적 사망음2_auda, 적 사망음3_auda
+- `Player_Jump` ← 점프_auda
+- `Player_Fall_Loop` ← 추락바람소리
+- `Facility_Cobra_Flame_Loop` ← 코브라타워 화염방사_auda
+- `Core_Ping` ← 코어핑_auda
+- `Facility_Build_Complete` ← 타워 건설음_auda
+- `Facility_Cobra_Destroy` ← 타워파괴2_auda, 타워파괴음
+- `Enemy_Chief_Bomb_Explosion` ← 폭발, 폭발2
+- `Enemy_Hit` ← 피격음, 피격음2, 피격음3_auda
+
+## 클립이 없는 큐 (66개) — 담당자가 채울 것
+
+- `Core_Destroy_Charge`: 코어 파괴 충전 상승음 (0~0.2초)
+- `Core_Destroy_Debris`: 코어 파편 착지 (1.1초)
+- `Core_Warning`: 코어 안정도 경고 (30 이하)
+- `Enemy_Assassin_Swing`: 단검 빠른 2연 whoosh
+- `Enemy_BodyFall`: 사망 클립에서 몸이 바닥에 닿는 '쿵' (전 종류 공용)
+- `Enemy_Burning`: 불타는 적 지글 2초
+- `Enemy_Chief_Bomb_Fuse_Loop`: 폭탄 도화선 지글 (비행 중)
+- `Enemy_Chief_Bomb_Throw`: 폭탄 던지기 whoosh (ReleaseChiefBomb 이벤트)
+- `Enemy_Chief_Shield_Loop`: 황금 방패 소환→유지 험→해제
+- `Enemy_Chief_Swing`: 곡도 whoosh + 보스 음성
+- `Enemy_HammerBrute_Impact`: 망치가 지면을 치는 '쿵' (Attack 클립 타격 프레임)
+- `Enemy_HammerBrute_Swing`: 망치 큰 whoosh → 지면 쿵 + 포효
+- `Enemy_ShieldGuard_Impact`: 방패 덜컥 (Attack 클립 타격 프레임)
+- `Enemy_ShieldGuard_Swing`: 검 휘두름 + 방패 덜컥
+- `Enemy_Spawn`: 출현: 모래 뚫고 '푸슉' + 북
+- `Enemy_Swordsman_Swing`: 검 휘두름 + 기합
+- `Enemy_Voice_Chief_Death`: 족장 사망 음성 (길게)
+- `Env_Altar_Loop`: 스킬 제단 룬 공명
+- `Env_Lightning`: 마법 번개 크랙 + 지연 천둥
+- `Env_StormWall_Loop`: 외곽 모래폭풍 벽 (거리 기반은 후속)
+- `Env_Torch_Loop`: 횃불 타닥
+- `Facility_Cobra_Destroy_Debris`: 코브라 파편 착지 (파괴 0.9초 뒤)
+- `Facility_Cobra_Extinguish`: 화염 소화 '푸스' (방출 정지)
+- `Facility_Cobra_Flame_Impact`: 화염 착탄 불꽃 튐
+- `Facility_Cobra_Ignite`: 화염 점화 '훅' (방출 시작)
+- `Facility_Disabled_Loop`: 시설 정지 전기 지직 (5초)
+- `Facility_Obelisk_Loop`: 오벨리스크 둔화 필드 (모래시계 + 저역 펄스)
+- `Facility_Summon_Circle_Loop`: 소환진 룬 공명
+- `Facility_Summon_Pillar`: 빛기둥 소환 + 해골 달그락
+- `Music_Boss_Loop`: 보스 테마
+- `Music_Boss_Sting`: 보스 등장 스팅어
+- `Music_Danger_Loop`: 코어 위험 긴장 레이어 (전투 위에 겹침)
+- `Music_Defeat`: 패배 스팅어
+- `Music_Victory`: 승리 팡파르
+- `Music_WaveClear_Sting`: 웨이브 클리어 스팅어
+- `Player_BodyFall`: 사망 클립에서 몸이 바닥에 닿는 '쿵'
+- `Player_Land`: 착지 발 + 옷
+- `Player_ManaBolt_Flight_Loop`: 투사체 비행 윙윙
+- `Player_ManaBolt_Impact`: 착탄: 크리스탈 파열 + 모래
+- `Player_ManaCharge_Complete`: 마나 충전 완료 차임
+- `Player_ManaCharge_Loop`: 코어 근처 마나 충전
+- `Player_PierceBeam_Fire`: 관통 빔 '즈왕'
+- `Player_Revive`: 부활 마력 응집
+- `Player_SandBurst`: 모래 폭발 저역 붐
+- `Player_SandShackle`: 모래 족쇄 조임
+- `Player_SandShackle_Release`: 모래 족쇄 풀림 (방출 정지)
+- `Player_SandStorm_End`: 폭풍 잦아듦
+- `Player_SandStorm_Loop`: 사막 폭풍 강풍
+- `Player_SandVortex_End`: 소용돌이 잦아듦
+- `Player_SandVortex_Loop`: 소용돌이 회전 바람
+- `Player_Updraft_Charge_Loop`: 상승 기류 충전(세기에 따라 피치 상승)
+- `Player_Updraft_Launch`: 상승 기류 발사 모래 기둥
+- `Player_Voice_Cast`: 시전 기합 (음성 모델)
+- `Player_Voice_Death`: 사망 음성
+- `Player_Voice_Hit`: 피격 음성
+- `Player_Voice_Jump`: 점프 기합
+- `Player_Xp_Drop`: 경험치 조각 드롭 짤랑
+- `UI_Cooldown_Ready`: 스킬 쿨다운 완료
+- `UI_Health_Low_Loop`: 체력 20% 이하 심장 박동
+- `UI_Hover`: 버튼 호버
+- `UI_Menu_Close`: 닫힘
+- `UI_Menu_Open`: 건설 메뉴·스킬트리 열림
+- `UI_Skill_Equip`: 슬롯 장착 클릭
+- `UI_Skill_Learn`: 스킬 해금 금빛 차임
+- `Wave_Clear`: 웨이브 클리어 팡파르 (VFX_Wave_Clear)
+- `Wave_Countdown_Tick`: 카운트다운 틱
+
+## AudioResource에 있지만 쓰지 않은 파일 (21개)
+
+- UI버튼 클릭음_auda
+- 강한착지음
+- 기본 사막환경 배경음
+- 기본공격_auda
+- 대쉬 효과음_auda
+- 더블점프_auda
+- 레벨업_auda
+- 마나부족스킬잠금건설불가_auda
+- 발자국 사운드
+- 방패타격음_auda
+- 웨이브 시작음_auda
+- 적 사망음1_auda
+- 적 사망음2_auda
+- 적 사망음3_auda
+- 점프_auda
+- 코브라타워 화염방사_auda
+- 타워 건설음_auda
+- 타워파괴2_auda
+- 폭발
+- 플레이어 발걸음 _auda
+- 피격음3

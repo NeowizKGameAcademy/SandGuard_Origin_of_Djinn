@@ -112,17 +112,18 @@ namespace SandGuard.Player.Tests
             Assert.Greater(holdPeak, motor.jumpHeight * 0.85f);
         }
 
-        /// <summary>대시는 등속이 아니라 빠르게 붙었다가 끝에서 풀린다. 총 거리는 그대로다.</summary>
-        [UnityTest] public IEnumerator DashAcceleratesQuicklyAndDeceleratesBeforeItEnds()
+        /// <summary>대시는 사다리꼴이다. 첫 프레임들에 최고속에 붙어 거의 끝까지 유지하고 마지막에만 떨어진다. 총 거리는 그대로다.</summary>
+        [UnityTest] public IEnumerator DashHoldsPeakSpeedAndDropsOnlyAtTheVeryEnd()
         {
             Cube(new Vector3(0, -0.5f, 0), new Vector3(60, 1, 60));
             var player = Player(Vector3.zero);
             var motor = player.GetComponent<PlayerMotor>();
             yield return new WaitForSeconds(0.3f);
             Assert.AreEqual(0f, motor.DashProgress(0f), 0.0001f); Assert.AreEqual(1f, motor.DashProgress(1f), 0.0001f);
-            Assert.Less(motor.DashProgress(0.08f), 0.08f, "The first 8% of the dash covers less than 8% of the distance (ramp-up).");
-            Assert.Greater(motor.DashProgress(0.5f), 0.55f, "By the middle well over half the distance is done (fast peak).");
-            Assert.Greater(motor.DashProgress(0.8f), 0.85f, "The last 20% of the dash covers under 15% of the distance (ease-out).");
+            Assert.Less(motor.DashProgress(0.05f), 0.05f, "첫 5%는 거리의 5%보다 덜 간다(짧은 가속).");
+            Assert.That(motor.DashProgress(0.5f), Is.InRange(0.45f, 0.6f), "평평한 정점이라 중간에 거리의 약 절반을 간다.");
+            Assert.Greater(motor.DashProgress(0.85f), 0.85f, "85%까지 감속이 없다.");
+            Assert.Greater(1f - motor.DashProgress(0.9f), 0.05f, "마지막 10%에도 거리의 5% 이상을 간다. 떨어지는 건 맨 끝뿐이다.");
             Vector3 start = player.transform.position; Vector3 previous = start;
             var speeds = new List<float>();
             Assert.True(motor.TryDash().Succeeded);
@@ -135,32 +136,57 @@ namespace SandGuard.Player.Tests
             float travelled = Vector3.Distance(start, player.transform.position);
             Assert.That(travelled, Is.InRange(motor.DashDistance - 0.3f, motor.DashDistance + 0.3f), "The profile keeps the total distance.");
             Assert.GreaterOrEqual(speeds.Count, 4, "Enough frames to see the shape.");
-            float peak = 0f; int peakIndex = 0;
-            for (int i = 0; i < speeds.Count; i++) if (speeds[i] > peak) { peak = speeds[i]; peakIndex = i; }
-            Assert.Greater(peak, motor.DashDistance / motor.dashDuration * 1.15f, "Peak speed is well above the average (constant) speed.");
-            Assert.Less(peakIndex, speeds.Count / 2, "The peak comes in the first half.");
-            Assert.Less(speeds[speeds.Count - 1], peak * 0.6f, "The dash is clearly slowing down when it ends.");
+            float peak = 0f;
+            for (int i = 0; i < speeds.Count; i++) peak = Mathf.Max(peak, speeds[i]);
+            Assert.Greater(peak, motor.DashDistance / motor.dashDuration * 1.03f, "정점은 평균(등속) 속도보다 높다. 사다리꼴이라 차이는 작다.");
+            foreach (int quarter in new[] { 1, 2, 3 })
+                Assert.Greater(speeds[speeds.Count * quarter / 4], peak * 0.9f, "25%·50%·75% 지점 모두 정점 속도다(평평한 정점).");
+            Assert.Less(speeds[speeds.Count - 1], peak * 0.8f, "마지막 프레임은 떨어지는 중이다.");
         }
 
-        [UnityTest] public IEnumerator DashFlowsIntoRunSpeedAndCoastsInsteadOfStopping()
+        /// <summary>질풍참 방식. 접지 상태에서 수평·아래 조준은 지면을 따라가고, 위를 보면 조준 방향으로 떠오른다. 공중 대시는 항상 조준을 따른다.</summary>
+        [UnityTest] public IEnumerator DashFollowsTheAimUpwardButStaysFlatOnTheGroundWhenAimingDown()
+        {
+            Cube(new Vector3(0, -0.5f, 0), new Vector3(60, 1, 60));
+            var player = Player(Vector3.zero);
+            var motor = player.GetComponent<PlayerMotor>();
+            var rig = player.GetComponentInChildren<PlayerCameraRig>();
+            yield return new WaitForSeconds(0.3f);
+            rig.pitch = 20f; yield return null; yield return null; // 아래를 본다
+            float groundY = player.transform.position.y;
+            Assert.True(motor.TryDash().Succeeded);
+            Assert.AreEqual(0f, motor.DashDirection.y, 0.001f, "접지 + 아래 조준: 지면을 따라 수평으로 간다.");
+            yield return new WaitUntil(() => !motor.IsDashing);
+            Assert.AreEqual(groundY, player.transform.position.y, 0.05f);
+            Assert.Greater(player.transform.position.z, motor.DashDistance * 0.9f);
+            motor.ResetDashCooldown();
+            rig.pitch = rig.pitchLimits.x; yield return null; yield return null; // 위를 본다(한계 -35도)
+            float startY = player.transform.position.y;
+            Assert.True(motor.TryDash().Succeeded);
+            Assert.Greater(motor.DashDirection.y, 0.5f, "접지 + 위 조준(35도 > groundedDashLiftAngle): 조준 방향으로 떠오른다.");
+            float peakY = startY;
+            while (motor.IsDashing) { yield return null; peakY = Mathf.Max(peakY, player.transform.position.y); }
+            Assert.Greater(peakY, startY + motor.DashDistance * 0.4f, "6m를 35도로 가면 3m 넘게 올라간다.");
+            Assert.False(motor.IsGrounded);
+            yield return new WaitForSeconds(2f);
+            Assert.True(motor.IsGrounded, "올라간 만큼 떨어져 다시 착지한다.");
+        }
+
+        [UnityTest] public IEnumerator DashHandsOverRunSpeedAndStopsCleanlyWithoutInput()
         {
             Cube(new Vector3(0, -0.5f, 0), new Vector3(40, 1, 40));
             var player = Player(Vector3.zero);
             var motor = player.GetComponent<PlayerMotor>();
             yield return new WaitForSeconds(0.15f);
+            Assert.That(motor.DashExitSpeed, Is.InRange(motor.moveSpeed * 0.7f, motor.moveSpeed * 1.5f), "곡선 끝 속도는 달리기 속도 근처다. 입력을 누르고 있으면 감속 없이 달리기로 이어진다.");
             Assert.True(motor.TryDash().Succeeded);
-            var speeds = new List<float>();
-            while (motor.IsDashing) { yield return null; speeds.Add(Vector3.ProjectOnPlane(motor.Velocity, Vector3.up).magnitude); }
-            // 마지막 프레임은 대시가 도중에 끝나 일부만 대시 이동이므로, 마지막 두 프레임 중 큰 값을 곡선의 끝 속도로 본다
-            float exit = Mathf.Max(speeds[speeds.Count - 1], speeds.Count > 1 ? speeds[speeds.Count - 2] : 0f);
+            yield return new WaitUntil(() => !motor.IsDashing);
             yield return null;
             float after = Vector3.ProjectOnPlane(motor.Velocity, Vector3.up).magnitude;
-            Assert.LessOrEqual(after, exit + 0.01f, "대시가 끝난 뒤 속도가 올라가지 않는다. 이동 속도로 덮어쓰지 않고 곡선의 마지막 속도를 이어받는다.");
-            Assert.Greater(after, motor.moveSpeed * 0.5f, "곡선 끝이 달리기 속도 근처라 멈추지 않고 이동으로 이어진다.");
-            yield return new WaitForSeconds(0.1f);
-            float later = Vector3.ProjectOnPlane(motor.Velocity, Vector3.up).magnitude;
-            Assert.Less(later, after, "입력이 없으면 서서히 줄어든다.");
-            Assert.Greater(later, 0f, "지상 감속이 아니라 dashExitDeceleration으로 풀리므로 0.1초 뒤에도 아직 미끄러지는 중이다.");
+            Assert.LessOrEqual(after, motor.DashExitSpeed + 0.01f, "대시가 끝난 뒤 속도가 올라가지 않는다. 이동 속도로 덮어쓰지 않고 곡선의 끝 속도를 이어받는다.");
+            Assert.Greater(after, motor.moveSpeed * 0.3f, "첫 프레임은 아직 넘겨받은 속도로 움직인다.");
+            yield return new WaitForSeconds(0.15f);
+            Assert.AreEqual(0f, Vector3.ProjectOnPlane(motor.Velocity, Vector3.up).magnitude, 0.01f, "입력이 없으면 dashExitDeceleration(60)으로 0.15초 안에 깔끔히 선다. 미끄러지지 않는다.");
             Assert.Greater(player.transform.position.z, motor.dashDistance * 0.9f);
         }
 

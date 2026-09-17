@@ -1155,6 +1155,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2208722252240412665}
   - component: {fileID: 6252466791211566491}
+  - component: {fileID: 4773751667245402351}
   m_Layer: 0
   m_Name: Circle Effect
   m_TagString: Untagged
@@ -1172,8 +1173,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0.025, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 5477319527616751185}
   m_Father: {fileID: 4771769703887535178}
@@ -1200,6 +1201,23 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &4773751667245402351
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8899446652530589414}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bdb87b0ef36e7c843819f121c5ef1857, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxAnimatorLoop
+  Cue: {fileID: 11400000, guid: b3c3c6b3e525450458cf76ba0708e733, type: 2}
+  Animator: {fileID: 6252466791211566491}
+  Layer: 7
+  StateName: Ground
+  Phase: 0
 --- !u!1001 &3171370330538328117
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -52,7 +52,7 @@ namespace SandGuard.Audio.Tests
             var cue = MakeCue();
             var go = Track(new GameObject("Walker"));
             var steps = go.AddComponent<SfxFootsteps>();
-            steps.Cue = cue; steps.Stride = 0.5f; steps.RequireGround = false; steps.MinSpeed = 0.1f;
+            steps.Cue = cue; steps.Mode = FootstepMode.Distance; steps.Stride = 0.5f; steps.RequireGround = false; steps.MinSpeed = 0.1f;
             yield return null;
             for (int i = 0; i < 20; i++) { go.transform.position += new Vector3(0.15f, 0, 0); yield return null; }
             // 3m 이동 / 0.5m = 6걸음 (첫 프레임 오차 허용)
@@ -65,7 +65,7 @@ namespace SandGuard.Audio.Tests
             var cue = MakeCue();
             var go = Track(new GameObject("Idle"));
             var steps = go.AddComponent<SfxFootsteps>();
-            steps.Cue = cue; steps.Stride = 0.3f; steps.RequireGround = false; steps.MinSpeed = 2f;
+            steps.Cue = cue; steps.Mode = FootstepMode.Distance; steps.Stride = 0.3f; steps.RequireGround = false; steps.MinSpeed = 2f;
             // 프레임 시간에 맞춰 MinSpeed의 절반 속도로만 움직인다 (배치 모드는 프레임이 매우 짧다)
             for (int i = 0; i < 10; i++) { go.transform.position += new Vector3(steps.MinSpeed * 0.5f * Time.deltaTime, 0, 0); yield return null; }
             Assert.AreEqual(0, steps.Steps);

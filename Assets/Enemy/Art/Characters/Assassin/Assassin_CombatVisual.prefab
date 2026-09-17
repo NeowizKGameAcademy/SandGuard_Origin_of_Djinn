@@ -170,7 +170,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5a57d6086768caf418ec4d592355d3e1, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: SandGuard.Enemy.Runtime::SandGuard.Enemy.EnemyVisualBindings
   animator: {fileID: 3755400676722860479}
   weaponPivot: {fileID: 0}
@@ -363,7 +363,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: d66e79aebb47773429af08d882ad12c1, type: 3}
       propertyPath: m_Controller
-      value:
+      value: 
       objectReference: {fileID: 9100000, guid: 7138126b01de0e74e9ec7b04adea9e78, type: 2}
     - target: {fileID: 5866666021909216657, guid: d66e79aebb47773429af08d882ad12c1, type: 3}
       propertyPath: m_CullingMode
@@ -408,6 +408,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d66e79aebb47773429af08d882ad12c1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 818178053846818927}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d66e79aebb47773429af08d882ad12c1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2965351427563285761}
   m_SourcePrefab: {fileID: 100100000, guid: d66e79aebb47773429af08d882ad12c1, type: 3}
 --- !u!4 &245539545649316373 stripped
 Transform:
@@ -484,7 +487,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f3a943c4b3405db4caa16e4fd4f75abc, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: SandGuard.Enemy.Runtime::SandGuard.Enemy.EnemyEquipmentGrip
   fingers:
   - bone: {fileID: 2556207072330797176}
@@ -519,6 +522,24 @@ MonoBehaviour:
   leftGripBasis: {x: 0, y: 0, z: 0, w: 1}
   shieldOffset: {x: -0.27, y: -0.16, z: 0.32}
   characterHeight: 1.94
+--- !u!114 &2965351427563285761
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7617312638931722623}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03e00a1276e442b4888e8d7dc67a5651, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxAnimationEvents
+  SwingCue: {fileID: 11400000, guid: 0df2207824139e74483e211ea72b1845, type: 2}
+  ImpactCue: {fileID: 0}
+  BodyFallCue: {fileID: 11400000, guid: d347d80f49fe32f47b21e7a27d18515f, type: 2}
+  FootstepCue: {fileID: 0}
+  ThrowCue: {fileID: 0}
+  Anchor: {fileID: 0}
 --- !u!4 &7720963562106634648 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8191740002585371210, guid: d66e79aebb47773429af08d882ad12c1, type: 3}

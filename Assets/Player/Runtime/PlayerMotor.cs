@@ -18,16 +18,19 @@ namespace SandGuard.Player
         [Header("대시")]
         [Min(0)] public int dashManaCost = 10;
         [Min(0f)] public float dashCooldown = 1f;
-        [Min(0.01f)] public float dashDuration = 0.3f;
-        [Min(0.01f)] public float dashDistance = 4f;
-        [Tooltip("대시 속도 곡선. 가로 = 대시 진행(0~1), 세로 = 상대 속도. 곡선 아래 넓이로 정규화하므로 모양만 정하면 되고 총 거리는 dashDistance를 유지한다. 기본: 12%까지 급가속, 절반 지나 감속, 끝은 달리기 속도 근처(정점의 30%)라 멈추지 않고 이동으로 이어진다")]
+        [Min(0.01f)] public float dashDuration = 0.2f;
+        [Min(0.01f)] public float dashDistance = 8f;
+        [Tooltip("대시 속도 곡선. 가로 = 대시 진행(0~1), 세로 = 상대 속도. 곡선 아래 넓이로 정규화하므로 모양만 정하면 되고 총 거리는 dashDistance를 유지한다. 기본: 사다리꼴. 5%에 최고속에 붙어 88%까지 유지하고 마지막에 달리기 속도 근처(정점의 15%)로 뚝 떨어진다. 발로란트·오버워치식 대시로, 끝의 여운은 이동이 아니라 카메라·소리가 맡는다")]
         public AnimationCurve dashProfile = new AnimationCurve(
-            new Keyframe(0f, 0.25f, 0f, 9f), new Keyframe(0.12f, 1f, 0f, 0f), new Keyframe(0.5f, 0.9f, -0.8f, -0.8f), new Keyframe(1f, 0.3f, -1.2f, 0f));
+            new Keyframe(0f, 0.5f, 0f, 20f), new Keyframe(0.05f, 1f, 0f, 0f), new Keyframe(0.88f, 1f, 0f, 0f), new Keyframe(1f, 0.15f, -6f, 0f));
         const int DashProfileSamples = 32;
         float[] dashProgressTable; // 정규화 누적 거리 F(t), t = i / DashProfileSamples
         float dashProfilePeak; // 곡선 최고값. DashSpeedFactor 정규화용
+        float dashProfileArea; // 곡선 아래 넓이(정규화 전). DashExitSpeed용. 곡선이 없으면 0
         [Min(0), Tooltip("공중에서 쓸 수 있는 대시 횟수(기본값). 접지하면 다시 찬다. 스킬 ④ 공중 대시가 AirDashes 수정자로 올린다")]
         public int airDashes = 0;
+        [Range(0f, 89f), Tooltip("접지 상태에서 조준이 이 각도(도)보다 위를 볼 때만 대시가 조준을 따라 떠오른다. 그 아래(수평·아래 조준)는 지면을 따라 수평으로 간다. 공중에서는 항상 조준 방향 그대로(질풍참)")]
+        public float groundedDashLiftAngle = 10f;
         public float DashCooldownRemaining { get; private set; }
         public bool IsDashing => dashRemaining > 0f && Alive;
         public event Action<PlayerMobilityState> Changed;
@@ -48,6 +51,7 @@ namespace SandGuard.Player
         float dashRemaining;
         Vector3 dashDirection;
         bool dashMomentum; // 대시가 넘긴 속도로 아직 미끄러지는 중. 입력이 들어오거나 멈추면 풀린다
+        float dashExitVertical; // 대시가 끝나는 프레임에 넘겨줄 수직 속도. 위로 대시했으면 조금 더 떠올랐다가 떨어진다
         public Vector3 DashDirection => dashDirection;
         /// <summary>지금 대시 속도가 정점 대비 얼마인지(0~1). dashProfile을 그대로 따르므로 카메라·VFX가 이동과 같은 박자로 움직인다. 대시 중이 아니면 0, 곡선이 없으면(등속) 1.</summary>
         public float DashSpeedFactor
@@ -61,6 +65,16 @@ namespace SandGuard.Player
         }
         PlayerMobilityState lastState;
         // 진행 중인 쿨다운은 발동 시점의 길이를 기준으로 진행률을 낸다. 도중에 수정자로 쿨다운이 줄어도 남은 시간이 길이를 넘지 않는다.
+        /// <summary>대시가 끝나는 순간 이동에 넘겨주는 속도(m/s). 곡선의 끝값을 넓이로 정규화한 값이라 프레임 배치와 무관하게 일정하다. 곡선이 없으면 등속(거리/시간).</summary>
+        public float DashExitSpeed
+        {
+            get
+            {
+                float average = DashDistance / dashDuration;
+                if (dashProgressTable == null || dashProfileArea <= 0f) return average;
+                return average * Mathf.Max(0f, dashProfile.Evaluate(1f)) / dashProfileArea;
+            }
+        }
         float activeDashCooldown;
         public float ActiveDashCooldown => DashCooldownRemaining > 0f ? Mathf.Max(activeDashCooldown, DashCooldownRemaining) : DashCooldown;
         public PlayerMobilityState State => new PlayerMobilityState(IsGrounded, RemainingAirJumps, DashManaCost,
@@ -72,7 +86,10 @@ namespace SandGuard.Player
         public float DashCooldown => Stat(PlayerStat.DashCooldown, dashCooldown);
         public int DashManaCost => stats != null ? stats.EvaluateCount(PlayerStat.DashManaCost, dashManaCost) : dashManaCost;
         public int ExtraAirJumps => SkillTreeAirJumpAllowed!=null ? (SkillTreeAirJumpAllowed()?Mathf.Max(1, stats!=null?stats.EvaluateCount(PlayerStat.ExtraAirJumps,extraAirJumps):extraAirJumps):0) : (stats != null ? stats.EvaluateCount(PlayerStat.ExtraAirJumps, extraAirJumps) : extraAirJumps);
-        public int AirDashes => stats != null ? stats.EvaluateCount(PlayerStat.AirDashes, airDashes) : airDashes;
+        /// <summary>공중 대시 횟수. 스킬트리가 붙어 있으면 ExtraAirJumps와 같은 규칙이다. 대시(move.dash)를 배웠으면 최소 1회, 안 배웠으면 0. 스킬트리가 없으면 스탯 값 그대로(테스트 씬은 AirDashEffect가 올린다).</summary>
+        public int AirDashes => SkillTreeDashAllowed != null
+            ? (SkillTreeDashAllowed() ? Mathf.Max(1, stats != null ? stats.EvaluateCount(PlayerStat.AirDashes, airDashes) : airDashes) : 0)
+            : (stats != null ? stats.EvaluateCount(PlayerStat.AirDashes, airDashes) : airDashes);
         /// <summary>이번 체공에서 아직 쓸 수 있는 공중 대시 횟수.</summary>
         public int RemainingAirDashes => Mathf.Max(0, AirDashes - airDashesUsed);
         int airDashesUsed;
@@ -83,7 +100,7 @@ namespace SandGuard.Player
         [Min(0.01f), Tooltip("지상에서 입력을 떼면 멈추는 속도. 가속보다 크게 두면 멈춤이 즉각적이다")] public float groundDeceleration = 90f;
         [Min(0.01f)] public float airAcceleration = 18f;
         [Min(0.01f)] public float airDeceleration = 8f;
-        [Min(0.01f), Tooltip("대시가 끝난 뒤 입력이 없을 때 넘겨받은 속도가 풀리는 감속. 지상·공중 감속보다 작을 때만 적용되어 대시 끝이 미끄러지듯 이어진다")] public float dashExitDeceleration = 20f;
+        [Min(0.01f), Tooltip("대시가 끝난 뒤 입력이 없을 때 넘겨받은 속도가 풀리는 감속. 지상·공중 감속보다 작을 때만 적용된다. 60이면 달리기 속도에서 0.08초 안에 깔끔히 서고, 20 정도로 낮추면 미끄러지는 여운이 생긴다")] public float dashExitDeceleration = 60f;
         [Header("점프")]
         [Min(0.1f)] public float jumpHeight = 1.5f;
         [Min(0.1f)] public float gravity = 25f;
@@ -205,7 +222,7 @@ namespace SandGuard.Player
         /// <summary>인스펙터에서 곡선을 바꾼 뒤 부른다. Awake·OnValidate에서 자동으로 한 번 만든다.</summary>
         public void BuildDashProfile()
         {
-            dashProfilePeak = 0f;
+            dashProfilePeak = 0f; dashProfileArea = 0f;
             if (dashProfile == null || dashProfile.length == 0) { dashProgressTable = null; return; }
             var table = new float[DashProfileSamples + 1];
             float previous = Mathf.Max(0f, dashProfile.Evaluate(0f));
@@ -219,6 +236,7 @@ namespace SandGuard.Player
             }
             float area = table[DashProfileSamples];
             if (area <= 0.0001f) { dashProgressTable = null; return; }
+            dashProfileArea = area;
             for (int i = 0; i <= DashProfileSamples; i++) table[i] /= area;
             dashProgressTable = table;
         }
@@ -266,10 +284,12 @@ namespace SandGuard.Player
             if (!Mana.TryReserve(DashManaCost, out var reservation)) return ActionResult.Fail(ActionFailure.InsufficientMana);
             using (reservation)
             {
-                Vector3 forward = FlatForward();
-                Vector2 move = Vector2.ClampMagnitude(Input.Move, 1f);
-                dashDirection = move.sqrMagnitude > 0.01f
-                    ? (forward * move.y + Vector3.Cross(Vector3.up, forward) * move.x).normalized : forward;
+                // 질풍참 방식: 이동 입력과 무관하게 크로스헤어(카메라)가 가리키는 3D 방향으로 간다.
+                // 접지 상태에서 수평·아래 조준은 지면을 따라 수평으로, groundedDashLiftAngle보다 위를 보면 떠오른다. 공중에서는 항상 조준 그대로다.
+                Vector3 aim = view != null ? view.forward : transform.forward;
+                float aimPitch = Mathf.Asin(Mathf.Clamp(aim.y, -1f, 1f)) * Mathf.Rad2Deg;
+                bool followAim = aim.sqrMagnitude > 0.01f && (!IsGrounded || aimPitch > groundedDashLiftAngle);
+                dashDirection = followAim ? aim.normalized : FlatForward();
                 dashRemaining = dashDuration; DashCooldownRemaining = DashCooldown; activeDashCooldown = DashCooldownRemaining;
                 if (!reservation.TryCommit())
                 { dashRemaining = 0f; DashCooldownRemaining = 0f; return ActionResult.Fail(ActionFailure.InvalidRequest); }
@@ -355,11 +375,13 @@ namespace SandGuard.Player
                 dashRemaining = Mathf.Max(0f, dashRemaining - step);
                 if (dashRemaining <= 0f)
                 {
-                    // 대시가 끝나면 곡선의 마지막 속도를 그대로 이어받는다. 이동 속도로 바로 덮어쓰지 않고, 입력이 있으면 평소 가감속이, 없으면 dashExitDeceleration이 이어서 푼다.
-                    float exitSpeed = step > 0f ? displacement.magnitude / step : 0f;
-                    localVelocity = new Vector2(Vector3.Dot(dashDirection, right), Vector3.Dot(dashDirection, forward)) * exitSpeed;
-                    horizontalVelocity = dashDirection * exitSpeed;
-                    dashMomentum = exitSpeed > 0f;
+                    // 대시가 끝나면 곡선의 끝 속도(DashExitSpeed)를 그대로 이어받는다. 이동 속도로 바로 덮어쓰지 않고, 입력이 있으면 평소 가감속이, 없으면 dashExitDeceleration이 이어서 푼다.
+                    float exitSpeed = DashExitSpeed;
+                    Vector3 flatDash = Vector3.ProjectOnPlane(dashDirection, Vector3.up); // 수평 성분만 이동 속도로, 수직 성분은 dashExitVertical로 넘긴다
+                    localVelocity = new Vector2(Vector3.Dot(flatDash, right), Vector3.Dot(flatDash, forward)) * exitSpeed;
+                    horizontalVelocity = flatDash * exitSpeed;
+                    dashMomentum = horizontalVelocity.sqrMagnitude > 0.0001f;
+                    dashExitVertical = dashDirection.y * exitSpeed;
                 }
                 else { localVelocity = Vector2.zero; horizontalVelocity = Vector3.zero; }
             }
@@ -379,10 +401,11 @@ namespace SandGuard.Player
             frameVelocity = (transform.position - movementStart) / dt;
             if (IsGrounded) { if (!wasGrounded && !impactCaptured) impactSpeed = -verticalVelocity; Land(); }
             if (dashingThisFrame) verticalVelocity = 0f; // Land's downward stick speed resumes only after the dash.
+            if (dashingThisFrame && !IsDashing) { if (!IsGrounded) verticalVelocity = dashExitVertical; dashExitVertical = 0f; } // 조준 대시의 수직 성분을 이어받아 자연스러운 포물선으로
             if (IsGrounded && !wasGrounded) Landed?.Invoke(Mathf.Max(0f, impactSpeed));
 
             Vector3 facing = Vector3.zero;
-            if (IsDashing) facing = dashDirection;
+            if (IsDashing) facing = Vector3.ProjectOnPlane(dashDirection, Vector3.up); // 위아래 대시여도 몸은 기울이지 않는다. 수직 대시면 회전 유지
             else if (alwaysFaceCamera || faceCameraTimer > 0f || Input.PrimaryAttackHeld) facing = forward;
             else if (steering && horizontalVelocity.sqrMagnitude > 0.04f) facing = horizontalVelocity;
             if (facing.sqrMagnitude > 0.0001f)

@@ -25849,7 +25849,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4805915954742917785}
-  - component: {fileID: 4031546093431449764}
+  - component: {fileID: 7466121549525193349}
   m_Layer: 0
   m_Name: Sfx
   m_TagString: Untagged
@@ -25872,7 +25872,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2021953329926535086}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4031546093431449764
+--- !u!114 &7466121549525193349
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -25881,13 +25881,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 8564416710904880129}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a2bd5ad3d6c26d243a66a793301b2e53, type: 3}
+  m_Script: {fileID: 11500000, guid: 7f19321ebc9e2564da7a9563fa698d64, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxEmitter
-  Cue: {fileID: 11400000, guid: 81043bb04f34eda4e83e501eb2b71a13, type: 2}
-  VolumeScale: 1
-  Delay: 0
-  Trigger: 0
+  m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxTimeline
+  Entries:
+  - Delay: 0
+    Cue: {fileID: 11400000, guid: 5e135b6bb20e35044b78531f5ec099be, type: 2}
+  - Delay: 0.2
+    Cue: {fileID: 11400000, guid: 81043bb04f34eda4e83e501eb2b71a13, type: 2}
+  - Delay: 1.1
+    Cue: {fileID: 11400000, guid: 0a4bd9a5f21dd6f40b2d4285a0ffce51, type: 2}
+  Anchor: {fileID: 0}
 --- !u!1 &9027298976515379004
 GameObject:
   m_ObjectHideFlags: 0

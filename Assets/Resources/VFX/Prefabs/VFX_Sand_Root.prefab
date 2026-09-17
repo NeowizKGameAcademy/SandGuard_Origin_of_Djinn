@@ -134,9 +134,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxEmitter
   Cue: {fileID: 11400000, guid: b9a4195b734098e48a10174f14671522, type: 2}
+  BeginCue: {fileID: 0}
+  EndCue: {fileID: 11400000, guid: d8c56bdceb4f8d84cb6c68ef22caf35b, type: 2}
   VolumeScale: 1
   Delay: 0
-  Trigger: 0
+  Trigger: 1
 --- !u!1 &5310361912717970230
 GameObject:
   m_ObjectHideFlags: 0
