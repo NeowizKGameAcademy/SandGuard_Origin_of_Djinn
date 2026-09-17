@@ -16,7 +16,7 @@ Material:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3000
+  m_CustomRenderQueue: 3001
   stringTagMap: {}
   disabledShaderPasses: []
   m_LockedProperties: 
@@ -29,16 +29,16 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _DensityFloor: 0.55
+    - _DensityFloor: 0.86
     - _FlowSpeed: 2.9
-    - _Opacity: 0.98
+    - _Opacity: 1
     - _Phase: 0.37
     - _StormTime: 0
     - _Streak: 0.55
     - _Swirl: 1
-    - _WaveAmplitude: 0.2
+    - _WaveAmplitude: 0.25
     m_Colors:
-    - _DarkColor: {r: 0.5, g: 0.36, b: 0.235, a: 1}
-    - _LightColor: {r: 0.88, g: 0.72, b: 0.5, a: 1}
+    - _DarkColor: {r: 0.4, g: 0.27, b: 0.16, a: 1}
+    - _LightColor: {r: 0.84, g: 0.66, b: 0.44, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

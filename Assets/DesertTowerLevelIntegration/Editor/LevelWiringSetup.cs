@@ -298,15 +298,20 @@ namespace DesertTower.LevelIntegration.Editor
         }
 
         /// <summary>Core.prefab 인스턴스의 루트를 찾는다. 이름 규칙이 아니라 프리팹 출처로 판별한다.</summary>
+        /// <summary>코어로 인정하는 프리팹. 2026-09-17 Level의 코어가 New Core.prefab으로 바뀌어 둘 다 받는다.</summary>
+        static readonly string[] CorePrefabPaths = { CorePrefabPath, "Assets/2.Model/Prefabs/New Core.prefab" };
+
         static GameObject FindCoreInstance()
         {
             foreach (var t in Object.FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None))
             {
                 var instanceRoot = PrefabUtility.GetNearestPrefabInstanceRoot(t.gameObject);
                 if (!instanceRoot || instanceRoot != t.gameObject) continue;
-                if (PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(instanceRoot) == CorePrefabPath) return instanceRoot;
+                if (System.Array.IndexOf(CorePrefabPaths, PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(instanceRoot)) >= 0) return instanceRoot;
             }
-            return null;
+            // 프리팹 인스턴스가 아니어도 코어 수신 컴포넌트가 붙어 있으면 그것을 코어로 본다
+            var receiver = Object.FindFirstObjectByType<CoreReceiver>(FindObjectsInactive.Include);
+            return receiver ? receiver.gameObject : null;
         }
 
         static string Step(bool apply, bool needed, string what)

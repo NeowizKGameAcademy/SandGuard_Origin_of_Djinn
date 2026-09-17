@@ -19,78 +19,92 @@ namespace SandGuard.Audio.Editor
     /// 오디오 컴포넌트를 프리팹·씬에 멱등하게 꽂는다. CombatVfxWiring의 소리판. 프리팹을 다시 만들었으면 다시 실행한다.
     /// 큐는 참조만 넣는다. 클립·볼륨·거리는 담당자가 큐 에셋에서 바꾼다. 컴포넌트에 이미 큐가 있으면 바꾸지 않는다.
     ///
-    ///   Player.prefab      onFired 마나탄 / onJumped·onAirJumped / onLevelUp / onDashStarted / onLanded / onHardLanded / onRespawned / 피격·사망 / 발소리 / 상승 기류 충전 루프
-    ///   Enemy.prefab(+변형) 피격·사망 / onAttack 휘두름 / onDied 음성 / 발소리. 변형별 큐 오버라이드
+    ///   Player.prefab      onFired 마나탄 / onJumped·onAirJumped / onLevelUp / onDashStarted / onLanded / onHardLanded / onRespawned / 피격·사망
+    ///                      발 뼈 발소리 / 상승 기류 충전 루프 / Falling 상태 낙하 바람 / Death 클립 BodyFall 이벤트
+    ///   Enemy.prefab(+변형) 피격·사망 / onDied 음성 / 발 뼈 발소리(변형별 큐)
+    ///   <이름>_CombatVisual.prefab  SfxAnimationEvents(휘두름·임팩트·쓰러짐·던지기) + Attack/Death 클립 이벤트
+    ///   Core.prefab        Circle Effect 애니메이터 루프 → Core_Ping
     ///   Chief_Bomb, ExperienceOrb, Tower_Obelisk   이미터
-    ///   VFX 프리팹         VfxTable에 따라 자식 Sfx 이미터
+    ///   VFX 프리팹         VfxTable(이미터, 시작·끝 큐) + TimelineTable(단계 지연)
     ///   Level.unity        코어 험·피격, 사막 바람, 폭풍 벽·번개, MusicDirector
     ///   MainScene.unity    버튼, 메뉴 앰비언스, MusicDirector(MenuMode)
     /// </summary>
     public static class AudioWiring
     {
         const string PlayerPrefabPath = "Assets/Player/Generated/Player.prefab";
+        const string PlayerDeathFbx = "Assets/Player/Art/Protagonist/CombatAnimations/Death.fbx";
         const string EnemyPrefabPath = "Assets/Enemy/Generated/Enemy.prefab";
+        const string EnemyArtDir = "Assets/Enemy/Art/Characters";
+        const string CorePrefabPath = "Assets/2.Model/Prefabs/Core.prefab";
         const string LevelScenePath = "Assets/1.Scene/Level.unity";
         const string MainScenePath = "Assets/1.Scene/MainScene.unity";
         const string SkillTreeUiPath = "Assets/SandGuardSkillTree/Assets/SkillTree/Generated/SkillTreeUI.prefab";
         const string VfxPrefabDir = "Assets/Resources/VFX/Prefabs";
 
-        /// <summary>적 변형 → (휘두름, 사망 음성, 발소리, 보폭).</summary>
-        static readonly (string path, string swing, string deathVoice, string footstep, float stride)[] EnemyVariants =
+        /// <summary>휘두름 이벤트를 타격보다 이만큼 앞에 둔다.</summary>
+        const float SwingLead = 0.15f;
+
+        /// <summary>적 변형 → (이름, 프리팹, 휘두름, 임팩트, 사망 음성, 발소리).</summary>
+        static readonly (string name, string path, string swing, string impact, string deathVoice, string footstep)[] EnemyVariants =
         {
-            ("Assets/Enemy/Generated/Enemy_Swordsman.prefab", "Enemy_Swordsman_Swing", "Enemy_Voice_Death_Light", "Enemy_Footstep_Light", 0.8f),
-            ("Assets/Enemy/Generated/Enemy_Assassin.prefab", "Enemy_Assassin_Swing", "Enemy_Voice_Death_Light", "Enemy_Footstep_Light", 0.7f),
-            ("Assets/Enemy/Generated/Enemy_ShieldGuard.prefab", "Enemy_ShieldGuard_Swing", "Enemy_Voice_Death_Light", "Enemy_Footstep_Heavy", 1.0f),
-            ("Assets/Enemy/Generated/Enemy_HammerBrute.prefab", "Enemy_HammerBrute_Swing", "Enemy_Voice_Death_Heavy", "Enemy_Footstep_Heavy", 1.05f),
-            ("Assets/Enemy/Generated/Enemy_Chief.prefab", "Enemy_Chief_Swing", "Enemy_Voice_Chief_Death", "Enemy_Footstep_Heavy", 1.2f),
+            ("Swordsman", "Assets/Enemy/Generated/Enemy_Swordsman.prefab", "Enemy_Swordsman_Swing", null, "Enemy_Voice_Death_Light", "Enemy_Footstep_Light"),
+            ("Assassin", "Assets/Enemy/Generated/Enemy_Assassin.prefab", "Enemy_Assassin_Swing", null, "Enemy_Voice_Death_Light", "Enemy_Footstep_Light"),
+            ("ShieldGuard", "Assets/Enemy/Generated/Enemy_ShieldGuard.prefab", "Enemy_ShieldGuard_Swing", "Enemy_ShieldGuard_Impact", "Enemy_Voice_Death_Light", "Enemy_Footstep_Heavy"),
+            ("HammerBrute", "Assets/Enemy/Generated/Enemy_HammerBrute.prefab", "Enemy_HammerBrute_Swing", "Enemy_HammerBrute_Impact", "Enemy_Voice_Death_Heavy", "Enemy_Footstep_Heavy"),
+            ("Chief", "Assets/Enemy/Generated/Enemy_Chief.prefab", "Enemy_Chief_Swing", null, "Enemy_Voice_Chief_Death", "Enemy_Footstep_Heavy"),
         };
 
-        /// <summary>VFX 프리팹 → 큐. 이벤트로 이미 내는 소리(점프·대시·착지·발사·피격·레벨업)는 여기 넣지 않아 두 번 나지 않는다.</summary>
-        static readonly (string prefab, string cue, SfxEmitterTrigger trigger)[] VfxTable =
+        /// <summary>VFX 프리팹 → 이미터. 이벤트로 이미 내는 소리(점프·대시·착지·발사·피격·레벨업)는 여기 넣지 않아 두 번 나지 않는다.</summary>
+        static readonly (string prefab, string cue, SfxEmitterTrigger trigger, string begin, string end)[] VfxTable =
         {
-            ("VFX_ManaBolt_Projectile", "Player_ManaBolt_Flight_Loop", SfxEmitterTrigger.OnEnable),
-            ("VFX_ManaBolt_Impact", "Player_ManaBolt_Impact", SfxEmitterTrigger.OnEnable),
-            ("VFX_Pierce_Beam", "Player_PierceBeam_Fire", SfxEmitterTrigger.OnEnable),
-            ("VFX_Sand_Burst", "Player_SandBurst", SfxEmitterTrigger.OnEnable),
-            ("VFX_Sand_Root", "Player_SandShackle", SfxEmitterTrigger.OnEnable),
-            ("VFX_Sand_Vortex", "Player_SandVortex_Loop", SfxEmitterTrigger.WhileParticlesEmit),
-            ("VFX_Sand_Storm", "Player_SandStorm_Loop", SfxEmitterTrigger.WhileParticlesEmit),
-            ("VFX_Updraft_Launch", "Player_Updraft_Launch", SfxEmitterTrigger.OnEnable),
-            ("VFX_Mana_Charge", "Player_ManaCharge_Loop", SfxEmitterTrigger.WhileParticlesEmit),
-            ("VFX_Mana_Charge_Complete", "Player_ManaCharge_Complete", SfxEmitterTrigger.OnEnable),
-            ("VFX_Enemy_Spawn", "Enemy_Spawn", SfxEmitterTrigger.OnEnable),
-            ("VFX_Shield_Front_Guard", "Enemy_ShieldBlock", SfxEmitterTrigger.OnEnable),
-            ("VFX_Shield_Gold_Guard", "Enemy_Chief_ShieldBlock", SfxEmitterTrigger.OnEnable),
-            ("VFX_Chief_Golden_Shield_Loop", "Enemy_Chief_Shield_Loop", SfxEmitterTrigger.OnEnable),
-            ("VFX_Demolition_Bomb_Explosion", "Enemy_Chief_Bomb_Explosion", SfxEmitterTrigger.OnEnable),
-            ("VFX_Burning_Loop", "Enemy_Burning", SfxEmitterTrigger.OnEnable),
-            ("VFX_Build_Poof", "Facility_Build_Poof", SfxEmitterTrigger.OnEnable),
-            ("VFX_Build_Complete", "Facility_Build_Complete", SfxEmitterTrigger.OnEnable),
-            ("VFX_FlameCobra_Breath", "Facility_Cobra_Flame_Loop", SfxEmitterTrigger.WhileParticlesEmit),
-            ("VFX_Fire_Impact", "Facility_Cobra_Flame_Impact", SfxEmitterTrigger.OnEnable),
-            ("VFX_Facility_Hit", "Facility_Hit", SfxEmitterTrigger.OnEnable),
-            ("VFX_Cobra_Destruction", "Facility_Cobra_Destroy", SfxEmitterTrigger.OnEnable),
-            ("VFX_Facility_Disabled_Loop", "Facility_Disabled_Loop", SfxEmitterTrigger.OnEnable),
-            ("VFX_Summon_Circle", "Facility_Summon_Circle_Loop", SfxEmitterTrigger.WhileParticlesEmit),
-            ("VFX_Summon_Pillar", "Facility_Summon_Pillar", SfxEmitterTrigger.OnEnable),
-            ("VFX_Wall_Hit", "Wall_Hit", SfxEmitterTrigger.OnEnable),
-            ("VFX_Wall_Destroy", "Wall_Destroy", SfxEmitterTrigger.OnEnable),
-            ("VFX_Core_Destruction", "Core_Destroy", SfxEmitterTrigger.OnEnable),
-            ("VFX_Wave_Clear", "Wave_Clear", SfxEmitterTrigger.OnEnable),
-            ("VFX_Torch", "Env_Torch_Loop", SfxEmitterTrigger.OnEnable),
+            ("VFX_ManaBolt_Projectile", "Player_ManaBolt_Flight_Loop", SfxEmitterTrigger.OnEnable, null, null),
+            ("VFX_ManaBolt_Impact", "Player_ManaBolt_Impact", SfxEmitterTrigger.OnEnable, null, null),
+            ("VFX_Pierce_Beam", "Player_PierceBeam_Fire", SfxEmitterTrigger.OnEnable, null, null),
+            ("VFX_Sand_Burst", "Player_SandBurst", SfxEmitterTrigger.OnEnable, null, null),
+            ("VFX_Sand_Root", "Player_SandShackle", SfxEmitterTrigger.WhileParticlesEmit, null, "Player_SandShackle_Release"),
+            ("VFX_Sand_Vortex", "Player_SandVortex_Loop", SfxEmitterTrigger.WhileParticlesEmit, null, "Player_SandVortex_End"),
+            ("VFX_Sand_Storm", "Player_SandStorm_Loop", SfxEmitterTrigger.WhileParticlesEmit, null, "Player_SandStorm_End"),
+            ("VFX_Updraft_Launch", "Player_Updraft_Launch", SfxEmitterTrigger.OnEnable, null, null),
+            ("VFX_Mana_Charge", "Player_ManaCharge_Loop", SfxEmitterTrigger.WhileParticlesEmit, null, null),
+            ("VFX_Mana_Charge_Complete", "Player_ManaCharge_Complete", SfxEmitterTrigger.OnEnable, null, null),
+            ("VFX_Enemy_Spawn", "Enemy_Spawn", SfxEmitterTrigger.OnEnable, null, null),
+            ("VFX_Shield_Front_Guard", "Enemy_ShieldBlock", SfxEmitterTrigger.OnEnable, null, null),
+            ("VFX_Shield_Gold_Guard", "Enemy_Chief_ShieldBlock", SfxEmitterTrigger.OnEnable, null, null),
+            ("VFX_Chief_Golden_Shield_Loop", "Enemy_Chief_Shield_Loop", SfxEmitterTrigger.OnEnable, null, null),
+            ("VFX_Demolition_Bomb_Explosion", "Enemy_Chief_Bomb_Explosion", SfxEmitterTrigger.OnEnable, null, null),
+            ("VFX_Burning_Loop", "Enemy_Burning", SfxEmitterTrigger.OnEnable, null, null),
+            ("VFX_Build_Poof", "Facility_Build_Poof", SfxEmitterTrigger.OnEnable, null, null),
+            ("VFX_Build_Complete", "Facility_Build_Complete", SfxEmitterTrigger.OnEnable, null, null),
+            ("VFX_FlameCobra_Breath", "Facility_Cobra_Flame_Loop", SfxEmitterTrigger.WhileParticlesEmit, "Facility_Cobra_Ignite", "Facility_Cobra_Extinguish"),
+            ("VFX_Fire_Impact", "Facility_Cobra_Flame_Impact", SfxEmitterTrigger.OnEnable, null, null),
+            ("VFX_Facility_Hit", "Facility_Hit", SfxEmitterTrigger.OnEnable, null, null),
+            ("VFX_Facility_Disabled_Loop", "Facility_Disabled_Loop", SfxEmitterTrigger.OnEnable, null, null),
+            ("VFX_Summon_Circle", "Facility_Summon_Circle_Loop", SfxEmitterTrigger.WhileParticlesEmit, null, null),
+            ("VFX_Summon_Pillar", "Facility_Summon_Pillar", SfxEmitterTrigger.OnEnable, null, null),
+            ("VFX_Wall_Hit", "Wall_Hit", SfxEmitterTrigger.OnEnable, null, null),
+            ("VFX_Wall_Destroy", "Wall_Destroy", SfxEmitterTrigger.OnEnable, null, null),
+            ("VFX_Wave_Clear", "Wave_Clear", SfxEmitterTrigger.OnEnable, null, null),
+            ("VFX_Torch", "Env_Torch_Loop", SfxEmitterTrigger.OnEnable, null, null),
         };
 
-        /// <summary>배치 진입점: 믹서 → 자리표시 클립 → 큐 → 배선 → 검증.</summary>
+        /// <summary>단계가 코드 상수인 연출 → 지연 목록. (VfxCoreDestruction: 충전 0.2초 → 폭발 → 파편 비행 0.9초 / VfxCobraDestruction: 0.08초 → 낙하 0.75~1.1초)</summary>
+        static readonly (string prefab, (float delay, string cue)[] entries)[] TimelineTable =
+        {
+            ("VFX_Core_Destruction", new[] { (0f, "Core_Destroy_Charge"), (0.2f, "Core_Destroy"), (1.1f, "Core_Destroy_Debris") }),
+            ("VFX_Cobra_Destruction", new[] { (0.08f, "Facility_Cobra_Destroy"), (0.9f, "Facility_Cobra_Destroy_Debris") }),
+        };
+
+        /// <summary>배치 진입점: 믹서 → 큐(카탈로그·Generated·AudioResource) → 배선 → 검증.</summary>
         public static void All()
         {
             AudioMixerSetup.EnsureMixer();
-            Synth.SynthSfxBaker.BakePlaceholders();
+            SfxTestAssetBuilder.Build();
             SfxCueBuilder.Build();
             WireAll();
             Verify();
         }
 
-        [MenuItem("SandGuard/Audio/Setup Everything (Mixer + Placeholders + Cues + Wire)")]
+        [MenuItem("SandGuard/Audio/Setup Everything (Mixer + Cues + Wire)")]
         public static void SetupMenu() => All();
 
         [MenuItem("SandGuard/Audio/Wire Audio Into Prefabs And Scenes")]
@@ -98,6 +112,8 @@ namespace SandGuard.Audio.Editor
         {
             WirePlayerPrefab();
             WireEnemyPrefabs();
+            WireEnemyCombatVisuals();
+            WireCorePrefab();
             WireEmitterOnPrefab("Assets/Enemy/Generated/Chief_Bomb.prefab", "Enemy_Chief_Bomb_Fuse_Loop");
             WireEmitterOnPrefab("Assets/Enemy/Generated/ExperienceOrb.prefab", "Player_Xp_Drop");
             WireEmitterOnPrefab("Assets/Facility/Generated/Towers/Tower_Obelisk.prefab", "Facility_Obelisk_Loop");
@@ -123,6 +139,7 @@ namespace SandGuard.Audio.Editor
                 var progression = root.GetComponentInChildren<PlayerProgression>(true);
                 var respawner = root.GetComponentInChildren<PlayerRespawner>(true);
                 var updraft = root.GetComponentInChildren<PlayerUpdraft>(true);
+                var animator = root.GetComponentInChildren<Animator>(true);
 
                 Transform staffTip = null;
                 foreach (var v in root.GetComponentsInChildren<VfxOneShot>(true))
@@ -138,7 +155,7 @@ namespace SandGuard.Audio.Editor
                 Listen(respawner?.onRespawned, OneShot(holder, "Player_Revive"));
 
                 HitReaction(root, "Player_Hit", "Player_Death");
-                Footsteps(root, "Player_Footstep_Sand", 0.75f, true);
+                Footsteps(root, "Player_Footstep_Sand", animator, true);
 
                 if (updraft != null)
                 {
@@ -150,10 +167,27 @@ namespace SandGuard.Audio.Editor
                     if (!HasListener(updraft.onLaunched, toggle)) UnityEventTools.AddPersistentListener(updraft.onLaunched, new UnityAction(toggle.End));
                 }
 
+                if (animator != null)
+                {
+                    // 클립 이벤트 수신(사망 쓰러짐)과 Falling 상태 낙하 바람은 Animator와 같은 오브젝트에
+                    var events = animator.GetComponent<SfxAnimationEvents>() ?? animator.gameObject.AddComponent<SfxAnimationEvents>();
+                    if (events.BodyFallCue == null) events.BodyFallCue = SfxCueBuilder.Load("Player_BodyFall");
+                    var fall = animator.GetComponent<SfxAnimatorState>() ?? animator.gameObject.AddComponent<SfxAnimatorState>();
+                    fall.StateName = "Falling";
+                    if (fall.LoopCue == null) fall.LoopCue = SfxCueBuilder.Load("Player_Fall_Loop");
+                }
+
                 PrefabUtility.SaveAsPrefabAsset(root, PlayerPrefabPath);
                 Debug.Log("[Audio] Player.prefab 배선 완료");
             }
             finally { PrefabUtility.UnloadPrefabContents(root); }
+
+            // 사망 클립: 몸이 바닥에 닿는 시각을 샘플링해 BodyFall 이벤트를 심는다
+            var playerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(PlayerPrefabPath);
+            var deathClip = ClipEventBuilder.LoadClip(PlayerDeathFbx);
+            var fallAt = ClipEventBuilder.DetectBodyFallSeconds(playerPrefab, deathClip);
+            if (fallAt.HasValue) { ClipEventBuilder.SetEvents(PlayerDeathFbx, (fallAt.Value, "BodyFall")); Debug.Log($"[Audio] Player Death BodyFall @ {fallAt.Value:0.00}s / {deathClip.length:0.00}s"); }
+            else Debug.LogWarning("[Audio] Player Death 클립에서 쓰러지는 시각을 찾지 못했다");
         }
 
         /* ================================================================ */
@@ -168,10 +202,12 @@ namespace SandGuard.Audio.Editor
             {
                 var holder = Child(root, "Sfx");
                 var visuals = root.GetComponentInChildren<EnemyVisuals>(true);
-                Listen(visuals?.onAttack, OneShot(holder, "Enemy_Swordsman_Swing"));
+                // 휘두름은 이제 클립 이벤트가 맡는다. 공격 시작(onAttack)에 걸려 있던 원샷은 떼어 낸다
+                foreach (var shot in holder.GetComponents<SfxOneShot>())
+                    if (shot.Cue != null && shot.Cue.name.Contains("_Swing")) { if (visuals != null) RemoveListeners(visuals.onAttack, shot); UnityEngine.Object.DestroyImmediate(shot); }
                 Listen(visuals?.onDied, OneShot(holder, "Enemy_Voice_Death_Light"));
                 HitReaction(root, "Enemy_Hit", "Enemy_Death");
-                Footsteps(root, "Enemy_Footstep_Light", 0.8f, false);
+                Footsteps(root, "Enemy_Footstep_Light", null, false);
                 PrefabUtility.SaveAsPrefabAsset(root, EnemyPrefabPath);
             }
             finally { PrefabUtility.UnloadPrefabContents(root); }
@@ -185,17 +221,12 @@ namespace SandGuard.Audio.Editor
                 {
                     bool changed = false;
                     foreach (var shot in vroot.GetComponentsInChildren<SfxOneShot>(true))
-                    {
-                        if (shot.Cue == null) continue;
-                        if (shot.Cue.name.Contains("_Swing")) changed |= Set(shot, v.swing);
-                        else if (shot.Cue.name.Contains("Voice_Death")) changed |= Set(shot, v.deathVoice);
-                    }
+                        if (shot.Cue != null && shot.Cue.name.Contains("Voice_Death")) changed |= Set(shot, v.deathVoice);
                     var steps = vroot.GetComponentInChildren<SfxFootsteps>(true);
                     if (steps != null)
                     {
                         var cue = SfxCueBuilder.Load(v.footstep);
                         if (cue != null && steps.Cue != cue) { steps.Cue = cue; changed = true; }
-                        if (!Mathf.Approximately(steps.Stride, v.stride)) { steps.Stride = v.stride; changed = true; }
                     }
                     if (changed) PrefabUtility.SaveAsPrefabAsset(vroot, v.path);
                     variants++;
@@ -203,6 +234,55 @@ namespace SandGuard.Audio.Editor
                 finally { PrefabUtility.UnloadPrefabContents(vroot); }
             }
             Debug.Log($"[Audio] Enemy.prefab + 변형 {variants}개 배선 완료");
+        }
+
+        /// <summary>
+        /// 적 외형 프리팹(Animator가 있는 오브젝트)에 SfxAnimationEvents를 두고, Attack/Death 클립에 이벤트를 심는다.
+        /// 타격 시각은 변형 프리팹의 EnemyMeleeAttack.windup, 쓰러짐 시각은 클립을 샘플링해 찾는다.
+        /// </summary>
+        [MenuItem("SandGuard/Audio/Wire Enemy Clip Events Only")]
+        public static void WireEnemyCombatVisuals()
+        {
+            int done = 0;
+            foreach (var v in EnemyVariants)
+            {
+                string visualPath = $"{EnemyArtDir}/{v.name}/{v.name}_CombatVisual.prefab";
+                var visualPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(visualPath);
+                if (visualPrefab == null) { Debug.LogWarning($"[Audio] 외형 프리팹이 없다: {visualPath}"); continue; }
+
+                var vroot = PrefabUtility.LoadPrefabContents(visualPath);
+                try
+                {
+                    var animator = vroot.GetComponentInChildren<Animator>(true);
+                    if (animator == null) { Debug.LogWarning($"[Audio] Animator가 없다: {visualPath}"); continue; }
+                    var events = animator.GetComponent<SfxAnimationEvents>() ?? animator.gameObject.AddComponent<SfxAnimationEvents>();
+                    if (events.SwingCue == null) events.SwingCue = SfxCueBuilder.Load(v.swing);
+                    if (events.ImpactCue == null && v.impact != null) events.ImpactCue = SfxCueBuilder.Load(v.impact);
+                    if (events.BodyFallCue == null) events.BodyFallCue = SfxCueBuilder.Load("Enemy_BodyFall");
+                    if (events.ThrowCue == null && v.name == "Chief") events.ThrowCue = SfxCueBuilder.Load("Enemy_Chief_Bomb_Throw");
+                    PrefabUtility.SaveAsPrefabAsset(vroot, visualPath);
+                }
+                finally { PrefabUtility.UnloadPrefabContents(vroot); }
+
+                // 타격 시각: 변형 프리팹(오버라이드 없으면 기본 프리팹 값이 상속된다)
+                float windup = 0.5f;
+                var enemyPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(v.path);
+                var melee = enemyPrefab != null ? enemyPrefab.GetComponentInChildren<EnemyMeleeAttack>(true) : null;
+                if (melee != null) windup = melee.windup;
+
+                string attackFbx = $"{EnemyArtDir}/{v.name}/{v.name}_Attack.fbx";
+                var attackEvents = new List<(float, string)> { (Mathf.Max(0.02f, windup - SwingLead), "Swing") };
+                if (v.impact != null) attackEvents.Add((windup, "Impact"));
+                ClipEventBuilder.SetEvents(attackFbx, attackEvents.ToArray());
+
+                string deathFbx = $"{EnemyArtDir}/{v.name}/{v.name}_Death.fbx";
+                var deathClip = ClipEventBuilder.LoadClip(deathFbx);
+                var fallAt = ClipEventBuilder.DetectBodyFallSeconds(visualPrefab, deathClip);
+                if (fallAt.HasValue) ClipEventBuilder.SetEvents(deathFbx, (fallAt.Value, "BodyFall"));
+                Debug.Log($"[Audio] {v.name}: Swing @ {Mathf.Max(0.02f, windup - SwingLead):0.00}s, Impact @ {windup:0.00}s, BodyFall @ {(fallAt.HasValue ? fallAt.Value.ToString("0.00") : "-")}s");
+                done++;
+            }
+            Debug.Log($"[Audio] 적 외형 {done}/{EnemyVariants.Length} 클립 이벤트 배선");
         }
 
         static bool Set(SfxOneShot shot, string cueName)
@@ -213,7 +293,52 @@ namespace SandGuard.Audio.Editor
         }
 
         /* ================================================================ */
-        /* 프리팹 이미터 (VFX, 폭탄, 경험치, 오벨리스크)                        */
+        /* 코어                                                             */
+        /* ================================================================ */
+
+        static readonly string[] CorePrefabPaths = { CorePrefabPath, "Assets/2.Model/Prefabs/New Core.prefab" };
+
+        /// <summary>
+        /// 범위 원 애니메이션(Ground.anim 2초 루프)이 감길 때마다 Core_Ping. 코어 프리팹마다 "Ground" 상태를 가진 애니메이터·레이어를 찾아 건다.
+        /// Core.prefab은 Circle Effect의 Core Range 컨트롤러(레이어 0), New Core.prefab은 루트 애니메이터의 "Circle" 레이어다.
+        /// </summary>
+        public static void WireCorePrefab()
+        {
+            foreach (var path in CorePrefabPaths)
+            {
+                if (AssetDatabase.LoadAssetAtPath<GameObject>(path) == null) { Debug.LogWarning($"[Audio] 코어 프리팹이 없다: {path}"); continue; }
+                var root = PrefabUtility.LoadPrefabContents(path);
+                try
+                {
+                    // 후보: Ground 상태를 가진 애니메이터. 같은 컨트롤러를 여러 애니메이터가 쓰면(New Core: 루트와 Circle Effect) 원을 실제로 움직이는 "Circle" 이름 쪽을 고른다
+                    Animator target = null; int layer = -1;
+                    var candidates = new List<(Animator a, int layer)>();
+                    foreach (var a in root.GetComponentsInChildren<Animator>(true))
+                    {
+                        var controller = a.runtimeAnimatorController as UnityEditor.Animations.AnimatorController;
+                        if (controller == null) continue;
+                        for (int i = 0; i < controller.layers.Length; i++)
+                            foreach (var s in controller.layers[i].stateMachine.states)
+                                if (s.state.name == "Ground") { candidates.Add((a, i)); goto next; }
+                        next:;
+                    }
+                    foreach (var c in candidates) if (c.a.gameObject.name.Contains("Circle")) { target = c.a; layer = c.layer; break; }
+                    if (target == null && candidates.Count > 0) { target = candidates[0].a; layer = candidates[0].layer; }
+                    if (target == null) { Debug.LogWarning($"[Audio] {path}에서 Ground 상태를 가진 애니메이터를 찾지 못했다"); continue; }
+                    // 같은 프리팹 안의 다른 애니메이터에 남은 예전 훅은 정리한다
+                    foreach (var old in root.GetComponentsInChildren<SfxAnimatorLoop>(true)) if (old.gameObject != target.gameObject) UnityEngine.Object.DestroyImmediate(old);
+                    var ping = target.GetComponent<SfxAnimatorLoop>() ?? target.gameObject.AddComponent<SfxAnimatorLoop>();
+                    ping.StateName = "Ground"; ping.Layer = layer; ping.Animator = target;
+                    if (ping.Cue == null) ping.Cue = SfxCueBuilder.Load("Core_Ping");
+                    PrefabUtility.SaveAsPrefabAsset(root, path);
+                    Debug.Log($"[Audio] {System.IO.Path.GetFileName(path)}: {target.gameObject.name} 애니메이터 레이어 {layer}의 Ground 루프에 핑 배선");
+                }
+                finally { PrefabUtility.UnloadPrefabContents(root); }
+            }
+        }
+
+        /* ================================================================ */
+        /* 프리팹 이미터·타임라인                                            */
         /* ================================================================ */
 
         [MenuItem("SandGuard/Audio/Wire VFX Prefabs Only")]
@@ -221,12 +346,14 @@ namespace SandGuard.Audio.Editor
         {
             int n = 0;
             foreach (var row in VfxTable)
-                if (WireEmitterOnPrefab($"{VfxPrefabDir}/{row.prefab}.prefab", row.cue, row.trigger)) n++;
-            Debug.Log($"[Audio] VFX 프리팹 {n}/{VfxTable.Length} 배선");
+                if (WireEmitterOnPrefab($"{VfxPrefabDir}/{row.prefab}.prefab", row.cue, row.trigger, row.begin, row.end)) n++;
+            foreach (var row in TimelineTable)
+                if (WireTimelineOnPrefab($"{VfxPrefabDir}/{row.prefab}.prefab", row.entries)) n++;
+            Debug.Log($"[Audio] VFX 프리팹 {n}/{VfxTable.Length + TimelineTable.Length} 배선");
         }
 
-        /// <summary>프리팹 루트 아래 자식 "Sfx"에 SfxEmitter를 둔다. 이미 같은 큐의 이미터가 있으면 손대지 않는다.</summary>
-        public static bool WireEmitterOnPrefab(string path, string cueName, SfxEmitterTrigger trigger = SfxEmitterTrigger.OnEnable)
+        /// <summary>프리팹 루트 아래 자식 "Sfx"에 SfxEmitter를 둔다. 같은 큐의 이미터가 있으면 트리거·시작·끝 큐만 보완한다.</summary>
+        public static bool WireEmitterOnPrefab(string path, string cueName, SfxEmitterTrigger trigger = SfxEmitterTrigger.OnEnable, string beginCue = null, string endCue = null)
         {
             if (AssetDatabase.LoadAssetAtPath<GameObject>(path) == null) { Debug.LogWarning($"[Audio] 프리팹이 없다: {path}"); return false; }
             var cue = SfxCueBuilder.Load(cueName);
@@ -234,12 +361,38 @@ namespace SandGuard.Audio.Editor
             var root = PrefabUtility.LoadPrefabContents(path);
             try
             {
-                foreach (var e in root.GetComponentsInChildren<SfxEmitter>(true)) if (e.Cue == cue) return true;
+                SfxEmitter emitter = null;
+                foreach (var e in root.GetComponentsInChildren<SfxEmitter>(true)) if (e.Cue == cue) { emitter = e; break; }
+                if (emitter == null)
+                {
+                    var holder = Child(root, "Sfx");
+                    emitter = holder.GetComponent<SfxEmitter>();
+                    if (emitter != null && emitter.Cue != null) emitter = null;
+                    if (emitter == null) emitter = holder.AddComponent<SfxEmitter>();
+                    emitter.Cue = cue;
+                }
+                emitter.Trigger = trigger;
+                if (emitter.BeginCue == null && beginCue != null) emitter.BeginCue = SfxCueBuilder.Load(beginCue);
+                if (emitter.EndCue == null && endCue != null) emitter.EndCue = SfxCueBuilder.Load(endCue);
+                PrefabUtility.SaveAsPrefabAsset(root, path);
+                return true;
+            }
+            finally { PrefabUtility.UnloadPrefabContents(root); }
+        }
+
+        /// <summary>단계 지연 목록. 같은 큐를 쓰던 단일 이미터는 떼어 낸다. Entries가 비어 있을 때만 채운다.</summary>
+        public static bool WireTimelineOnPrefab(string path, (float delay, string cue)[] entries)
+        {
+            if (AssetDatabase.LoadAssetAtPath<GameObject>(path) == null) { Debug.LogWarning($"[Audio] 프리팹이 없다: {path}"); return false; }
+            var root = PrefabUtility.LoadPrefabContents(path);
+            try
+            {
                 var holder = Child(root, "Sfx");
-                var emitter = holder.GetComponent<SfxEmitter>();
-                if (emitter != null && emitter.Cue != null) emitter = holder.AddComponent<SfxEmitter>();
-                if (emitter == null) emitter = holder.AddComponent<SfxEmitter>();
-                emitter.Cue = cue; emitter.Trigger = trigger;
+                var cueSet = new HashSet<string>(); foreach (var e in entries) cueSet.Add(e.cue);
+                foreach (var em in holder.GetComponents<SfxEmitter>()) if (em.Cue != null && cueSet.Contains(em.Cue.name)) UnityEngine.Object.DestroyImmediate(em);
+                var tl = holder.GetComponent<SfxTimeline>() ?? holder.AddComponent<SfxTimeline>();
+                if (tl.Entries.Count == 0)
+                    foreach (var e in entries) tl.Entries.Add(new SfxTimeline.Entry { Delay = e.delay, Cue = SfxCueBuilder.Load(e.cue) });
                 PrefabUtility.SaveAsPrefabAsset(root, path);
                 return true;
             }
@@ -370,6 +523,13 @@ namespace SandGuard.Audio.Editor
             return true;
         }
 
+        static void RemoveListeners(UnityEventBase evt, UnityEngine.Object target)
+        {
+            if (evt == null) return;
+            for (int i = evt.GetPersistentEventCount() - 1; i >= 0; i--)
+                if (evt.GetPersistentTarget(i) == target) UnityEventTools.RemovePersistentListener(evt, i);
+        }
+
         static void HitReaction(GameObject root, string hitCue, string deathCue)
         {
             var events = root.GetComponentInChildren<IDamageEvents>(true) as Component;
@@ -379,10 +539,13 @@ namespace SandGuard.Audio.Editor
             if (r.DeathCue == null) r.DeathCue = SfxCueBuilder.Load(deathCue);
         }
 
-        static void Footsteps(GameObject root, string cueName, float stride, bool requireGround)
+        /// <summary>발 뼈 모드. Animator가 프리팹 안에 있으면 참조를 넣고, 런타임에 생기면(적) 비워 두어 스스로 찾게 한다.</summary>
+        static void Footsteps(GameObject root, string cueName, Animator animator, bool requireGround)
         {
             var f = root.GetComponent<SfxFootsteps>();
-            if (f == null) { f = root.AddComponent<SfxFootsteps>(); f.Stride = stride; f.RequireGround = requireGround; }
+            if (f == null) { f = root.AddComponent<SfxFootsteps>(); f.RequireGround = requireGround; }
+            f.Mode = FootstepMode.FootBones;
+            if (animator != null && f.Animator == null) f.Animator = animator;
             if (f.Cue == null) f.Cue = SfxCueBuilder.Load(cueName);
         }
 
@@ -415,25 +578,45 @@ namespace SandGuard.Audio.Editor
         /// <summary>배선 결과를 다시 읽어 로그로 남긴다. 배치 로그에서 AUDIO_WIRED 줄을 확인한다.</summary>
         public static void Verify()
         {
-            int playerShots = 0, enemyShots = 0, vfx = 0, levelEmitters = 0, buttons = 0, cues = 0, missingClips = 0;
+            int playerShots = 0, vfx = 0, levelEmitters = 0, buttons = 0, cues = 0, cuesWithClips = 0, visualsWithEvents = 0, clipEvents = 0, corePing = 0;
             var player = AssetDatabase.LoadAssetAtPath<GameObject>(PlayerPrefabPath);
-            if (player != null) foreach (var s in player.GetComponentsInChildren<SfxOneShot>(true)) if (s.Cue != null && s.Cue.HasClips) playerShots++;
-            var enemy = AssetDatabase.LoadAssetAtPath<GameObject>(EnemyPrefabPath);
-            if (enemy != null) foreach (var s in enemy.GetComponentsInChildren<SfxOneShot>(true)) if (s.Cue != null && s.Cue.HasClips) enemyShots++;
+            if (player != null) foreach (var s in player.GetComponentsInChildren<SfxOneShot>(true)) if (s.Cue != null) playerShots++;
             foreach (var row in VfxTable)
             {
                 var p = AssetDatabase.LoadAssetAtPath<GameObject>($"{VfxPrefabDir}/{row.prefab}.prefab");
                 if (p != null && p.GetComponentInChildren<SfxEmitter>(true) != null) vfx++;
             }
+            foreach (var row in TimelineTable)
+            {
+                var p = AssetDatabase.LoadAssetAtPath<GameObject>($"{VfxPrefabDir}/{row.prefab}.prefab");
+                if (p != null && p.GetComponentInChildren<SfxTimeline>(true) != null) vfx++;
+            }
             foreach (var guid in AssetDatabase.FindAssets("t:SfxCue", new[] { SfxCueBuilder.CueRoot }))
             {
                 var cue = AssetDatabase.LoadAssetAtPath<SfxCue>(AssetDatabase.GUIDToAssetPath(guid));
-                cues++; if (!cue.HasClips) missingClips++;
+                cues++; if (cue.HasClips) cuesWithClips++;
+            }
+            foreach (var v in EnemyVariants)
+            {
+                var vis = AssetDatabase.LoadAssetAtPath<GameObject>($"{EnemyArtDir}/{v.name}/{v.name}_CombatVisual.prefab");
+                if (vis != null && vis.GetComponentInChildren<SfxAnimationEvents>(true) != null) visualsWithEvents++;
+                foreach (var fbx in new[] { $"{EnemyArtDir}/{v.name}/{v.name}_Attack.fbx", $"{EnemyArtDir}/{v.name}/{v.name}_Death.fbx" })
+                {
+                    var clip = ClipEventBuilder.LoadClip(fbx);
+                    if (clip != null) foreach (var e in clip.events) if (Array.IndexOf(ClipEventBuilder.OurFunctions, e.functionName) >= 0) clipEvents++;
+                }
+            }
+            var pd = ClipEventBuilder.LoadClip(PlayerDeathFbx);
+            if (pd != null) foreach (var e in pd.events) if (e.functionName == "BodyFall") clipEvents++;
+            foreach (var cp in CorePrefabPaths)
+            {
+                var core = AssetDatabase.LoadAssetAtPath<GameObject>(cp);
+                if (core != null && core.GetComponentInChildren<SfxAnimatorLoop>(true) != null) corePing++;
             }
             if (System.IO.File.Exists(LevelScenePath))
             {
                 EditorSceneManager.OpenScene(LevelScenePath, OpenSceneMode.Single);
-                foreach (var e in UnityEngine.Object.FindObjectsByType<SfxEmitter>(FindObjectsInactive.Include, FindObjectsSortMode.None)) if (e.Cue != null && e.Cue.HasClips) levelEmitters++;
+                foreach (var e in UnityEngine.Object.FindObjectsByType<SfxEmitter>(FindObjectsInactive.Include, FindObjectsSortMode.None)) if (e.Cue != null) levelEmitters++;
             }
             if (System.IO.File.Exists(MainScenePath))
             {
@@ -441,7 +624,7 @@ namespace SandGuard.Audio.Editor
                 foreach (var b in UnityEngine.Object.FindObjectsByType<SfxUiButton>(FindObjectsInactive.Include, FindObjectsSortMode.None)) if (b.ClickCue != null) buttons++;
             }
             EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-            Debug.Log($"AUDIO_WIRED cues={cues} cuesWithoutClips={missingClips} playerOneShots={playerShots} enemyOneShots={enemyShots} vfxPrefabs={vfx}/{VfxTable.Length} levelEmitters={levelEmitters} mainMenuButtons={buttons} mixer={(AssetDatabase.LoadAssetAtPath<AudioMixer>(SfxCueBuilder.MixerPath) != null)}");
+            Debug.Log($"AUDIO_WIRED cues={cues} cuesWithClips={cuesWithClips} playerOneShots={playerShots} vfxPrefabs={vfx}/{VfxTable.Length + TimelineTable.Length} enemyVisualsWithEvents={visualsWithEvents}/{EnemyVariants.Length} clipEvents={clipEvents} corePing={corePing} levelEmitters={levelEmitters} mainMenuButtons={buttons} mixer={(AssetDatabase.LoadAssetAtPath<AudioMixer>(SfxCueBuilder.MixerPath) != null)}");
         }
     }
 

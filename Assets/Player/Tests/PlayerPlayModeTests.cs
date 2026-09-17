@@ -264,6 +264,7 @@ namespace SandGuard.Player.Tests
             var motor = player.GetComponent<PlayerMotor>();
             yield return new WaitForSeconds(0.3f);
             player.GetComponent<PlayerEffects>().Apply(new SandGuard.Player.Effects.AirDashEffect());
+            player.GetComponentInChildren<PlayerCameraRig>().pitch = 0f; // 공중 대시는 조준을 따르므로 수평으로 보게 한다
             motor.Teleport(new Vector3(0, 5, 0));
             yield return new WaitForSeconds(0.2f);
             Assert.Less(motor.VerticalSpeed, -3f);
@@ -298,6 +299,28 @@ namespace SandGuard.Player.Tests
             yield return null;
         }
 
+        /// <summary>스킬트리에서 대시를 배우면 더블 점프처럼 공중 대시 1회가 함께 열린다. 스킬트리가 없으면 기존대로 스탯 값이다.</summary>
+        [UnityTest] public IEnumerator LearningTheDashOnTheSkillTreeAlsoGrantsOneAirDash()
+        {
+            var player = Player();
+            var motor = player.GetComponent<PlayerMotor>();
+            player.GetComponentInChildren<PlayerCameraRig>().pitch = 0f;
+            Assert.AreEqual(0, motor.AirDashes, "스킬트리가 없으면 스탯 값(기본 0) 그대로다.");
+            bool learned = false;
+            motor.SkillTreeDashAllowed = () => learned;
+            Assert.AreEqual(0, motor.AirDashes, "스킬트리는 있는데 대시를 안 배웠으면 0이다.");
+            motor.Teleport(new Vector3(0, 4, 0)); yield return null; yield return null;
+            Assert.AreEqual(ActionFailure.Locked, motor.TryDash().Failure);
+            learned = true;
+            Assert.AreEqual(1, motor.AirDashes, "대시를 배우면 공중 대시 1회가 함께 열린다.");
+            Assert.AreEqual(1, motor.RemainingAirDashes);
+            Assert.True(motor.TryDash().Succeeded, "공중에서 바로 대시할 수 있다.");
+            Assert.AreEqual(0, motor.RemainingAirDashes);
+            yield return new WaitForSeconds(motor.dashDuration + 0.05f);
+            motor.ResetDashCooldown();
+            Assert.AreEqual(ActionFailure.Locked, motor.TryDash().Failure, "한 번 뜬 동안 한 번뿐이다. 착지하면 다시 찬다.");
+        }
+
         [UnityTest] public IEnumerator DashPauseFreezesMovementAndCooldown()
         {
             var player = Player();
@@ -313,17 +336,19 @@ namespace SandGuard.Player.Tests
             Assert.AreEqual(ActionFailure.Paused, motor.TryDash().Failure);
         }
 
-        [UnityTest] public IEnumerator AirDashUsesMovementDirectionAndPreservesAirJump()
+        [UnityTest] public IEnumerator AirDashFollowsTheAimNotTheStickAndPreservesAirJump()
         {
             var player = Player();
             var motor = player.GetComponent<PlayerMotor>();
             player.GetComponent<PlayerEffects>().Apply(new SandGuard.Player.Effects.AirDashEffect()); // 기본값은 공중 대시 0
+            player.GetComponentInChildren<PlayerCameraRig>().pitch = 0f;
             motor.Teleport(new Vector3(0, 4, 0));
-            Keys(Key.D); yield return null; yield return null;
+            Keys(Key.D); yield return null; yield return null; // 오른쪽을 밀고 있어도 대시는 크로스헤어(정면)로 간다
             int airJumps = motor.RemainingAirJumps;
             Assert.True(motor.TryDash().Succeeded);
             yield return new WaitForSeconds(motor.dashDuration + 0.05f);
-            Assert.Greater(player.transform.position.x, 3f);
+            Assert.Greater(player.transform.position.z, 3f, "질풍참 방식: 조준 방향으로 간다.");
+            Assert.Less(Mathf.Abs(player.transform.position.x), 0.5f, "이동 입력은 대시 방향에 영향을 주지 않는다.");
             Assert.AreEqual(airJumps, motor.RemainingAirJumps);
         }
 

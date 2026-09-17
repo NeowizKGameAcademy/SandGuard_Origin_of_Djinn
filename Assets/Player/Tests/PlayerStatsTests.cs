@@ -123,7 +123,7 @@ namespace SandGuard.Player.Tests
             stats.Add(PlayerStat.DashManaCost, StatModifierKind.Flat, -5f, "test");
             stats.Add(PlayerStat.ExtraAirJumps, StatModifierKind.Flat, 1f, "double-jump");           // ① 더블 점프
             stats.Add(PlayerStat.MoveSpeed, StatModifierKind.PercentAdd, 0.03f, "desert-master");    // ⑧ 이속 +3%
-            Assert.AreEqual(5f, motor.DashDistance, 0.0001f); Assert.AreEqual(0.8f, motor.DashCooldown, 0.0001f);
+            Assert.AreEqual(motor.dashDistance * 1.25f, motor.DashDistance, 0.0001f); Assert.AreEqual(0.8f, motor.DashCooldown, 0.0001f);
             Assert.AreEqual(5, motor.DashManaCost); Assert.AreEqual(1, motor.ExtraAirJumps); Assert.AreEqual(5.15f, motor.MoveSpeed, 0.0001f);
             yield return null; yield return null;
             Assert.AreEqual(1, motor.RemainingAirJumps, "Grounded players pick up the extra air jump right away (base is 0).");
@@ -133,7 +133,8 @@ namespace SandGuard.Player.Tests
             Assert.AreEqual(95, mana.CurrentMana, "Reduced mana cost is charged.");
             Assert.AreEqual(0.8f, motor.DashCooldownRemaining, 0.0001f, "Reduced cooldown is applied.");
             yield return new WaitForSeconds(motor.dashDuration + 0.05f);
-            Assert.That(Vector3.Distance(start, player.transform.position), Is.InRange(4.6f, 5.4f), "Dash travels the modified distance.");
+            // 종료 뒤 0.05초는 넘겨받은 달리기 속도가 dashExitDeceleration으로 풀리며 0.2m쯤 더 간다
+            Assert.That(Vector3.Distance(start, player.transform.position), Is.InRange(motor.DashDistance - 0.4f, motor.DashDistance + 0.4f), "Dash travels the modified distance.");
             Keys(Key.W); yield return new WaitForSeconds(0.7f);
             Assert.That(Vector3.ProjectOnPlane(motor.Velocity, Vector3.up).magnitude, Is.InRange(5.05f, 5.25f), "Run speed follows the modifier.");
             Keys();

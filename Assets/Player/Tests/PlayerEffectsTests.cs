@@ -173,6 +173,7 @@ namespace SandGuard.Player.Tests
         [UnityTest] public IEnumerator DoubleJumpAndAirDashStayLockedUntilTheirEffectsAreAttached()
         {
             var motor = player.GetComponent<PlayerMotor>();
+            player.GetComponentInChildren<PlayerCameraRig>().pitch = 0f; // 공중 대시는 조준을 따르므로, 기본 피치(아래 15도)면 땅으로 내려가 착지해 버린다
             int jumps = 0; motor.Jumped += () => jumps++;
             yield return new WaitForSeconds(0.2f);
             Assert.AreEqual(0, motor.ExtraAirJumps); Assert.AreEqual(0, motor.AirDashes); Assert.AreEqual(0, motor.RemainingAirJumps);

@@ -41,7 +41,9 @@ namespace SandGuard.Player
         public float FovOffset { get; private set; }
         /// <summary>이번 프레임에 적용한 거리 변화(m)의 합. 음수면 카메라가 플레이어 쪽으로 당겨 온다. <see cref="AddDistance"/>로 넣는다.</summary>
         public float DistanceOffset { get; private set; }
-        float pendingFov, pendingDistance;
+        /// <summary>이번 프레임에 적용한 연출 롤(도)의 합. 마지막에 곱하므로 위치·조준선은 바뀌지 않는다. <see cref="AddRoll"/>로 넣는다.</summary>
+        public float RollOffset { get; private set; }
+        float pendingFov, pendingDistance, pendingRoll;
         /// <summary>흔들림을 더하기 전의 카메라 위치.</summary>
         public Vector3 UnshakenPosition { get; private set; }
         /// <summary>이번 프레임에 더한 흔들림 오프셋(월드). 흔들리지 않으면 0.</summary>
@@ -72,13 +74,15 @@ namespace SandGuard.Player
         public void AddFov(float degrees) { if (!float.IsNaN(degrees)) pendingFov += degrees; }
         /// <summary>거리 변화(m)를 이번 프레임에 더한다. 규칙은 <see cref="AddFov"/>와 같다.</summary>
         public void AddDistance(float meters) { if (!float.IsNaN(meters)) pendingDistance += meters; }
+        /// <summary>카메라 롤(도)을 이번 프레임에 더한다. 양수면 화면이 반시계로 기운다. 규칙은 <see cref="AddFov"/>와 같다.</summary>
+        public void AddRoll(float degrees) { if (!float.IsNaN(degrees)) pendingRoll += degrees; }
         /// <summary>연출 입력을 전부 지운다 (부활·씬 전환).</summary>
-        public void ClearFeel() { ShakeAmplitude = 0f; kickRemaining = 0f; FovOffset = DistanceOffset = pendingFov = pendingDistance = 0f; }
+        public void ClearFeel() { ShakeAmplitude = 0f; kickRemaining = 0f; FovOffset = DistanceOffset = RollOffset = pendingFov = pendingDistance = pendingRoll = 0f; }
         /// <summary>순간이동·부활처럼 바라보는 방향을 바꿔야 할 때 카메라 회전을 즉시 맞춘다.</summary>
         public void SetYaw(float degrees) { yaw = degrees; currentLength = -1f; }
         void LateUpdate()
         {
-            FovOffset = pendingFov; DistanceOffset = pendingDistance; pendingFov = pendingDistance = 0f; // 이번 프레임 기여분을 모아 쓰고 비운다
+            FovOffset = pendingFov; DistanceOffset = pendingDistance; RollOffset = pendingRoll; pendingFov = pendingDistance = pendingRoll = 0f; // 이번 프레임 기여분을 모아 쓰고 비운다
             if (target == null) return;
             if (input != null && input.AcceptsInput)
             {
@@ -126,6 +130,7 @@ namespace SandGuard.Player
                 float roll = Noise(noiseSeed + 13.1f, t) * amplitude * rollDegreesPerMeter;
                 rotation *= Quaternion.Euler(0f, 0f, roll);
             }
+            if (RollOffset != 0f) rotation *= Quaternion.Euler(0f, 0f, RollOffset); // 연출 롤은 위치 계산이 끝난 뒤 곱해 조준선을 건드리지 않는다
             transform.SetPositionAndRotation(position, rotation);
             if (cachedCamera != null) cachedCamera.fieldOfView = Mathf.Clamp(BaseFieldOfView + FovOffset, 10f, 150f);
         }

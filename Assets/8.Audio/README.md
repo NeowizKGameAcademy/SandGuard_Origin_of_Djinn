@@ -27,6 +27,29 @@
 
 의존 방향: 오디오 런타임은 `DesertTower.VFX.Runtime`(풀), `Gameplay.Abstractions`, `Combat.Runtime`, `UnityEngine.UI`만 참조한다. Player·Enemy는 오디오를 모르고 UnityEvent와 인터페이스로만 만난다.
 
+## 애니메이션·연출 동기 (2026-09-17)
+
+소리를 "시작 시점에 한 번"이 아니라 애니메이션의 실제 프레임·주기·단계에 맞추는 장치. 전부 `AudioWiring`이 꽂는다.
+
+| 장치 | 어디에 | 무엇을 |
+|---|---|---|
+| `SfxAnimatorLoop` | 코어 프리팹의 Circle Effect(Animator, Ground 2초 루프). Level은 `New Core.prefab`(레이어 7 "Circle"), 구형 `Core.prefab`은 레이어 0 | 루프가 감길 때마다 `Core_Ping`. `normalizedTime` 정수부로 판정하므로 속도·일시정지와 어긋나지 않는다. 배선은 "Ground 상태를 가진 애니메이터"를 찾아 걸므로 코어 프리팹을 바꿔도 다시 실행만 하면 된다 |
+| `SfxAnimatorState` | `Player.prefab`의 Character(Animator) | `Falling` 상태 동안 `Player_Fall_Loop` |
+| `SfxAnimationEvents` | Animator와 같은 오브젝트: Player Character, 적 5종 `<이름>_CombatVisual.prefab` | 클립 이벤트 `Swing` / `Impact` / `BodyFall` / `Footstep` / `ReleaseChiefBomb`(족장 던지기)를 받아 큐를 낸다 |
+| `ClipEventBuilder` (에디터) | `<이름>_Attack.fbx`, `<이름>_Death.fbx`, 플레이어 `Death.fbx` | Swing = windup − 0.15초, Impact = `EnemyMeleeAttack.windup`(변형별), BodyFall = 클립을 샘플링해 엉덩이 뼈가 바닥에 닿는 시각. 임포터 이벤트는 0~1 정규화 |
+| `SfxFootsteps` FootBones 모드 | Player·Enemy 루트 | LeftFoot/RightFoot 뼈 높이로 접지 순간 감지(들림 8cm → 접지 3cm, 외형 배율에 비례). 블렌드 트리와 무관하게 애니메이션과 맞는다. 이동 속도 조건으로 제자리 발 구르기는 무시 |
+| `SfxEmitter` BeginCue/EndCue | 코브라 화염(점화·소화), 모래 족쇄(풀림), 소용돌이·폭풍(잦아듦) | 파티클 방출 시작·정지 순간에 한 번씩 |
+| `SfxTimeline` | `VFX_Core_Destruction`(0초 충전 → 0.2초 폭발 → 1.1초 파편), `VFX_Cobra_Destruction`(0.08초 붕괴 → 0.9초 파편) | 코드 상수 단계에 맞춘 지연 목록 |
+
+주의: `EnemyCombatArtBuilder`(Connect Combat Art)나 플레이어 팩 빌더가 클립을 다시 임포트하면 이벤트가 사라진다. 그 뒤 `SandGuard > Audio > Wire Enemy Clip Events Only`(적) 또는 `Wire Audio Into Prefabs And Scenes`(전체)를 다시 실행한다.
+
+측정된 시각(초): Swordsman Swing 0.35 / Impact 0.50 / BodyFall 1.57 · Assassin 0.15 / 0.30 / 1.57 · ShieldGuard 0.35 / 0.50 / 3.13 · HammerBrute 0.78 / 0.93 / 1.57 · Chief 0.45 / 0.60 / 2.10 · Player Death BodyFall 1.63.
+
+## 담당자 클립 (`Assets/8.Audio/AudioResource`)
+
+큐의 클립은 담당자가 인스펙터에서 넣는다. `Editor/AudioResourceMap.cs`의 대응표는 **비어 있는 큐만** 채우고(같은 소리의 원본과 `_auda`가 있으면 `_auda`), 코드 합성·자리표시 클립(`SFX_*`)은 큐에서 제거한다. 결과와 남은 빈 큐 목록은 `Docs/Audio/audio-resource-map.md`.
+합성·자리표시 WAV(`Synth/`, `Placeholder/`)는 더 이상 큐에 들어가지 않는다. 필요하면 인스펙터에서 직접 드래그한다.
+
 ## 큐 목록과 자리표시 클립
 
 제안 목록의 모든 소리(89개)가 `Editor/SfxCatalog.cs`에 이름·기본값·자리표시 종류로 정의되어 있고, `Assets/8.Audio/Cues/<분류>/`에 큐 에셋으로 존재한다.
@@ -66,7 +89,7 @@
 이벤트로 내는 소리는 VFX에 다시 붙이지 않는다(점프·대시·착지·발사·피격·레벨업). 그래서 한 동작에 소리가 두 번 나지 않는다. 점프 소리는 `PlayerMotor.Jumped` → `PlayerVisuals.onJumped/onAirJumped`에서 내며, 이동 VFX의 속도 감지에 의존하지 않는다.
 
 배치 설정·검증: `Unity.exe -batchmode -nographics -projectPath . -executeMethod SandGuard.Audio.Editor.AudioWiring.All -quit` → 로그의 `AUDIO_WIRED` 줄.
-테스트: `-runTests -testPlatform PlayMode -assemblyNames SandGuard.Audio.Tests` (오디오 장치 없이 돈다. 14개).
+테스트: `-runTests -testPlatform PlayMode -assemblyNames SandGuard.Audio.Tests` (23개. `LevelAudioSmokeTests`는 Level.unity를 실제로 재생해 코어 핑 발화를 확인하며 약 4분 걸린다). **`-nographics`를 빼고** 돌린다. Unity는 그래픽 장치가 없으면 애니메이션 클립 이벤트를 보내지 않아 `AnimationEventsComponentReceivesClipEvent`가 실패한다. 테스트용 애니메이터는 `Tests/Resources/SfxTestAssets.asset`(Setup Everything이 생성).
 
 ### 아직 훅이 없어 큐만 있는 소리
 
