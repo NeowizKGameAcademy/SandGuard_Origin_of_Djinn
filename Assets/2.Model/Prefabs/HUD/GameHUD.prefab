@@ -164,8 +164,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SandGuard.UI.HUD.MinimapController
   hud: {fileID: 3967492218319307788}
-  viewRadius: 30
-  cameraHeight: 60
+  viewRadius: 75
+  cameraHeight: 120
+  mapCenterOffset: {x: 0, y: 0}
   textureSize: 512
   groundColor: {r: 0.16, g: 0.12, b: 0.09, a: 1}
   cullingMask:
@@ -685,11 +686,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8761399069352129561, guid: 6cf0e3ffe384bae4f9258e8ea7e44163, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 280
+      value: 320
       objectReference: {fileID: 0}
     - target: {fileID: 8761399069352129561, guid: 6cf0e3ffe384bae4f9258e8ea7e44163, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 280
+      value: 320
       objectReference: {fileID: 0}
     - target: {fileID: 8761399069352129561, guid: 6cf0e3ffe384bae4f9258e8ea7e44163, type: 3}
       propertyPath: m_LocalPosition.x
@@ -721,11 +722,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8761399069352129561, guid: 6cf0e3ffe384bae4f9258e8ea7e44163, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -30
+      value: -24
       objectReference: {fileID: 0}
     - target: {fileID: 8761399069352129561, guid: 6cf0e3ffe384bae4f9258e8ea7e44163, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -115
+      value: -126
       objectReference: {fileID: 0}
     - target: {fileID: 8761399069352129561, guid: 6cf0e3ffe384bae4f9258e8ea7e44163, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
