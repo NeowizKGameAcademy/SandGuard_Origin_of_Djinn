@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodes:
   - id: move.dash
-    displayName: 대시
+    displayName: "\uB300\uC2DC"
     description: 
     branch: 0
     kind: 0
@@ -22,7 +22,7 @@ MonoBehaviour:
     prerequisites: []
     allowedSlots: 03000000
   - id: move.jump
-    displayName: 더블 점프
+    displayName: "\uB354\uBE14 \uC810\uD504"
     description: 
     branch: 0
     kind: 0
@@ -30,16 +30,18 @@ MonoBehaviour:
     prerequisites: []
     allowedSlots: 04000000
   - id: move.updraft
-    displayName: 차지 점프
-    description: 지상에서 Space를 길게 눌러 충전하고, 놓으면 높이 도약합니다. 구매 즉시 활성화됩니다.
+    displayName: "\uCC28\uC9C0 \uC810\uD504"
+    description: "\uC9C0\uC0C1\uC5D0\uC11C Space\uB97C \uAE38\uAC8C \uB20C\uB7EC
+      \uCDA9\uC804\uD558\uACE0, \uB193\uC73C\uBA74 \uB192\uC774 \uB3C4\uC57D\uD569\uB2C8\uB2E4.
+      \uAD6C\uB9E4 \uC989\uC2DC \uD65C\uC131\uD654\uB429\uB2C8\uB2E4."
     branch: 0
     kind: 1
     cost: 2
     prerequisites:
     - move.jump
-    allowedSlots: []
+    allowedSlots: 
   - id: move.recall
-    displayName: 흔적 귀환
+    displayName: "\uD754\uC801 \uADC0\uD658"
     description: 
     branch: 0
     kind: 0
@@ -48,7 +50,7 @@ MonoBehaviour:
     - move.dash
     allowedSlots: 03000000000000000100000002000000
   - id: attack.pierce
-    displayName: 관통탄
+    displayName: "\uAD00\uD1B5\uD0C4"
     description: 
     branch: 1
     kind: 0
@@ -56,7 +58,7 @@ MonoBehaviour:
     prerequisites: []
     allowedSlots: 000000000100000002000000
   - id: attack.burst
-    displayName: 모래 폭발
+    displayName: "\uBAA8\uB798 \uD3ED\uBC1C"
     description: 
     branch: 1
     kind: 0
@@ -65,7 +67,7 @@ MonoBehaviour:
     - attack.pierce
     allowedSlots: 000000000100000002000000
   - id: attack.vortex
-    displayName: 모래 소용돌이
+    displayName: "\uBAA8\uB798 \uC18C\uC6A9\uB3CC\uC774"
     description: 
     branch: 1
     kind: 0
@@ -74,7 +76,7 @@ MonoBehaviour:
     - attack.burst
     allowedSlots: 000000000100000002000000
   - id: attack.storm
-    displayName: 사막 폭풍
+    displayName: "\uC0AC\uB9C9 \uD3ED\uD48D"
     description: 
     branch: 1
     kind: 0
@@ -83,37 +85,38 @@ MonoBehaviour:
     - attack.vortex
     allowedSlots: 000000000100000002000000
   - id: tower.cobra
-    displayName: 화염 코브라 해금
+    displayName: "\uD654\uC5FC \uCF54\uBE0C\uB77C \uD574\uAE08"
     description: 
     branch: 2
     kind: 1
     cost: 1
     prerequisites: []
-    allowedSlots: []
+    allowedSlots: 
   - id: tower.skeleton
-    displayName: 해골 소환진 해금
+    displayName: "\uD574\uACE8 \uC18C\uD658\uC9C4 \uD574\uAE08"
     description: 
     branch: 2
     kind: 1
     cost: 2
     prerequisites:
     - tower.cobra
-    allowedSlots: []
+    allowedSlots: 
   - id: tower.anubis
-    displayName: 아누비스 해금
+    displayName: "\uC544\uB204\uBE44\uC2A4 \uD574\uAE08"
     description: 
     branch: 2
     kind: 1
     cost: 3
     prerequisites:
     - tower.skeleton
-    allowedSlots: []
+    allowedSlots: 
   - id: tower.obelisk
-    displayName: 모래시계 오벨리스크 해금
-    description: 구매하면 모래시계 오벨리스크를 설치할 수 있습니다.
+    displayName: "\uC624\uBCA8\uB9AC\uC2A4\uD06C \uD574\uAE08"
+    description: "\uAD6C\uB9E4\uD558\uBA74 \uC624\uBCA8\uB9AC\uC2A4\uD06C\uB97C \uC124\uCE58\uD560
+      \uC218 \uC788\uC2B5\uB2C8\uB2E4."
     branch: 2
     kind: 1
     cost: 2
     prerequisites:
     - tower.cobra
-    allowedSlots: []
+    allowedSlots: 

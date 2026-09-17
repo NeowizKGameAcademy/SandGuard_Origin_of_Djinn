@@ -38,12 +38,13 @@ namespace SandGuard.Skills.Editor
                 if(!theme.font)theme.font=AssetDatabase.FindAssets("Pretendard-Medium t:Font").Select(AssetDatabase.GUIDToAssetPath).Select(AssetDatabase.LoadAssetAtPath<Font>).FirstOrDefault(f=>f);
                 if(!theme.font)theme.font=Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
                 theme.panel=Sprite("PanelFrame");theme.button=Sprite("ButtonFrame");theme.ring=Sprite("NodeRing");theme.ornament=Sprite("HeaderScarab");
-                string[] ids={"move.dash","move.jump","move.recall","attack.pierce","attack.burst","attack.vortex","attack.storm","tower.cobra","tower.skeleton","tower.anubis"};
+                string[] ids={"move.dash","move.jump","move.recall","attack.pierce","attack.burst","attack.vortex","attack.storm","tower.cobra","tower.obelisk","tower.skeleton","tower.anubis"};
                 theme.icons=ids.Select(id=>new SkillUITheme.IconEntry{skillId=id,sprite=Sprite(id)}).ToArray();
                 AssetDatabase.CreateAsset(theme,dir+"/SkillUITheme.asset");
             }
             var data=AssetDatabase.LoadAssetAtPath<SkillTreeAsset>(dir+"/SkillTreeData.asset");
             if(!data){data=SkillTreeAsset.CreateDemo();AssetDatabase.CreateAsset(data,dir+"/SkillTreeData.asset");}
+            UpdateObelisk(theme,data);
             // Existing edited prefabs are kept. Subsequent runs create a numbered sibling.
             var root=new GameObject("SkillTree UI");
             try
@@ -61,6 +62,47 @@ namespace SandGuard.Skills.Editor
             AssetDatabase.SaveAssets();Debug.Log("스킬 UI / 제단 프리팹 생성 완료: "+dir);
         }
         static Sprite Sprite(string name)=>AssetDatabase.LoadAssetAtPath<Sprite>(Root+"/Art/"+name+".png");
+        [MenuItem("SandGuard/Skills/Apply Obelisk Name And Icon")]
+        public static void ApplyObelisk()
+        {
+            string iconPath=Root+"/Art/tower.obelisk.png";
+            AssetDatabase.ImportAsset(iconPath,ImportAssetOptions.ForceUpdate);
+            var importer=(TextureImporter)AssetImporter.GetAtPath(iconPath);
+            if(importer.textureType!=TextureImporterType.Sprite)
+            {
+                importer.textureType=TextureImporterType.Sprite;
+                importer.spriteImportMode=SpriteImportMode.Single;
+                importer.alphaIsTransparency=true;
+                importer.mipmapEnabled=false;
+                importer.textureCompression=TextureImporterCompression.Uncompressed;
+                importer.SaveAndReimport();
+            }
+            string dir=Root+"/Generated";
+            var theme=AssetDatabase.LoadAssetAtPath<SkillUITheme>(dir+"/SkillUITheme.asset");
+            var data=AssetDatabase.LoadAssetAtPath<SkillTreeAsset>(dir+"/SkillTreeData.asset");
+            if(!theme || !data)throw new InvalidOperationException("Skill tree theme or data is missing.");
+            UpdateObelisk(theme,data);
+            AssetDatabase.SaveAssets();
+            Debug.Log("[Skills] Obelisk name and simplified icon applied.");
+        }
+        static void UpdateObelisk(SkillUITheme theme,SkillTreeAsset data)
+        {
+            var icon=Sprite("tower.obelisk");
+            if(!icon)throw new InvalidOperationException("Obelisk icon is missing.");
+            var entry=theme.icons.FirstOrDefault(x=>x!=null && x.skillId=="tower.obelisk");
+            if(entry==null)
+            {
+                entry=new SkillUITheme.IconEntry{skillId="tower.obelisk"};
+                theme.icons=theme.icons.Concat(new[]{entry}).ToArray();
+            }
+            entry.sprite=icon;
+            var row=data.nodes.FirstOrDefault(x=>x!=null && x.id=="tower.obelisk");
+            if(row==null)throw new InvalidOperationException("Obelisk skill is missing.");
+            row.displayName="오벨리스크 해금";
+            row.description="구매하면 오벨리스크를 설치할 수 있습니다.";
+            EditorUtility.SetDirty(theme);
+            EditorUtility.SetDirty(data);
+        }
         [MenuItem("SandGuard/Skills/Create Styled Preview Scene")]
         public static void CreatePreview()
         {
