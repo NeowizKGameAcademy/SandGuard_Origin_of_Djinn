@@ -40,7 +40,7 @@ namespace SandGuard.Skills.Unity
             asset.Add("attack.vortex","모래 소용돌이",SkillBranch.Attack,3,SkillKind.Active,"attack.burst",EquipSlot.Q,EquipSlot.E,EquipSlot.R);
             asset.Add("attack.storm","사막 폭풍",SkillBranch.Attack,3,SkillKind.Active,"attack.vortex",EquipSlot.Q,EquipSlot.E,EquipSlot.R);
             asset.Add("tower.cobra","화염 코브라 해금",SkillBranch.Tower,1,SkillKind.Passive,"");
-            asset.Add("tower.obelisk","모래시계 오벨리스크 해금",SkillBranch.Tower,2,SkillKind.Passive,"tower.cobra");
+            asset.Add("tower.obelisk","오벨리스크 해금",SkillBranch.Tower,2,SkillKind.Passive,"tower.cobra");
             asset.Add("tower.skeleton","해골 소환진 해금",SkillBranch.Tower,2,SkillKind.Passive,"tower.cobra");
             asset.Add("tower.anubis","아누비스 해금",SkillBranch.Tower,3,SkillKind.Passive,"tower.skeleton");
             return asset;
