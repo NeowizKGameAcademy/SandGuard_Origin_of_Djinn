@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Player_Jump
   m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxCue
   clips:
-  - {fileID: 8300000, guid: 7676729a1e583bb4cb00854ef7cb7efb, type: 3}
+  - {fileID: 8300000, guid: 960f6c49a1c3c8c40a1749f8e4c9500c, type: 3}
   volume: 0.7
   volumeJitterDb: 1
   pitch: 1
@@ -27,4 +27,5 @@ MonoBehaviour:
   loop: 0
   maxVoices: 4
   minInterval: 0.02
+  chance: 1
   loopFade: 0.3

@@ -12,7 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54a03e5cbec6ac7459a523d1564d4bb0, type: 3}
   m_Name: Player_Land
   m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxCue
-  clips: []
+  clips:
+  - {fileID: 8300000, guid: e820ef9077a4e8145b58deb95ffed92b, type: 3}
+  - {fileID: 8300000, guid: 98305cf5553b13041afc18420b75fabc, type: 3}
+  - {fileID: 8300000, guid: 5f69e96e3e2e1ce47be4aae22abd6230, type: 3}
   volume: 0.6
   volumeJitterDb: 1
   pitch: 1
@@ -26,4 +29,5 @@ MonoBehaviour:
   loop: 0
   maxVoices: 4
   minInterval: 0.02
+  chance: 1
   loopFade: 0.3

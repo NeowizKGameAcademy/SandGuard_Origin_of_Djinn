@@ -1,6 +1,6 @@
 # AudioResource 대응 결과
 
-생성: 2026-09-18 10:03. 표: `Assets/8.Audio/Editor/AudioResourceMap.cs`.
+생성: 2026-09-18 13:05. 표: `Assets/8.Audio/Editor/AudioResourceMap.cs`.
 
 ## 대응된 큐
 
@@ -30,33 +30,44 @@
 - `Player_Pierce_Charge_Loop` ← 기 모으기
 - `Player_SandStorm_Cast` ← 폭풍
 - `Player_Recall_Warp` ← whoosh모음
+- `Env_Lightning` ← 천둥-가까운 거리, 천둥-중간, 천둥-먼 거리
+- `Core_Hum_Loop` ← 코어허밍_auda
+- `Enemy_Spawn` ← 북소리_auda
+- `Enemy_Swordsman_Swing` ← 휘두르는소리
+- `Enemy_Assassin_Swing` ← 휘두르는소리
+- `Enemy_ShieldGuard_Swing` ← 휘두르는소리
+- `Enemy_HammerBrute_Swing` ← 휘두르는소리
+- `Enemy_Chief_Swing` ← 휘두르는소리
+- `Enemy_Chief_Bomb_Throw` ← 죽어!
+- `Player_Updraft_Charge_Loop` ← 기 모으기
+- `Player_Updraft_Launch` ← 폭발4_차지점프_auda
+- `Player_SandBurst` ← 폭발3
+- `Player_SandStorm_Loop` ← 폭풍_auda
+- `Player_SandVortex_Loop` ← 바람소리_auda
+- `Player_ManaBolt_Impact` ← impactGlass_light_000, impactGlass_light_001, impactGlass_light_002, impactGlass_light_003, impactGlass_light_004
+- `Player_Land` ← impactSoft_medium_000, impactSoft_medium_001, impactSoft_medium_002
+- `Player_BodyFall` ← impactSoft_heavy_000, impactSoft_heavy_001
+- `Enemy_BodyFall` ← impactSoft_heavy_000, impactSoft_heavy_001, impactSoft_heavy_002, impactSoft_heavy_003, impactSoft_heavy_004
+- `Enemy_ShieldGuard_Impact` ← impactMetal_light_000, impactMetal_light_001, impactMetal_light_002, impactMetal_light_003, impactMetal_light_004
+- `Enemy_HammerBrute_Impact` ← impactMining_000, impactMining_001, impactMining_002, impactMining_003, impactMining_004
+- `Core_Destroy_Debris` ← impactGlass_heavy_000, impactGlass_heavy_001, impactGlass_heavy_002
+- `Facility_Cobra_Destroy_Debris` ← impactMining_000, impactMining_001, impactMining_002
+- `Core_Warning` ← impactBell_heavy_000
 
-## 클립이 없는 큐 (71개) — 담당자가 채울 것
+## 클립이 없는 큐 (51개) — 담당자가 채울 것
 
 - `Core_Destroy_Charge`: 코어 파괴 충전 상승음 (0~0.2초)
-- `Core_Destroy_Debris`: 코어 파편 착지 (1.1초)
-- `Core_Hit`: 코어 피격 균열 + 경고음
-- `Core_Hum_Loop`: 코어 크리스탈 험
-- `Core_Warning`: 코어 안정도 경고 (30 이하)
-- `Enemy_Assassin_Swing`: 단검 빠른 2연 whoosh
-- `Enemy_BodyFall`: 사망 클립에서 몸이 바닥에 닿는 '쿵' (전 종류 공용)
 - `Enemy_Burning`: 불타는 적 지글 2초
 - `Enemy_Chief_Bomb_Fuse_Loop`: 폭탄 도화선 지글 (비행 중)
-- `Enemy_Chief_Bomb_Throw`: 폭탄 던지기 whoosh (ReleaseChiefBomb 이벤트)
 - `Enemy_Chief_Shield_Loop`: 황금 방패 소환→유지 험→해제
-- `Enemy_Chief_Swing`: 곡도 whoosh + 보스 음성
-- `Enemy_HammerBrute_Impact`: 망치가 지면을 치는 '쿵' (Attack 클립 타격 프레임)
-- `Enemy_HammerBrute_Swing`: 망치 큰 whoosh → 지면 쿵 + 포효
-- `Enemy_ShieldGuard_Impact`: 방패 덜컥 (Attack 클립 타격 프레임)
-- `Enemy_ShieldGuard_Swing`: 검 휘두름 + 방패 덜컥
-- `Enemy_Spawn`: 출현: 모래 뚫고 '푸슉' + 북
-- `Enemy_Swordsman_Swing`: 검 휘두름 + 기합
 - `Enemy_Voice_Chief_Death`: 족장 사망 음성 (길게)
+- `Enemy_Voice_Death_Heavy`: 망치병 사망 음성
+- `Enemy_Voice_Death_Light`: 검병·암살자·방패병 사망 음성
 - `Env_Altar_Loop`: 스킬 제단 룬 공명
 - `Env_Menu_Ambience_Loop`: 메인 메뉴 앰비언스
 - `Env_StormWall_Loop`: 외곽 모래폭풍 벽 (거리 기반은 후속)
 - `Env_Torch_Loop`: 횃불 타닥
-- `Facility_Cobra_Destroy_Debris`: 코브라 파편 착지 (파괴 0.9초 뒤)
+- `Facility_Build_Poof`: 건설 연막 '퍽'
 - `Facility_Cobra_Extinguish`: 화염 소화 '푸스' (방출 정지)
 - `Facility_Cobra_Flame_Impact`: 화염 착탄 불꽃 튐
 - `Facility_Cobra_Ignite`: 화염 점화 '훅' (방출 시작)
@@ -70,24 +81,16 @@
 - `Music_Defeat`: 패배 스팅어
 - `Music_Victory`: 승리 팡파르
 - `Music_WaveClear_Sting`: 웨이브 클리어 스팅어
-- `Player_BodyFall`: 사망 클립에서 몸이 바닥에 닿는 '쿵'
-- `Player_Land`: 착지 발 + 옷
 - `Player_ManaBolt_Flight_Loop`: 투사체 비행 윙윙
-- `Player_ManaBolt_Impact`: 착탄: 크리스탈 파열 + 모래
 - `Player_ManaCharge_Complete`: 마나 충전 완료 차임
 - `Player_ManaCharge_Loop`: 코어 근처 마나 충전
 - `Player_PierceBeam_Fire`: 관통 빔 '즈왕'
 - `Player_Recall_Mark`: 흔적 생성 룬
 - `Player_Revive`: 부활 마력 응집
-- `Player_SandBurst`: 모래 폭발 저역 붐
 - `Player_SandShackle`: 모래 족쇄 조임
 - `Player_SandShackle_Release`: 모래 족쇄 풀림 (방출 정지)
 - `Player_SandStorm_End`: 폭풍 잦아듦
-- `Player_SandStorm_Loop`: 사막 폭풍 강풍(퍼지는 링을 따라)
 - `Player_SandVortex_End`: 소용돌이 잦아듦
-- `Player_SandVortex_Loop`: 소용돌이 회전 바람
-- `Player_Updraft_Charge_Loop`: 상승 기류 충전(세기에 따라 피치 상승)
-- `Player_Updraft_Launch`: 상승 기류 발사 모래 기둥
 - `Player_Voice_Cast`: 시전 기합 (기본 공격·Q/E/R 스킬). 매번 나면 지겨우니 확률 20%
 - `Player_Voice_Dash`: 대시 기합. 확률 40%
 - `Player_Voice_Death`: 사망 음성. 항상
@@ -105,28 +108,131 @@
 - `Wave_Clear`: 웨이브 클리어 팡파르 (VFX_Wave_Clear)
 - `Wave_Countdown_Tick`: 카운트다운 틱
 
-## AudioResource에 있지만 쓰지 않은 파일 (23개)
+## AudioResource에 있지만 쓰지 않은 파일 (126개)
 
-- UI버튼 클릭음_auda
+- footstep_carpet_000
+- footstep_carpet_001
+- footstep_carpet_002
+- footstep_carpet_003
+- footstep_carpet_004
+- footstep_concrete_000
+- footstep_concrete_001
+- footstep_concrete_002
+- footstep_concrete_003
+- footstep_concrete_004
+- footstep_grass_000
+- footstep_grass_001
+- footstep_grass_002
+- footstep_grass_003
+- footstep_grass_004
+- footstep_snow_000
+- footstep_snow_001
+- footstep_snow_002
+- footstep_snow_003
+- footstep_snow_004
+- footstep_wood_000
+- footstep_wood_001
+- footstep_wood_002
+- footstep_wood_003
+- footstep_wood_004
+- impactBell_heavy_001
+- impactBell_heavy_002
+- impactBell_heavy_003
+- impactBell_heavy_004
+- impactGeneric_light_000
+- impactGeneric_light_001
+- impactGeneric_light_002
+- impactGeneric_light_003
+- impactGeneric_light_004
+- impactGlass_heavy_003
+- impactGlass_heavy_004
+- impactGlass_medium_003
+- impactGlass_medium_004
+- impactMetal_heavy_000
+- impactMetal_heavy_001
+- impactMetal_heavy_002
+- impactMetal_heavy_003
+- impactMetal_heavy_004
+- impactMetal_medium_000
+- impactMetal_medium_001
+- impactMetal_medium_002
+- impactMetal_medium_003
+- impactMetal_medium_004
+- impactPlank_medium_000
+- impactPlank_medium_001
+- impactPlank_medium_002
+- impactPlank_medium_003
+- impactPlank_medium_004
+- impactPlate_heavy_000
+- impactPlate_heavy_001
+- impactPlate_heavy_002
+- impactPlate_heavy_003
+- impactPlate_heavy_004
+- impactPlate_light_000
+- impactPlate_light_001
+- impactPlate_light_002
+- impactPlate_light_003
+- impactPlate_light_004
+- impactPlate_medium_000
+- impactPlate_medium_001
+- impactPlate_medium_002
+- impactPlate_medium_003
+- impactPlate_medium_004
+- impactPunch_heavy_000
+- impactPunch_heavy_001
+- impactPunch_heavy_002
+- impactPunch_heavy_003
+- impactPunch_heavy_004
+- impactPunch_medium_000
+- impactPunch_medium_001
+- impactPunch_medium_002
+- impactPunch_medium_003
+- impactPunch_medium_004
+- impactSoft_medium_003
+- impactSoft_medium_004
+- impactTin_medium_000
+- impactTin_medium_001
+- impactTin_medium_002
+- impactTin_medium_003
+- impactTin_medium_004
+- impactWood_heavy_000
+- impactWood_heavy_001
+- impactWood_heavy_002
+- impactWood_heavy_003
+- impactWood_heavy_004
+- impactWood_light_000
+- impactWood_light_001
+- impactWood_light_002
+- impactWood_light_003
+- impactWood_light_004
+- impactWood_medium_000
+- impactWood_medium_001
+- impactWood_medium_002
+- impactWood_medium_003
+- impactWood_medium_004
+- UI버튼 클릭음
 - 강한착지음
-- 기본 사막환경 배경음_auda
-- 기본공격_auda
+- 기본 사막환경 배경음
+- 기본공격
 - 대쉬 효과음
-- 더블점프_auda
-- 레벨업_auda
-- 마나부족스킬잠금건설불가_auda
-- 발자국 사운드
-- 방패타격음_auda
-- 웨이브 시작음_auda
-- 적 사망음1_auda
-- 적 사망음2_auda
-- 적 사망음3_auda
-- 점프_auda
+- 대쉬효과음2
+- 더블점프
+- 레벨업
+- 마나부족스킬잠금건설불가
+- 발걸음2
+- 방패타격음
+- 아누비스발소리
+- 웨이브 시작음
+- 점프
 - 추락바람소리
-- 코브라타워 화염방사_auda
+- 코브라타워 화염방사
 - 코어핑
-- 타워 건설음_auda
-- 타워파괴2_auda
+- 타워 건설음
 - 폭발
-- 플레이어 발걸음 _auda
+- 폭발2
+- 폭발4
+- 폭발6
+- 폭발7
+- 폭발8
+- 폭발9
 - 피격음3

@@ -12,7 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54a03e5cbec6ac7459a523d1564d4bb0, type: 3}
   m_Name: Enemy_HammerBrute_Impact
   m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxCue
-  clips: []
+  clips:
+  - {fileID: 8300000, guid: 96d8e195cba31e841b58396444c1c072, type: 3}
+  - {fileID: 8300000, guid: 9e2ffbfcc4c47c34e8151de160881d50, type: 3}
+  - {fileID: 8300000, guid: b17af045843e8b04fbdbe93496e75802, type: 3}
+  - {fileID: 8300000, guid: 802cc7782eadb0749a909e756b5b0c61, type: 3}
+  - {fileID: 8300000, guid: 3753fc9c012d5ff4ea346005213124ee, type: 3}
   volume: 0.8
   volumeJitterDb: 1
   pitch: 1
@@ -26,4 +31,5 @@ MonoBehaviour:
   loop: 0
   maxVoices: 2
   minInterval: 0.02
+  chance: 1
   loopFade: 0.3

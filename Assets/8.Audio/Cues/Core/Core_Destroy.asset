@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Core_Destroy
   m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxCue
   clips:
-  - {fileID: 8300000, guid: e3774091109c0184b9fc3fa94589d310, type: 3}
+  - {fileID: 8300000, guid: b7c48999511f3814eb1db66a45d93d3f, type: 3}
   volume: 0.8
   volumeJitterDb: 0
   pitch: 1
@@ -27,4 +27,5 @@ MonoBehaviour:
   loop: 0
   maxVoices: 1
   minInterval: 0.02
+  chance: 1
   loopFade: 1

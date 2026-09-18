@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Enemy_Footstep_Light
   m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxCue
   clips:
-  - {fileID: 8300000, guid: d6785ebe18b6cac489601c40b00a15d4, type: 3}
+  - {fileID: 8300000, guid: 16fe68c0dd73b154888c00261f2d6457, type: 3}
   volume: 0.35
   volumeJitterDb: 1
   pitch: 0.76
@@ -27,4 +27,5 @@ MonoBehaviour:
   loop: 0
   maxVoices: 4
   minInterval: 0.02
+  chance: 1
   loopFade: 0.3

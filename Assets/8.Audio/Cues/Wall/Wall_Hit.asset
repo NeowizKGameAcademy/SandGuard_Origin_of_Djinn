@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: Wall_Hit
   m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxCue
   clips:
-  - {fileID: 8300000, guid: a7d2dbd7b8caf804cbc66b1b01be2af6, type: 3}
+  - {fileID: 8300000, guid: 802cc7782eadb0749a909e756b5b0c61, type: 3}
+  - {fileID: 8300000, guid: 3753fc9c012d5ff4ea346005213124ee, type: 3}
   volume: 0.8
   volumeJitterDb: 1
   pitch: 1
@@ -27,4 +28,5 @@ MonoBehaviour:
   loop: 0
   maxVoices: 4
   minInterval: 0.02
+  chance: 1
   loopFade: 0.3

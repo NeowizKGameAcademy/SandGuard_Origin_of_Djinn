@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Enemy_Footstep_Heavy
   m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxCue
   clips:
-  - {fileID: 8300000, guid: 16fe68c0dd73b154888c00261f2d6457, type: 3}
+  - {fileID: 8300000, guid: c8d9bd7c30d00c6449dd58de704e4aaa, type: 3}
   volume: 0.5
   volumeJitterDb: 1
   pitch: 0.76
@@ -27,4 +27,5 @@ MonoBehaviour:
   loop: 0
   maxVoices: 4
   minInterval: 0.02
+  chance: 1
   loopFade: 0.3
