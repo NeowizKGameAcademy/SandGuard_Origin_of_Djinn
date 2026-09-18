@@ -753,7 +753,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 5303913446472920051}
   m_Father: {fileID: 6778567520666740832}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2341724519013178968
@@ -1807,6 +1808,9 @@ GameObject:
   - component: {fileID: 8186172269289657213}
   - component: {fileID: 1174840284904390671}
   - component: {fileID: 2522104697291278904}
+  - component: {fileID: 5521191632982356345}
+  - component: {fileID: 4930134469582894905}
+  - component: {fileID: 8069317497968182141}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -2009,6 +2013,11 @@ MonoBehaviour:
   reactionBlendTime: 0.1
   dashLayerName: Dash Legs
   dashLayerBlendTime: 0.15
+  pierceLayerName: Pierce Casting
+  pierceChargingParameter: PierceCharging
+  pierceFireTrigger: PierceFire
+  pierceBlendInTime: 0.1
+  pierceBlendOutTime: 0.25
   onFired:
     m_PersistentCalls:
       m_Calls:
@@ -2239,7 +2248,7 @@ MonoBehaviour:
   skillVfxLifetime: 3
   cameraRig: {fileID: 0}
   beamPrefab: {fileID: 6758639609000383068, guid: 108df792754acb74b9940d125831eee5, type: 3}
-  beamHitPrefab: {fileID: 7247469167048375430, guid: 7ff360d1c513b93468b1da46fb2824d1, type: 3}
+  beamHitPrefab: {fileID: 589025706979960442, guid: d440a7bb90effdd49acd1845fc99b9d5, type: 3}
   beamRange: 14
   beamRadius: 0.2
   burstPrefab: {fileID: 5299723019764337286, guid: 889645eca7f0271498372df135f51d91, type: 3}
@@ -2248,6 +2257,15 @@ MonoBehaviour:
   burstDamageRatio: 0.6
   burstCameraKick: 0.08
   burstCameraKickDuration: 0.18
+  burstLaunchUp: 5.5
+  burstLaunchOut: 2.5
+  chargedDamageMultiplier: 2.2
+  chargedRadiusMultiplier: 2.5
+  chargedRangeBonus: 8
+  chargedKnockback: 6
+  beamVfxRadius: 0.14
+  beamVfxIntensity: 1.1
+  beamRingsFromCharge: 0.5
   shackleRadius: 2
   shackleDuration: 1.5
 --- !u!114 &5015132214736890607
@@ -2759,27 +2777,45 @@ MonoBehaviour:
   burstCooldown: 4
   vortexManaCost: 25
   vortexCooldown: 8
-  vortexRadius: 4
-  vortexDuration: 1.5
-  vortexPullSpeed: 3
-  vortexEndShackle: 0.5
+  vortexRadius: 3
+  vortexDuration: 2.5
+  vortexPullSpeed: 4
+  vortexEndLaunch: 4.5
+  vortexEndShackle: 0
   vortexPrefab: {fileID: 7703356908835638667, guid: 69f2fe8b8c8670c48b932b0978d69dab, type: 3}
   vortexVfxRadius: 1
-  stormManaCost: 40
-  stormCooldown: 15
-  stormRadius: 5
-  stormDuration: 5
-  stormTickInterval: 0.5
-  stormDamageRatio: 0.25
-  stormSlow: 0.6
+  stormManaCost: 60
+  stormCooldown: 45
+  stormRadius: 90
+  stormExpandSpeed: 14
+  stormRingThickness: 4
+  stormDamageRatio: 1.5
+  stormKnockback: 7
+  stormSlow: 0.5
+  stormSlowDuration: 3
   stormPrefab: {fileID: 895128081417247708, guid: 15a92a70bb563134bb9012fb6dd562a4, type: 3}
-  stormVfxRadius: 1
+  stormOrigin: {fileID: 0}
   onCast:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 8900168980621931674}
         m_TargetAssemblyTypeName: SandGuard.Audio.SfxOneShot, SandGuard.Audio.Runtime
         m_MethodName: Fire
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onStormCast:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5521191632982356345}
+        m_TargetAssemblyTypeName: DesertTower.VFX.VfxStormSurge, DesertTower.VFX.Runtime
+        m_MethodName: Trigger
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2875,6 +2911,147 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   PlayAtFoot: 1
+--- !u!114 &5521191632982356345
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4692671237183193388}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c4e6a8b0d1f4c3e5a7b9d1f3e5c7a92, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesertTower.VFX.Runtime::DesertTower.VFX.VfxStormSurge
+  storm: {fileID: 0}
+  speedBoost: 5
+  swirlBoost: 0.8
+  brighten: 1.7
+  attack: 0.25
+  hold: 0.6
+  release: 1.6
+--- !u!114 &4930134469582894905
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4692671237183193388}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d2b7c9e1f4a4b8e9c3d6a7f0e1b2c53, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SandGuard.Player.Runtime::SandGuard.Player.PlayerPierceCharge
+  input: {fileID: 0}
+  attack: {fileID: 0}
+  motor: {fileID: 0}
+  manaSource: {fileID: 0}
+  manaCost: 8
+  fullChargeExtraMana: 8
+  cooldown: 2
+  holdToCharge: 0.15
+  chargeTime: 0.9
+  faceCameraWhileCharging: 1
+  onChargeStarted:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5373906977062073465}
+        m_TargetAssemblyTypeName: DesertTower.VFX.VfxChargeLoop, DesertTower.VFX.Runtime
+        m_MethodName: Begin
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onCharging:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5373906977062073465}
+        m_TargetAssemblyTypeName: DesertTower.VFX.VfxChargeLoop, DesertTower.VFX.Runtime
+        m_MethodName: SetIntensity
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onChargeCancelled:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5373906977062073465}
+        m_TargetAssemblyTypeName: DesertTower.VFX.VfxChargeLoop, DesertTower.VFX.Runtime
+        m_MethodName: End
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onFired:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5373906977062073465}
+        m_TargetAssemblyTypeName: DesertTower.VFX.VfxChargeLoop, DesertTower.VFX.Runtime
+        m_MethodName: End
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &8069317497968182141
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4692671237183193388}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c4f1e2a9b7d4d3e8a1f6c5b2e9d7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SandGuard.Player.Runtime::SandGuard.Player.PlayerRecall
+  motor: {fileID: 0}
+  health: {fileID: 0}
+  manaSource: {fileID: 0}
+  manaCost: 12
+  window: 6
+  cooldown: 10
+  obstacles:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  markPrefab: {fileID: 7523577251105623944, guid: 188c075863bc6944d8e9a52ae4f43c5b, type: 3}
+  markVfxTail: 1.5
+  departPrefab: {fileID: 5888625269232001709, guid: f9a1c14e35eae3e4aa24b4ba1ee6737f, type: 3}
+  arrivePrefab: {fileID: 4790788064638141839, guid: fed37d5508bc30f45ac665f3a6c4171e, type: 3}
+  effectLifetime: 3
+  cameraRig: {fileID: 0}
+  recallKick: 0.12
+  recallKickDuration: 0.2
+  recallFovPunch: -6
+  recallFovDuration: 0.3
+  onMarked:
+    m_PersistentCalls:
+      m_Calls: []
+  onRecalled:
+    m_PersistentCalls:
+      m_Calls: []
+  onMarkCleared:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &4692874630212477141
 GameObject:
   m_ObjectHideFlags: 0
@@ -4845,6 +5022,79 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4502333540455046394}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &266159892317088531
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 5254408141149399661}
+    m_Modifications:
+    - target: {fileID: 5344328199854325984, guid: c25e65b38d9337a47ab6a60ec619317a, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5344328199854325984, guid: c25e65b38d9337a47ab6a60ec619317a, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5344328199854325984, guid: c25e65b38d9337a47ab6a60ec619317a, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5344328199854325984, guid: c25e65b38d9337a47ab6a60ec619317a, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5344328199854325984, guid: c25e65b38d9337a47ab6a60ec619317a, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5344328199854325984, guid: c25e65b38d9337a47ab6a60ec619317a, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5344328199854325984, guid: c25e65b38d9337a47ab6a60ec619317a, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5344328199854325984, guid: c25e65b38d9337a47ab6a60ec619317a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5344328199854325984, guid: c25e65b38d9337a47ab6a60ec619317a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5344328199854325984, guid: c25e65b38d9337a47ab6a60ec619317a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7945244876423638896, guid: c25e65b38d9337a47ab6a60ec619317a, type: 3}
+      propertyPath: m_Name
+      value: PierceCharge
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: c25e65b38d9337a47ab6a60ec619317a, type: 3}
+--- !u!4 &5303913446472920051 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5344328199854325984, guid: c25e65b38d9337a47ab6a60ec619317a, type: 3}
+  m_PrefabInstance: {fileID: 266159892317088531}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5373906977062073465 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5269885493461589866, guid: c25e65b38d9337a47ab6a60ec619317a, type: 3}
+  m_PrefabInstance: {fileID: 266159892317088531}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa6a7dae690286d49b7a97ab9817b545, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesertTower.VFX.Runtime::DesertTower.VFX.VfxChargeLoop
 --- !u!1001 &1488583215729610105
 PrefabInstance:
   m_ObjectHideFlags: 0

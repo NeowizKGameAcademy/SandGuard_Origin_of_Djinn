@@ -109,6 +109,12 @@ VFX: 관통 빔 `VFX_Pierce_Beam`(자식 `VfxBeam` 길이를 실제 도달 거�
 
 `SandGuard > Player > Apply Animation Packs`으로 위 시전 3개·이동 8개·피격/사망 2개를 `Art/Protagonist/CombatAnimations`에 가져오고 연결합니다. 원본은 `Docs/model-art`에 보존합니다. `Connect Hand Casting`은 자세/마스크/프리팹 연결을 재생성하며, 기존 외형/점프 연결 메뉴도 팩 자산이 있으면 팩 설정을 다시 적용합니다. 세부 조절은 외형 프리팹 Character의 `PlayerSpellcasting`에서 Raise/Lower Duration, Pose Hold Duration, Recoil Duration/Distance, Arm Extension으로 합니다.
 
+## 관통탄 충전·발사 (양팔 동작)
+
+관통탄(스킬트리 attack.pierce)은 누르고 있으면 두 손을 모아 가슴 앞에 구슬을 감싸는 자세(`Pierce Charge`, Mixamo Standing 2H Magic Attack 04의 4~22프레임에서 멈춤)로 충전하고, 떼면 두 손을 앞으로 내지른다(`Pierce Fire`, 22~42프레임 1.6배속). 탭도 내지르기를 쓴다.
+`SandGuard > Player > Connect Pierce Charge Animation`이 `CombatAnimations/PierceCast.fbx`를 가져와 양팔 마스크 `PierceArms.mask`의 오버라이드 레이어 `Pierce Casting`을 만든다.
+런타임은 `PlayerVisuals`가 `PierceCharging`(Bool)·`PierceFire`(Trigger)와 레이어 가중치를 몰고, 그동안 `PlayerSpellcasting`의 오른손 조준 IK는 쉰다(`Suppressed`). 레이어가 없는 컨트롤러에서는 예전처럼 손바닥 시전 동작으로 대신한다.
+
 ## 램프
 
 마나 순환으로 실제 회복한 양이 0보다 크면 `PlayerBasicAttack.ManaAbsorbed`가 램프 반짝임을 시작합니다. 문양과 램프 본체 발광은 0.1초 동안 올라갔다가 0.65초 동안 원래 마나 밝기로 돌아오고 주변 조명은 최대 0.22를 더합니다. 연속 명중은 현재 밝기에서 반짝임을 갱신하며 중첩하지 않습니다. 마나가 가득 찼거나 스킬이 없으면 자동 반짝임이 발생하지 않습니다. 에디터·개발 빌드에서 H 또는 `PlayerLampEquipment > Preview Mana Absorption`으로 연출만 시험할 수 있습니다. G로 강제로 꺼 놓은 상태에서는 반짝임도 꺼집니다.

@@ -86,6 +86,14 @@ namespace DesertTower.VFX.Editor
                 Forward = Vector3.right,
             },
             new Job { PrefabPath = BeamVfxBuilder.SummonPillarPath, Times = new[] { 0.1f, 0.3f, 0.55f, 0.9f }, StartPos = Vector3.zero },
+            // ---- skill set ----
+            new Job { PrefabPath = ImpactVfxBuilder.PierceHitPath, Times = new[] { 0.04f, 0.12f, 0.3f }, StartPos = new Vector3(0f, 1f, 0f) },
+            new Job { PrefabPath = SkillVfxBuilder.PierceChargePath, Times = new[] { 0.6f, 1.5f }, StartPos = new Vector3(0f, 1.2f, 0f) },
+            new Job { PrefabPath = SkillVfxBuilder.RecallMarkPath, Times = new[] { 1f, 3f }, StartPos = Vector3.zero },
+            new Job { PrefabPath = ImpactVfxBuilder.RecallDepartPath, Times = new[] { 0.05f, 0.2f, 0.5f, 0.9f }, StartPos = Vector3.zero },
+            new Job { PrefabPath = ImpactVfxBuilder.RecallArrivePath, Times = new[] { 0.05f, 0.2f, 0.5f, 0.9f }, StartPos = Vector3.zero },
+            new Job { PrefabPath = SandZoneVfxBuilder.VortexPath, Times = new[] { 0.8f, 1.6f, 2.4f }, StartPos = Vector3.zero },
+            new Job { PrefabPath = SandZoneVfxBuilder.StormPath, Times = new[] { 0.3f, 0.9f, 1.6f }, StartPos = Vector3.zero },
             // ---- combat set ----
             new Job { PrefabPath = CombatVfxBuilder.PlayerHitPath, Times = new[] { 0.04f, 0.12f, 0.3f, 0.55f }, StartPos = new Vector3(0f, 1f, 0f), Forward = Vector3.back },
             new Job { PrefabPath = CombatVfxBuilder.EnemyHitPath, Times = new[] { 0.04f, 0.12f, 0.3f, 0.55f }, StartPos = new Vector3(0f, 1f, 0f), Forward = Vector3.back },
@@ -251,6 +259,7 @@ namespace DesertTower.VFX.Editor
                 if (job.AttractToReference)
                     foreach (var a in attractors) a.Target = stage.Reference;
                 var beams = instance.GetComponentsInChildren<VfxBeam>();
+                var fronts = instance.GetComponentsInChildren<VfxStormFront>(); // 퍼지는 링(사막 폭풍)은 스스로 전진시킨다
 
                 var core = instance.GetComponent<CoreAmbientVfx>();
                 var stabilities = job.Stabilities != null && core != null ? job.Stabilities : new[] { float.NaN };
@@ -267,6 +276,7 @@ namespace DesertTower.VFX.Editor
                         {
                             foreach (var a in attractors) a.Tick(dt);
                             foreach (var b in beams) if (dt > 0f) b.Tick(dt);
+                            foreach (var f in fronts) if (dt > 0f) f.Tick(dt);
                             if (core != null) core.Tick(dt);
                         });
 

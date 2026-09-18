@@ -1,6 +1,6 @@
 # AudioResource 대응 결과
 
-생성: 2026-09-17 15:56. 표: `Assets/8.Audio/Editor/AudioResourceMap.cs`.
+생성: 2026-09-18 09:53. 표: `Assets/8.Audio/Editor/AudioResourceMap.cs`.
 
 ## 대응된 큐
 
@@ -27,8 +27,11 @@
 - `Facility_Cobra_Destroy` ← 타워파괴2_auda, 타워파괴음
 - `Enemy_Chief_Bomb_Explosion` ← 폭발, 폭발2
 - `Enemy_Hit` ← 피격음, 피격음2, 피격음3_auda
+- `Player_Pierce_Charge_Loop` ← 기 모으기
+- `Player_SandStorm_Cast` ← 폭풍
+- `Player_Recall_Warp` ← whoosh모음
 
-## 클립이 없는 큐 (70개) — 담당자가 채울 것
+## 클립이 없는 큐 (71개) — 담당자가 채울 것
 
 - `Core_Destroy_Charge`: 코어 파괴 충전 상승음 (0~0.2초)
 - `Core_Destroy_Debris`: 코어 파편 착지 (1.1초)
@@ -74,12 +77,13 @@
 - `Player_ManaCharge_Complete`: 마나 충전 완료 차임
 - `Player_ManaCharge_Loop`: 코어 근처 마나 충전
 - `Player_PierceBeam_Fire`: 관통 빔 '즈왕'
+- `Player_Recall_Mark`: 흔적 생성 룬
 - `Player_Revive`: 부활 마력 응집
 - `Player_SandBurst`: 모래 폭발 저역 붐
 - `Player_SandShackle`: 모래 족쇄 조임
 - `Player_SandShackle_Release`: 모래 족쇄 풀림 (방출 정지)
 - `Player_SandStorm_End`: 폭풍 잦아듦
-- `Player_SandStorm_Loop`: 사막 폭풍 강풍
+- `Player_SandStorm_Loop`: 사막 폭풍 강풍(퍼지는 링을 따라)
 - `Player_SandVortex_End`: 소용돌이 잦아듦
 - `Player_SandVortex_Loop`: 소용돌이 회전 바람
 - `Player_Updraft_Charge_Loop`: 상승 기류 충전(세기에 따라 피치 상승)

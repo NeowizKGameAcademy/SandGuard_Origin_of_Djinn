@@ -1,0 +1,733 @@
+[Licensing::Module] Trying to connect to existing licensing client channel...
+Built from '6000.2/respin/6000.2.8f1-e4064264ae96' branch; Version is '6000.2.8f1 (c9992ac36c34) revision 13211946'; Using compiler version '194234433'; Build Type 'Release'
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-m" at "2026-09-17T09:21:49.3763406Z"
+OS: 'Windows 11  (10.0.26200) 64bit Core' Language: 'ko' Physical Memory: 32471 MB
+BatchMode: 1, IsHumanControllingUs: 0, StartBugReporterOnCrash: 0, Is64bit: 1
+Date: 2026-09-17T09:21:49Z
+
+COMMAND LINE ARGUMENTS:
+C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Unity.exe
+-batchmode
+-nographics
+-quit
+-projectPath
+C:\course\unity\SandGuard
+-executeMethod
+MinionVisualsBuilder.Build
+-logFile
+C:\course\unity\SandGuard\Docs\model-art\minion-visuals\unity-build.log
+Successfully changed project path to: C:\course\unity\SandGuard
+C:/course/unity/SandGuard
+[UnityMemory] Configuration Parameters - Can be set up in boot.config
+    "memorysetup-allocator-temp-initial-block-size-main=262144"
+    "memorysetup-allocator-temp-initial-block-size-worker=262144"
+    "memorysetup-bucket-allocator-granularity=16"
+    "memorysetup-bucket-allocator-bucket-count=8"
+    "memorysetup-bucket-allocator-block-size=33554432"
+    "memorysetup-bucket-allocator-block-count=8"
+    "memorysetup-main-allocator-block-size=16777216"
+    "memorysetup-thread-allocator-block-size=16777216"
+    "memorysetup-gfx-main-allocator-block-size=16777216"
+    "memorysetup-gfx-thread-allocator-block-size=16777216"
+    "memorysetup-cache-allocator-block-size=4194304"
+    "memorysetup-typetree-allocator-block-size=2097152"
+    "memorysetup-profiler-bucket-allocator-granularity=16"
+    "memorysetup-profiler-bucket-allocator-bucket-count=8"
+    "memorysetup-profiler-bucket-allocator-block-size=33554432"
+    "memorysetup-profiler-bucket-allocator-block-count=8"
+    "memorysetup-profiler-allocator-block-size=16777216"
+    "memorysetup-profiler-editor-allocator-block-size=1048576"
+    "memorysetup-temp-allocator-size-main=16777216"
+    "memorysetup-job-temp-allocator-block-size=2097152"
+    "memorysetup-job-temp-allocator-block-size-background=1048576"
+    "memorysetup-job-temp-allocator-reduction-small-platforms=262144"
+    "memorysetup-temp-allocator-size-background-worker=32768"
+    "memorysetup-temp-allocator-size-job-worker=262144"
+    "memorysetup-temp-allocator-size-preload-manager=33554432"
+    "memorysetup-temp-allocator-size-nav-mesh-worker=65536"
+    "memorysetup-temp-allocator-size-audio-worker=65536"
+    "memorysetup-temp-allocator-size-cloud-worker=32768"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gfx=262144"
+Player connection [38140]  Target information:
+
+Player connection [38140]  * "[IP] 192.168.1.39 [Port] 55504 [Flags] 2 [Guid] 3795827063 [EditorId] 3795827063 [Version] 1048832 [Id] WindowsEditor(7,DESKTOP-LKQ38HD) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" 
+
+Player connection [38140] Host joined multi-casting on [225.0.0.222:54997]...
+Player connection [38140] Host joined alternative multi-casting on [225.0.0.222:34997]...
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+[Licensing::Client] Code 10 while verifying Licensing Client signature (process Id: 15512, path: "C:/Program Files/Unity Hub/UnityLicensingClient_V1/Unity.Licensing.Client.exe")
+[Licensing::Module] LicensingClient has failed validation; ignoring
+[Licensing::Client] Handshaking with LicensingClient:
+  Version:                 1.18.3+d7ffd15
+  Session Id:              e2f83276fcca4f81978b4543d00d2794
+  Correlation Id:          ddf24e057dd5ce04b127cc16eb857047
+  External correlation Id: 3157616432383372467
+  Machine Id:              LB3ncWW38BJdHmRzKztJP09Q3ig=
+[Licensing::Module] Successfully connected to LicensingClient on channel: "LicenseClient-m" (connect: 0.00s, validation: 0.00s, handshake: 0.04s)
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-m-notifications" at "2026-09-17T09:21:49.4221014Z"
+[Licensing::Module] Error: Access token is unavailable; failed to update
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: F4-K5YW-SH7J-TNEA-5VZ3-XXXX
+  Product: Unity Personal
+  Type: ULF
+  Expiration: 2026-10-26T10:21:25Z
+[Licensing::Module] License group:
+  Id: 14568940251572-UnityPersXXXX
+  Product: Unity Personal
+  Type: Assigned
+  Expiration: Unlimited
+[Licensing::Client] Successfully updated license, isAsync: True, time: 0.00
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: F4-K5YW-SH7J-TNEA-5VZ3-XXXX
+  Product: Unity Personal
+  Type: ULF
+  Expiration: 2026-10-26T10:21:25Z
+[Licensing::Module] License group:
+  Id: 14568940251572-UnityPersXXXX
+  Product: Unity Personal
+  Type: Assigned
+  Expiration: Unlimited
+[Licensing::Module] Licensing Background thread has ended after 0.06s
+[Package Manager] Connected to IPC stream "Upm-20080" after 0.3 seconds.
+Library Redirect Path: Library/
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+Refreshing native plugins compatible for Editor in 0.21 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Initialize engine version: 6000.2.8f1 (c9992ac36c34)
+[Subsystems] Discovering subsystems at path C:/Program Files/Unity/Hub/Editor/6000.2.8f1/Editor/Data/Resources/UnitySubsystems
+[Subsystems] Discovering subsystems at path C:/course/unity/SandGuard/Assets
+Forcing GfxDevice: Null
+GfxDevice: creating device client; kGfxThreadingModeNonThreaded
+NullGfxDevice:
+    Version:  NULL 1.0 [1.0]
+    Renderer: Null Device
+    Vendor:   Unity Technologies
+Shader Hidden/ProbeVolume/VoxelizeScene is not supported: GPU does not support conservative rasterization
+Initialize mono
+Mono path[0] = 'C:/Program Files/Unity/Hub/Editor/6000.2.8f1/Editor/Data/Managed'
+Mono path[1] = 'C:/Program Files/Unity/Hub/Editor/6000.2.8f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32'
+Mono config path = 'C:/Program Files/Unity/Hub/Editor/6000.2.8f1/Editor/Data/MonoBleedingEdge/etc'
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56080
+Using cacheserver namespaces - metadata:defaultmetadata, artifacts:defaultartifacts
+Using cacheserver namespaces - metadata:defaultmetadata, artifacts:defaultartifacts
+ImportWorker Server TCP listen port: 0
+AcceleratorClientConnectionCallback - disconnected - :0
+Begin MonoManager ReloadAssembly
+Registering precompiled unity dll's ...
+Register platform support module: C:/Program Files/Unity/Hub/Editor/6000.2.8f1/Editor/Data/PlaybackEngines/WebGLSupport/UnityEditor.WebGL.Extensions.dll
+Register platform support module: C:/Program Files/Unity/Hub/Editor/6000.2.8f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: F4-K5YW-SH7J-TNEA-5VZ3-XXXX
+  Product: Unity Personal
+  Type: ULF
+  Expiration: 2026-10-26T10:21:50Z
+[Licensing::Module] License group:
+  Id: 14568940251572-UnityPersXXXX
+  Product: Unity Personal
+  Type: Assigned
+  Expiration: Unlimited
+Register platform support module: C:/Program Files/Unity/Hub/Editor/6000.2.8f1/Editor/Data/PlaybackEngines/AndroidPlayer/UnityEditor.Android.Extensions.dll
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: F4-K5YW-SH7J-TNEA-5VZ3-XXXX
+  Product: Unity Personal
+  Type: ULF
+  Expiration: 2026-10-26T10:21:50Z
+[Licensing::Module] License group:
+  Id: 14568940251572-UnityPersXXXX
+  Product: Unity Personal
+  Type: Assigned
+  Expiration: Unlimited
+Register platform support module: C:/Program Files/Unity/Hub/Editor/6000.2.8f1/Editor/Data/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.dll
+Registered in 0.007572 seconds.
+- Loaded All Assemblies, in  0.380 seconds
+Native extension for iOS target not found
+Native extension for Android target not found
+Android Extension - Scanning For ADB Devices 246 ms
+Native extension for WindowsStandalone target not found
+Native extension for WebGL target not found
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  0.590 seconds
+Domain Reload Profiling: 969ms
+	BeginReloadAssembly (122ms)
+		ExecutionOrderSort (0ms)
+		DisableScriptedObjects (0ms)
+		BackupInstance (0ms)
+		ReleaseScriptingObjects (0ms)
+		CreateAndSetChildDomain (1ms)
+	RebuildCommonClasses (35ms)
+	RebuildNativeTypeToScriptingClass (9ms)
+	initialDomainReloadingComplete (53ms)
+	LoadAllAssembliesAndSetupDomain (159ms)
+		LoadAssemblies (120ms)
+		RebuildTransferFunctionScriptingTraits (0ms)
+		AnalyzeDomain (155ms)
+			TypeCache.Refresh (153ms)
+				TypeCache.ScanAssembly (143ms)
+			BuildScriptInfoCaches (0ms)
+			ResolveRequiredComponents (0ms)
+	FinalizeReload (590ms)
+		ReleaseScriptCaches (0ms)
+		RebuildScriptCaches (0ms)
+		SetupLoadedEditorAssemblies (561ms)
+			LogAssemblyErrors (0ms)
+			InitializePlatformSupportModulesInManaged (371ms)
+			SetLoadedEditorAssemblies (3ms)
+			BeforeProcessingInitializeOnLoad (49ms)
+			ProcessInitializeOnLoadAttributes (94ms)
+			ProcessInitializeOnLoadMethodAttributes (44ms)
+			AfterProcessingInitializeOnLoad (0ms)
+			EditorAssembliesLoaded (0ms)
+		ExecutionOrderSort2 (0ms)
+		AwakeInstancesAfterBackupRestoration (0ms)
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: F4-K5YW-SH7J-TNEA-5VZ3-XXXX
+  Product: Unity Personal
+  Type: ULF
+  Expiration: 2026-10-26T10:21:50Z
+[Licensing::Module] License group:
+  Id: 14568940251572-UnityPersXXXX
+  Product: Unity Personal
+  Type: Assigned
+  Expiration: Unlimited
+Application.AssetDatabase Initial Refresh Start
+Package Manager log level set to [2]
+[Package Manager] Restoring resolved packages state from cache
+[Licensing::Client] Successfully resolved entitlement details
+[Package Manager] Registered 59 packages:
+  Packages from [https://packages.unity.com]:
+    com.unity.ai.navigation@2.0.9 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.ai.navigation@5218e4bf7edc)
+    com.unity.collab-proxy@2.9.3 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.collab-proxy@ab839cc7d2ad)
+    com.unity.ide.rider@3.0.38 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.ide.rider@1f60b3138684)
+    com.unity.ide.visualstudio@2.0.23 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.ide.visualstudio@198cdf337d13)
+    com.unity.inputsystem@1.14.2 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.inputsystem@be6c4fd0abf5)
+    com.unity.pipeline@0.6.0-exp.1 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.pipeline@9bb4172c603c)
+    com.unity.timeline@1.8.9 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.timeline@6b9e48457ddb)
+    com.unity.visualscripting@1.9.7 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.visualscripting@6279e2b7c485)
+    com.unity.nuget.mono-cecil@1.11.6 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.nuget.mono-cecil@ecb9724e46ff)
+    com.unity.nuget.newtonsoft-json@3.2.1 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.nuget.newtonsoft-json@74deb55db2a0)
+    com.unity.searcher@4.9.3 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.searcher@1e17ce91558d)
+    com.unity.burst@1.8.25 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.burst@1df634d836b8)
+    com.unity.mathematics@1.3.2 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.mathematics@8017b507cc74)
+    com.unity.collections@2.5.7 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.collections@d49facba0036)
+    com.unity.test-framework.performance@3.2.0 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.test-framework.performance@0840f58e4562)
+  Built-in packages:
+    com.unity.2d.sprite@1.0.0 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.2d.sprite@331abd9a1e2f)
+    com.unity.multiplayer.center@1.0.0 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.multiplayer.center@f3fb577b3546)
+    com.unity.render-pipelines.universal@17.2.0 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.render-pipelines.universal@cc5029882822)
+    com.unity.test-framework@1.6.0 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.test-framework@d97b7cd61ded)
+    com.unity.ugui@2.0.0 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.ugui@8d7885e629a4)
+    com.unity.modules.accessibility@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.accessibility)
+    com.unity.modules.ai@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.ai)
+    com.unity.modules.androidjni@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.androidjni)
+    com.unity.modules.animation@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.animation)
+    com.unity.modules.assetbundle@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.assetbundle)
+    com.unity.modules.audio@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.audio)
+    com.unity.modules.cloth@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.cloth)
+    com.unity.modules.director@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.director)
+    com.unity.modules.imageconversion@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.imageconversion)
+    com.unity.modules.imgui@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.imgui)
+    com.unity.modules.jsonserialize@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.jsonserialize)
+    com.unity.modules.particlesystem@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.particlesystem)
+    com.unity.modules.physics@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.physics)
+    com.unity.modules.physics2d@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.physics2d)
+    com.unity.modules.screencapture@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.screencapture)
+    com.unity.modules.terrain@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.terrain)
+    com.unity.modules.terrainphysics@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.terrainphysics)
+    com.unity.modules.tilemap@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.tilemap)
+    com.unity.modules.ui@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.ui)
+    com.unity.modules.uielements@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.uielements)
+    com.unity.modules.umbra@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.umbra)
+    com.unity.modules.unityanalytics@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.unityanalytics)
+    com.unity.modules.unitywebrequest@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.unitywebrequest)
+    com.unity.modules.unitywebrequestassetbundle@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.unitywebrequestassetbundle)
+    com.unity.modules.unitywebrequestaudio@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.unitywebrequestaudio)
+    com.unity.modules.unitywebrequesttexture@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.unitywebrequesttexture)
+    com.unity.modules.unitywebrequestwww@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.unitywebrequestwww)
+    com.unity.modules.vehicles@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.vehicles)
+    com.unity.modules.video@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.video)
+    com.unity.modules.vr@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.vr)
+    com.unity.modules.wind@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.wind)
+    com.unity.modules.xr@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.xr)
+    com.unity.modules.subsystems@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.subsystems)
+    com.unity.modules.hierarchycore@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.hierarchycore)
+    com.unity.ext.nunit@2.0.5 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.ext.nunit@031a54704bff)
+    com.unity.render-pipelines.core@17.2.0 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.render-pipelines.core@60896ea171dc)
+    com.unity.shadergraph@17.2.0 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.shadergraph@2c9221ffedf4)
+    com.unity.render-pipelines.universal-config@17.0.3 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.render-pipelines.universal-config@8dc1aab4af1d)
+    com.unity.rendering.light-transport@1.0.1 (location: C:\course\unity\SandGuard\Library\PackageCache\com.unity.rendering.light-transport@2c9279f90d7c)
+[Subsystems] No new subsystems found in resolved package list.
+[Package Manager] Done registering packages in 0.03 seconds
+[ScriptCompilation] Requested script compilation because: Assetdatabase observed changes in script compilation related files
+Duplicate assembly 'System.Runtime.CompilerServices.Unsafe.dll' with different versions detected, using 'Packages/com.unity.collections/Unity.Collections.Tests/System.Runtime.CompilerServices.Unsafe/System.Runtime.CompilerServices.Unsafe.dll, AssemblyName=System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a' and ignoring 'Packages/com.unity.pipeline/Runtime/Plugins/CodeAnalysis/System.Runtime.CompilerServices.Unsafe.dll, AssemblyName=System.Runtime.CompilerServices.Unsafe, Version=4.0.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a'.Starting: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\bee_backend.exe --ipc --defer-dag-verification --dagfile="Library/Bee/1900b0aE.dag" --continue-on-failure --profile="Library/Bee/backend1.traceevents" ScriptAssemblies
+WorkingDir: C:/course/unity/SandGuard
+DisplayProgressbar: Compiling Scripts
+ExitCode: 0 Duration: 3s391ms
+[ 975/1283  0s] ILPP-Configuration Library/ilpp-configuration.nevergeneratedoutput
+[1279/1283  0s] Csc Library/Bee/artifacts/1900b0aE.dag/Assembly-CSharp-Editor.dll (+2 others)
+Assets\3.Script\UI\HUD\Editor\HUDSceneBuilder.cs(100,392): warning CS0618: 'TMP_Text.enableWordWrapping' is obsolete: 'The enabledWordWrapping property is now obsolete. Please use the textWrappingMode property instead.'
+[1280/1283  0s] ILPostProcess Library/Bee/artifacts/1900b0aE.dag/post-processed/Assembly-CSharp-Editor.dll (+pdb)
+Processing assembly Library/Bee/artifacts/1900b0aE.dag/Assembly-CSharp-Editor.dll, with 131 defines and 375 references
+
+processors: Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+
+running Unity.Jobs.CodeGen.JobsILPostProcessor
+
+running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+
+running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+[1281/1283  0s] CopyFiles Library/ScriptAssemblies/Assembly-CSharp-Editor.pdb
+[1282/1283  0s] CopyFiles Library/ScriptAssemblies/Assembly-CSharp-Editor.dll
+*** Tundra build success (3.36 seconds), 5 items updated, 1283 evaluated
+Assets\3.Script\UI\HUD\Editor\HUDSceneBuilder.cs(100,392): warning CS0618: 'TMP_Text.enableWordWrapping' is obsolete: 'The enabledWordWrapping property is now obsolete. Please use the textWrappingMode property instead.'
+AssetDatabase: script compilation time: 3.836248s
+Begin MonoManager ReloadAssembly
+Duplicate assembly 'System.Runtime.CompilerServices.Unsafe.dll' with different versions detected, using 'Packages/com.unity.collections/Unity.Collections.Tests/System.Runtime.CompilerServices.Unsafe/System.Runtime.CompilerServices.Unsafe.dll, AssemblyName=System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a' and ignoring 'Packages/com.unity.pipeline/Runtime/Plugins/CodeAnalysis/System.Runtime.CompilerServices.Unsafe.dll, AssemblyName=System.Runtime.CompilerServices.Unsafe, Version=4.0.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a'.- Loaded All Assemblies, in  2.189 seconds
+Start importing Assets/MinionVisuals/AnubisMinion using Guid(3b960e9bbc2eb4345a630f250cd1ab7f) (DefaultImporter) -> (artifact id: '60df285aa553da50bcdd92ef513c2de0') in 0.0316166 seconds
+Start importing Assets/MinionVisuals/SkeletonMinion using Guid(ecfd4248789c50847915b10ec908ffe1) (DefaultImporter) -> (artifact id: 'f1fd95fd6b1cf3a1359c66a01b4cb9dc') in 0.0155312 seconds
+Start importing Assets/MinionVisuals/AnubisMinion/Textures using Guid(72545ed10e34a7e47bb0e74ac684b8a4) (DefaultImporter) -> (artifact id: '97e63706fdc872165842be9f25484beb') in 0.0129395 seconds
+Start importing Assets/MinionVisuals/SkeletonMinion/Models using Guid(b775ee24b59b92246b301460a6a24d2d) (DefaultImporter) -> (artifact id: '7c07e93c973eb7197475c0d9d362f77e') in 0.0101437 seconds
+Start importing Assets/MinionVisuals/SkeletonMinion/Materials using Guid(28f894606271c364e9f4f78aca44e6e3) (DefaultImporter) -> (artifact id: '4fffd72241b759207ba93b97ca2872a6') in 0.0159542 seconds
+Start importing Assets/MinionVisuals/SkeletonMinion/Textures using Guid(99236b00223335d43915e49a197dae44) (DefaultImporter) -> (artifact id: '12812a02699efd94640d2e24e34d7c2c') in 0.0127718 seconds
+Start importing Assets/MinionVisuals/AnubisMinion/Materials using Guid(f9ad867585ab37343a5920ee51a985db) (DefaultImporter) -> (artifact id: '05949529a574f6867273f00f9ec2b209') in 0.0095935 seconds
+Start importing Assets/MinionVisuals/AnubisMinion/Models using Guid(1a2675f3296481d47bb39b8dc71077ef) (DefaultImporter) -> (artifact id: '39fb315ea323a86f06ec66e73c036c41') in 0.0171261 seconds
+Start importing Assets/MinionVisuals/AnubisMinion/Animations using Guid(4af8632427008b04d8170e9de43eb8fc) (DefaultImporter) -> (artifact id: 'cc84da2423a0d1cc7e9e308fa002e339') in 0.0116017 seconds
+Start importing Assets/MinionVisuals/SkeletonMinion/Animations using Guid(bc64a232f4f055c4f88a3c2b07f88bf2) (DefaultImporter) -> (artifact id: '991dce0584949985863f5ab446f238d3') in 0.0094323 seconds
+Refreshing native plugins compatible for Editor in 1.04 ms, found 3 plugins.
+Native extension for iOS target not found
+Native extension for Android target not found
+Native extension for WindowsStandalone target not found
+Native extension for WebGL target not found
+Duplicate assembly 'System.Runtime.CompilerServices.Unsafe.dll' with different versions detected, using 'Packages/com.unity.collections/Unity.Collections.Tests/System.Runtime.CompilerServices.Unsafe/System.Runtime.CompilerServices.Unsafe.dll, AssemblyName=System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a' and ignoring 'Packages/com.unity.pipeline/Runtime/Plugins/CodeAnalysis/System.Runtime.CompilerServices.Unsafe.dll, AssemblyName=System.Runtime.CompilerServices.Unsafe, Version=4.0.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a'.Start HTTP server: port:7800
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  3.724 seconds
+Domain Reload Profiling: 5909ms
+	BeginReloadAssembly (277ms)
+		ExecutionOrderSort (0ms)
+		DisableScriptedObjects (11ms)
+		BackupInstance (0ms)
+		ReleaseScriptingObjects (0ms)
+		CreateAndSetChildDomain (130ms)
+	RebuildCommonClasses (32ms)
+	RebuildNativeTypeToScriptingClass (10ms)
+	initialDomainReloadingComplete (30ms)
+	LoadAllAssembliesAndSetupDomain (1835ms)
+		LoadAssemblies (1576ms)
+		RebuildTransferFunctionScriptingTraits (0ms)
+		AnalyzeDomain (352ms)
+			TypeCache.Refresh (276ms)
+				TypeCache.ScanAssembly (259ms)
+			BuildScriptInfoCaches (58ms)
+			ResolveRequiredComponents (12ms)
+	FinalizeReload (3725ms)
+		ReleaseScriptCaches (0ms)
+		RebuildScriptCaches (0ms)
+		SetupLoadedEditorAssemblies (3516ms)
+			LogAssemblyErrors (0ms)
+			InitializePlatformSupportModulesInManaged (51ms)
+			SetLoadedEditorAssemblies (5ms)
+			BeforeProcessingInitializeOnLoad (131ms)
+			ProcessInitializeOnLoadAttributes (3228ms)
+			ProcessInitializeOnLoadMethodAttributes (94ms)
+			AfterProcessingInitializeOnLoad (5ms)
+			EditorAssembliesLoaded (1ms)
+		ExecutionOrderSort2 (0ms)
+		AwakeInstancesAfterBackupRestoration (12ms)
+Start importing Assets/MinionVisuals/AnubisMinion/Textures/AnubisMinion_BaseColor.jpg using Guid(f9d4d00adf8275943a13ce565cf918fb) (TextureImporter) -> (artifact id: 'd4875e77f73b7f6a28d06ab8f94b81ac') in 0.1438521 seconds
+Start importing Assets/MinionVisuals/SkeletonMinion/Textures/SkeletonMinion_BaseColor.jpg using Guid(2ad2e14683f505948b65ab8748fc3f56) (TextureImporter) -> (artifact id: '88a5576ae863be8f42dea6c2b4cdb28b') in 0.1059201 seconds
+Start importing Assets/MinionVisuals/SkeletonMinion/Animations/SkeletonMinion@Sword And Shield Idle.fbx using Guid(20af36e0a42b8cd408930ab9988bcde7) (FBXImporter)Launched and connected shader compiler UnityShaderCompiler.exe after 0.01 seconds
+Keyframe reduction: Ratio: 15.350940%;
+ -> (artifact id: 'afe6d04d3f585fe72a05df8d0cb50cf1') in 0.1686429 seconds
+Start importing Assets/MinionVisuals/SkeletonMinion/Animations/SkeletonMinion@Sword And Shield Impact.fbx using Guid(81fc48fcd2e82524c9d694a9fab69260) (FBXImporter)Keyframe reduction: Ratio: 66.966301%;
+ -> (artifact id: '77043ceb11edd7ff6d32a44fcfcec1a3') in 0.0886517 seconds
+Start importing Assets/MinionVisuals/AnubisMinion/Animations/AnubisMinion@Mutant Swiping.fbx using Guid(c1819a1969edffb438fa503a497735a1) (FBXImporter)Keyframe reduction: Ratio: 40.782352%;
+ -> (artifact id: '5fc8a3e731358fa0e47b8d3b31538e22') in 0.1054387 seconds
+Start importing Assets/MinionVisuals/SkeletonMinion/Animations/SkeletonMinion@Sword And Shield Kick.fbx using Guid(83dff6d3ddf97a74e924b95bce156344) (FBXImporter)Keyframe reduction: Ratio: 49.164890%;
+ -> (artifact id: '919da082c658cae5458f5bc04a5183c8') in 0.0833825 seconds
+Start importing Assets/MinionVisuals/SkeletonMinion/Animations/SkeletonMinion@Standing Melee Attack 360 High.fbx using Guid(93c892f277c1cf74e9f5b0c3cb150fee) (FBXImporter)Keyframe reduction: Ratio: 42.848778%;
+ -> (artifact id: '59fa00839a44b17423fa4be80f79ee33') in 0.0885019 seconds
+Start importing Assets/MinionVisuals/AnubisMinion/Animations/AnubisMinion@Standing Idle.fbx using Guid(14698662a9410494f93d5f027093db93) (FBXImporter)Keyframe reduction: Ratio: 38.964684%;
+ -> (artifact id: '344f7624ab39bdbaf199d13c54dcc8c0') in 0.1021476 seconds
+Start importing Assets/MinionVisuals/SkeletonMinion/Animations/SkeletonMinion@Sword And Shield Slash.fbx using Guid(b6facc7b65d62fd408537d7a547b52bb) (FBXImporter)Keyframe reduction: Ratio: 69.486656%;
+ -> (artifact id: '24c5247989fee7158a90a8a2d8249cfa') in 0.1032247 seconds
+Start importing Assets/MinionVisuals/AnubisMinion/Animations/AnubisMinion@Sword And Shield Death.fbx using Guid(571cba871efc1e6408ea5f15d5a5aea5) (FBXImporter)Keyframe reduction: Ratio: 62.588081%;
+ -> (artifact id: '882fcba4c6c63045f3c6f347fbf5cf72') in 0.1119129 seconds
+Start importing Assets/MinionVisuals/SkeletonMinion/Animations/SkeletonMinion@Standing Melee Attack Downward.fbx using Guid(77ae80e26b2364e47a08e4815f7cb7d4) (FBXImporter)Keyframe reduction: Ratio: 39.830650%;
+ -> (artifact id: '8dcfa6fce11befc57fb32d46849d9446') in 0.0913211 seconds
+Start importing Assets/MinionVisuals/SkeletonMinion/Animations/SkeletonMinion@Mutant Dying.fbx using Guid(b871c79ffe2cd354eab8700521540308) (FBXImporter)Keyframe reduction: Ratio: 11.365290%;
+ -> (artifact id: '7ecc1cd7f2e8f4cbd050fc131503ad8b') in 0.1343941 seconds
+Start importing Assets/MinionVisuals/AnubisMinion/Animations/AnubisMinion@Mutant Walking.fbx using Guid(79692ba0c0338c84bb8c8c1b62ec176b) (FBXImporter)Keyframe reduction: Ratio: 33.656792%;
+ -> (artifact id: '65f1510ce18e3680b95e2fc40ea27a8a') in 0.1041766 seconds
+Start importing Assets/MinionVisuals/AnubisMinion/Animations/AnubisMinion@Standing Melee Attack Backhand.fbx using Guid(8ae4b76b5ac7da540bcb901d63651477) (FBXImporter)Keyframe reduction: Ratio: 44.393726%;
+ -> (artifact id: '016dadc86d609b464d2b550d92978d22') in 0.105795 seconds
+Start importing Assets/MinionVisuals/AnubisMinion/Animations/AnubisMinion@Standing Melee Combo Attack Ver. 3.fbx using Guid(8b9ad75ef46585648b8ec97747c117e5) (FBXImporter)Keyframe reduction: Ratio: 41.288761%;
+ -> (artifact id: 'ce4bf0c62b1760e0c07b1081649d2e1a') in 0.1031473 seconds
+Start importing Assets/MinionVisuals/SkeletonMinion/Animations/SkeletonMinion@Sword And Shield Slash2.fbx using Guid(4c747ee9caf22434e95487092a909232) (FBXImporter)Keyframe reduction: Ratio: 68.441620%;
+ -> (artifact id: '1589a126e34a60a8d33b91eab30ff87c') in 0.1043775 seconds
+Start importing Assets/MinionVisuals/SkeletonMinion/Animations/SkeletonMinion@Sword And Shield Walk.fbx using Guid(8d3be89c4869f70409477cefee4e30c3) (FBXImporter)Keyframe reduction: Ratio: 20.191671%;
+ -> (artifact id: 'abbfb0fc0526d9bf88cacf74bc5a4d2c') in 0.0944644 seconds
+Start importing Assets/MinionVisuals/AnubisMinion/Animations/AnubisMinion@Mutant Breathing Idle.fbx using Guid(dfc883388e320d44ca4d71bef978fcac) (FBXImporter)Keyframe reduction: Ratio: 25.372995%;
+ -> (artifact id: '261244c2642b9a0b39897bf3d11a2096') in 0.1049926 seconds
+Start importing Assets/MinionVisuals/SkeletonMinion/Models/SkeletonMinion_UnriggedSource.fbx using Guid(139d7e49c24150249965360db97de0f6) (FBXImporter) -> (artifact id: 'b7053615febf321be2580d5862bff7ca') in 0.0432199 seconds
+Start importing Assets/MinionVisuals/AnubisMinion/Models/AnubisMinion.fbx using Guid(4c1eade38b8451d428cbc66a91482efe) (FBXImporter)Keyframe reduction: Ratio: 38.964684%;
+ -> (artifact id: '22be596139ae87fc1de6c9d65ba04f79') in 0.0890247 seconds
+Start importing Assets/MinionVisuals/AnubisMinion/Models/AnubisMinion_UnriggedSource.fbx using Guid(fd947af9c88526c42a7add8a849d061d) (FBXImporter) -> (artifact id: '128c829c0223308b36a372bdc450c5d3') in 0.0541891 seconds
+Start importing Assets/MinionVisuals/SkeletonMinion/Models/SkeletonMinion.fbx using Guid(be555f58b9e6a7e4cb879b9bee2694fc) (FBXImporter)Keyframe reduction: Ratio: 15.350941%;
+ -> (artifact id: '2eaa8aec2226ce42c61b6ab2f46dadd6') in 0.1130153 seconds
+Refreshing native plugins compatible for Editor in 0.96 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=2f1a1ef8cad859c44839cf07f82f6462): Total: 13.117 seconds - Initiated by InitialRefreshV2(ForceSynchronousImport)
+	Summary:
+		Imports: total=30 (actual=30, local cache=0, cache server=0)
+		Asset DB Process Time: managed=85 ms, native=6572 ms
+		Asset DB Callback time: managed=321 ms, native=49 ms
+		Scripting: domain reloads=1, domain reload time=2190 ms, compile time=3838 ms, other=60 ms
+		Project Asset Count: scripts=1699, non-scripts=4560
+		Asset File Changes: new=0, changed=2, moved=0, deleted=0
+		Scan Filter Count: 0
+	InvokeCustomDependenciesCallbacks: 0.002ms
+	InvokePackagesCallback: 32.401ms
+	ApplyChangesToAssetFolders: 0.678ms
+	Scan: 142.878ms
+	OnSourceAssetsModified: 0.912ms
+	CategorizeAssetsWithTransientArtifact: 53.874ms
+	ProcessAssetsWithTransientArtifactChanges: 85.405ms
+	CategorizeAssets: 75.891ms
+	ImportOutOfDateAssets: 6153.433ms (-104.836ms without children)
+		ImportManagerImport: 2417.321ms (6.715ms without children)
+			ImportInProcess: 2409.905ms
+			UpdateCategorizedAssets: 0.702ms
+		CompileScripts: 3837.621ms
+		ReloadNativeAssets: 0.055ms
+		UnloadImportedAssets: 0.825ms
+		ReloadImportedAssets: 0.003ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 1.688ms
+		InitializingProgressBar: 0.019ms
+		PostProcessAllAssetNotificationsAddChangedAssets: 0.001ms
+		OnDemandSchedulerStart: 0.736ms
+	PostProcessAllAssets: 329.285ms
+	Hotreload: 9.735ms
+	GatherAllCurrentPrimaryArtifactRevisions: 0.002ms
+	UnloadStreamsBegin: 2.181ms
+	PersistCurrentRevisions: 0.660ms
+	UnloadStreamsEnd: 0.002ms
+	GenerateScriptTypeHashes: 5.304ms
+	Untracked: 6229.321ms
+
+Application.AssetDatabase Initial Refresh End
+Scanning for USB devices : 2.603ms
+Initializing Unity extensions:
+[MODES] ModeService[none].Initialize
+[MODES] ModeService[none].LoadModes
+[MODES] Loading mode Default (0) for mode-current-id-DesertTower
+Unloading 50 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 9212 unused Assets / (4.6 MB). Loaded Objects now: 7730.
+Memory consumption went from 239.4 MB to 234.8 MB.
+Total: 10.528400 ms (FindLiveObjects: 0.744400 ms CreateObjectMapping: 0.647800 ms MarkObjects: 5.525800 ms  DeleteObjects: 3.609100 ms)
+
+[ScriptCompilation] Requested script compilation because: Assetdatabase observed changes in script compilation related files
+AssetDatabase: script compilation time: 0.000675s
+Refreshing native plugins compatible for Editor in 0.73 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=087d2fee562a1b947bfe9623484129a6): Total: 0.068 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/SkeletonMinion/Textures/SkeletonMinion_BaseColor.jpg using Guid(2ad2e14683f505948b65ab8748fc3f56) (TextureImporter) -> (artifact id: '88a5576ae863be8f42dea6c2b4cdb28b') in 0.0808575 seconds
+Refreshing native plugins compatible for Editor in 0.83 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=72f8ec908eab7bb47aee73def663ea8a): Total: 0.097 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/SkeletonMinion/Materials/SkeletonMinion.mat using Guid(71415e83805624544879a53e39e0221a) (NativeFormatImporter) -> (artifact id: 'b38729a9c6f6c98deae017104edd3527') in 0.0021086 seconds
+Refreshing native plugins compatible for Editor in 0.80 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=161167cf684ccd6438213b741c56029d): Total: 0.046 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/SkeletonMinion/Models/SkeletonMinion.fbx using Guid(be555f58b9e6a7e4cb879b9bee2694fc) (FBXImporter) -> (artifact id: 'ac375645cff56b21abdf8f30113cc3b1') in 0.0601185 seconds
+Refreshing native plugins compatible for Editor in 2.20 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=f304b22105dffd948a04ea729abc6c64): Total: 0.127 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/SkeletonMinion/Models/SkeletonMinion.fbx using Guid(be555f58b9e6a7e4cb879b9bee2694fc) (FBXImporter) -> (artifact id: 'd7dc9c755d9a0d2bfdefdd4b7b7c0d10') in 0.0553445 seconds
+Refreshing native plugins compatible for Editor in 0.84 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=ad5b617a20a0fc84c8d9ff3c27e2a555): Total: 0.115 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+ModelImporter.avatarSetup can't be changed when AnimationType is None or Legacy and is enforced to NoAvatar
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEditor.ModelImporter:SetSourceAvatarInternal (UnityEditor.ModelImporter,UnityEngine.Avatar)
+UnityEditor.ModelImporter:set_sourceAvatar (UnityEngine.Avatar)
+MinionVisualsBuilder:Configure (string,UnityEngine.Material,bool,bool,UnityEngine.Avatar) (at Assets/MinionVisuals/Editor/MinionVisualsBuilder.cs:104)
+MinionVisualsBuilder:Build () (at Assets/MinionVisuals/Editor/MinionVisualsBuilder.cs:40)
+
+[Assets/MinionVisuals/Editor/MinionVisualsBuilder.cs line 40]
+
+Start importing Assets/MinionVisuals/SkeletonMinion/Models/SkeletonMinion_UnriggedSource.fbx using Guid(139d7e49c24150249965360db97de0f6) (FBXImporter) -> (artifact id: '453d639f1a77f257b665161af5121c33') in 0.0332943 seconds
+Refreshing native plugins compatible for Editor in 0.75 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=3a1b555ff7e6e6f45971a1025956d494): Total: 0.094 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/SkeletonMinion/Models/SkeletonMinion_UnriggedSource.fbx using Guid(139d7e49c24150249965360db97de0f6) (FBXImporter) -> (artifact id: '84bf6f09cb24282233306bc33a50e104') in 0.0280598 seconds
+Refreshing native plugins compatible for Editor in 0.72 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=45d3370865d8b1f418b2f1073c5e0bf9): Total: 0.088 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/SkeletonMinion/SkeletonMinion_Visual.prefab using Guid(280261104d35711459cda02603bb0ec0) (PrefabImporter) -> (artifact id: '5f34cfc440d6dd6348eba5ed2d2c7164') in 0.0175741 seconds
+Refreshing native plugins compatible for Editor in 0.75 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=6b630ad4a58cd504fa8e949cae877492): Total: 0.059 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/SkeletonMinion/Animations/SkeletonMinion@Mutant Dying.fbx using Guid(b871c79ffe2cd354eab8700521540308) (FBXImporter)Keyframe reduction: Ratio: 11.365290%;
+ -> (artifact id: '67b134e92a7b080a33415a2a3d6305b4') in 0.0858506 seconds
+Refreshing native plugins compatible for Editor in 1.28 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=19088e598692ad04abcdf65321f28501): Total: 0.151 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/SkeletonMinion/Animations/SkeletonMinion@Mutant Dying.fbx using Guid(b871c79ffe2cd354eab8700521540308) (FBXImporter)Keyframe reduction: Ratio: 11.365291%;
+ -> (artifact id: '5720e650aa75ddf933e5f11612a8be6c') in 0.0800947 seconds
+Refreshing native plugins compatible for Editor in 0.79 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=65835e08768a96f47a2ade0614db4d5b): Total: 0.135 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/SkeletonMinion/Animations/SkeletonMinion@Standing Melee Attack 360 High.fbx using Guid(93c892f277c1cf74e9f5b0c3cb150fee) (FBXImporter)Keyframe reduction: Ratio: 42.848782%;
+ -> (artifact id: '0b0f2da7ca61c14f27e9096455ac092e') in 0.0827378 seconds
+Refreshing native plugins compatible for Editor in 1.00 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=b505ecf2a62983349a7d08b0e2e36c51): Total: 0.138 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/SkeletonMinion/Animations/SkeletonMinion@Standing Melee Attack 360 High.fbx using Guid(93c892f277c1cf74e9f5b0c3cb150fee) (FBXImporter)Keyframe reduction: Ratio: 42.848782%;
+ -> (artifact id: '27ea4ef1ea1c7224730e4077f71547f7') in 0.0722689 seconds
+Refreshing native plugins compatible for Editor in 0.84 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=000f62c40f94f3442a1a041f7ed25200): Total: 0.126 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/SkeletonMinion/Animations/SkeletonMinion@Standing Melee Attack Downward.fbx using Guid(77ae80e26b2364e47a08e4815f7cb7d4) (FBXImporter)Keyframe reduction: Ratio: 39.830650%;
+ -> (artifact id: '70965d5c7d74dfa603d4aad845927de6') in 0.0761256 seconds
+Refreshing native plugins compatible for Editor in 1.40 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=d0b7e80c566b6b242a2d95adee2acb4f): Total: 0.146 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/SkeletonMinion/Animations/SkeletonMinion@Standing Melee Attack Downward.fbx using Guid(77ae80e26b2364e47a08e4815f7cb7d4) (FBXImporter)Keyframe reduction: Ratio: 39.830650%;
+ -> (artifact id: '4b689977b6cbb8d8b017785c315b564a') in 0.0704868 seconds
+Refreshing native plugins compatible for Editor in 0.77 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=395569801731f8a4f911e0594321bb85): Total: 0.132 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/SkeletonMinion/Animations/SkeletonMinion@Sword And Shield Idle.fbx using Guid(20af36e0a42b8cd408930ab9988bcde7) (FBXImporter)Keyframe reduction: Ratio: 15.350941%;
+ -> (artifact id: '93e0743d939e8e139b11308a10165614') in 0.0774629 seconds
+Refreshing native plugins compatible for Editor in 0.82 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=8d46e23e4e46574468de9b08a13c3253): Total: 0.127 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/SkeletonMinion/Animations/SkeletonMinion@Sword And Shield Idle.fbx using Guid(20af36e0a42b8cd408930ab9988bcde7) (FBXImporter)Keyframe reduction: Ratio: 15.350939%;
+ -> (artifact id: '25b75751d64b6eaad9b1b21288c1f6f6') in 0.0719742 seconds
+Refreshing native plugins compatible for Editor in 0.83 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=222f525f6df66d546a701963d79df076): Total: 0.125 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/SkeletonMinion/Animations/SkeletonMinion@Sword And Shield Impact.fbx using Guid(81fc48fcd2e82524c9d694a9fab69260) (FBXImporter)Keyframe reduction: Ratio: 66.966301%;
+ -> (artifact id: 'a6c4565fd8c9b20e62168061db690d82') in 0.0683527 seconds
+Refreshing native plugins compatible for Editor in 1.04 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=8039362cb3b724a44aec41c5b8c52fe1): Total: 0.122 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/SkeletonMinion/Animations/SkeletonMinion@Sword And Shield Impact.fbx using Guid(81fc48fcd2e82524c9d694a9fab69260) (FBXImporter)Keyframe reduction: Ratio: 66.966293%;
+ -> (artifact id: '64f2b72dbf0f8229672780f3ea48550b') in 0.06461 seconds
+Refreshing native plugins compatible for Editor in 0.74 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=9470d6a379acbf547a33d99ff0318f82): Total: 0.126 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/SkeletonMinion/Animations/SkeletonMinion@Sword And Shield Kick.fbx using Guid(83dff6d3ddf97a74e924b95bce156344) (FBXImporter)Keyframe reduction: Ratio: 49.164886%;
+ -> (artifact id: '89e2620fae98e11bb752d351aec8c844') in 0.0790564 seconds
+Refreshing native plugins compatible for Editor in 1.86 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=6a7fe5ab639e14b49a3455117b408eda): Total: 0.138 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/SkeletonMinion/Animations/SkeletonMinion@Sword And Shield Kick.fbx using Guid(83dff6d3ddf97a74e924b95bce156344) (FBXImporter)Keyframe reduction: Ratio: 49.164890%;
+ -> (artifact id: '0842e8717ad06d04e9989e218c0fe05b') in 0.0701889 seconds
+Refreshing native plugins compatible for Editor in 0.85 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=f9adb38673a71364185a15f7eb82de1e): Total: 0.130 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/SkeletonMinion/Animations/SkeletonMinion@Sword And Shield Slash.fbx using Guid(b6facc7b65d62fd408537d7a547b52bb) (FBXImporter)Keyframe reduction: Ratio: 69.486656%;
+ -> (artifact id: 'ba84c0d76d884e66487c1807fb9adf5f') in 0.0823969 seconds
+Refreshing native plugins compatible for Editor in 1.19 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=59a1c50e405e98b448409ea1700d7b6c): Total: 0.148 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/SkeletonMinion/Animations/SkeletonMinion@Sword And Shield Slash.fbx using Guid(b6facc7b65d62fd408537d7a547b52bb) (FBXImporter)Keyframe reduction: Ratio: 69.486664%;
+ -> (artifact id: '07e59fc486a6478aac80d7428f1b3e49') in 0.0707938 seconds
+Refreshing native plugins compatible for Editor in 0.84 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=9d9fd35fd8ef9ce4f8a21535e2535e9d): Total: 0.137 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/SkeletonMinion/Animations/SkeletonMinion@Sword And Shield Slash2.fbx using Guid(4c747ee9caf22434e95487092a909232) (FBXImporter)Keyframe reduction: Ratio: 68.441612%;
+ -> (artifact id: 'f59c9b78ce94940ed1eb44dd83cf0b96') in 0.0740465 seconds
+Refreshing native plugins compatible for Editor in 1.29 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=b51c3b1befb4dee46a4acfbf89c1dede): Total: 0.134 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/SkeletonMinion/Animations/SkeletonMinion@Sword And Shield Slash2.fbx using Guid(4c747ee9caf22434e95487092a909232) (FBXImporter)Keyframe reduction: Ratio: 68.441620%;
+ -> (artifact id: '5dd611a2b12ccd598ec9705ac88f2432') in 0.0635662 seconds
+Refreshing native plugins compatible for Editor in 0.76 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=5772002f484a84345a5d6d9d3d99b759): Total: 0.126 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/SkeletonMinion/Animations/SkeletonMinion@Sword And Shield Walk.fbx using Guid(8d3be89c4869f70409477cefee4e30c3) (FBXImporter)Keyframe reduction: Ratio: 20.191671%;
+ -> (artifact id: '7c5571db2506591abd12099bb7f01e81') in 0.0768313 seconds
+Refreshing native plugins compatible for Editor in 0.82 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=5733ce775b73d4449b77d227468e4851): Total: 0.128 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/SkeletonMinion/Animations/SkeletonMinion@Sword And Shield Walk.fbx using Guid(8d3be89c4869f70409477cefee4e30c3) (FBXImporter)Keyframe reduction: Ratio: 20.191673%;
+ -> (artifact id: '7688d4ccc7f17fb47d7d9041ca8af762') in 0.0630602 seconds
+Refreshing native plugins compatible for Editor in 0.93 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=3ea4d51b87b3bc642b5ba6a3ed394931): Total: 0.124 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/AnubisMinion/Textures/AnubisMinion_BaseColor.jpg using Guid(f9d4d00adf8275943a13ce565cf918fb) (TextureImporter) -> (artifact id: 'd4875e77f73b7f6a28d06ab8f94b81ac') in 0.0896746 seconds
+Refreshing native plugins compatible for Editor in 0.91 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=e9de4920fd87f5a4b923111983b7c137): Total: 0.106 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/AnubisMinion/Materials/AnubisMinion.mat using Guid(295ed5e5a8d077a4585173fc868f62c2) (NativeFormatImporter) -> (artifact id: '18542afb0a585ecba37e53cca12328a4') in 0.0016754 seconds
+Refreshing native plugins compatible for Editor in 0.88 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=a566ede27ceea384f964e80327048276): Total: 0.051 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/AnubisMinion/Models/AnubisMinion.fbx using Guid(4c1eade38b8451d428cbc66a91482efe) (FBXImporter) -> (artifact id: 'e5870b65774228fd7039456746a1a65d') in 0.0677152 seconds
+Refreshing native plugins compatible for Editor in 0.79 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=b467459ce1a46fd44b298d788fec0143): Total: 0.125 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/AnubisMinion/Models/AnubisMinion.fbx using Guid(4c1eade38b8451d428cbc66a91482efe) (FBXImporter) -> (artifact id: '1858c6fb441ed001cae1e20eff062eb7') in 0.0609419 seconds
+Refreshing native plugins compatible for Editor in 0.85 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=2e0938d589e29304a853ccde66f4c882): Total: 0.122 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+ModelImporter.avatarSetup can't be changed when AnimationType is None or Legacy and is enforced to NoAvatar
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEditor.ModelImporter:SetSourceAvatarInternal (UnityEditor.ModelImporter,UnityEngine.Avatar)
+UnityEditor.ModelImporter:set_sourceAvatar (UnityEngine.Avatar)
+MinionVisualsBuilder:Configure (string,UnityEngine.Material,bool,bool,UnityEngine.Avatar) (at Assets/MinionVisuals/Editor/MinionVisualsBuilder.cs:104)
+MinionVisualsBuilder:Build () (at Assets/MinionVisuals/Editor/MinionVisualsBuilder.cs:40)
+
+[Assets/MinionVisuals/Editor/MinionVisualsBuilder.cs line 40]
+
+Start importing Assets/MinionVisuals/AnubisMinion/Models/AnubisMinion_UnriggedSource.fbx using Guid(fd947af9c88526c42a7add8a849d061d) (FBXImporter) -> (artifact id: '39844450a1206224ce5d76bcaf45be05') in 0.0389522 seconds
+Refreshing native plugins compatible for Editor in 0.93 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=b58e70559a02fa04e8a9168694aa8364): Total: 0.095 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/AnubisMinion/Models/AnubisMinion_UnriggedSource.fbx using Guid(fd947af9c88526c42a7add8a849d061d) (FBXImporter) -> (artifact id: '3d89f4ab872d1558710e0c0d0f4bca08') in 0.0312598 seconds
+Refreshing native plugins compatible for Editor in 0.75 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=b784399e11161ae4d845086af2b304d5): Total: 0.094 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/AnubisMinion/AnubisMinion_Visual.prefab using Guid(1246b2ddb61d8264e84096d2652fbeb0) (PrefabImporter) -> (artifact id: '105913545e5e796bf29e7c4ead557d1c') in 0.0165707 seconds
+Refreshing native plugins compatible for Editor in 1.17 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=8f65154a0bb98a54d92d149df5bc3c70): Total: 0.054 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/AnubisMinion/Animations/AnubisMinion@Mutant Breathing Idle.fbx using Guid(dfc883388e320d44ca4d71bef978fcac) (FBXImporter)Keyframe reduction: Ratio: 25.372992%;
+ -> (artifact id: 'c17b048140a493a3c333ce0b3cc3637d') in 0.0837582 seconds
+Refreshing native plugins compatible for Editor in 0.98 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=9ae96b5e080129e44827ce1e714acb80): Total: 0.144 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/AnubisMinion/Animations/AnubisMinion@Mutant Breathing Idle.fbx using Guid(dfc883388e320d44ca4d71bef978fcac) (FBXImporter)Keyframe reduction: Ratio: 25.372997%;
+ -> (artifact id: '0ef106a8b380f795d52327d41695f8d3') in 0.0823837 seconds
+Refreshing native plugins compatible for Editor in 0.76 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=483698f6bfbe46547ab2a6bdccfaaa8b): Total: 0.142 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/AnubisMinion/Animations/AnubisMinion@Mutant Swiping.fbx using Guid(c1819a1969edffb438fa503a497735a1) (FBXImporter)Keyframe reduction: Ratio: 40.782352%;
+ -> (artifact id: '00f8bd4c9b0c3e348374351599ff8a24') in 0.075255 seconds
+Refreshing native plugins compatible for Editor in 0.93 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=f2f77f82c9ea5fd4ab77ce80f7a7d3e8): Total: 0.131 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/AnubisMinion/Animations/AnubisMinion@Mutant Swiping.fbx using Guid(c1819a1969edffb438fa503a497735a1) (FBXImporter)Keyframe reduction: Ratio: 40.782352%;
+ -> (artifact id: 'cc30a11dcbe373abe8171ac226f7d446') in 0.0746835 seconds
+Refreshing native plugins compatible for Editor in 0.89 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=40ee45ae54fe6f1478d00e7d59fe338f): Total: 0.139 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/AnubisMinion/Animations/AnubisMinion@Mutant Walking.fbx using Guid(79692ba0c0338c84bb8c8c1b62ec176b) (FBXImporter)Keyframe reduction: Ratio: 33.656792%;
+ -> (artifact id: '2f5db46a6d1dedc1f45f31e188342238') in 0.0796177 seconds
+Refreshing native plugins compatible for Editor in 1.05 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=95ccd8fa561a786489b1b17b7774a757): Total: 0.143 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/AnubisMinion/Animations/AnubisMinion@Mutant Walking.fbx using Guid(79692ba0c0338c84bb8c8c1b62ec176b) (FBXImporter)Keyframe reduction: Ratio: 33.656796%;
+ -> (artifact id: '446b7022781b155f8cbacde0ad65b508') in 0.0716121 seconds
+Refreshing native plugins compatible for Editor in 0.92 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=e1c666d2e6c703a46b37331ee1c49bb0): Total: 0.133 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/AnubisMinion/Animations/AnubisMinion@Standing Idle.fbx using Guid(14698662a9410494f93d5f027093db93) (FBXImporter)Keyframe reduction: Ratio: 38.964684%;
+ -> (artifact id: 'f9978f096d86014ea3b68a84f51d3d8d') in 0.0790241 seconds
+Refreshing native plugins compatible for Editor in 1.22 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=2f060dde807bdf341944bd310eaeac0b): Total: 0.140 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/AnubisMinion/Animations/AnubisMinion@Standing Idle.fbx using Guid(14698662a9410494f93d5f027093db93) (FBXImporter)Keyframe reduction: Ratio: 38.964684%;
+ -> (artifact id: '664e6118e146821f69bf00bfc9cf873c') in 0.0715174 seconds
+Refreshing native plugins compatible for Editor in 0.86 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=a2186748038d1c742b3529b45151d70a): Total: 0.132 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/AnubisMinion/Animations/AnubisMinion@Standing Melee Attack Backhand.fbx using Guid(8ae4b76b5ac7da540bcb901d63651477) (FBXImporter)Keyframe reduction: Ratio: 44.393726%;
+ -> (artifact id: 'd668c633cf410ffc34f4d57c0df6b30f') in 0.0776796 seconds
+Refreshing native plugins compatible for Editor in 0.77 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=4796bc9d72ed5864aa850a8ad359a037): Total: 0.140 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/AnubisMinion/Animations/AnubisMinion@Standing Melee Attack Backhand.fbx using Guid(8ae4b76b5ac7da540bcb901d63651477) (FBXImporter)Keyframe reduction: Ratio: 44.393726%;
+ -> (artifact id: 'e4befd3b833370382e2f1b75fb638537') in 0.0749366 seconds
+Refreshing native plugins compatible for Editor in 0.77 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=5c2cf3b0e7148984ab246e8fce2a259a): Total: 0.125 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/AnubisMinion/Animations/AnubisMinion@Standing Melee Combo Attack Ver. 3.fbx using Guid(8b9ad75ef46585648b8ec97747c117e5) (FBXImporter)Keyframe reduction: Ratio: 41.288757%;
+ -> (artifact id: '5478358db11d73ab25f2284673a2dd03') in 0.0766861 seconds
+Refreshing native plugins compatible for Editor in 0.90 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=176db5d44da14df498034cf5a4b2df52): Total: 0.134 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/AnubisMinion/Animations/AnubisMinion@Standing Melee Combo Attack Ver. 3.fbx using Guid(8b9ad75ef46585648b8ec97747c117e5) (FBXImporter)Keyframe reduction: Ratio: 41.288757%;
+ -> (artifact id: '6cba49ccca93abfc85e504b845350a00') in 0.0750315 seconds
+Refreshing native plugins compatible for Editor in 0.73 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=b869697e35b4bd24b98eec2dbabfdf43): Total: 0.128 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/AnubisMinion/Animations/AnubisMinion@Sword And Shield Death.fbx using Guid(571cba871efc1e6408ea5f15d5a5aea5) (FBXImporter)Keyframe reduction: Ratio: 62.588081%;
+ -> (artifact id: 'e4b71e839c9a61e043eb47d4b04fb878') in 0.0837994 seconds
+Refreshing native plugins compatible for Editor in 0.91 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=9a10e009e5e5f5d468601d4bef17a4dd): Total: 0.141 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/AnubisMinion/Animations/AnubisMinion@Sword And Shield Death.fbx using Guid(571cba871efc1e6408ea5f15d5a5aea5) (FBXImporter)Keyframe reduction: Ratio: 62.588081%;
+ -> (artifact id: '49f1a9d61592af7d72d2c444ffd791d4') in 0.0985206 seconds
+Refreshing native plugins compatible for Editor in 1.14 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=ba6a412c0e0374d4c89d67541b85d08f): Total: 0.167 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/SkeletonMinion/Materials/SkeletonMinion.mat using Guid(71415e83805624544879a53e39e0221a) (NativeFormatImporter) -> (artifact id: 'c3408232888cfb06bea93201e9a763da') in 0.0018142 seconds
+Start importing Assets/MinionVisuals/AnubisMinion/Materials/AnubisMinion.mat using Guid(295ed5e5a8d077a4585173fc868f62c2) (NativeFormatImporter) -> (artifact id: 'b514af1bd4ea71be5d36bb2b36a3240c') in 0.0013787 seconds
+Refreshing native plugins compatible for Editor in 1.06 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=e8c52f0661524d04c8b31502078ea423): Total: 0.035 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+MINION_VISUALS_BUILD_OK
+Minion visual import validation
+SkeletonMinion: triangles=9180, skin renderers=1, bones=46, size=(0.927, 1.053, 0.385), animation clips=9, visual-only components=PASS
+AnubisMinion: triangles=10638, skin renderers=1, bones=46, size=(0.698, 1.034, 0.525), animation clips=7, visual-only components=PASS
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+MinionVisualsBuilder:Build () (at Assets/MinionVisuals/Editor/MinionVisualsBuilder.cs:92)
+
+(Filename: Assets/MinionVisuals/Editor/MinionVisualsBuilder.cs Line: 92)
+
+Batchmode quit successfully invoked - shutting down!
+Pipeline Server stopped
+Clearing [Pretendard-Bold SDF] dynamic font asset data.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+TMPro.EditorEventCallbacks/<>c:<InitializeFontAssetResourceChangeCallBacks>b__0_0 () (at ./Library/PackageCache/com.unity.ugui@8d7885e629a4/Editor/TMP/TMP_EditorResourceManager.cs:36)
+UnityEditor.EditorApplication:Internal_EditorApplicationQuit ()
+
+(Filename: ./Library/PackageCache/com.unity.ugui@8d7885e629a4/Editor/TMP/TMP_EditorResourceManager.cs Line: 36)
+
+Killing ADB server in 0.0791952 seconds.
+Start importing Assets/9.Font/Pretendard-Bold SDF.asset using Guid(9a6b3d0b4eb136f48bc0872b1cc4e94f) (NativeFormatImporter) -> (artifact id: '233fd7737ebb24756ce8da909f7c6b04') in 0.009729 seconds
+Refreshing native plugins compatible for Editor in 0.78 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=9438fd8f580650248bf8db643b9ad99e): Total: 0.051 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+[Physics::Module] Cleanup current backend.
+[Physics::Module] Id: 0xf2b8ea05
+Input System module state changed to: ShutdownInProgress.
+Input System polling thread exited.
+Input System module state changed to: Shutdown.
+[Licensing::IpcConnector] LicenseClient-m-notifications channel disconnected successfully.
+[Licensing::IpcConnector] LicenseClient-m channel disconnected successfully.
+AcceleratorClientConnectionCallback - disconnected - :0
+Cleanup mono
+Exiting batchmode successfully now!
+Exiting without the bug reporter. Application will terminate with return code 0
