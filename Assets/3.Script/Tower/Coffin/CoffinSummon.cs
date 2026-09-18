@@ -12,11 +12,14 @@ public class CoffinSummon : MonoBehaviour
     private Vector3[] summonPoints;
     private CreatureController[] summonedCreatures;
 
-    private void OnEnable()
+    private void Awake()
     {
         TryGetComponent(out Status);
         TryGetComponent(out Range);
+    }
 
+    private void OnEnable()
+    {
         SetPoints();
         SummonAll();
     }
