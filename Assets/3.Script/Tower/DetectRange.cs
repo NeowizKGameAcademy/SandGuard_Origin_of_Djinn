@@ -22,16 +22,16 @@ public class DetectRange : MonoBehaviour
 
     private ICombatTarget Owner;
 
-    private void OnEnable()
+    private void Awake()
     {
         TryGetComponent(out Status);
         Owner = GetComponentInParent<ICombatTarget>();
+
+        Range = Status.detectRange;
     }
 
     private void Update()
     {
-        Range = Status.detectRange;
-
         CountEnemies();
     }
 

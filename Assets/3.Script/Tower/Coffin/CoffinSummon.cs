@@ -12,10 +12,20 @@ public class CoffinSummon : MonoBehaviour
     private Vector3[] summonPoints;
     private CreatureController[] summonedCreatures;
 
-    private void OnEnable()
+    private void Awake()
     {
         TryGetComponent(out Status);
         TryGetComponent(out Range);
+    }
+
+    private void OnEnable()
+    {
+        StartCoroutine(InitializeNextFrame());
+    }
+
+    private IEnumerator InitializeNextFrame()
+    {
+        yield return null;
 
         SetPoints();
         SummonAll();

@@ -16,7 +16,7 @@ public class AnubisController : MonoBehaviour
 
     public float distance => StopDistance;
 
-    private void OnEnable()
+    private void Awake()
     {
         TryGetComponent(out enemy);
         TryGetComponent(out status);
