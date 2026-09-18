@@ -14,12 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxCue
   clips:
   - {fileID: 8300000, guid: ff78117eae6a47342b355abd8bd3b4e9, type: 3}
-  - {fileID: 8300000, guid: 16fe68c0dd73b154888c00261f2d6457, type: 3}
-  - {fileID: 8300000, guid: 9ef95a003107d454ba52f6c6f041527d, type: 3}
-  volume: 0.45
-  volumeJitterDb: 1
+  volume: 1
+  volumeJitterDb: 1.5
   pitch: 1
-  pitchJitter: 0.04
+  pitchJitter: 0.07
   mixerGroup: {fileID: -6147871996741235955, guid: 1fae13e4ac1874e45988f79fc0bae7ec, type: 2}
   priority: 128
   spatial: 1

@@ -24,6 +24,8 @@ namespace SandGuard.Player
         public bool PrimaryAttackHeld => AcceptsInput && (attack?.IsPressed() ?? false);
         /// <summary>점프 버튼을 계속 누르고 있는지. 가변 점프 높이에 쓴다.</summary>
         public bool JumpHeld => AcceptsInput && (jump?.IsPressed() ?? false);
+        /// <summary>왼쪽 Ctrl을 누르고 있는지. Ctrl + Space가 차지 점프(상승 기류)다.</summary>
+        public bool ChargeModifierHeld => AcceptsInput && Keyboard.current != null && Keyboard.current.leftCtrlKey.isPressed;
         /// <summary>공격 스킬 키(0 = Q, 1 = E, 2 = R)를 계속 누르고 있는지. 입력이 막히면 false.</summary>
         public bool SkillHeld(int slot) => AcceptsInput && map != null && (map.FindAction("Skill" + (slot + 1))?.IsPressed() ?? false);
         public event Action PrimaryActionPressed;

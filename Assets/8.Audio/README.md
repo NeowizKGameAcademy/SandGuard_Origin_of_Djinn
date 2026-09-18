@@ -51,6 +51,12 @@
 큐의 클립은 담당자가 인스펙터에서 넣는다. `Editor/AudioResourceMap.cs`의 대응표는 **비어 있는 큐만** 채우고(같은 소리의 원본과 `_auda`가 있으면 `_auda`), 코드 합성·자리표시 클립(`SFX_*`)은 큐에서 제거한다. 결과와 남은 빈 큐 목록은 `Docs/Audio/audio-resource-map.md`.
 합성·자리표시 WAV(`Synth/`, `Placeholder/`)는 더 이상 큐에 들어가지 않는다. 필요하면 인스펙터에서 직접 드래그한다.
 
+2026-09-18 웨이브 시작음: `Wave_Start` 큐는 클립만 있고 재생하는 곳이 없었다. `MusicDirector.WaveStart`가 WaveDirector 상태 Preparing → Running(준비 시간이 끝나 스폰 시작)마다 한 번 낸다(2D). 확인: `LevelAudioSmokeTests.WaveStartCuePlaysWhenWaveBegins`(Level 재생, 그래픽 장치 필요).
+
+2026-09-18 클립 점검·수정: 점검 스크립트(길이·클리핑·직류·앞뒤 무음·끝 끊김·루프 이음매·변형 크기 차·3D 스테레오·임포트 설정) 결과는 `Docs/Audio/cue-clip-audit.md`. 수정본은 원본을 보존한 채 `AudioResource/Repaired/`에 두고 `Docs/Audio/repair-2026-09-18/manifest.json`에 기록한다(1차는 다른 작업, 2차는 `second_pass`). 연결은 `AudioResourceMap.Repair2`(메뉴 `Apply Repair 2026-09-18 (second pass)`). 3D 큐에서만 쓰는 클립은 Force To Mono(`ForceMonoFor3D`). 교체 표에서 빈 배열로 비운 큐는 자동 채우기가 다시 채우지 않는다(마지막 표 기준). 음악 루프는 `MusicDirector.SongEndCrossfade`(기본 3초)로 곡 끝 전에 처음부터 겹쳐 넘긴다.
+
+2026-09-18 오후(`Overrides0918b`, 배치 `AudioWiring.Update0918b`): 흔적 귀환은 출발(`VFX_Recall_Depart`)=워프, 도착(`VFX_Recall_Arrive`)=워프 완료로 나눔. 관통탄 충전은 루프 대신 충전 시작 원샷(짧은 충전음 1.2s, 충전 0.9s). 레벨업은 차임 + 팡파레(`Player_LevelUp_Fanfare`)를 겹침. 코어 흡수(`VFX_Core_Damage_Enemy`)에 호로록 6조각(`AudioResource/호로록_01~06`, ffmpeg로 분할). 음악: 전투=웨이브테마곡, 보스=보스테마곡(`MusicDirector`가 `EnemyBossInfo.Active`로 전환), 승리=승리음악, 패배=게임오버. 30초 넘는 음악·앰비언스는 Streaming 임포트. 분석은 Python/librosa·ffmpeg(경로는 메모리 `audio-analysis-tools`).
+
 2026-09-18: `Docs/Audio`의 추가 파일(정리본 5개, 원본 8개, kenney 임팩트·발소리 130개 → `AudioResource/kenney/`)을 복사하고, `AudioResourceMap.Overrides` 표로 이미 채워진 큐도 더 맞는 클립으로 한 번 교체했다(메뉴 `Apply Overrides 2026-09-18`, 자동 빌드에는 포함되지 않음). 원칙: 같은 소리는 `_auda` 정리본, 변형은 모두 넣기, 자리와 다른 소리는 바로잡거나 비우기, 한 동작에 같은 클립이 두 번 나는 구성은 한쪽만 남기기.
 
 ## 큐 목록과 자리표시 클립
@@ -94,9 +100,21 @@
 배치 설정·검증: `Unity.exe -batchmode -nographics -projectPath . -executeMethod SandGuard.Audio.Editor.AudioWiring.All -quit` → 로그의 `AUDIO_WIRED` 줄.
 테스트: `-runTests -testPlatform PlayMode -assemblyNames SandGuard.Audio.Tests` (23개. `LevelAudioSmokeTests`는 Level.unity를 실제로 재생해 코어 핑 발화를 확인하며 약 4분 걸린다). **`-nographics`를 빼고** 돌린다. Unity는 그래픽 장치가 없으면 애니메이션 클립 이벤트를 보내지 않아 `AnimationEventsComponentReceivesClipEvent`가 실패한다. 테스트용 애니메이터는 `Tests/Resources/SfxTestAssets.asset`(Setup Everything이 생성).
 
-### 아직 훅이 없어 큐만 있는 소리
+### 남은 훅 연결 (2026-09-18, `Editor/AudioHookWiring.cs`)
 
-`Player_Voice_*`(시전·점프 음성), `Player_ManaBolt_Flight_Loop`(투사체 프리팹에는 붙어 있음), `Player_SandShackle` 풀림, `Player_Xp_Pickup`(획득 이벤트 없음), 흔적 귀환, 적 낙하(`EnemyFall` C# 이벤트), 코브라 회전, 시설 켜기/끄기, 해골 발소리, `Core_Warning`, `Wave_Start`, `Wave_Countdown_Tick`, `UI_Menu_Open/Close`·`UI_Fail`·`UI_Skill_*`·`UI_Cooldown_Ready`·`UI_Health_Low_Loop`(HUD·건설 메뉴·스킬트리는 Assembly-CSharp라 인스펙터에서 `SfxOneShot.Fire`를 직접 연결), `Env_Torch_Loop`(Level에 횃불 미배치), `Env_Altar_Loop`, `Music_Boss_*`(`MusicDirector.BossAppeared()`를 부르는 쪽이 필요).
+| 소리 | 훅 | 클립 |
+|---|---|---|
+| 스킬트리 열림·닫힘 | `SkillTreeWindow.onOpened/onClosed` | 케니 generic light (열림 ×1.15, 닫힘 ×0.9) |
+| 스킬 구매 / 장착·해제 / 거부 | `SkillTreeWindow.onLearned/onEquipped/onFailed` (새 이벤트) | 종 3종 ×1.2 / 금속 딸깍 2종 / 마나부족 거절음 |
+| 건설 메뉴 열림·닫힘 / 건설 거부 | Level 루트 `Sfx Hooks`의 `SfxBuildMenuWatcher`가 `FacilityBuildMenu.IsOpen`·`LastResult`를 지켜본다. 건설 쪽은 담당자가 통합 중이라 그 스크립트·프리팹은 고치지 않는다 | 위와 같음 |
+| 스킬 시전 거부(쿨다운·마나) | `PlayerSkillCaster.onCastFailed` (새 이벤트) | 거절음, 0.3초 최소 간격 |
+| 쿨다운 완료 | `SfxCooldownReady` (Q/E/R·관통탄·흔적 귀환, 1.5초 미만 쿨다운과 대시는 제외) | 유리 울림 2종 ×1.5 |
+| 체력 낮음 | `SfxLowHealthLoop` (20% 아래에서 켜고 25% 위에서 끔, 사망 시 끔) | `Repaired/Heartbeat_Loop.wav` (케니 soft impact로 만든 80BPM 박동) |
+| 코어 경고 | `CoreReceiver.onChanged` (코어가 공격당할 때) | 코어핑 원본 ×0.75, 4초 최소 간격 |
+| 제단 루프 | `New Core.prefab`의 `SkillAltarAnchor` 자식 이미터 | 비움 — 제단이 코어 자체라 코어 험과 겹침. 맞는 루프 파일이 생기면 큐에만 넣으면 된다 |
+
+카운트다운 틱(`Wave_Countdown_Tick`)은 게임에 카운트다운이 없어 큐와 카탈로그에서 뺐다.
+`FacilityPlayModeTests` 5개는 이 작업 전에도 실패한다. 건설 쪽 통합이 아직 끝나지 않았기 때문이다(2026-09-18 사용자 확인).
 
 ## 합성 SFX 베이커 (`Editor/Synth/`)
 

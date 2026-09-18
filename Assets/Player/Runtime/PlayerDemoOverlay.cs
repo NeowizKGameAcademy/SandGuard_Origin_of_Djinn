@@ -35,7 +35,7 @@ namespace SandGuard.Player
         void OnGUI()
         {
             GUI.Box(new Rect(16, 16, 490, 216), "SandGuard | Player Test");
-            GUI.Label(new Rect(28, 40, 430, 24), "WASD Move | Mouse Look | Space Jump (x2, hold on ground: Updraft) | LMB Fire");
+            GUI.Label(new Rect(28, 40, 430, 24), "WASD Move | Mouse Look | Space Jump (x2) | LCtrl+Space hold: Updraft | LMB Fire");
             GUI.Label(new Rect(28, 64, 460, 24), "Shift Dash (10 MP) | Q/E/R Skills (if unlocked) | Esc Release Cursor");
             if (motor != null)
             {

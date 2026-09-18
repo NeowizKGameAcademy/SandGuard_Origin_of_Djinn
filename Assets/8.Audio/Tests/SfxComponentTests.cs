@@ -93,6 +93,25 @@ namespace SandGuard.Audio.Tests
             Assert.IsNull(emitter.Voice, "방출 정지 → 루프 정지");
         }
 
+        [UnityTest] public IEnumerator MusicDirectorRestartsLongSongBeforeItEnds()
+        {
+            var song = MakeCue(spatial: false, loop: true, length: 2.5f);
+            var go = Track(new GameObject("Music"));
+            go.SetActive(false);
+            var m = go.AddComponent<MusicDirector>();
+            m.Menu = song; m.MenuMode = true; m.Crossfade = 0.1f; m.SongEndCrossfade = 0.5f; // 2.5s > 0.5*4 → 직접 잇기
+            go.SetActive(true);
+            yield return null;
+            Assert.IsTrue(m.ManualLoop, "긴 곡은 Unity 반복 대신 끝 크로스페이드");
+            Assert.IsFalse(m.Front.loop);
+            // 오디오 장치가 없는 배치 모드에서는 time이 흐르지 않을 수 있어, isPlaying이 꺼지는 경우와 함께 재시작을 기다린다
+            float until = Time.unscaledTime + 4f;
+            while (m.SongRestarts == 0 && Time.unscaledTime < until) yield return null;
+            Assert.GreaterOrEqual(m.SongRestarts, 1, "곡 끝 전에 처음부터 다시 시작");
+            Assert.AreEqual(song, m.Current);
+            Assert.IsTrue(m.Front.isPlaying || m.Front.clip == song.clips[0]);
+        }
+
         [UnityTest] public IEnumerator MusicDirectorPlaysMenuThenPreparationWithoutDirector()
         {
             var menu = MakeCue(spatial: false, loop: true, length: 1f);

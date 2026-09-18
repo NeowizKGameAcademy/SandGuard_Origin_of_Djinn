@@ -44,6 +44,12 @@ namespace SandGuard.Audio.Editor
         /// <summary>휘두름 이벤트를 타격보다 이만큼 앞에 둔다.</summary>
         const float SwingLead = 0.15f;
 
+        /// <summary>
+        /// 휘두름 소리의 최고점이 타격 순간에 오도록 Swing 이벤트를 타격보다 이만큼 앞에 둔다.
+        /// 휘두름 클립은 최고점이 가벼운 묶음 0.12초, 무거운 묶음 0.30초에 오도록 잘라 두었다(AudioResource/휘두름_*).
+        /// </summary>
+        static float SwingLeadFor(string enemy) => enemy == "HammerBrute" || enemy == "Chief" ? 0.30f : 0.12f;
+
         /// <summary>적 변형 → (이름, 프리팹, 휘두름, 임팩트, 사망 음성, 발소리).</summary>
         static readonly (string name, string path, string swing, string impact, string deathVoice, string footstep)[] EnemyVariants =
         {
@@ -65,10 +71,12 @@ namespace SandGuard.Audio.Editor
             ("VFX_Sand_Vortex", "Player_SandVortex_Loop", SfxEmitterTrigger.WhileParticlesEmit, null, "Player_SandVortex_End"),
             ("VFX_Sand_Storm", "Player_SandStorm_Loop", SfxEmitterTrigger.WhileParticlesEmit, null, "Player_SandStorm_End"),
             ("VFX_Sand_Storm", "Player_SandStorm_Cast", SfxEmitterTrigger.OnEnable, null, null),
-            ("VFX_Pierce_Charge", "Player_Pierce_Charge_Loop", SfxEmitterTrigger.WhileParticlesEmit, null, null),
+            ("VFX_Pierce_Charge", "Player_Pierce_Charge_Loop", SfxEmitterTrigger.WhileParticlesEmit, "Player_Pierce_Charge", null),
             ("VFX_Pierce_Hit", "Player_ManaBolt_Impact", SfxEmitterTrigger.OnEnable, null, null),
             ("VFX_Recall_Mark", "Player_Recall_Mark", SfxEmitterTrigger.OnEnable, null, null),
-            ("VFX_Recall_Arrive", "Player_Recall_Warp", SfxEmitterTrigger.OnEnable, null, null),
+            ("VFX_Recall_Depart", "Player_Recall_Warp", SfxEmitterTrigger.OnEnable, null, null),
+            ("VFX_Recall_Arrive", "Player_Recall_Arrive", SfxEmitterTrigger.OnEnable, null, null),
+            ("VFX_Core_Damage_Enemy", "Core_Absorb", SfxEmitterTrigger.OnEnable, null, null),
             ("VFX_Updraft_Launch", "Player_Updraft_Launch", SfxEmitterTrigger.OnEnable, null, null),
             ("VFX_Mana_Charge", "Player_ManaCharge_Loop", SfxEmitterTrigger.WhileParticlesEmit, null, null),
             ("VFX_Mana_Charge_Complete", "Player_ManaCharge_Complete", SfxEmitterTrigger.OnEnable, null, null),
@@ -105,6 +113,15 @@ namespace SandGuard.Audio.Editor
             AudioMixerSetup.EnsureMixer();
             SfxTestAssetBuilder.Build();
             SfxCueBuilder.Build();
+            WireAll();
+            Verify();
+        }
+
+        /// <summary>2026-09-18 오후 추가분 적용: 새 큐 생성 → 교체 표 → 배선 → 검증.</summary>
+        public static void Update0918b()
+        {
+            SfxCueBuilder.Build();
+            AudioResourceMap.ApplyOverrides0918b();
             WireAll();
             Verify();
         }
@@ -154,6 +171,7 @@ namespace SandGuard.Audio.Editor
                 Listen(visuals?.onJumped, OneShot(holder, "Player_Jump"));
                 Listen(visuals?.onAirJumped, OneShot(holder, "Player_AirJump"));
                 Listen(progression?.onLevelUp, OneShot(holder, "Player_LevelUp"));
+                Listen(progression?.onLevelUp, OneShot(holder, "Player_LevelUp_Fanfare")); // 차임(고역)과 팡파레(저역)를 겹친다
                 Listen(visuals?.onDashStarted, OneShot(holder, "Player_Dash"));
                 Listen(visuals?.onLanded, OneShot(holder, "Player_Land"));
                 Listen(visuals?.onHardLanded, OneShot(holder, "Player_HardLand"));
@@ -289,7 +307,8 @@ namespace SandGuard.Audio.Editor
                 if (melee != null) windup = melee.windup;
 
                 string attackFbx = $"{EnemyArtDir}/{v.name}/{v.name}_Attack.fbx";
-                var attackEvents = new List<(float, string)> { (Mathf.Max(0.02f, windup - SwingLead), "Swing") };
+                float swingAt = Mathf.Max(0.02f, windup - SwingLeadFor(v.name));
+                var attackEvents = new List<(float, string)> { (swingAt, "Swing") };
                 if (v.impact != null) attackEvents.Add((windup, "Impact"));
                 ClipEventBuilder.SetEvents(attackFbx, attackEvents.ToArray());
 
@@ -297,7 +316,7 @@ namespace SandGuard.Audio.Editor
                 var deathClip = ClipEventBuilder.LoadClip(deathFbx);
                 var fallAt = ClipEventBuilder.DetectBodyFallSeconds(visualPrefab, deathClip);
                 if (fallAt.HasValue) ClipEventBuilder.SetEvents(deathFbx, (fallAt.Value, "BodyFall"));
-                Debug.Log($"[Audio] {v.name}: Swing @ {Mathf.Max(0.02f, windup - SwingLead):0.00}s, Impact @ {windup:0.00}s, BodyFall @ {(fallAt.HasValue ? fallAt.Value.ToString("0.00") : "-")}s");
+                Debug.Log($"[Audio] {v.name}: Swing @ {swingAt:0.00}s, Impact @ {windup:0.00}s, BodyFall @ {(fallAt.HasValue ? fallAt.Value.ToString("0.00") : "-")}s");
                 done++;
             }
             Debug.Log($"[Audio] 적 외형 {done}/{EnemyVariants.Length} 클립 이벤트 배선");
@@ -359,15 +378,36 @@ namespace SandGuard.Audio.Editor
         /* 프리팹 이미터·타임라인                                            */
         /* ================================================================ */
 
+        /// <summary>자리를 옮긴 큐: 이 프리팹에 남은 이 큐의 이미터는 떼어 낸다. (워프음이 도착→출발로 이동)</summary>
+        static readonly (string prefab, string cue)[] MovedAway =
+        {
+            ("VFX_Recall_Arrive", "Player_Recall_Warp"),
+        };
+
         [MenuItem("SandGuard/Audio/Wire VFX Prefabs Only")]
         public static void WireVfxPrefabs()
         {
+            foreach (var (prefab, cueName) in MovedAway) RemoveEmitterFromPrefab($"{VfxPrefabDir}/{prefab}.prefab", cueName);
             int n = 0;
             foreach (var row in VfxTable)
                 if (WireEmitterOnPrefab($"{VfxPrefabDir}/{row.prefab}.prefab", row.cue, row.trigger, row.begin, row.end)) n++;
             foreach (var row in TimelineTable)
                 if (WireTimelineOnPrefab($"{VfxPrefabDir}/{row.prefab}.prefab", row.entries)) n++;
             Debug.Log($"[Audio] VFX 프리팹 {n}/{VfxTable.Length + TimelineTable.Length} 배선");
+        }
+
+        public static void RemoveEmitterFromPrefab(string path, string cueName)
+        {
+            var cue = SfxCueBuilder.Load(cueName);
+            if (cue == null || AssetDatabase.LoadAssetAtPath<GameObject>(path) == null) return;
+            var root = PrefabUtility.LoadPrefabContents(path);
+            try
+            {
+                bool removed = false;
+                foreach (var e in root.GetComponentsInChildren<SfxEmitter>(true)) if (e.Cue == cue) { UnityEngine.Object.DestroyImmediate(e); removed = true; }
+                if (removed) { PrefabUtility.SaveAsPrefabAsset(root, path); Debug.Log($"[Audio] {System.IO.Path.GetFileName(path)}에서 {cueName} 이미터 제거"); }
+            }
+            finally { PrefabUtility.UnloadPrefabContents(root); }
         }
 
         /// <summary>프리팹 루트 아래 자식 "Sfx"에 SfxEmitter를 둔다. 같은 큐의 이미터가 있으면 트리거·시작·끝 큐만 보완한다.</summary>
@@ -501,6 +541,7 @@ namespace SandGuard.Audio.Editor
             changed |= Fill(ref m.Defeat, "Music_Defeat");
             changed |= Fill(ref m.WaveClearSting, "Music_WaveClear_Sting");
             changed |= Fill(ref m.BossSting, "Music_Boss_Sting");
+            if (!menuMode) changed |= Fill(ref m.WaveStart, "Wave_Start");
             return changed;
         }
 

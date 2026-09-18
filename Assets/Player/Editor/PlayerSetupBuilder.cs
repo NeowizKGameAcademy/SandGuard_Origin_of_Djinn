@@ -3,6 +3,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
 
 namespace SandGuard.Player.Editor
@@ -70,6 +71,8 @@ namespace SandGuard.Player.Editor
                 var cameraObject = Child(root.transform, "PlayerCamera", Vector3.zero).gameObject;
                 cameraObject.tag = "MainCamera";
                 var camera = cameraObject.AddComponent<Camera>(); camera.nearClipPlane = 0.1f; camera.fieldOfView = 60f;
+                // 후처리(톤매핑·Bloom·색보정)는 Level 의 전역 볼륨이 담당하므로 플레이어 카메라에서 반드시 켠다.
+                var cameraData = camera.GetUniversalAdditionalCameraData(); cameraData.renderPostProcessing = true; cameraData.antialiasing = UnityEngine.Rendering.Universal.AntialiasingMode.SubpixelMorphologicalAntiAliasing;
                 cameraObject.AddComponent<AudioListener>();
                 var rig = cameraObject.AddComponent<PlayerCameraRig>(); rig.input = reader; rig.target = cameraTarget; rig.owner = root.transform;
                 rig.distance = PlayerFeelTuning.CameraDistance; rig.shoulderOffset = PlayerFeelTuning.CameraShoulderOffset;

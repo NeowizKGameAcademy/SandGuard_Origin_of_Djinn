@@ -175,7 +175,7 @@ namespace SandGuard.Player.Editor
                 var flame = root.GetComponentsInChildren<Transform>().First(t => t.name == "FlameSocket");
                 var light = new GameObject("Lamp Light").AddComponent<Light>();
                 light.transform.SetParent(flame, false); light.type = LightType.Point;
-                light.color = new Color(1f, 0.55f, 0.18f); light.range = 1.8f; light.intensity = 0.35f; light.enabled = false;
+                light.color = new Color(0.1f, 0.9f, 1f); light.range = 1.8f; light.intensity = 0.35f; light.enabled = false;
                 return PrefabUtility.SaveAsPrefabAsset(root, LampArt + "/Lamp.prefab");
             }
             finally { Object.DestroyImmediate(root); }

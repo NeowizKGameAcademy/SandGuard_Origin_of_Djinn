@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Core_Warning
   m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxCue
   clips:
-  - {fileID: 8300000, guid: 0605ee47ab6f30b48b71ec5ed7a81063, type: 3}
+  - {fileID: 8300000, guid: ea1a4d603ab4fa843acb2517b875b46e, type: 3}
   volume: 0.8
   volumeJitterDb: 1
-  pitch: 1
-  pitchJitter: 0.04
+  pitch: 0.75
+  pitchJitter: 0.02
   mixerGroup: {fileID: -6147871996741235955, guid: 1fae13e4ac1874e45988f79fc0bae7ec, type: 2}
   priority: 128
   spatial: 0
@@ -26,6 +26,6 @@ MonoBehaviour:
   rolloff: 0
   loop: 0
   maxVoices: 1
-  minInterval: 0.02
+  minInterval: 4
   chance: 1
   loopFade: 1

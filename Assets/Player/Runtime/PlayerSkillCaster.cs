@@ -93,6 +93,11 @@ namespace SandGuard.Player
         void Update() { for (int i = 0; i < cooldowns.Length; i++) cooldowns[i] = Mathf.Max(0f, cooldowns[i] - Time.deltaTime); }
         void OnSkill(int slot) { if(SkillTreeInput!=null)SkillTreeInput(slot);else TryCast(slot); }
 
+        /// <summary>플레이어가 누른 스킬이 쿨다운·마나 부족으로 나가지 못했을 때(거절음 등). 잠김·사망 같은 상태 거부는 알리지 않는다.</summary>
+        public UnityEngine.Events.UnityEvent onCastFailed = new UnityEngine.Events.UnityEvent();
+
+        ActionResult CastFailed(ActionFailure reason) { onCastFailed.Invoke(); return ActionResult.Fail(reason); }
+
         /// <summary>부활 등으로 자원을 회복할 때 쿨다운을 지운다.</summary>
         public void ResetCooldowns() => Array.Clear(cooldowns, 0, cooldowns.Length);
 
@@ -103,11 +108,11 @@ namespace SandGuard.Player
             if (attack == null || !attack.CanFire)
                 return ActionResult.Fail((attack != null ? attack.lifeSource as ILifeState : null)?.State is LifeState state && state != LifeState.Alive
                     ? ActionFailure.NotAlive : ActionFailure.InvalidRequest);
-            if (cooldowns[slot] > 0f) return ActionResult.Fail(ActionFailure.Cooldown);
+            if (cooldowns[slot] > 0f) return CastFailed(ActionFailure.Cooldown);
             var mana = Mana;
             if (mana == null) return ActionResult.Fail(ActionFailure.NotFound);
             int cost = ManaCost(slot);
-            if (mana.CurrentMana < cost || !mana.TrySpend(cost)) return ActionResult.Fail(ActionFailure.InsufficientMana);
+            if (mana.CurrentMana < cost || !mana.TrySpend(cost)) return CastFailed(ActionFailure.InsufficientMana);
             Vector3 point;
             if (slot == Burst)
             {

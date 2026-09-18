@@ -1,0 +1,760 @@
+{
+  "files": [
+    {
+      "source": "아누비스발소리.wav",
+      "output": "Assets\\8.Audio\\AudioResource\\Repaired\\HeavyStep_01.wav",
+      "guid": "3b1812949e414f30bf666355867334fd",
+      "note": "Alternative step 4.77-5.43s; DC removal, gain, edge fades. Not declipping.",
+      "before": {
+        "duration": 18.816,
+        "peak_db": 0.0,
+        "rms_db": -16.28,
+        "clip_pct": 0.02699,
+        "seam": 0.000666
+      },
+      "after": {
+        "duration": 0.66,
+        "peak_db": -11.57,
+        "rms_db": -23.01,
+        "clip_pct": 0.0,
+        "seam": 0.0
+      },
+      "cues": [
+        "Assets\\8.Audio\\Cues\\Enemy\\Enemy_Footstep_Heavy.asset"
+      ]
+    },
+    {
+      "source": "아누비스발소리.wav",
+      "output": "Assets\\8.Audio\\AudioResource\\Repaired\\HeavyStep_02.wav",
+      "guid": "6fed8a6af09f4242ababc8043de44703",
+      "note": "Alternative step 2.97-3.63s; DC removal, gain, edge fades. Not declipping.",
+      "before": {
+        "duration": 18.816,
+        "peak_db": 0.0,
+        "rms_db": -16.28,
+        "clip_pct": 0.02699,
+        "seam": 0.000666
+      },
+      "after": {
+        "duration": 0.66,
+        "peak_db": -12.07,
+        "rms_db": -23.0,
+        "clip_pct": 0.0,
+        "seam": 0.0
+      },
+      "cues": [
+        "Assets\\8.Audio\\Cues\\Enemy\\Enemy_Footstep_Heavy.asset"
+      ]
+    },
+    {
+      "source": "아누비스발소리.wav",
+      "output": "Assets\\8.Audio\\AudioResource\\Repaired\\HeavyStep_03.wav",
+      "guid": "cf94ff43cb8d4c5284cc2d1c79e633c1",
+      "note": "Alternative step 11.67-12.33s; DC removal, gain, edge fades. Not declipping.",
+      "before": {
+        "duration": 18.816,
+        "peak_db": 0.0,
+        "rms_db": -16.28,
+        "clip_pct": 0.02699,
+        "seam": 0.000666
+      },
+      "after": {
+        "duration": 0.66,
+        "peak_db": -11.61,
+        "rms_db": -23.0,
+        "clip_pct": 0.0,
+        "seam": 0.0
+      },
+      "cues": [
+        "Assets\\8.Audio\\Cues\\Enemy\\Enemy_Footstep_Heavy.asset"
+      ]
+    },
+    {
+      "source": "발자국 사운드.wav",
+      "output": "Assets\\8.Audio\\AudioResource\\Repaired\\SandStep_01.wav",
+      "guid": "d9a1d96aecf44543977e677558dcadd7",
+      "note": "Extract 1.85-2.28s, DC removal, RMS target -29 dBFS, peak cap -6.",
+      "before": {
+        "duration": 23.197,
+        "peak_db": -35.01,
+        "rms_db": -63.37,
+        "clip_pct": 0.0,
+        "seam": 1.8e-05
+      },
+      "after": {
+        "duration": 0.43,
+        "peak_db": -8.66,
+        "rms_db": -29.01,
+        "clip_pct": 0.0,
+        "seam": 0.0
+      },
+      "cues": [
+        "Assets\\8.Audio\\Cues\\Player\\Player_Footstep_Sand.asset"
+      ]
+    },
+    {
+      "source": "바람소리_auda.wav",
+      "output": "Assets\\8.Audio\\AudioResource\\Repaired\\SandVortex_Loop.wav",
+      "guid": "480de81189e04868aceaeba159a46c1a",
+      "note": "250ms wrap crossfade; duration reduced 250ms; DC removal, peak headroom.",
+      "before": {
+        "duration": 27.9148,
+        "peak_db": 0.0,
+        "rms_db": -13.47,
+        "clip_pct": 7e-05,
+        "seam": 0.463928
+      },
+      "after": {
+        "duration": 27.6648,
+        "peak_db": -2.0,
+        "rms_db": -15.48,
+        "clip_pct": 0.0,
+        "seam": 0.014526
+      },
+      "cues": [
+        "Assets\\8.Audio\\Cues\\Player\\Player_SandVortex_Loop.asset"
+      ]
+    },
+    {
+      "source": "폭풍_auda.wav",
+      "output": "Assets\\8.Audio\\AudioResource\\Repaired\\SandStorm_Loop.wav",
+      "guid": "1fbec570553e42a4b7b05e01917157dd",
+      "note": "250ms wrap crossfade; duration reduced 250ms; DC removal, peak headroom.",
+      "before": {
+        "duration": 9.6077,
+        "peak_db": -0.61,
+        "rms_db": -14.59,
+        "clip_pct": 0.0,
+        "seam": 0.325806
+      },
+      "after": {
+        "duration": 9.3577,
+        "peak_db": -2.0,
+        "rms_db": -16.05,
+        "clip_pct": 0.0,
+        "seam": 0.003571
+      },
+      "cues": [
+        "Assets\\8.Audio\\Cues\\Player\\Player_SandStorm_Loop.asset"
+      ]
+    },
+    {
+      "source": "방패타격음_auda.wav",
+      "output": "Assets\\8.Audio\\AudioResource\\Repaired\\ShieldHit.wav",
+      "guid": "2aeae96c8b8f4eef8eeb959709f13f27",
+      "note": "DC removal, 3ms fade in, 25ms fade out.",
+      "before": {
+        "duration": 0.3133,
+        "peak_db": -3.15,
+        "rms_db": -13.51,
+        "clip_pct": 0.0,
+        "seam": 0.09729
+      },
+      "after": {
+        "duration": 0.3133,
+        "peak_db": -3.14,
+        "rms_db": -13.57,
+        "clip_pct": 0.0,
+        "seam": 0.0
+      },
+      "cues": [
+        "Assets\\8.Audio\\Cues\\Enemy\\Enemy_Chief_ShieldBlock.asset",
+        "Assets\\8.Audio\\Cues\\Enemy\\Enemy_ShieldBlock.asset"
+      ]
+    },
+    {
+      "source": "타워파괴2_auda.wav",
+      "output": "Assets\\8.Audio\\AudioResource\\Repaired\\TowerDestroy_01.wav",
+      "guid": "d8ea9cb0c955439f9a9f2b5975dae9e2",
+      "note": "DC removal, 3ms fade in, 25ms fade out. Whole-clip RMS target -24 dBFS, peak cap -3; existing distortion not restored.",
+      "before": {
+        "duration": 2.0018,
+        "peak_db": 0.0,
+        "rms_db": -12.05,
+        "clip_pct": 0.37608,
+        "seam": 0.011993
+      },
+      "after": {
+        "duration": 2.0018,
+        "peak_db": -11.81,
+        "rms_db": -24.0,
+        "clip_pct": 0.0,
+        "seam": 0.0
+      },
+      "cues": [
+        "Assets\\8.Audio\\Cues\\Facility\\Facility_Cobra_Destroy.asset",
+        "Assets\\8.Audio\\Cues\\Wall\\Wall_Destroy.asset"
+      ]
+    },
+    {
+      "source": "타워파괴음.wav",
+      "output": "Assets\\8.Audio\\AudioResource\\Repaired\\TowerDestroy_02.wav",
+      "guid": "a42cde22980649079d0d631ca9c04e4c",
+      "note": "DC removal, 3ms fade in, 25ms fade out. Whole-clip RMS target -24 dBFS, peak cap -3; existing distortion not restored.",
+      "before": {
+        "duration": 1.2272,
+        "peak_db": -8.78,
+        "rms_db": -31.95,
+        "clip_pct": 0.0,
+        "seam": 2e-06
+      },
+      "after": {
+        "duration": 1.2272,
+        "peak_db": -3.0,
+        "rms_db": -26.17,
+        "clip_pct": 0.0,
+        "seam": 0.0
+      },
+      "cues": [
+        "Assets\\8.Audio\\Cues\\Facility\\Facility_Cobra_Destroy.asset"
+      ]
+    },
+    {
+      "source": "피격음2.wav",
+      "output": "Assets\\8.Audio\\AudioResource\\Repaired\\EnemyHit_01.wav",
+      "guid": "d02aba25ff954ab0b59c003f7cb2db67",
+      "note": "DC removal, 3ms fade in, 25ms fade out. Trimmed 0.1282s leading low-level audio.",
+      "before": {
+        "duration": 0.7422,
+        "peak_db": -4.84,
+        "rms_db": -20.52,
+        "clip_pct": 0.0,
+        "seam": 0.000214
+      },
+      "after": {
+        "duration": 0.614,
+        "peak_db": -4.84,
+        "rms_db": -19.7,
+        "clip_pct": 0.0,
+        "seam": 0.0
+      },
+      "cues": [
+        "Assets\\8.Audio\\Cues\\Enemy\\Enemy_Hit.asset"
+      ]
+    },
+    {
+      "source": "피격음3_auda.wav",
+      "output": "Assets\\8.Audio\\AudioResource\\Repaired\\EnemyHit_02.wav",
+      "guid": "6f9484b2c5dd41d2b4b8ce3ae17ea264",
+      "note": "DC removal, 3ms fade in, 25ms fade out. Trimmed 0.1324s leading low-level audio.",
+      "before": {
+        "duration": 0.9531,
+        "peak_db": -4.31,
+        "rms_db": -21.13,
+        "clip_pct": 0.0,
+        "seam": 0.0
+      },
+      "after": {
+        "duration": 0.8207,
+        "peak_db": -4.31,
+        "rms_db": -20.48,
+        "clip_pct": 0.0,
+        "seam": 0.0
+      },
+      "cues": [
+        "Assets\\8.Audio\\Cues\\Enemy\\Enemy_Hit.asset"
+      ]
+    },
+    {
+      "source": "천둥-먼 거리.wav",
+      "output": "Assets\\8.Audio\\AudioResource\\Repaired\\Thunder_Mid_Alternative.wav",
+      "guid": "6bd43c0d25a14ec9b80d87d55c22c8d5",
+      "note": "Clean alternative to clipped middle thunder; source 2.9-10s; tonal character differs.",
+      "before": {
+        "duration": 18.9852,
+        "peak_db": -11.63,
+        "rms_db": -40.77,
+        "clip_pct": 0.0,
+        "seam": 1e-06
+      },
+      "after": {
+        "duration": 7.1,
+        "peak_db": -4.0,
+        "rms_db": -29.08,
+        "clip_pct": 0.0,
+        "seam": 0.0
+      },
+      "cues": [
+        "Assets\\8.Audio\\Cues\\Env\\Env_Lightning.asset"
+      ]
+    }
+  ],
+  "original_hashes": {
+    "Assets\\8.Audio\\AudioResource\\아누비스발소리.wav": "81f43e0d991ac5d285b49a3c24ddc8a1d76878fa18381aff203060eb774399f2",
+    "Assets\\8.Audio\\AudioResource\\발자국 사운드.wav": "b2b381b565eab126bfc8d51315f7d9b8b0f046c355b740cea17ac80c6c98f9d3",
+    "Assets\\8.Audio\\AudioResource\\바람소리_auda.wav": "27f4c0288103f2eccf17b3093d3aa307fca781b8a3916090645facbffd42377d",
+    "Assets\\8.Audio\\AudioResource\\폭풍_auda.wav": "8163796b7289145077b551bad0335a4ec928f4862b3bfd33fc674714bc836543",
+    "Assets\\8.Audio\\AudioResource\\방패타격음_auda.wav": "c6accdfbfabd0813b428ea727cb1e0aeaff4a4326b6e99da88ad0d078facb914",
+    "Assets\\8.Audio\\AudioResource\\타워파괴2_auda.wav": "508a42a23b6aee29c2c5db0f0a0f331e84ca006695451d17b5be363c28905a16",
+    "Assets\\8.Audio\\AudioResource\\타워파괴음.wav": "477290f0368503405cc113f3243250b62417a67fe8b985a7991b3746a205af1f",
+    "Assets\\8.Audio\\AudioResource\\피격음2.wav": "2c07dd61cc7b4ac29ca30666b8c0ef6e29a633c49eae0e13029cb5530b6852db",
+    "Assets\\8.Audio\\AudioResource\\피격음3_auda.wav": "3d815335e8406e615569ed4cf16f8869e755b3f79c1d9b88f59ccd7c8db6d8f6",
+    "Assets\\8.Audio\\AudioResource\\천둥-먼 거리.wav": "f25473922f2c44a58f5e65a162c974553421801f82b1fd48108cad888d0f7e63"
+  },
+  "cue_backups": {
+    "Assets\\8.Audio\\Cues\\Enemy\\Enemy_Chief_ShieldBlock.asset": "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:\n  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}\n  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}\n  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 11500000, guid: 54a03e5cbec6ac7459a523d1564d4bb0, type: 3}\n  m_Name: Enemy_Chief_ShieldBlock\n  m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxCue\n  clips:\n  - {fileID: 8300000, guid: 4d3051c056fd18e44a1e48e19f66293c, type: 3}\n  volume: 0.8\n  volumeJitterDb: 1\n  pitch: 1\n  pitchJitter: 0.04\n  mixerGroup: {fileID: -6147871996741235955, guid: 1fae13e4ac1874e45988f79fc0bae7ec, type: 2}\n  priority: 128\n  spatial: 1\n  minDistance: 3\n  maxDistance: 40\n  rolloff: 0\n  loop: 0\n  maxVoices: 2\n  minInterval: 0.02\n  chance: 1\n  loopFade: 0.3\n",
+    "Assets\\8.Audio\\Cues\\Enemy\\Enemy_Footstep_Heavy.asset": "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:\n  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}\n  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}\n  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 11500000, guid: 54a03e5cbec6ac7459a523d1564d4bb0, type: 3}\n  m_Name: Enemy_Footstep_Heavy\n  m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxCue\n  clips:\n  - {fileID: 8300000, guid: c8d9bd7c30d00c6449dd58de704e4aaa, type: 3}\n  volume: 0.5\n  volumeJitterDb: 1\n  pitch: 0.76\n  pitchJitter: 0.04\n  mixerGroup: {fileID: -6147871996741235955, guid: 1fae13e4ac1874e45988f79fc0bae7ec, type: 2}\n  priority: 128\n  spatial: 1\n  minDistance: 2\n  maxDistance: 25\n  rolloff: 0\n  loop: 0\n  maxVoices: 4\n  minInterval: 0.02\n  chance: 1\n  loopFade: 0.3\n",
+    "Assets\\8.Audio\\Cues\\Enemy\\Enemy_Hit.asset": "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:\n  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}\n  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}\n  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 11500000, guid: 54a03e5cbec6ac7459a523d1564d4bb0, type: 3}\n  m_Name: Enemy_Hit\n  m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxCue\n  clips:\n  - {fileID: 8300000, guid: d00846c8877d1544c92f206753ab778e, type: 3}\n  - {fileID: 8300000, guid: edeb3de0402cf394887a9c678a077406, type: 3}\n  volume: 0.8\n  volumeJitterDb: 1\n  pitch: 1\n  pitchJitter: 0.04\n  mixerGroup: {fileID: -6147871996741235955, guid: 1fae13e4ac1874e45988f79fc0bae7ec, type: 2}\n  priority: 128\n  spatial: 1\n  minDistance: 2\n  maxDistance: 35\n  rolloff: 0\n  loop: 0\n  maxVoices: 6\n  minInterval: 0.02\n  loopFade: 0.3\n",
+    "Assets\\8.Audio\\Cues\\Enemy\\Enemy_ShieldBlock.asset": "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:\n  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}\n  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}\n  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 11500000, guid: 54a03e5cbec6ac7459a523d1564d4bb0, type: 3}\n  m_Name: Enemy_ShieldBlock\n  m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxCue\n  clips:\n  - {fileID: 8300000, guid: 4d3051c056fd18e44a1e48e19f66293c, type: 3}\n  volume: 0.8\n  volumeJitterDb: 1\n  pitch: 1\n  pitchJitter: 0.04\n  mixerGroup: {fileID: -6147871996741235955, guid: 1fae13e4ac1874e45988f79fc0bae7ec, type: 2}\n  priority: 128\n  spatial: 1\n  minDistance: 2\n  maxDistance: 35\n  rolloff: 0\n  loop: 0\n  maxVoices: 3\n  minInterval: 0.02\n  chance: 1\n  loopFade: 0.3\n",
+    "Assets\\8.Audio\\Cues\\Env\\Env_Lightning.asset": "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:\n  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}\n  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}\n  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 11500000, guid: 54a03e5cbec6ac7459a523d1564d4bb0, type: 3}\n  m_Name: Env_Lightning\n  m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxCue\n  clips:\n  - {fileID: 8300000, guid: bd5570e6db158f949993a5e9e01cd5ba, type: 3}\n  - {fileID: 8300000, guid: d83871cd3346d734983e5473b4dcefe4, type: 3}\n  - {fileID: 8300000, guid: 51f38533b07032144972a76939475433, type: 3}\n  volume: 0.14\n  volumeJitterDb: 1\n  pitch: 1\n  pitchJitter: 0.04\n  mixerGroup: {fileID: 1775084881491148297, guid: 1fae13e4ac1874e45988f79fc0bae7ec, type: 2}\n  priority: 128\n  spatial: 0\n  minDistance: 2\n  maxDistance: 35\n  rolloff: 0\n  loop: 0\n  maxVoices: 2\n  minInterval: 3\n  loopFade: 1.5\n",
+    "Assets\\8.Audio\\Cues\\Facility\\Facility_Cobra_Destroy.asset": "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:\n  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}\n  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}\n  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 11500000, guid: 54a03e5cbec6ac7459a523d1564d4bb0, type: 3}\n  m_Name: Facility_Cobra_Destroy\n  m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxCue\n  clips:\n  - {fileID: 8300000, guid: e364103b10d6b1f4a90997a0251fc354, type: 3}\n  - {fileID: 8300000, guid: 4b4d7fb1e5d8d684cadac340c152216e, type: 3}\n  volume: 0.8\n  volumeJitterDb: 1\n  pitch: 1\n  pitchJitter: 0.04\n  mixerGroup: {fileID: -6147871996741235955, guid: 1fae13e4ac1874e45988f79fc0bae7ec, type: 2}\n  priority: 128\n  spatial: 1\n  minDistance: 6\n  maxDistance: 70\n  rolloff: 0\n  loop: 0\n  maxVoices: 2\n  minInterval: 0.02\n  chance: 1\n  loopFade: 0.3\n",
+    "Assets\\8.Audio\\Cues\\Player\\Player_Footstep_Sand.asset": "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:\n  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}\n  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}\n  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 11500000, guid: 54a03e5cbec6ac7459a523d1564d4bb0, type: 3}\n  m_Name: Player_Footstep_Sand\n  m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxCue\n  clips:\n  - {fileID: 8300000, guid: ff78117eae6a47342b355abd8bd3b4e9, type: 3}\n  - {fileID: 8300000, guid: 16fe68c0dd73b154888c00261f2d6457, type: 3}\n  - {fileID: 8300000, guid: 9ef95a003107d454ba52f6c6f041527d, type: 3}\n  volume: 0.45\n  volumeJitterDb: 1\n  pitch: 1\n  pitchJitter: 0.04\n  mixerGroup: {fileID: -6147871996741235955, guid: 1fae13e4ac1874e45988f79fc0bae7ec, type: 2}\n  priority: 128\n  spatial: 1\n  minDistance: 1\n  maxDistance: 15\n  rolloff: 0\n  loop: 0\n  maxVoices: 3\n  minInterval: 0.02\n  chance: 1\n  loopFade: 0.3\n",
+    "Assets\\8.Audio\\Cues\\Player\\Player_SandStorm_Loop.asset": "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:\n  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}\n  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}\n  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 11500000, guid: 54a03e5cbec6ac7459a523d1564d4bb0, type: 3}\n  m_Name: Player_SandStorm_Loop\n  m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxCue\n  clips:\n  - {fileID: 8300000, guid: c2c877380d58deb49823591078b27b4c, type: 3}\n  volume: 0.8\n  volumeJitterDb: 1\n  pitch: 1\n  pitchJitter: 0.04\n  mixerGroup: {fileID: -6147871996741235955, guid: 1fae13e4ac1874e45988f79fc0bae7ec, type: 2}\n  priority: 128\n  spatial: 1\n  minDistance: 5\n  maxDistance: 60\n  rolloff: 0\n  loop: 1\n  maxVoices: 4\n  minInterval: 0.02\n  chance: 1\n  loopFade: 0.3\n",
+    "Assets\\8.Audio\\Cues\\Player\\Player_SandVortex_Loop.asset": "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:\n  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}\n  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}\n  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 11500000, guid: 54a03e5cbec6ac7459a523d1564d4bb0, type: 3}\n  m_Name: Player_SandVortex_Loop\n  m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxCue\n  clips:\n  - {fileID: 8300000, guid: 574174676a1019d42a5b2ea0d6a43ca2, type: 3}\n  volume: 0.8\n  volumeJitterDb: 1\n  pitch: 1\n  pitchJitter: 0.04\n  mixerGroup: {fileID: -6147871996741235955, guid: 1fae13e4ac1874e45988f79fc0bae7ec, type: 2}\n  priority: 128\n  spatial: 1\n  minDistance: 4\n  maxDistance: 45\n  rolloff: 0\n  loop: 1\n  maxVoices: 4\n  minInterval: 0.02\n  chance: 1\n  loopFade: 0.3\n",
+    "Assets\\8.Audio\\Cues\\Wall\\Wall_Destroy.asset": "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:\n  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}\n  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}\n  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 11500000, guid: 54a03e5cbec6ac7459a523d1564d4bb0, type: 3}\n  m_Name: Wall_Destroy\n  m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxCue\n  clips:\n  - {fileID: 8300000, guid: e364103b10d6b1f4a90997a0251fc354, type: 3}\n  volume: 0.8\n  volumeJitterDb: 1\n  pitch: 1\n  pitchJitter: 0.04\n  mixerGroup: {fileID: -6147871996741235955, guid: 1fae13e4ac1874e45988f79fc0bae7ec, type: 2}\n  priority: 128\n  spatial: 1\n  minDistance: 6\n  maxDistance: 70\n  rolloff: 0\n  loop: 0\n  maxVoices: 2\n  minInterval: 0.02\n  chance: 1\n  loopFade: 0.3\n"
+  },
+  "second_pass": [
+    {
+      "output": "Assets\\8.Audio\\AudioResource\\Repaired\\HeavyStep_01.wav",
+      "source": "아누비스발소리.wav(Repaired/HeavyStep_01 재가공)",
+      "note": "앞 무음 제거. leading 0.000s trimmed (pre-roll 15ms) + 충격 지점(피크 -24dB) 12ms 앞에서 재절단",
+      "before": {
+        "duration": 0.66,
+        "peak_db": -11.57,
+        "rms_db": -23.54,
+        "clip_pct": 0.0,
+        "dc": 0.00027
+      },
+      "after": {
+        "duration": 0.5159,
+        "peak_db": -11.88,
+        "rms_db": -25.83,
+        "clip_pct": 0.0,
+        "dc": 0.0
+      },
+      "cues": [
+        "Enemy_Footstep_Heavy"
+      ],
+      "in_place": true
+    },
+    {
+      "output": "Assets\\8.Audio\\AudioResource\\Repaired\\HeavyStep_02.wav",
+      "source": "아누비스발소리.wav(Repaired/HeavyStep_02 재가공)",
+      "note": "앞 무음 제거. leading 0.109s trimmed (pre-roll 15ms) + 충격 지점(피크 -24dB) 12ms 앞에서 재절단",
+      "before": {
+        "duration": 0.66,
+        "peak_db": -12.07,
+        "rms_db": -23.22,
+        "clip_pct": 0.0,
+        "dc": -0.00011
+      },
+      "after": {
+        "duration": 0.5255,
+        "peak_db": -12.37,
+        "rms_db": -25.37,
+        "clip_pct": 0.0,
+        "dc": -2e-05
+      },
+      "cues": [
+        "Enemy_Footstep_Heavy"
+      ],
+      "in_place": true
+    },
+    {
+      "output": "Assets\\8.Audio\\AudioResource\\Repaired\\HeavyStep_03.wav",
+      "source": "아누비스발소리.wav(Repaired/HeavyStep_03 재가공)",
+      "note": "앞 무음 제거. leading 0.140s trimmed (pre-roll 15ms) + 충격 지점(피크 -24dB) 12ms 앞에서 재절단",
+      "before": {
+        "duration": 0.66,
+        "peak_db": -11.61,
+        "rms_db": -23.1,
+        "clip_pct": 0.0,
+        "dc": 7e-05
+      },
+      "after": {
+        "duration": 0.4928,
+        "peak_db": -11.69,
+        "rms_db": -24.12,
+        "clip_pct": 0.0,
+        "dc": -2e-05
+      },
+      "cues": [
+        "Enemy_Footstep_Heavy"
+      ],
+      "in_place": true
+    },
+    {
+      "output": "Assets\\8.Audio\\AudioResource\\Repaired\\TowerDestroy_02.wav",
+      "source": "타워파괴음.wav(Repaired/TowerDestroy_02 재가공)",
+      "note": "앞 무음 제거. leading 0.158s trimmed (pre-roll 10ms)",
+      "before": {
+        "duration": 1.2272,
+        "peak_db": -3.0,
+        "rms_db": -26.17,
+        "clip_pct": 0.0,
+        "dc": -0.0
+      },
+      "after": {
+        "duration": 1.0694,
+        "peak_db": -2.94,
+        "rms_db": -25.59,
+        "clip_pct": 0.0,
+        "dc": -2e-05
+      },
+      "cues": [
+        "Facility_Cobra_Destroy"
+      ],
+      "in_place": true
+    },
+    {
+      "output": "Assets\\8.Audio\\AudioResource\\Repaired\\BombExplosion.wav",
+      "source": "폭발5.wav",
+      "note": "앞 무음 제거. leading 0.149s trimmed (pre-roll 10ms)",
+      "before": {
+        "duration": 3.5117,
+        "peak_db": -0.46,
+        "rms_db": -16.34,
+        "clip_pct": 0.0,
+        "dc": -0.00373
+      },
+      "after": {
+        "duration": 3.3629,
+        "peak_db": -0.53,
+        "rms_db": -16.59,
+        "clip_pct": 0.0,
+        "dc": 0.0
+      },
+      "cues": [
+        "Enemy_Chief_Bomb_Explosion"
+      ],
+      "in_place": false
+    },
+    {
+      "output": "Assets\\8.Audio\\AudioResource\\Repaired\\WaveStart.wav",
+      "source": "웨이브시작_auda.wav",
+      "note": "앞 무음 제거. leading 0.157s trimmed (pre-roll 10ms)",
+      "before": {
+        "duration": 3.4421,
+        "peak_db": -1.08,
+        "rms_db": -15.49,
+        "clip_pct": 0.0,
+        "dc": 0.00039
+      },
+      "after": {
+        "duration": 3.2853,
+        "peak_db": -1.12,
+        "rms_db": -15.34,
+        "clip_pct": 0.0,
+        "dc": -1e-05
+      },
+      "cues": [
+        "Wave_Start"
+      ],
+      "in_place": false
+    },
+    {
+      "output": "Assets\\8.Audio\\AudioResource\\Repaired\\Thunder_Near.wav",
+      "source": "천둥-가까운 거리.wav",
+      "note": "가까운 천둥은 번개와 거의 동시: 앞 무음 제거. 먼 천둥의 지연은 유지. leading 0.857s trimmed (pre-roll 20ms)",
+      "before": {
+        "duration": 22.8656,
+        "peak_db": -0.0,
+        "rms_db": -24.36,
+        "clip_pct": 0.02223,
+        "dc": 6e-05
+      },
+      "after": {
+        "duration": 22.0085,
+        "peak_db": 0.0,
+        "rms_db": -24.23,
+        "clip_pct": 0.01884,
+        "dc": -1e-05
+      },
+      "cues": [
+        "Env_Lightning"
+      ],
+      "in_place": false
+    },
+    {
+      "output": "Assets\\8.Audio\\AudioResource\\Repaired\\RecallArrive.wav",
+      "source": "흔적귀환워프완료.wav",
+      "note": "앞·뒤 무음 제거. leading 0.199s, trailing 0.000s trimmed",
+      "before": {
+        "duration": 3.2041,
+        "peak_db": -13.57,
+        "rms_db": -39.74,
+        "clip_pct": 0.0,
+        "dc": -7e-05
+      },
+      "after": {
+        "duration": 3.0051,
+        "peak_db": -13.55,
+        "rms_db": -39.47,
+        "clip_pct": 0.0,
+        "dc": -2e-05
+      },
+      "cues": [
+        "Player_Recall_Arrive"
+      ],
+      "in_place": false
+    },
+    {
+      "output": "Assets\\8.Audio\\AudioResource\\Repaired\\Revive.wav",
+      "source": "부활_auda.wav",
+      "note": "앞·뒤 무음 제거. leading 0.154s, trailing 0.210s trimmed",
+      "before": {
+        "duration": 2.2346,
+        "peak_db": -6.64,
+        "rms_db": -27.32,
+        "clip_pct": 0.0,
+        "dc": 0.0
+      },
+      "after": {
+        "duration": 1.8702,
+        "peak_db": -6.64,
+        "rms_db": -26.55,
+        "clip_pct": 0.0,
+        "dc": -2e-05
+      },
+      "cues": [
+        "Player_Revive"
+      ],
+      "in_place": false
+    },
+    {
+      "output": "Assets\\8.Audio\\AudioResource\\Repaired\\CorePing.wav",
+      "source": "코어핑_auda.wav",
+      "note": "뒤 무음 제거(보이스 점유 단축). trailing 0.803s trimmed",
+      "before": {
+        "duration": 3.283,
+        "peak_db": -18.2,
+        "rms_db": -35.26,
+        "clip_pct": 0.0,
+        "dc": -0.0
+      },
+      "after": {
+        "duration": 2.4803,
+        "peak_db": -18.2,
+        "rms_db": -34.04,
+        "clip_pct": 0.0,
+        "dc": -3e-05
+      },
+      "cues": [
+        "Core_Ping"
+      ],
+      "in_place": false
+    },
+    {
+      "output": "Assets\\8.Audio\\AudioResource\\Repaired\\SandBurst.wav",
+      "source": "폭발3.wav",
+      "note": "뒤 무음 제거(보이스 점유 단축). trailing 3.069s trimmed",
+      "before": {
+        "duration": 5.5536,
+        "peak_db": 0.0,
+        "rms_db": -23.68,
+        "clip_pct": 0.00169,
+        "dc": -0.00121
+      },
+      "after": {
+        "duration": 2.4846,
+        "peak_db": 0.0,
+        "rms_db": -20.78,
+        "clip_pct": 0.00377,
+        "dc": -2e-05
+      },
+      "cues": [
+        "Player_SandBurst"
+      ],
+      "in_place": false
+    },
+    {
+      "output": "Assets\\8.Audio\\AudioResource\\Repaired\\ShieldHit.wav",
+      "source": "방패타격음_auda.wav(Repaired/ShieldHit 재가공)",
+      "note": "끝 페이드 25ms→80ms. end fade 80ms",
+      "before": {
+        "duration": 0.3133,
+        "peak_db": -3.15,
+        "rms_db": -13.51,
+        "clip_pct": 0.0,
+        "dc": 0.00075
+      },
+      "after": {
+        "duration": 0.3133,
+        "peak_db": -2.84,
+        "rms_db": -14.19,
+        "clip_pct": 0.0,
+        "dc": 0.00018
+      },
+      "cues": [
+        "Enemy_ShieldBlock",
+        "Enemy_Chief_ShieldBlock"
+      ],
+      "in_place": false
+    },
+    {
+      "output": "Assets\\8.Audio\\AudioResource\\Repaired\\Dash.wav",
+      "source": "대쉬효과음2.mp3",
+      "note": "끝 페이드. end fade 60ms",
+      "before": {
+        "duration": 0.53,
+        "peak_db": -2.27,
+        "rms_db": -19.64,
+        "clip_pct": 0.0,
+        "dc": -0.00018
+      },
+      "after": {
+        "duration": 0.53,
+        "peak_db": -2.41,
+        "rms_db": -19.7,
+        "clip_pct": 0.0,
+        "dc": -0.00013
+      },
+      "cues": [
+        "Player_Dash"
+      ],
+      "in_place": false
+    },
+    {
+      "output": "Assets\\8.Audio\\AudioResource\\Repaired\\SandStorm_Cast.wav",
+      "source": "폭풍.aiff",
+      "note": "원샷 길이 정리. first 3.5s, fade out 1.2s (24s 원샷을 시전 스팅어로)",
+      "before": {
+        "duration": 23.9937,
+        "peak_db": -0.1,
+        "rms_db": -15.3,
+        "clip_pct": 0.0,
+        "dc": -0.0026
+      },
+      "after": {
+        "duration": 3.5,
+        "peak_db": -3.77,
+        "rms_db": -18.76,
+        "clip_pct": 0.0,
+        "dc": -2e-05
+      },
+      "cues": [
+        "Player_SandStorm_Cast"
+      ],
+      "in_place": false
+    },
+    {
+      "output": "Assets\\8.Audio\\AudioResource\\Repaired\\Charge_Loop.wav",
+      "source": "기 모으기.wav",
+      "note": "상승 부분을 뺀 유지 구간 루프(상승감은 SetIntensity 피치가 담당). loop 1.0-2.45s, wrap crossfade 150ms, DC removal",
+      "before": {
+        "duration": 3.2551,
+        "peak_db": -6.89,
+        "rms_db": -21.35,
+        "clip_pct": 0.0,
+        "dc": 0.0
+      },
+      "after": {
+        "duration": 1.3,
+        "peak_db": -8.36,
+        "rms_db": -20.71,
+        "clip_pct": 0.0,
+        "dc": -0.0
+      },
+      "cues": [
+        "Player_Updraft_Charge_Loop"
+      ],
+      "in_place": false
+    },
+    {
+      "output": "Assets\\8.Audio\\AudioResource\\Repaired\\Fall_Loop.wav",
+      "source": "추락바람소리_auda.wav",
+      "note": "끝 페이드아웃 구간을 빼고 루프. loop 0.0-4.1s, wrap crossfade 400ms, DC removal",
+      "before": {
+        "duration": 4.6441,
+        "peak_db": -0.24,
+        "rms_db": -17.52,
+        "clip_pct": 0.0,
+        "dc": -0.01138
+      },
+      "after": {
+        "duration": 3.7,
+        "peak_db": -5.58,
+        "rms_db": -19.62,
+        "clip_pct": 0.0,
+        "dc": -1e-05
+      },
+      "cues": [
+        "Player_Fall_Loop"
+      ],
+      "in_place": false
+    },
+    {
+      "output": "Assets\\8.Audio\\AudioResource\\Repaired\\DesertWind_Loop.wav",
+      "source": "기본 사막환경 배경음_auda.wav",
+      "note": "60초 베드 루프 이음매. loop 0.0-ends, wrap crossfade 1500ms, DC removal",
+      "before": {
+        "duration": 59.6477,
+        "peak_db": -0.44,
+        "rms_db": -21.0,
+        "clip_pct": 0.0,
+        "dc": 0.00033
+      },
+      "after": {
+        "duration": 58.1477,
+        "peak_db": -1.07,
+        "rms_db": -21.62,
+        "clip_pct": 0.0,
+        "dc": -2e-05
+      },
+      "cues": [
+        "Env_DesertWind_Loop"
+      ],
+      "in_place": false
+    },
+    {
+      "output": "Assets\\8.Audio\\AudioResource\\Repaired\\LevelUpFanfare.wav",
+      "source": "레벨업팡파레.wav",
+      "note": "직류 성분 제거. DC removal (20Hz highpass)",
+      "before": {
+        "duration": 1.8086,
+        "peak_db": -0.0,
+        "rms_db": -17.21,
+        "clip_pct": 0.00029,
+        "dc": 0.02126
+      },
+      "after": {
+        "duration": 1.8086,
+        "peak_db": -0.43,
+        "rms_db": -17.38,
+        "clip_pct": 0.0,
+        "dc": -1e-05
+      },
+      "cues": [
+        "Player_LevelUp_Fanfare"
+      ],
+      "in_place": false
+    },
+    {
+      "output": "Assets\\8.Audio\\AudioResource\\Repaired\\Swing_Light_03.wav",
+      "source": "휘두르는소리.wav",
+      "note": "휘두름 변형끼리 크기 맞춤. gain +3.6 dB to match 휘두름_가벼움_01 (peak capped -1 dBFS)",
+      "before": {
+        "duration": 0.31,
+        "peak_db": -3.87,
+        "rms_db": -21.16,
+        "clip_pct": 0.0,
+        "dc": -2e-05
+      },
+      "after": {
+        "duration": 0.31,
+        "peak_db": -1.0,
+        "rms_db": -18.29,
+        "clip_pct": 0.0,
+        "dc": -3e-05
+      },
+      "cues": [
+        "Enemy_Swordsman_Swing",
+        "Enemy_Assassin_Swing"
+      ],
+      "in_place": false
+    },
+    {
+      "output": "Assets\\8.Audio\\AudioResource\\Repaired\\Heartbeat_Loop.wav",
+      "source": "kenney/impactSoft_medium_003.ogg + 004.ogg",
+      "note": "심장 박동 루프: 80BPM 3박(2.25s), lub-dub 간격 0.26s, 380Hz 저역 통과, 꼬리를 머리에 겹쳐 이음매 없음; 루프 경계가 박 사이 조용한 구간에 오도록 0.15s 회전",
+      "after": {
+        "duration": 2.25,
+        "peak_db": -3.0
+      },
+      "cues": [
+        "UI_Health_Low_Loop"
+      ],
+      "in_place": false
+    }
+  ]
+}

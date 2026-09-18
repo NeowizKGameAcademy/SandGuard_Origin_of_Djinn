@@ -15,7 +15,10 @@ namespace SandGuard.Player
         public Vector3 handGripOffset;
         public Vector3 heldEuler = new Vector3(0, 90, 0);
         public Vector3 palmOffset = new Vector3(0f, 0f, 0.065f);
-        public Color glowColor = new Color(1f, 0.36f, 0.035f);
+        [Tooltip("마나가 가득 찼을 때 색 (청록)")]
+        public Color glowColor = new Color(0.1f, 0.9f, 1f);
+        [Tooltip("마나가 바닥에 가까울 때 색 (보라)")]
+        public Color lowManaColor = new Color(0.6f, 0.2f, 1f);
         [Min(0)] public float glowStrength = 3f;
         [Range(0, 25)] public float swayDegrees = 10f;
         [SerializeField] bool held;
@@ -44,7 +47,7 @@ namespace SandGuard.Player
         PlayerMotor motor;
         MaterialPropertyBlock block;
         Vector3 sway, swayVelocity;
-        float handWeight, brightness, brightnessVelocity, targetBrightness;
+        float handWeight, brightness, brightnessVelocity, targetBrightness, manaRatio;
         Vector3 lastPosition, lastVelocity, acceleration;
         bool sampled, forcedOff;
         Quaternion lastHeading;
@@ -151,6 +154,7 @@ namespace SandGuard.Player
         void RefreshBrightness()
         {
             float ratio = manaDriven ? (mana != null && mana.MaxMana > 0 ? Mathf.Clamp01((float)mana.CurrentMana / mana.MaxMana) : 0f) : (glowing ? 1f : 0f);
+            manaRatio = ratio;
             targetBrightness = forcedOff ? 0f : ratio * ratio;
         }
 
@@ -195,8 +199,12 @@ namespace SandGuard.Player
             ApplyLight();
         }
 
+        /// <summary>마나 비율에 따라 보라 → 청록. 흡수 반짝임은 청록 쪽으로 당긴다.</summary>
+        public Color CurrentGlowColor => Color.Lerp(Color.Lerp(lowManaColor, glowColor, manaRatio), glowColor, absorptionPulse);
+
         void ApplyLight()
         {
+            Color color = CurrentGlowColor;
             if (lampRenderer != null)
             {
                 if (block == null) block = new MaterialPropertyBlock();
@@ -207,12 +215,13 @@ namespace SandGuard.Player
                     float emission = i == emissiveMaterialIndex
                         ? glowStrength * brightness + absorptionEmissionBoost * absorptionPulse
                         : 2.5f * absorptionPulse;
-                    block.SetColor("_EmissionColor", emission > 0f ? glowColor * emission : Color.black);
+                    block.SetColor("_EmissionColor", emission > 0f ? color * emission : Color.black);
                     lampRenderer.SetPropertyBlock(block, i);
                 }
             }
             if (lampLight != null)
             {
+                lampLight.color = color;
                 lampLight.intensity = maxLightIntensity * brightness + absorptionLightBoost * absorptionPulse;
                 lampLight.enabled = lampLight.intensity > 0.0001f;
             }
