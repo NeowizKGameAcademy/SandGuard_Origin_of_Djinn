@@ -55,6 +55,8 @@ MonoBehaviour:
   TickDamage: 10
   TickInterval: 1
   SlowRatio: 0.3
+  ManaGain: 10
+  GainTick: 1
   CreatureNum: 7
   SummonDistance: 0.3
 --- !u!114 &561771609500174286
@@ -220,7 +222,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8318035740673722136}
   m_Layer: 0
-  m_Name: Tower Anubis
+  m_Name: Tower_Anubis
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -682,6 +684,7 @@ MonoBehaviour:
   Player: {fileID: 0}
   detectRange: {fileID: 561771609500174286}
   renderer: {fileID: 744293119959530677}
+  ShowDistance: 7.5
   FadeSpeed: 10
 --- !u!1 &7148513550294472814
 GameObject:
