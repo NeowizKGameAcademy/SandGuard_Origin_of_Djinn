@@ -129,8 +129,429 @@
     }
   ],
   "estimated_full_pass_credits": 450,
-  "remaining_jobs_submitted": false,
-  "blocker": "User confirmed rights. Checking provider-supported rights-holder confirmation.",
+  "remaining_jobs_submitted": true,
+  "blocker": null,
   "help_url": "https://higgsfield.ai/creator-hub/help-center/troubleshooting/my-generation-blocked-for-copyright-or-ip",
-  "rights_confirmed_by_user": true
+  "rights_confirmed_by_user": true,
+  "retry": {
+    "job_id": "a95a1778-2077-4c1f-971b-b3cb9e0a0e23",
+    "scene": 5,
+    "status": "completed",
+    "estimated_credits": 63,
+    "params": {
+      "model": "seedance_2_5",
+      "mode": "omni_reference",
+      "aspect_ratio": "16:9",
+      "duration": 7,
+      "resolution": "1080p",
+      "generate_audio": true,
+      "count": 1,
+      "medias": [
+        {
+          "role": "image",
+          "value": "ff03ee01-2141-414d-b068-7b465b868e68"
+        }
+      ],
+      "prompt": "Seven-second close-up animation for the user's original game SandGuard. The user confirms they created or hold the necessary rights to the supplied concept image. Use the image as the reference for the bronze lighting vessel, gloved hands, cream cloth, red scarf, warm colors and stylized 3D rendering. Start with the engraved metal completely unlit. Keep both hands gently cradling the rigid vessel, with only subtle breathing motion. Fine amber sand drifts across the out-of-focus excavation background. Between seconds 2 and 5, a small cyan-blue light appears inside the engraved diamond emblem and gradually illuminates its thin lines, with a faint reflection on the nearby glove. Hold the softly luminous emblem for the final two seconds. The spout remains dark throughout this shot. Very slow camera push-in. Preserve the vessel's shape, engraved pattern, hand anatomy and clothing. One continuous shot. Sound consists only of muffled wind, cloth rustling and one quiet glass-like resonance. No words, music, on-screen text or scene changes."
+    },
+    "reason": "User confirmed rights; simplified descriptive prompt per official help. No rights-holder button available on rejected web generation.",
+    "result": {
+      "index": 5,
+      "job_id": "a95a1778-2077-4c1f-971b-b3cb9e0a0e23",
+      "status": "completed",
+      "type": "video",
+      "model": "seedance_2_5",
+      "result_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3J4HjJannQVvsR4UR4EFsbAqIjp/hf_20260918_064409_a95a1778-2077-4c1f-971b-b3cb9e0a0e23.mp4",
+      "thumbnail_url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3J4HjJannQVvsR4UR4EFsbAqIjp/ff03ee01-2141-414d-b068-7b465b868e68.png"
+    },
+    "qa": {
+      "resolution": "1920x1080",
+      "fps": 24,
+      "duration": 7.05,
+      "audio_sample_rate": 32000,
+      "visual": "Stable lamp and hands in sampled frames, visible unlit-to-lit progression. Purple glow remains; selective color correction required.",
+      "local_clip": "clips/05-lamp-awakening-v1.mp4",
+      "contact_sheet": "qa/05-contact-sheet.png"
+    }
+  },
+  "remaining_jobs": {
+    "jobs": [
+      {
+        "index": 1,
+        "status": "submission_failed",
+        "error": "Out of credits on ultra (monthly) plan in Private workspace.",
+        "adjustments": {
+          "medias[0].role": {
+            "requested": "image",
+            "used": "image_references",
+            "reason": "Seedance 2.5 backend expects schema-key media roles"
+          },
+          "medias[1].role": {
+            "requested": "image",
+            "used": "image_references",
+            "reason": "Seedance 2.5 backend expects schema-key media roles"
+          }
+        }
+      },
+      {
+        "index": 2,
+        "job_id": "b1353136-ad20-48e0-b77a-96d4118c9922",
+        "status": "pending",
+        "adjustments": {
+          "medias[0].role": {
+            "requested": "image",
+            "used": "image_references",
+            "reason": "Seedance 2.5 backend expects schema-key media roles"
+          },
+          "medias[1].role": {
+            "requested": "image",
+            "used": "image_references",
+            "reason": "Seedance 2.5 backend expects schema-key media roles"
+          }
+        }
+      },
+      {
+        "index": 3,
+        "job_id": "1af88fbf-38b9-4318-80ff-6540b9ffe4a5",
+        "status": "pending",
+        "adjustments": {
+          "medias[0].role": {
+            "requested": "image",
+            "used": "image_references",
+            "reason": "Seedance 2.5 backend expects schema-key media roles"
+          },
+          "medias[1].role": {
+            "requested": "image",
+            "used": "image_references",
+            "reason": "Seedance 2.5 backend expects schema-key media roles"
+          }
+        }
+      },
+      {
+        "index": 4,
+        "status": "submission_failed",
+        "error": "Out of credits on ultra (monthly) plan in Private workspace.",
+        "adjustments": {
+          "medias[0].role": {
+            "requested": "image",
+            "used": "image_references",
+            "reason": "Seedance 2.5 backend expects schema-key media roles"
+          },
+          "medias[1].role": {
+            "requested": "image",
+            "used": "image_references",
+            "reason": "Seedance 2.5 backend expects schema-key media roles"
+          }
+        }
+      },
+      {
+        "index": 6,
+        "job_id": "01473cf8-d178-4aed-a4fd-9c86bbc93578",
+        "status": "pending",
+        "adjustments": {
+          "medias[0].role": {
+            "requested": "image",
+            "used": "image_references",
+            "reason": "Seedance 2.5 backend expects schema-key media roles"
+          },
+          "medias[1].role": {
+            "requested": "image",
+            "used": "image_references",
+            "reason": "Seedance 2.5 backend expects schema-key media roles"
+          }
+        }
+      },
+      {
+        "index": 7,
+        "status": "submission_failed",
+        "error": "seedance_2_5 backend request failed (429): not_enough_boost_credits",
+        "adjustments": {
+          "medias[0].role": {
+            "requested": "image",
+            "used": "image_references",
+            "reason": "Seedance 2.5 backend expects schema-key media roles"
+          },
+          "medias[1].role": {
+            "requested": "image",
+            "used": "image_references",
+            "reason": "Seedance 2.5 backend expects schema-key media roles"
+          }
+        }
+      }
+    ],
+    "submitted_count": 3,
+    "failed_count": 3
+  },
+  "selected_jobs": [
+    {
+      "index": 1,
+      "job_id": "1ccbdb5a-5e6b-48f4-8c28-93449a504982",
+      "status": "completed",
+      "model": "hf_mult_replace_object",
+      "result_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3J4HjJannQVvsR4UR4EFsbAqIjp/hf_20260918_070426_1ccbdb5a-5e6b-48f4-8c28-93449a504982.mp4"
+    },
+    {
+      "index": 2,
+      "job_id": "b1353136-ad20-48e0-b77a-96d4118c9922",
+      "status": "completed",
+      "type": "video",
+      "model": "seedance_2_5",
+      "result_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3J4HjJannQVvsR4UR4EFsbAqIjp/hf_20260918_065114_b1353136-ad20-48e0-b77a-96d4118c9922.mp4",
+      "thumbnail_url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3J4HjJannQVvsR4UR4EFsbAqIjp/5cad4198-8414-4d4c-982b-2bb42c81d709.png"
+    },
+    {
+      "index": 3,
+      "job_id": "1af88fbf-38b9-4318-80ff-6540b9ffe4a5",
+      "status": "completed",
+      "type": "video",
+      "model": "seedance_2_5",
+      "result_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3J4HjJannQVvsR4UR4EFsbAqIjp/hf_20260918_065115_1af88fbf-38b9-4318-80ff-6540b9ffe4a5.mp4",
+      "thumbnail_url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3J4HjJannQVvsR4UR4EFsbAqIjp/ad450c88-9ec8-4027-9f14-dd315875713f.png"
+    },
+    {
+      "index": 4,
+      "job_id": "810b2b92-b32d-4b67-b758-4c74cdc26b5d",
+      "status": "completed",
+      "type": "video",
+      "model": "seedance_2_5",
+      "result_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3J4HjJannQVvsR4UR4EFsbAqIjp/hf_20260918_065524_810b2b92-b32d-4b67-b758-4c74cdc26b5d.mp4",
+      "thumbnail_url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3J4HjJannQVvsR4UR4EFsbAqIjp/85865155-afa3-4ec9-9b19-05d6d4f2e307.png"
+    },
+    {
+      "index": 5,
+      "job_id": "a95a1778-2077-4c1f-971b-b3cb9e0a0e23",
+      "status": "completed",
+      "type": "video",
+      "model": "seedance_2_5",
+      "result_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3J4HjJannQVvsR4UR4EFsbAqIjp/hf_20260918_064409_a95a1778-2077-4c1f-971b-b3cb9e0a0e23.mp4",
+      "thumbnail_url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3J4HjJannQVvsR4UR4EFsbAqIjp/ff03ee01-2141-414d-b068-7b465b868e68.png"
+    },
+    {
+      "index": 6,
+      "job_id": "01473cf8-d178-4aed-a4fd-9c86bbc93578",
+      "status": "completed",
+      "type": "video",
+      "model": "seedance_2_5",
+      "result_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3J4HjJannQVvsR4UR4EFsbAqIjp/hf_20260918_065115_01473cf8-d178-4aed-a4fd-9c86bbc93578.mp4",
+      "thumbnail_url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3J4HjJannQVvsR4UR4EFsbAqIjp/a015e0ab-df23-48df-9fe9-47f5fa98fb91.png"
+    },
+    {
+      "index": 7,
+      "job_id": "1deedf0a-f675-4071-82b0-f01e01467e50",
+      "status": "completed",
+      "type": "video",
+      "model": "seedance_2_5",
+      "result_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3J4HjJannQVvsR4UR4EFsbAqIjp/hf_20260918_065946_1deedf0a-f675-4071-82b0-f01e01467e50.mp4",
+      "thumbnail_url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3J4HjJannQVvsR4UR4EFsbAqIjp/b4fdb8ec-b01c-4a7b-8009-9b6211df085f.png"
+    }
+  ],
+  "batch2": {
+    "jobs": [
+      {
+        "index": 1,
+        "job_id": "bde6aaab-cdf2-4bfc-9ce6-f20f0b5d8394",
+        "status": "pending",
+        "adjustments": {
+          "medias[0].role": {
+            "requested": "image",
+            "used": "image_references",
+            "reason": "Seedance 2.5 backend expects schema-key media roles"
+          },
+          "medias[1].role": {
+            "requested": "image",
+            "used": "image_references",
+            "reason": "Seedance 2.5 backend expects schema-key media roles"
+          }
+        }
+      },
+      {
+        "index": 4,
+        "job_id": "810b2b92-b32d-4b67-b758-4c74cdc26b5d",
+        "status": "pending",
+        "adjustments": {
+          "medias[0].role": {
+            "requested": "image",
+            "used": "image_references",
+            "reason": "Seedance 2.5 backend expects schema-key media roles"
+          },
+          "medias[1].role": {
+            "requested": "image",
+            "used": "image_references",
+            "reason": "Seedance 2.5 backend expects schema-key media roles"
+          }
+        }
+      },
+      {
+        "index": 7,
+        "job_id": "59bd7991-ce67-47d1-bcbd-d0f3450c5cc6",
+        "status": "pending",
+        "adjustments": {
+          "medias[0].role": {
+            "requested": "image",
+            "used": "image_references",
+            "reason": "Seedance 2.5 backend expects schema-key media roles"
+          },
+          "medias[1].role": {
+            "requested": "image",
+            "used": "image_references",
+            "reason": "Seedance 2.5 backend expects schema-key media roles"
+          }
+        }
+      }
+    ],
+    "submitted_count": 3,
+    "failed_count": 0
+  },
+  "temple_retry": {
+    "params": {
+      "model": "seedance_2_5",
+      "mode": "omni_reference",
+      "aspect_ratio": "16:9",
+      "resolution": "1080p",
+      "generate_audio": true,
+      "count": 1,
+      "duration": 11,
+      "medias": [
+        {
+          "role": "image",
+          "value": "b4fdb8ec-b01c-4a7b-8009-9b6211df085f"
+        },
+        {
+          "role": "image",
+          "value": "ff03ee01-2141-414d-b068-7b465b868e68"
+        }
+      ],
+      "prompt": "Eleven-second single-shot reveal for the user's original game SandGuard. The user confirms they created or hold the necessary rights to both images. Image 1 defines the composition and original character; image 2 defines only the small bronze lamp. Rear wide shot: the young man stands still at the right foreground on a rocky desert ledge, holding that lamp lowered in his left hand. Warm sunset. At the beginning a thick opaque curtain of airborne sand completely hides the distant view. During seconds 1 through 7 the sand thins and moves aside to reveal a huge, weathered, abandoned stepped stone temple across a wide sandy basin. The building stays fixed and rigid throughout: only the sand moves. The temple is a separate distant ruin and has no construction equipment or workers. Keep sparse faded old fabric remnants, remove scaffolds and cranes. At seconds 7 to 8 the summit crystal lights softly in cyan blue, matching the lamp emblem. The camera slowly pulls back to emphasize the temple's scale. The man's feet remain planted and his red scarf flutters in the dying wind. Hold the final composition for the last two seconds. Match the supplied stylized 3D art. Sound: wind gradually fades, a low resonant tone and a quiet crystal shimmer. No speech, music, text or cuts."
+    },
+    "result": {
+      "jobs": [
+        {
+          "index": 7,
+          "job_id": "1deedf0a-f675-4071-82b0-f01e01467e50",
+          "status": "completed",
+          "type": "video",
+          "model": "seedance_2_5",
+          "result_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3J4HjJannQVvsR4UR4EFsbAqIjp/hf_20260918_065946_1deedf0a-f675-4071-82b0-f01e01467e50.mp4",
+          "thumbnail_url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3J4HjJannQVvsR4UR4EFsbAqIjp/b4fdb8ec-b01c-4a7b-8009-9b6211df085f.png"
+        }
+      ],
+      "summary": {
+        "total": 1,
+        "completed": 1,
+        "failed": 0,
+        "active": 0,
+        "errors": 0
+      },
+      "all_terminal": true
+    }
+  },
+  "shot1_correction": {
+    "params": {
+      "model": "hf_mult_replace_object",
+      "resolution": "1080p",
+      "duration": 6,
+      "count": 1,
+      "medias": [
+        {
+          "role": "video",
+          "value": "bde6aaab-cdf2-4bfc-9ce6-f20f0b5d8394"
+        },
+        {
+          "role": "image",
+          "value": "ff03ee01-2141-414d-b068-7b465b868e68"
+        }
+      ],
+      "prompt": "Correct two continuity details in this original SandGuard game shot. Replace the single upright glass lantern on the rock immediately beside the seated young man, at the lower-left of the frame, with ONE small unlit bronze oil lamp matching the reference image: squat bronze bowl, long curved spout, round rear handle with wrapped cord and small hanging medallion. The new lamp sits naturally on the same rock, with its base resting flat, spout pointing right. Its engraved diamond emblem is completely dark with no blue or purple glow. Do not change the man's hands or add any lamp in his hands. Also remove the small blue crystal at the top of the distant worksite pyramid in the upper-right; finish that summit with ordinary weathered stone. Keep all other pixels, character identity and performance, clothes, sunset, camera movement, video duration, stonework, background workers and original audio unchanged. Use only the lamp design from the reference image, not its hands or sandstorm background. User confirms rights to this original content."
+    },
+    "estimated_credits": 63,
+    "submission": {
+      "jobs": [
+        {
+          "index": 1,
+          "job_id": "1ccbdb5a-5e6b-48f4-8c28-93449a504982",
+          "status": "pending",
+          "adjustments": {
+            "medias[0].role": {
+              "requested": "video",
+              "used": "video_references",
+              "reason": "Genjutsu backend expects schema-key media roles"
+            },
+            "medias[1].role": {
+              "requested": "image",
+              "used": "image_references",
+              "reason": "Genjutsu backend expects schema-key media roles"
+            }
+          }
+        }
+      ],
+      "submitted_count": 1,
+      "failed_count": 0
+    },
+    "result": {
+      "index": 1,
+      "job_id": "1ccbdb5a-5e6b-48f4-8c28-93449a504982",
+      "status": "completed",
+      "model": "hf_mult_replace_object",
+      "result_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3J4HjJannQVvsR4UR4EFsbAqIjp/hf_20260918_070426_1ccbdb5a-5e6b-48f4-8c28-93449a504982.mp4"
+    }
+  },
+  "estimated_selected_generation_credits": 513,
+  "assembly": {
+    "method": "local ffmpeg",
+    "reason": "Automatic approval review rejected extra cloud uploads of raw video and editable project ZIP. Local assembly removes those external transfers.",
+    "cloud_export_performed": false,
+    "music": "Assets/8.Audio/AudioResource/메인화면 배경음.mp3",
+    "target": "SandGuard-Prologue-v1.mp4",
+    "status": "completed",
+    "final_path": "C:\\course\\unity\\SandGuard\\Docs\\concept-art\\Prologue\\production\\SandGuard-Prologue-v1.mp4",
+    "size_bytes": 47280079,
+    "duration_seconds": 50,
+    "resolution": [
+      1920,
+      1080
+    ],
+    "fps": 24,
+    "frames": 1200,
+    "video_codec": "H.264",
+    "audio_codec": "AAC",
+    "audio_sample_rate": 48000,
+    "audio_channels": 2,
+    "fade_out_seconds": [
+      49.0,
+      49.8
+    ],
+    "black_hold_seconds": 0.2
+  },
+  "final_balance_snapshot": 2560,
+  "observed_balance_change_since_start": 450,
+  "note_on_costs": "Per-job estimates total 513 credits including the successful correction; account snapshots show a net decrease of 450 credits. Shared account activity/refund timing may differ from per-job cost; do not treat the balance delta as an exact invoice.",
+  "final_qa": {
+    "full_decode_exit_code": 0,
+    "sampled_visual_review": "completed",
+    "mean_sample_level_dbfs": -22.8,
+    "max_sample_level_dbfs": -2.6,
+    "last_frame_rgb_extrema": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        0
+      ]
+    ],
+    "evidence": [
+      "qa/final-decode-check.txt",
+      "qa/final-contact-sheet.jpg",
+      "qa/final-last-frame.png",
+      "qa/notes.md"
+    ],
+    "unity_playback_tested": false
+  },
+  "status": "completed",
+  "snapshot_note": "credits_after and observed_net_credit_change refer to the initial failed pilot snapshot; final_balance_snapshot is the later account reading. Submission snapshots retain the statuses returned when submitted; selected_jobs and assembly contain final outcomes."
 }

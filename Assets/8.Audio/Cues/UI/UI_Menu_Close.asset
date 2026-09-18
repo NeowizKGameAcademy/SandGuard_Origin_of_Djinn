@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54a03e5cbec6ac7459a523d1564d4bb0, type: 3}
   m_Name: UI_Menu_Close
   m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxCue
-  clips: []
-  volume: 0.5
+  clips:
+  - {fileID: 8300000, guid: 96165c2abf5327e4897942547556fffe, type: 3}
+  volume: 0.45
   volumeJitterDb: 0.5
-  pitch: 1
+  pitch: 0.9
   pitchJitter: 0.02
   mixerGroup: {fileID: 6399908840758426329, guid: 1fae13e4ac1874e45988f79fc0bae7ec, type: 2}
   priority: 128
@@ -25,5 +26,6 @@ MonoBehaviour:
   rolloff: 0
   loop: 0
   maxVoices: 1
-  minInterval: 0.02
+  minInterval: 0.2
+  chance: 1
   loopFade: 0.3

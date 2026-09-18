@@ -12,11 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54a03e5cbec6ac7459a523d1564d4bb0, type: 3}
   m_Name: UI_Skill_Learn
   m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxCue
-  clips: []
+  clips:
+  - {fileID: 8300000, guid: 374f0b16f0412674d83e782b911f61a8, type: 3}
+  - {fileID: 8300000, guid: 4330ce0d8d9f8e541a1a9d53fa18219c, type: 3}
+  - {fileID: 8300000, guid: 17c3d84de7253674b9830596b9e46e44, type: 3}
   volume: 0.7
   volumeJitterDb: 0
-  pitch: 1
-  pitchJitter: 0
+  pitch: 1.2
+  pitchJitter: 0.03
   mixerGroup: {fileID: 6399908840758426329, guid: 1fae13e4ac1874e45988f79fc0bae7ec, type: 2}
   priority: 128
   spatial: 0
@@ -25,5 +28,6 @@ MonoBehaviour:
   rolloff: 0
   loop: 0
   maxVoices: 1
-  minInterval: 0.02
+  minInterval: 0.1
+  chance: 1
   loopFade: 0.3

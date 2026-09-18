@@ -176,7 +176,7 @@ namespace SandGuard.Player
         void QueueDash() { if(SkillTreeDashInput!=null)SkillTreeDashInput();else TryDash(); }
         /// <summary>충전(상승 기류)처럼 제자리에 붙들 때 켠다. 이동 입력·점프·대시를 받지 않지만 중력과 접지는 그대로다.</summary>
         public bool Anchored { get; set; }
-        /// <summary>켜면 지상(코요테 포함) 점프를 버튼 누름에 바로 하지 않고 버린다. 상승 기류가 탭이면 <see cref="TryJump"/>, 홀드면 충전으로 처리한다. 공중 점프는 그대로다.</summary>
+        /// <summary>켜면 지상(코요테 포함) 점프를 버튼 누름에 바로 하지 않고 버린다. 상승 기류가 Ctrl + Space를 충전으로 가로챌 때 켠다. 공중 점프는 그대로다.</summary>
         public bool DeferGroundJumps { get; set; }
         /// <summary>지상(코요테 포함) 점프를 지금 한다. fullHeight면 버튼을 떼도 최대 높이로 뛴다.</summary>
         public bool TryJump(bool fullHeight = false)
@@ -348,7 +348,7 @@ namespace SandGuard.Player
             if (jumpBufferTimer > 0f && !IsDashing)
             {
                 bool groundJump = IsGrounded || coyoteTimer > 0f;
-                if (groundJump && DeferGroundJumps) jumpBufferTimer = 0f; // 상승 기류가 탭/홀드를 가른 뒤 TryJump로 점프시킨다
+                if (groundJump && DeferGroundJumps) jumpBufferTimer = 0f; // Ctrl + Space: 점프 대신 상승 기류 충전
                 else if (groundJump || (RemainingAirJumps > 0 && (SkillTreeAirJumpAllowed==null || SkillTreeAirJumpAllowed()))) jumpedThisFrame = Jump(groundJump, false);
             }
             jumpBufferTimer = Mathf.Max(0f, jumpBufferTimer - dt);

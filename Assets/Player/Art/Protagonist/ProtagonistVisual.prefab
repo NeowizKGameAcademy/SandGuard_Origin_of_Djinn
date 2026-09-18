@@ -1937,7 +1937,8 @@ MonoBehaviour:
   handGripOffset: {x: 0.02899997, y: -0.039999954, z: 0.000000028405339}
   heldEuler: {x: 0, y: 90, z: 0}
   palmOffset: {x: 0, y: 0, z: 0.065}
-  glowColor: {r: 1, g: 0.36, b: 0.035, a: 1}
+  glowColor: {r: 0.1, g: 0.9, b: 1, a: 1}
+  lowManaColor: {r: 0.6, g: 0.2, b: 1, a: 1}
   glowStrength: 3
   swayDegrees: 10
   held: 0

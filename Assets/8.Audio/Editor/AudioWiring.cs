@@ -541,6 +541,7 @@ namespace SandGuard.Audio.Editor
             changed |= Fill(ref m.Defeat, "Music_Defeat");
             changed |= Fill(ref m.WaveClearSting, "Music_WaveClear_Sting");
             changed |= Fill(ref m.BossSting, "Music_Boss_Sting");
+            if (!menuMode) changed |= Fill(ref m.WaveStart, "Wave_Start");
             return changed;
         }
 

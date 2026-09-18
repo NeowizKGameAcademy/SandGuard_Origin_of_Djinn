@@ -133,7 +133,6 @@ namespace SandGuard.Audio.Editor
             E("Core_Destroy_Debris", PlaceholderKind.Impact, "코어 파편 착지 (1.1초)").Flat().Voices(1),
             E("Wave_Clear", PlaceholderKind.Sting, "웨이브 클리어 팡파르 (VFX_Wave_Clear)").Flat().Voices(1),
             E("Wave_Start", PlaceholderKind.Impact, "웨이브 시작 북 1타").Flat().Voices(1),
-            E("Wave_Countdown_Tick", PlaceholderKind.Tick, "카운트다운 틱").Flat().Voices(1),
 
             /* ---------------- 환경 ---------------- */
             E("Env_DesertWind_Loop", PlaceholderKind.Loop, "사막 바람 베드 (2D)").Flat().Vol(0.5f),

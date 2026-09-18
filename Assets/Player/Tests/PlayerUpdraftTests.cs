@@ -12,7 +12,7 @@ using Object = UnityEngine.Object;
 
 namespace SandGuard.Player.Tests
 {
-    /// <summary>③ 상승 기류: Space 홀드 충전 → 놓으면 발사. 해금 여부, 충전 중 붙들림, 높이, 취소, 애니메이터 상태.</summary>
+    /// <summary>③ 상승 기류: 왼쪽 Ctrl + Space 홀드 충전 → 놓으면 발사. 해금 여부, 충전 중 붙들림, 높이, 취소, 애니메이터 상태.</summary>
     public sealed class PlayerUpdraftTests
     {
         readonly List<GameObject> objects = new List<GameObject>();
@@ -58,39 +58,40 @@ namespace SandGuard.Player.Tests
             yield return null;
         }
 
-        /// <summary>지상에서 Space를 누른 채 유지: 점프 없이 곧장 충전이 시작될 때까지 기다린다.</summary>
+        /// <summary>지상에서 Ctrl + Space를 누른 채 유지: 점프 없이 곧장 충전이 시작될 때까지 기다린다.</summary>
         IEnumerator HoldSpaceUntilCharging()
         {
-            Keys(Key.Space);
-            yield return Until(() => updraft.IsCharging, updraft.holdToCharge + 0.3f, "Holding on the ground starts the charge directly.");
+            yield return Until(() => !motor.HardLandingLocked, 2f, "The previous launch's hard landing recovers first.");
+            Keys(Key.LeftCtrl, Key.Space);
+            yield return Until(() => updraft.IsCharging, 0.3f, "Ctrl + Space on the ground starts the charge directly.");
             Assert.True(motor.IsGrounded, "No hop before charging.");
         }
 
-        [UnityTest] public IEnumerator TapJumpsOnReleaseAtFullHeightAndAirJumpsStayImmediate()
+        [UnityTest] public IEnumerator PlainSpaceJumpsImmediatelyAndCtrlSpaceHeldThroughLandingCharges()
         {
             effects.Apply(new UpdraftEffect()); effects.Apply(new DoubleJumpEffect());
             int jumps = 0; motor.Jumped += () => jumps++;
             Keys(Key.Space);
-            yield return new WaitForSeconds(0.06f);
-            Assert.True(motor.IsGrounded, "A press is held back until it is known to be a tap.");
-            Assert.AreEqual(0, jumps); Assert.False(updraft.IsCharging);
-            Keys(); // 탭: 놓는 순간 점프
-            yield return Until(() => !motor.IsGrounded, 0.15f, "Release performs the jump.");
+            yield return Until(() => !motor.IsGrounded, 0.1f, "Space alone jumps right away even when unlocked.");
             Assert.AreEqual(1, jumps); Assert.False(motor.LastJumpWasAirJump);
-            float peak = 0f;
-            for (float t = 0f; t < 1.2f && !(motor.IsGrounded && t > 0.2f); t += Time.deltaTime) { peak = Mathf.Max(peak, player.transform.position.y); yield return null; }
-            Assert.Greater(peak, motor.JumpHeight - 0.25f, "A tap jump reaches full height even though the button is already released.");
+            yield return new WaitForSeconds(0.2f);
             Assert.False(updraft.IsCharging);
-            yield return Until(() => motor.IsGrounded, 1f, "Lands.");
-            // 공중 점프는 누르는 즉시. 착지까지 계속 누르고 있으면 그대로 충전으로 이어진다.
+            Keys();
+            yield return Until(() => motor.IsGrounded, 1.5f, "Lands.");
+            yield return new WaitForSeconds(0.1f);
+            Keys(Key.Space); yield return new WaitForSeconds(0.4f);
+            Assert.False(updraft.IsCharging, "Holding Space without Ctrl never charges.");
+            Keys();
+            yield return Until(() => motor.IsGrounded, 1.5f, "Lands.");
+            // 공중 점프는 Ctrl을 쥐고 있어도 누르는 즉시. 착지까지 계속 누르고 있으면 그대로 충전으로 이어진다.
             Keys(Key.Space); yield return new WaitForSeconds(0.05f); Keys();
-            yield return Until(() => !motor.IsGrounded, 0.15f, "Second tap jumps.");
+            yield return Until(() => !motor.IsGrounded, 0.15f, "Third jump.");
             yield return new WaitForSeconds(0.15f);
-            Keys(Key.Space);
-            yield return Until(() => jumps == 3, 0.1f, "The air jump is not deferred.");
+            Keys(Key.LeftCtrl, Key.Space);
+            yield return Until(() => jumps == 4, 0.1f, "The air jump is not deferred.");
             Assert.True(motor.LastJumpWasAirJump);
-            yield return Until(() => updraft.IsCharging, 2f, "Holding through the landing charges.");
-            Assert.AreEqual(3, jumps, "Landing while held does not add another jump.");
+            yield return Until(() => updraft.IsCharging, 2f, "Holding Ctrl + Space through the landing charges.");
+            Assert.AreEqual(4, jumps, "Landing while held does not add another jump.");
             Keys(); yield return null;
         }
 
@@ -98,11 +99,11 @@ namespace SandGuard.Player.Tests
         {
             Assert.False(updraft.unlocked);
             int launches = 0; updraft.Launched += (_, __) => launches++;
-            Keys(Key.Space);
+            Keys(Key.LeftCtrl, Key.Space);
             yield return Until(() => !motor.IsGrounded, 0.3f, "Normal jump.");
             yield return Until(() => motor.IsGrounded, 1.5f, "Lands.");
             yield return new WaitForSeconds(0.6f);
-            Assert.False(updraft.IsCharging, "Locked: holding Space does nothing.");
+            Assert.False(updraft.IsCharging, "Locked: holding Ctrl + Space is just a jump.");
             Assert.False(motor.Anchored);
             Keys(); yield return new WaitForSeconds(0.1f);
             Assert.AreEqual(0, launches);
@@ -120,7 +121,7 @@ namespace SandGuard.Player.Tests
             Assert.AreEqual(1, started);
             Assert.True(motor.Anchored, "Charging anchors the motor.");
             Vector3 anchoredAt = player.transform.position;
-            Keys(Key.Space, Key.W); // 충전 중 이동 입력은 무시된다
+            Keys(Key.LeftCtrl, Key.Space, Key.W); // 충전 중 이동 입력은 무시된다
             yield return new WaitForSeconds(0.3f);
             Assert.Less(Vector3.Distance(anchoredAt, player.transform.position), 0.05f, "No movement while charging.");
             Assert.AreEqual(ActionFailure.Locked, motor.TryDash().Failure, "No dash while charging.");
@@ -147,7 +148,7 @@ namespace SandGuard.Player.Tests
         {
             effects.Apply(new UpdraftEffect());
             int launches = 0; float height = -1f; updraft.Launched += (_, h) => { launches++; height = h; };
-            // holdToCharge 전에 놓으면 충전 없이 보통 점프만 한다
+            // Ctrl 없는 Space 탭은 충전 없이 보통 점프만 한다
             Keys(Key.Space); yield return new WaitForSeconds(0.05f); Keys();
             yield return Until(() => !motor.IsGrounded, 0.15f, "Tap jumps.");
             yield return Until(() => motor.IsGrounded, 1.5f, "Lands.");

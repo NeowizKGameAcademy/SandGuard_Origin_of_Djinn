@@ -13,6 +13,8 @@ namespace SandGuard.Audio
     {
         [Header("Cues")]
         public SfxCue Menu, Preparation, Combat, Boss, Danger, Victory, Defeat, WaveClearSting, BossSting;
+        [Tooltip("웨이브 시작 신호. 준비 시간이 끝나 적 스폰이 시작되는 순간(WaveDirector: Preparing → Running)마다 한 번")]
+        public SfxCue WaveStart;
 
         [Header("Behaviour")]
         public bool MenuMode;
@@ -43,9 +45,27 @@ namespace SandGuard.Audio
 
         void OnDisable() { Unsubscribe(); }
 
+        /// <summary>웨이브 시작 신호를 낸 횟수 (진단·테스트용).</summary>
+        public int WaveStarts { get; private set; }
+        RunState lastRunState = RunState.Idle;
+
+        /// <summary>WaveDirector 상태가 Running으로 막 바뀌었으면 웨이브 시작 신호.</summary>
+        void WatchWaveStart()
+        {
+            if (director == null || MenuMode) return;
+            var state = director.State;
+            if (state == RunState.Running && lastRunState != RunState.Running)
+            {
+                WaveStarts++;
+                if (WaveStart != null) SfxPlayer.Play2D(WaveStart);
+            }
+            lastRunState = state;
+        }
+
         void Update()
         {
             FindTargets();
+            WatchWaveStart();
             var target = Choose();
             if (target != Current) Switch(target);
             else if (NearSongEnd()) Switch(Current); // 같은 곡을 처음부터, 끝나 가는 쪽은 back에서 페이드아웃

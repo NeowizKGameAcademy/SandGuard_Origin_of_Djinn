@@ -742,6 +742,19 @@
         "Enemy_Assassin_Swing"
       ],
       "in_place": false
+    },
+    {
+      "output": "Assets\\8.Audio\\AudioResource\\Repaired\\Heartbeat_Loop.wav",
+      "source": "kenney/impactSoft_medium_003.ogg + 004.ogg",
+      "note": "심장 박동 루프: 80BPM 3박(2.25s), lub-dub 간격 0.26s, 380Hz 저역 통과, 꼬리를 머리에 겹쳐 이음매 없음; 루프 경계가 박 사이 조용한 구간에 오도록 0.15s 회전",
+      "after": {
+        "duration": 2.25,
+        "peak_db": -3.0
+      },
+      "cues": [
+        "UI_Health_Low_Loop"
+      ],
+      "in_place": false
     }
   ]
 }

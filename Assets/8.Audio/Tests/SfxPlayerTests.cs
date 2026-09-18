@@ -175,6 +175,43 @@ namespace SandGuard.Audio.Tests
             public void Die() => Died?.Invoke(new DeathInfo(EntityId, "enemy", FactionId, 0, new DamageInfo(5f, "Player")));
         }
 
+        sealed class FakeHealth : MonoBehaviour, IHealth, ILifeState
+        {
+#pragma warning disable 67
+            public event Action<HealthChangedInfo> HealthChanged;
+            public event Action<LifeStateChangedInfo> StateChanged;
+            public event Action<DeathInfo> Died;
+            public event Action<Guid> Revived;
+            public event Action<Guid> Despawned;
+#pragma warning restore 67
+            public float CurrentHealth { get; set; } = 100f;
+            public float MaxHealth => 100f;
+            public LifeState State { get; set; } = global::LifeState.Alive;
+        }
+
+        [UnityTest] public IEnumerator LowHealthLoopTurnsOnBelowTwentyPercentAndOffWithHysteresis()
+        {
+            var cue = MakeCue(); cue.loop = true; cue.loopFade = 0f; cue.spatial = false;
+            var go = Track(new GameObject("Player"));
+            go.SetActive(false);
+            var hp = go.AddComponent<FakeHealth>();
+            var low = go.AddComponent<SfxLowHealthLoop>(); low.Cue = cue;
+            go.SetActive(true);
+            yield return null;
+            Assert.IsFalse(low.Active, "체력 100%");
+            hp.CurrentHealth = 15f; yield return null;
+            Assert.IsTrue(low.Active, "20% 아래에서 켜진다");
+            Assert.AreEqual(1, SfxPlayer.Instance.ActiveVoiceCountFor(cue));
+            hp.CurrentHealth = 22f; yield return null;
+            Assert.IsTrue(low.Active, "20~25% 사이에서는 그대로 (경계에서 깜빡이지 않음)");
+            hp.CurrentHealth = 30f; yield return null; yield return null;
+            Assert.IsFalse(low.Active, "25% 이상 회복하면 끈다");
+            Assert.AreEqual(0, SfxPlayer.Instance.ActiveVoiceCountFor(cue));
+            hp.CurrentHealth = 10f; yield return null;
+            hp.State = global::LifeState.Dying; yield return null; yield return null;
+            Assert.IsFalse(low.Active, "죽으면 끈다");
+        }
+
         [UnityTest] public IEnumerator HitReactionPlaysHitAndDeathCues()
         {
             var hit = MakeCue(); var death = MakeCue();

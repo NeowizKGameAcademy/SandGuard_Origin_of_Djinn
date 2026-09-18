@@ -5,9 +5,8 @@ using UnityEngine.Events;
 namespace SandGuard.Player
 {
     /// <summary>
-    /// ③ 상승 기류. 해금되면 지상에서 Space는 "탭 = 점프, 홀드 = 충전"이 된다: 누른 채 <see cref="holdToCharge"/>가 지나면 웅크림 충전이 시작되고,
-    /// 그 전에 놓으면 그 순간 최대 높이 점프를 한다(탭 점프는 버튼을 떼도 낮아지지 않는다). 공중 점프는 평소처럼 누르는 즉시 나간다.
-    /// 착지한 뒤에도 누르고 있으면 그대로 충전으로 이어진다. 놓으면 충전량에 따라 <see cref="minHeight"/>~<see cref="maxHeight"/>로 발사되듯 솟아오른다.
+    /// ③ 상승 기류. 해금되면 지상에서 왼쪽 Ctrl + Space를 누르는 즉시 웅크림 충전이 시작된다. Ctrl 없이 누른 Space는 평소 점프 그대로다.
+    /// 공중에서 Ctrl + Space를 누른 채 착지하면 그대로 충전으로 이어진다. Space를 놓으면 충전량에 따라 <see cref="minHeight"/>~<see cref="maxHeight"/>로 발사되듯 솟아오른다.
     /// 충전 중에는 모터를 붙들어(<see cref="PlayerMotor.Anchored"/>) 이동·점프·대시를 막고, 공중에 뜨거나 대시·사망하면 취소된다.
     /// 연출(카메라 떨림, 기류, 충격파)은 <see cref="Charge"/>와 이벤트만 구독한다.
     /// </summary>
@@ -19,14 +18,13 @@ namespace SandGuard.Player
         [Tooltip("마나 비용을 낼 IManaWallet. 비우면 같은 오브젝트에서 찾는다")]
         public MonoBehaviour manaSource;
         [Header("해금")]
-        [Tooltip("스킬 ③ 상승 기류가 UpdraftEffect로 켠다. 꺼져 있으면 Space를 오래 눌러도 아무 일도 없다")]
+        [Tooltip("스킬 ③ 상승 기류가 UpdraftEffect로 켠다. 꺼져 있으면 Ctrl + Space도 보통 점프다")]
         public bool unlocked;
         [Header("충전")]
-        [Min(0f), Tooltip("접지 상태에서 Space를 이만큼 누르고 있으면 충전이 시작된다. 그 전에 놓으면 점프(탭)")] public float holdToCharge = 0.3f;
         [Min(0.05f), Tooltip("충전이 가득 차는 시간")] public float chargeTime = 0.8f;
         [Header("도약")]
         [Min(0.1f), Tooltip("충전 0일 때 높이")] public float minHeight = 4f;
-        [Min(0.1f), Tooltip("충전 1일 때 높이")] public float maxHeight = 10f;
+        [Min(0.1f), Tooltip("충전 1일 때 높이")] public float maxHeight = 17f;
         [Min(0), Tooltip("발사 시 마나 비용. 부족하면 충전이 취소된다")] public int manaCost = 0;
         /// <summary>충전 중인지. 애니메이터 Charging.</summary>
         public bool IsCharging { get; private set; }
@@ -44,9 +42,8 @@ namespace SandGuard.Player
         public UnityEvent<float> onCharging = new UnityEvent<float>();
         public UnityEvent onChargeCancelled = new UnityEvent();
         public UnityEvent onLaunched = new UnityEvent();
-        float holdTimer;
-        bool pendingTap; // 지상에서 눌렀지만 아직 탭인지 홀드인지 모르는 상태
         bool Held => input != null && input.JumpHeld;
+        bool Modifier => input != null && input.ChargeModifierHeld;
         bool Alive => motor == null || motor.lifeSource == null || (motor.lifeSource as ILifeState)?.State == global::LifeState.Alive;
         bool Ready => unlocked && isActiveAndEnabled && motor != null && motor.MovementEnabled && !motor.HardLandingLocked && input != null && input.AcceptsInput
             && Time.timeScale > 0f && Alive;
@@ -67,20 +64,20 @@ namespace SandGuard.Player
             Cancel();
             if (motor != null) motor.DeferGroundJumps = false;
         }
-        void OnJumpPressed() { if (Ready && !IsCharging) pendingTap = true; }
-        /// <summary>해금이 바뀐 직후 모터의 점프 유예를 바로 맞춘다. 다음 Update를 기다리면 그 사이 누른 점프가 즉시 나가 버린다.</summary>
-        public void RefreshDeferral() { if (motor != null) motor.DeferGroundJumps = Ready; }
+        // 입력 리더(-300)가 이벤트를 쏜 직후, 모터(-200)가 점프 버퍼를 처리하기 전이라 같은 프레임의 Ctrl + Space도 지상 점프로 새지 않는다.
+        void OnJumpPressed() => RefreshDeferral();
+        /// <summary>Ctrl + Space일 때만 모터의 지상 점프를 막는다. 해금이 바뀐 직후에도 불러 바로 맞춘다.</summary>
+        public void RefreshDeferral() { if (motor != null) motor.DeferGroundJumps = Ready && Modifier; }
 
         void Update()
         {
             if (!Ready)
             {
                 if (IsCharging) Cancel();
-                holdTimer = 0f; pendingTap = false;
                 if (motor != null) motor.DeferGroundJumps = false;
                 return;
             }
-            motor.DeferGroundJumps = true;
+            motor.DeferGroundJumps = Modifier;
             if (IsCharging)
             {
                 if (!motor.IsGrounded || motor.IsDashing) { Cancel(); return; }
@@ -89,24 +86,12 @@ namespace SandGuard.Player
                 onCharging.Invoke(Charge);
                 return;
             }
-            if (Held)
-            {
-                if (motor.IsGrounded && !motor.IsDashing)
-                {
-                    holdTimer += Time.deltaTime;
-                    if (holdTimer >= holdToCharge) { pendingTap = false; StartCharge(); }
-                }
-                else holdTimer = 0f;
-                return;
-            }
-            // 놓았다: 지상에서 짧게 눌렀으면(또는 착지 직전에 눌렀으면) 그 순간 점프한다.
-            if (pendingTap && !motor.IsDashing) motor.TryJump(true);
-            pendingTap = false; holdTimer = 0f;
+            if (Held && Modifier && motor.IsGrounded && !motor.IsDashing) StartCharge();
         }
 
         void StartCharge()
         {
-            IsCharging = true; Charge = 0f; holdTimer = 0f; pendingTap = false;
+            IsCharging = true; Charge = 0f;
             motor.Anchored = true;
             ChargeStarted?.Invoke();
             onChargeStarted.Invoke();
@@ -115,7 +100,6 @@ namespace SandGuard.Player
         /// <summary>충전을 버린다. 발사하지 않는다.</summary>
         public void Cancel()
         {
-            holdTimer = 0f; pendingTap = false;
             if (!IsCharging) return;
             IsCharging = false; Charge = 0f;
             if (motor != null) motor.Anchored = false;
@@ -128,7 +112,7 @@ namespace SandGuard.Player
             float charge = Charge;
             float height = HeightForCharge(charge);
             if (manaCost > 0 && (Mana == null || !Mana.TrySpend(manaCost))) { Cancel(); return; }
-            IsCharging = false; Charge = 0f; holdTimer = 0f;
+            IsCharging = false; Charge = 0f;
             motor.Anchored = false;
             motor.LaunchVertical(height);
             LastLaunchHeight = height; LaunchCount++;

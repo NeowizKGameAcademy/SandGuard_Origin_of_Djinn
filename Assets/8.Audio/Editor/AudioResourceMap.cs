@@ -27,7 +27,7 @@ namespace SandGuard.Audio.Editor
             ("Player_LevelUp", new[] { "레벨업_auda" }),
             ("UI_Fail", new[] { "마나부족스킬잠금건설불가_auda" }),
             ("Music_Menu_Loop", new[] { "메인화면 배경음" }),
-            ("Player_Footstep_Sand", new[] { "발걸음2_auda", "발자국 사운드", "플레이어 발걸음 _auda" }),
+            ("Player_Footstep_Sand", new[] { "플레이어 발걸음 _auda" }), // 2026-09-18: 한 클립만 (딛는 소리 + 모래, 가장 빠른 어택). 적은 발걸음2로 구분
             ("Enemy_ShieldBlock", new[] { "방패타격음_auda" }),
             ("Wave_Start", new[] { "웨이브 시작음_auda" }),
             ("Music_Preparation_Loop", new[] { "인게임 배경음" }),
@@ -95,7 +95,7 @@ namespace SandGuard.Audio.Editor
             ("Player_Jump", new[] { "점프_auda" }),
             ("Player_LevelUp", new[] { "레벨업_auda" }),
             ("UI_Fail", new[] { "마나부족스킬잠금건설불가_auda" }),
-            ("Player_Footstep_Sand", new[] { "플레이어 발걸음 _auda", "발걸음2_auda", "발자국 사운드" }),
+            ("Player_Footstep_Sand", new[] { "플레이어 발걸음 _auda" }),
             ("Enemy_Footstep_Light", new[] { "발걸음2_auda" }),
             ("Enemy_Footstep_Heavy", new[] { "몬스터발소리" }),
             ("Enemy_ShieldBlock", new[] { "방패타격음_auda" }),

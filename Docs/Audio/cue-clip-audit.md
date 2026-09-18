@@ -1,19 +1,20 @@
 # 큐 클립 점검
 
-큐 114개, 클립이 있는 큐 68개, 서로 다른 파일 99개.
+큐 113개, 클립이 있는 큐 74개, 서로 다른 파일 109개.
 
 ## 발견 사항
 
 | 등급 | 큐 | 클립 | 내용 |
 |---|---|---|---|
-| 주의 | Env_DesertWind_Loop | DesertWind_Loop.wav | 58s인데 Streaming 아님 (loadType 0) |
 | 주의 | Env_Lightning | 천둥-먼 거리.wav | 앞 무음 0.63s — 이벤트보다 늦게 들림 |
 | 주의 | Env_Lightning | - | 변형끼리 크기 차 20.7 dB (Thunder_Near.wav -7.5 ↔ 천둥-먼 거리.wav -28.2) |
 | 주의 | Music_Boss_Loop | 보스테마곡2.mp3 | 루프 이음매: 끝↔처음 점프 비율 0, 끝/처음 크기 차 +19.9 dB |
 | 주의 | Music_Combat_Loop | 웨이브테마곡2.mp3 | 루프 이음매: 끝↔처음 점프 비율 0, 끝/처음 크기 차 -45.9 dB |
 | 주의 | Music_Menu_Loop | 메인화면 배경음.mp3 | 루프 이음매: 끝↔처음 점프 비율 2, 끝/처음 크기 차 -14.2 dB |
 | 주의 | Music_Preparation_Loop | 인게임 배경음.mp3 | 루프 이음매: 끝↔처음 점프 비율 0, 끝/처음 크기 차 -25.6 dB |
+| 주의 | UI_Health_Low_Loop | Heartbeat_Loop.wav | 루프 이음매: 끝↔처음 점프 비율 569, 끝/처음 크기 차 -169.0 dB |
 | 정보 | Core_Ping | CorePing.wav | 뒤 무음 0.90s — 보이스를 불필요하게 오래 잡음 |
+| 정보 | Core_Warning | 코어핑.wav | 뒤 무음 1.71s — 보이스를 불필요하게 오래 잡음 |
 | 정보 | Enemy_BodyFall | impactSoft_heavy_000.ogg | 3D 큐인데 스테레오 클립 (좌우 상관 1.00) — 3D에서는 Force To Mono 권장 |
 | 정보 | Enemy_BodyFall | impactSoft_heavy_001.ogg | 3D 큐인데 스테레오 클립 (좌우 상관 1.00) — 3D에서는 Force To Mono 권장 |
 | 정보 | Enemy_BodyFall, Player_BodyFall | impactSoft_heavy_000.ogg | 여러 큐가 같은 클립을 공유 |
@@ -49,7 +50,7 @@
 | Core_Hit | impactGlass_medium_002.ogg | 0.54 | 2 | 44100 | -1.0 | -18.4 | 0.00 | 0.28 | -47 | Decompress |
 | Core_Hum_Loop | 코어허밍_auda.wav | 9.38 | 1 | 48000 | -0.7 | -6.4 | 0.00 | 0.00 | -20 | Decompress |
 | Core_Ping | CorePing.wav | 2.48 | 1 | 44100 | -18.2 | -23.2 | 0.00 | 0.90 | -75 | Decompress |
-| Core_Warning | impactBell_heavy_000.ogg | 1.48 | 2 | 44100 | -1.1 | -16.4 | 0.00 | 0.43 | -60 | Decompress |
+| Core_Warning | 코어핑.wav | 3.29 | 2 | 48000 | -1.8 | -6.8 | 0.00 | 1.71 | -84 | Decompress |
 | Enemy_Assassin_Swing | 휘두름_가벼움_01.wav | 0.57 | 2 | 48000 | -2.6 | -12.8 | 0.00 | 0.05 | -68 | Decompress |
 | Enemy_Assassin_Swing | Swing_Light_03.wav | 0.31 | 1 | 44100 | -1.0 | -13.4 | 0.03 | 0.09 | -60 | Decompress |
 | Enemy_BodyFall | impactSoft_heavy_000.ogg | 0.51 | 2 | 44100 | -0.9 | -10.4 | 0.00 | 0.10 | -43 | Decompress |
@@ -90,7 +91,7 @@
 | Enemy_Swordsman_Swing | 휘두름_가벼움_01.wav | 0.57 | 2 | 48000 | -2.6 | -12.8 | 0.00 | 0.05 | -68 | Decompress |
 | Enemy_Swordsman_Swing | 휘두름_가벼움_02.wav | 0.48 | 2 | 48000 | -0.2 | -8.7 | 0.00 | 0.05 | -67 | Decompress |
 | Enemy_Swordsman_Swing | Swing_Light_03.wav | 0.31 | 1 | 44100 | -1.0 | -13.4 | 0.03 | 0.09 | -60 | Decompress |
-| Env_DesertWind_Loop | DesertWind_Loop.wav | 58.15 | 1 | 44100 | -1.1 | -10.7 | 0.00 | 0.00 | -25 | Decompress |
+| Env_DesertWind_Loop | DesertWind_Loop.wav | 58.15 | 1 | 44100 | -1.1 | -10.7 | 0.00 | 0.00 | -25 | Streaming |
 | Env_Lightning | Thunder_Near.wav | 22.01 | 2 | 48000 | 0.0 | -7.5 | 0.03 | 0.53 | -66 | Decompress |
 | Env_Lightning | 천둥-먼 거리.wav | 18.99 | 2 | 48000 | -18.4 | -28.2 | 0.63 | 1.38 | -162 | Decompress |
 | Env_Lightning | Thunder_Mid_Alternative.wav | 7.10 | 2 | 48000 | -10.8 | -20.6 | 0.00 | 0.12 | -77 | Decompress |
@@ -145,7 +146,17 @@
 | Player_Updraft_Charge_Loop | Charge_Loop.wav | 1.30 | 2 | 48000 | -9.2 | -17.3 | 0.00 | 0.00 | -11 | Decompress |
 | Player_Updraft_Launch | 폭발4_차지점프_auda.wav | 1.95 | 1 | 48000 | -0.0 | -3.9 | 0.02 | 0.34 | -82 | Decompress |
 | UI_Click | UI버튼 클릭음_auda.wav | 0.25 | 1 | 44100 | -0.1 | -23.8 | 0.02 | 0.02 | -51 | Decompress |
+| UI_Cooldown_Ready | impactGlass_medium_003.ogg | 0.54 | 2 | 44100 | -1.3 | -18.3 | 0.00 | 0.24 | -48 | Decompress |
+| UI_Cooldown_Ready | impactGlass_medium_004.ogg | 0.54 | 2 | 44100 | -1.4 | -17.4 | 0.00 | 0.26 | -52 | Decompress |
 | UI_Fail | 마나부족스킬잠금건설불가_auda.wav | 0.28 | 1 | 44100 | -10.0 | -12.7 | 0.01 | 0.08 | -74 | Decompress |
+| UI_Health_Low_Loop | Heartbeat_Loop.wav | 2.25 | 1 | 48000 | -3.0 | -14.0 | 0.00 | 0.39 | -177 | Decompress |
+| UI_Menu_Close | impactGeneric_light_003.ogg | 0.14 | 2 | 44100 | -1.1 | -19.3 | 0.00 | 0.00 | -36 | Decompress |
+| UI_Menu_Open | impactGeneric_light_001.ogg | 0.12 | 2 | 44100 | -1.0 | -19.4 | 0.00 | 0.00 | -35 | Decompress |
+| UI_Skill_Equip | impactMetal_medium_001.ogg | 0.14 | 2 | 44100 | -1.2 | -18.0 | 0.00 | 0.04 | -41 | Decompress |
+| UI_Skill_Equip | impactMetal_medium_003.ogg | 0.25 | 2 | 44100 | -1.4 | -17.7 | 0.00 | 0.12 | -47 | Decompress |
+| UI_Skill_Learn | impactBell_heavy_001.ogg | 1.74 | 2 | 44100 | -1.2 | -14.5 | 0.00 | 0.48 | -60 | Decompress |
+| UI_Skill_Learn | impactBell_heavy_002.ogg | 0.70 | 2 | 44100 | -0.8 | -15.8 | 0.00 | 0.26 | -53 | Decompress |
+| UI_Skill_Learn | impactBell_heavy_004.ogg | 0.30 | 2 | 44100 | -1.1 | -17.5 | 0.00 | 0.18 | -47 | Decompress |
 | Wall_Destroy | TowerDestroy_01.wav | 2.00 | 1 | 44100 | -11.8 | -17.4 | 0.00 | 0.01 | -50 | Decompress |
 | Wall_Hit | impactMining_003.ogg | 0.99 | 2 | 44100 | -1.0 | -13.7 | 0.00 | 0.43 | -66 | Decompress |
 | Wall_Hit | impactMining_004.ogg | 0.83 | 2 | 44100 | -0.9 | -10.9 | 0.00 | 0.35 | -61 | Decompress |
