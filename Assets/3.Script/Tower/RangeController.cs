@@ -1,6 +1,8 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using SandGuard.Player;
 
 // =====================================================================================
 // [통합 수정 2026-09-14] 게임의 실제 적(Assets/Enemy)과 연결하기 위한 수정입니다.
@@ -39,6 +41,7 @@ public class RangeController : MonoBehaviour
     }
 
     [SerializeField] private Type type;
+    [SerializeField] private PlayerManaWallet Player;
 
     [Header("Status")]
     [SerializeField] private TowerStatus Status;
@@ -48,6 +51,8 @@ public class RangeController : MonoBehaviour
 
     [Header("Slow")]
     [SerializeField] private float SlowRatio;
+    [SerializeField] private int ManaGain;
+    [SerializeField] private float GainTick;
 
     // [통합 추가] 검사·요청 간격(초). 둔화는 이 간격의 2배 조금 넘게 걸어 두고 계속 갱신한다.
     [Header("Integration")]
@@ -67,14 +72,22 @@ public class RangeController : MonoBehaviour
 
     private string Faction => Owner != null ? Owner.FactionId : "Ally";
 
+    private Coroutine ReGainCoroutine;
+
     // [통합 추가] 범위 모양(이 오브젝트의 콜라이더)과 타워 자신의 전투 정보(진영·ID)
     private void Awake()
     {
-        TryGetComponent(out Status);
         TryGetComponent(out Area);
-        Owner = GetComponentInParent<ICombatTarget>();
 
+        Owner = GetComponentInParent<ICombatTarget>();
+        Player = FindAnyObjectByType<PlayerManaWallet>();
+    }
+
+    private void OnEnable()
+    {
         SlowRatio = Status.slowRatio;
+        ManaGain = Status.manaGain;
+        GainTick = Status.gainTick;
 
         Tick_Interval = Status.tickInterval;
         Fire_Damage = Status.tickDamage;
@@ -83,6 +96,9 @@ public class RangeController : MonoBehaviour
     // [통합 추가] 트리거 콜백 대신 주기적으로 범위 안 적을 찾아 요청을 보낸다.
     private void Update()
     {
+        if (type == Type.Slow)
+            ReGainMana();
+
         Tick_Timer -= Time.deltaTime;
 
         if (Tick_Timer > 0f)
@@ -124,6 +140,15 @@ public class RangeController : MonoBehaviour
 
                     break;
             }
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (ReGainCoroutine != null)
+        {
+            StopCoroutine(ReGainCoroutine);
+            ReGainCoroutine = null;
         }
     }
 
@@ -211,4 +236,33 @@ public class RangeController : MonoBehaviour
         }
     }
     */
+
+    private void ReGainMana()
+    {
+        if (DetectRange.Contains(Player.transform.position, DetectRange.range))
+        {
+            if (ReGainCoroutine == null)
+                ReGainCoroutine = StartCoroutine(ReGainMana_co());
+        }
+        else
+        {
+            if (ReGainCoroutine != null)
+            {
+                StopCoroutine(ReGainCoroutine);
+                ReGainCoroutine = null;
+            }
+        }
+    }
+
+    private IEnumerator ReGainMana_co()
+    {
+        while (true)
+        {
+            Player.Gain(ManaGain);
+
+            Debug.Log("Mana Gained");
+
+            yield return new WaitForSeconds(GainTick);
+        }
+    }
 }

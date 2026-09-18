@@ -12,6 +12,7 @@ public class ShowRange : MonoBehaviour
     [SerializeField] private Renderer renderer;
 
     [Header("Fade")]
+    [SerializeField] private float ShowDistance = 7.5f;
     [SerializeField] private float FadeSpeed = 10f;
 
     private float CurrentAlpha;
@@ -34,7 +35,7 @@ public class ShowRange : MonoBehaviour
 
     private void OnOffRange()
     {
-        float TargetAlpha = detectRange.Contains(Player.transform.position) ? 1f : 0f;
+        float TargetAlpha = detectRange.Contains(Player.transform.position, ShowDistance) ? 1f : 0f;
 
         CurrentAlpha = Mathf.Lerp(
             CurrentAlpha,

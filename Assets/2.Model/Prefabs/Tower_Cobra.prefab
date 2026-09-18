@@ -152,6 +152,8 @@ MonoBehaviour:
   TickDamage: 10
   TickInterval: 1
   SlowRatio: 0.3
+  ManaGain: 10
+  GainTick: 1
   CreatureNum: 7
   SummonDistance: 0.3
 --- !u!114 &3477409069980780067
@@ -15090,9 +15092,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RangeController
   type: 0
-  Status: {fileID: 0}
+  Player: {fileID: 0}
+  Status: {fileID: 5651857099929563370}
   DetectRange: {fileID: 3477409069980780067}
   SlowRatio: 0.5
+  ManaGain: 0
+  GainTick: 0
   Tick_Interval: 0.25
   Fire_Damage: 5
   Cause_Id: tower.fire
@@ -20188,8 +20193,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f15225beef3f124bbe5007befebcf34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShowRange
+  Player: {fileID: 0}
   detectRange: {fileID: 0}
   renderer: {fileID: 4445096993401758971}
+  ShowDistance: 7.5
+  FadeSpeed: 10
 --- !u!1 &8051442605204366221
 GameObject:
   m_ObjectHideFlags: 0

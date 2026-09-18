@@ -15,6 +15,8 @@ public class TowerStatus : MonoBehaviour
 
     [Header("Obelisk Status")]
     [SerializeField] private float SlowRatio = 0.3f;
+    [SerializeField] private int ManaGain = 10;
+    [SerializeField] private float GainTick = 1f;
 
     [Header("Coffin Status")]
     [SerializeField] private int CreatureNum = 7;
@@ -27,6 +29,8 @@ public class TowerStatus : MonoBehaviour
     public float tickDamage => TickDamage;
     public float tickInterval => TickInterval;
     public float slowRatio => SlowRatio;
+    public int manaGain => ManaGain;
+    public float gainTick => GainTick;
     public int creatureNum => CreatureNum;
     public float summonDistance => SummonDistance;
 

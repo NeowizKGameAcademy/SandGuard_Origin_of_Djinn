@@ -64,8 +64,8 @@ public class DetectRange : MonoBehaviour
         return (other.ClosestPoint(center) - center).sqrMagnitude <= Range * Range;
     }
 
-    public bool Contains(Vector3 position)
+    public bool Contains(Vector3 position, float range)
     {
-        return (position - transform.position).sqrMagnitude <= 7.5f * 7.5f;
+        return (position - transform.position).sqrMagnitude <= range * range;
     }
 }
