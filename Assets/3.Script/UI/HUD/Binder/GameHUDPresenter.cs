@@ -24,7 +24,8 @@ namespace SandGuard.UI.HUD
         SkillTreeHUDLink skillTreeLink;
         // 마지막으로 그린 값. NaN이면 아직 그리지 않았다.
         float hp = float.NaN, hpMax, coreValue = float.NaN, coreMax, bossHp = float.NaN, bossMax;
-        int mp = -1, mpMax, level = -1, exp, expNeed, waveNumber = -1;
+        int mp = -1, mpMax, level = -1, exp, expNeed, waveNumber = -1, remainingEnemies = -1, announcedWave = -1;
+        RunState lastWaveState = RunState.Idle;
         readonly float[] slotRemaining = { -1, -1, -1, -1, -1, -1 };
         readonly bool[] slotBlocked = new bool[6];
 
@@ -134,8 +135,22 @@ namespace SandGuard.UI.HUD
 
         void RefreshWave()
         {
-            int number = wave is IWaveStateReader reader ? reader.WaveNumber : -1;
+            if (wave is not IWaveStateReader reader) return;
+            int number = reader.WaveNumber;
             if (number >= 0 && number != waveNumber) hud.Wave.SetWave(waveNumber = number);
+            int remaining = reader.AliveEnemyCount + reader.PendingEnemyCount;
+            if (remaining != remainingEnemies) hud.Wave.SetRemainingEnemies(remainingEnemies = remaining);
+
+            if (wave is WaveDirector director)
+            {
+                hud.Wave.SetRemainingEnemiesVisible(director.State == RunState.Running);
+                if (director.State == RunState.Running && lastWaveState != RunState.Running && number != announcedWave)
+                {
+                    announcedWave = number;
+                    if (hud.WaveAlert != null) hud.WaveAlert.ShowWave(number);
+                }
+                lastWaveState = director.State;
+            }
         }
 
         void RefreshBoss()

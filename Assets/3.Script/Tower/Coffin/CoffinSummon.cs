@@ -5,9 +5,7 @@ public class CoffinSummon : MonoBehaviour
 {
     [Header("Components")]
     [SerializeField] private DetectRange Range;
-
-    [Header("Summon")]
-    [SerializeField] private int summonNum;
+    [SerializeField] private TowerStatus Status;
     [SerializeField] private ObjectPooling CreaturePool;
     [SerializeField] private float RespawnCoolDown = 5f;
 
@@ -16,6 +14,7 @@ public class CoffinSummon : MonoBehaviour
 
     private void OnEnable()
     {
+        TryGetComponent(out Status);
         TryGetComponent(out Range);
 
         SetPoints();
@@ -29,16 +28,16 @@ public class CoffinSummon : MonoBehaviour
 
     public void SetPoints()
     {
-        if (summonNum <= 0)
+        if (Status.creatureNum <= 0)
             return;
 
-        summonPoints = new Vector3[summonNum];
-        summonedCreatures = new CreatureController[summonNum];
+        summonPoints = new Vector3[Status.creatureNum];
+        summonedCreatures = new CreatureController[Status.creatureNum];
 
-        float radius = Range.range * 0.3f;
-        float angleStep = 360f / summonNum;
+        float radius = Range.range * Status.summonDistance;
+        float angleStep = 360f / Status.creatureNum;
 
-        for (int i = 0; i < summonNum; i++)
+        for (int i = 0; i < Status.creatureNum; i++)
         {
             float angle = angleStep * i;
             float radian = angle * Mathf.Deg2Rad;
@@ -55,7 +54,7 @@ public class CoffinSummon : MonoBehaviour
 
     public void SummonAll()
     {
-        for (int i = 0; i < summonNum; i++)
+        for (int i = 0; i < Status.creatureNum; i++)
         {
             Summon(i);
         }

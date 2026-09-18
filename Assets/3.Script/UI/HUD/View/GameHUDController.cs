@@ -8,6 +8,7 @@ namespace SandGuard.UI.HUD
         [SerializeField] private CoreStatusHUD coreStatus;
         [SerializeField] private BossStatusHUD bossStatus;
         [SerializeField] private WaveHUD wave;
+        [SerializeField] private WaveAlertHUD waveAlert;
         [SerializeField] private CombatSkillHUD combatSkills;
         [SerializeField] private MovementSkillHUD movementSkills;
         [SerializeField] private MinimapHUD minimap;
@@ -15,6 +16,7 @@ namespace SandGuard.UI.HUD
         public CoreStatusHUD CoreStatus => coreStatus;
         public BossStatusHUD BossStatus => bossStatus;
         public WaveHUD Wave => wave;
+        public WaveAlertHUD WaveAlert => waveAlert;
         public CombatSkillHUD CombatSkills => combatSkills;
         public MovementSkillHUD MovementSkills => movementSkills;
         public MinimapHUD Minimap => minimap;

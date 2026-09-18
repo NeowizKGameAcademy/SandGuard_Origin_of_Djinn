@@ -7,16 +7,17 @@ using UnityEngine.Rendering.Universal;
 namespace SandGuard.UI.HUD
 {
     /// <summary>
-    /// 미니맵. 플레이어 위를 따라다니는 북쪽 고정(위 = +Z) 직교 카메라가 RenderTexture에 지형을 그리고, 그 위에 마커를 얹는다.
-    /// 마커: 플레이어(화살표, 바라보는 방향으로 회전), 적(작은 점, 반경 밖이면 숨김), 코어·보스(반경 밖이면 가장자리에 붙임).
+    /// 미니맵. 코어를 중심으로 고정된 북쪽 고정(위 = +Z) 직교 카메라가 전체 전장을 그리고, 그 위에 마커를 얹는다.
+    /// 마커: 플레이어(화살표, 바라보는 방향으로 회전), 적, 코어, 보스.
     /// 플레이어(PlayerHealth)가 없는 씬(HUD.unity)에서는 아무것도 하지 않아 빈 판이 그대로 보인다.
     /// </summary>
     [DefaultExecutionOrder(-90)]
     public sealed class MinimapController : MonoBehaviour
     {
         [SerializeField] private GameHUDController hud;
-        [Tooltip("지도에 보이는 반경(m). 카메라 orthographicSize")] public float viewRadius = 30f;
-        [Tooltip("플레이어 위 카메라 높이(m)")] public float cameraHeight = 60f;
+        [Tooltip("전체 전장을 담는 지도 반경(m). 카메라 orthographicSize")] public float viewRadius = 75f;
+        [Tooltip("고정 미니맵 카메라 높이(m)")] public float cameraHeight = 120f;
+        [Tooltip("코어 기준 미니맵 중심 보정값(XZ)")] public Vector2 mapCenterOffset;
         public int textureSize = 512;
         public Color groundColor = new Color(.16f, .12f, .09f, 1f);
         [Tooltip("지도에 그릴 레이어. 기본은 UI 제외 전부")] public LayerMask cullingMask = ~(1 << 5);
@@ -67,7 +68,7 @@ namespace SandGuard.UI.HUD
             data.renderShadows = false; data.renderPostProcessing = false;
             data.requiresColorOption = CameraOverrideOption.Off; data.requiresDepthOption = CameraOverrideOption.Off;
             go.transform.rotation = Quaternion.Euler(90f, 0f, 0f); // 위에서 아래로, 화면 위 = 세계 +Z
-            Follow();
+            PositionFixedCamera();
         }
 
         void BuildMarkers()
@@ -82,17 +83,19 @@ namespace SandGuard.UI.HUD
         void LateUpdate()
         {
             if (player == null) return;
-            Follow();
             UpdateMarkers();
         }
 
-        void Follow()
+        void PositionFixedCamera()
         {
-            var p = player.position;
-            cam.transform.position = new Vector3(p.x, p.y + cameraHeight, p.z);
+            Vector3 center = core != null ? core.position : player.position;
+            cam.transform.position = new Vector3(
+                center.x + mapCenterOffset.x,
+                center.y + cameraHeight,
+                center.z + mapCenterOffset.y);
         }
 
-        // 세계 좌표 → 지도 픽셀(지도 중심 기준). 카메라가 플레이어 위에 있으므로 플레이어가 항상 중심이다.
+        // 세계 좌표 → 고정된 전체 지도 픽셀(지도 중심 기준).
         Vector2 ToMap(Vector3 world)
         {
             var rect = Map.MarkerRoot.rect;
@@ -114,7 +117,7 @@ namespace SandGuard.UI.HUD
 
         void UpdateMarkers()
         {
-            playerDot.anchoredPosition = Vector2.zero;
+            Place(playerDot, player.position, true);
             playerDot.localRotation = Quaternion.Euler(0f, 0f, -player.eulerAngles.y); // 화살표 위 = 북쪽(+Z)
             if (core != null) Place(coreDot, core.position, true);
 
