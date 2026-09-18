@@ -41,6 +41,9 @@ namespace SandGuard.Audio.Editor
             ("Facility_Cobra_Destroy", new[] { "타워파괴2_auda", "타워파괴음" }),
             ("Enemy_Chief_Bomb_Explosion", new[] { "폭발", "폭발2" }),
             ("Enemy_Hit", new[] { "피격음", "피격음2", "피격음3_auda" }),
+            ("Player_Pierce_Charge_Loop", new[] { "기 모으기" }),
+            ("Player_SandStorm_Cast", new[] { "폭풍" }),
+            ("Player_Recall_Warp", new[] { "whoosh모음" }),
         };
 
         static Dictionary<string, AudioClip> LoadAll()

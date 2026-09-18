@@ -24,12 +24,16 @@ namespace SandGuard.Player
         public bool PrimaryAttackHeld => AcceptsInput && (attack?.IsPressed() ?? false);
         /// <summary>점프 버튼을 계속 누르고 있는지. 가변 점프 높이에 쓴다.</summary>
         public bool JumpHeld => AcceptsInput && (jump?.IsPressed() ?? false);
+        /// <summary>공격 스킬 키(0 = Q, 1 = E, 2 = R)를 계속 누르고 있는지. 입력이 막히면 false.</summary>
+        public bool SkillHeld(int slot) => AcceptsInput && map != null && (map.FindAction("Skill" + (slot + 1))?.IsPressed() ?? false);
         public event Action PrimaryActionPressed;
         public event Action SpellPressed;
         public event Action JumpPressed;
         public event Action DashPressed;
         /// <summary>공격 스킬 키. 0 = Q(Skill1), 1 = E(Skill2), 2 = R(Skill3). 입력 에셋에 해당 액션이 없으면 오지 않는다.</summary>
         public event Action<int> SkillPressed;
+        /// <summary>공격 스킬 키를 뗀 순간. 충전형 스킬(관통탄)이 발사 시점으로 쓴다. 입력이 막힌 채로 떼면 오지 않으니 충전 쪽은 <see cref="SkillHeld"/>도 같이 봐야 한다.</summary>
+        public event Action<int> SkillReleased;
         public event Action<int> SlotSelected;
         public event Action BuildModeToggled;
         /// <summary>인터페이스 호환용. 회전 입력은 기획에 없어 발생하지 않는다.</summary>
@@ -70,13 +74,18 @@ namespace SandGuard.Player
             if (jump.WasPressedThisFrame()) JumpPressed?.Invoke();
             if (Pressed("Spell")) SpellPressed?.Invoke();
             if (Pressed("Dash")) DashPressed?.Invoke();
-            for (int i = 0; i < 3; i++) if (Pressed("Skill" + (i + 1))) SkillPressed?.Invoke(i);
+            for (int i = 0; i < 3; i++)
+            {
+                if (Pressed("Skill" + (i + 1))) SkillPressed?.Invoke(i);
+                if (Released("Skill" + (i + 1))) SkillReleased?.Invoke(i);
+            }
             if (Pressed("BuildMode")) BuildModeToggled?.Invoke();
             if (Pressed("Cancel")) CancelPressed?.Invoke();
             for (int i = 0; i < 9; i++) if (Pressed("Slot" + (i + 1))) SlotSelected?.Invoke(i);
         }
 
         bool Pressed(string name) => map.FindAction(name)?.WasPressedThisFrame() ?? false;
+        bool Released(string name) => map.FindAction(name)?.WasReleasedThisFrame() ?? false;
         void OnApplicationFocus(bool value)
         {
             focused = value;

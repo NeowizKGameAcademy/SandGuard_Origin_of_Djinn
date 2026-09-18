@@ -22,6 +22,8 @@ namespace SandGuard.Player
         [Tooltip("Hand-local rotation whose forward points out of the palm and up follows the fingers.")]
         public Quaternion palmBasis = Quaternion.identity;
         public float Weight { get; private set; }
+        /// <summary>true면 조준 자세·IK를 쉰다(관통탄 양팔 동작 중). 손바닥 플래시는 그대로 낸다.</summary>
+        public bool Suppressed { get; set; }
         public bool UsesRightHand => requested || Weight > .001f;
         public bool ReadyToFire => requested && raisedTime >= raiseDuration && Weight >= .95f && poseFrame == Time.frameCount;
         public Vector3 AimDirection { get; private set; }
@@ -61,6 +63,9 @@ namespace SandGuard.Player
             SetFlash(true);
         }
 
+        /// <summary>자세 없이 손바닥 플래시만(관통탄 발사: 자세는 Pierce Casting 레이어가 맡는다).</summary>
+        public void Flash() { flashTime = .065f; SetFlash(true); }
+
         void Update()
         {
             if (layer < 0) return;
@@ -70,8 +75,8 @@ namespace SandGuard.Player
             recoilTime += dt;
             flashTime = Mathf.Max(0, flashTime - dt);
             SetFlash(flashTime > 0);
-            raisedTime = requested ? raisedTime + dt : 0f;
-            bool active = requested || holdTime > 0f;
+            raisedTime = requested && !Suppressed ? raisedTime + dt : 0f;
+            bool active = !Suppressed && (requested || holdTime > 0f);
             Weight = Mathf.MoveTowards(Weight, active ? 1f : 0f, dt / (active ? raiseDuration : lowerDuration));
             animator.SetLayerWeight(layer, Mathf.SmoothStep(0, 1, Weight));
             animator.SetBool("Casting", UsesRightHand);
@@ -91,7 +96,7 @@ namespace SandGuard.Player
 
         void OnAnimatorIK(int layerIndex)
         {
-            if (layerIndex != layer || Weight <= 0f || attack == null || attack.aimer == null) return;
+            if (layerIndex != layer || Weight <= 0f || Suppressed || attack == null || attack.aimer == null) return;
             Transform owner = attack.transform;
             Vector3 direction = (attack.aimer.GetAimPoint() - upperArm.position).normalized;
             // Avoid an elbow folding backwards while the body catches up with a fast camera turn.

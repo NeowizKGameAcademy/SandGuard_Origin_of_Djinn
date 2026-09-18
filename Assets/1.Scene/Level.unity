@@ -711,6 +711,8 @@ MonoBehaviour:
   allowedFacilityIds:
   - cobra
   - obelisk
+  - skeleton
+  - anubis
   footprint: {x: 4, y: 4}
   available: 1
 --- !u!1 &49566597
@@ -5061,6 +5063,8 @@ MonoBehaviour:
   allowedFacilityIds:
   - cobra
   - obelisk
+  - skeleton
+  - anubis
   footprint: {x: 4, y: 4}
   available: 1
 --- !u!1001 &359434510
@@ -6894,6 +6898,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxEmitter
   Cue: {fileID: 11400000, guid: 8fae4864b484c5f4e95945ce5da6a2fd, type: 2}
+  BeginCue: {fileID: 0}
+  EndCue: {fileID: 0}
   VolumeScale: 1
   Delay: 0
   Trigger: 0
@@ -9496,6 +9502,8 @@ MonoBehaviour:
   allowedFacilityIds:
   - cobra
   - obelisk
+  - skeleton
+  - anubis
   footprint: {x: 4, y: 4}
   available: 1
 --- !u!1 &666992427
@@ -11642,6 +11650,8 @@ MonoBehaviour:
   allowedFacilityIds:
   - cobra
   - obelisk
+  - skeleton
+  - anubis
   footprint: {x: 4, y: 4}
   available: 1
 --- !u!1001 &835317462
@@ -13811,6 +13821,8 @@ MonoBehaviour:
   allowedFacilityIds:
   - cobra
   - obelisk
+  - skeleton
+  - anubis
   footprint: {x: 4, y: 4}
   available: 1
 --- !u!1001 &970470950
@@ -17339,6 +17351,8 @@ MonoBehaviour:
   allowedFacilityIds:
   - cobra
   - obelisk
+  - skeleton
+  - anubis
   footprint: {x: 4, y: 4}
   available: 1
 --- !u!1 &1217874065
@@ -18608,6 +18622,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxEmitter
   Cue: {fileID: 11400000, guid: b3d2d02a4c56d6f43b76de6e640ada6e, type: 2}
+  BeginCue: {fileID: 0}
+  EndCue: {fileID: 0}
   VolumeScale: 1
   Delay: 0
   Trigger: 0
@@ -21420,6 +21436,8 @@ MonoBehaviour:
   allowedFacilityIds:
   - cobra
   - obelisk
+  - skeleton
+  - anubis
   footprint: {x: 4, y: 4}
   available: 1
 --- !u!1 &1572243632
@@ -24077,6 +24095,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxEmitter
   Cue: {fileID: 11400000, guid: 9bb07588cc3430946bf7a8edfc6504e6, type: 2}
+  BeginCue: {fileID: 0}
+  EndCue: {fileID: 0}
   VolumeScale: 1
   Delay: 0
   Trigger: 0
@@ -28086,6 +28106,8 @@ MonoBehaviour:
   allowedFacilityIds:
   - cobra
   - obelisk
+  - skeleton
+  - anubis
   footprint: {x: 4, y: 4}
   available: 1
 --- !u!1001 &1940443367

@@ -11,7 +11,7 @@ namespace DesertTower.VFX.Editor
         public const string FacilityPath = PrefabDir + "/VFX_Facility_Hit.prefab";
         public const string BombPath = PrefabDir + "/VFX_Demolition_Bomb_Explosion.prefab";
         public const string DisabledPath = PrefabDir + "/VFX_Facility_Disabled_Loop.prefab";
-        public const string CobraPath = "Assets/2.Model/Prefabs/Tower (Cobra).prefab";
+        public const string CobraPath = "Assets/2.Model/Prefabs/Tower_Cobra.prefab"; // 이름이 Tower (Cobra) → Tower_Cobra 로 바뀌었다
 
         public static void BuildLightningAndPreview()
         {

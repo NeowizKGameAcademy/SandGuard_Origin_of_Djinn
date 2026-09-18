@@ -44,7 +44,15 @@ namespace SandGuard.Audio.Editor
 
             // 1) 카탈로그의 모든 큐가 존재하게 (없는 것만 빈 큐로 생성)
             foreach (var entry in SfxCatalog.Entries)
-                if (!File.Exists(PathOf(entry.Name))) { Ensure(entry.Name, mixer); created++; }
+            {
+                if (!File.Exists(PathOf(entry.Name))) { Ensure(entry.Name, mixer); created++; continue; }
+                // 재생 확률은 새로 생긴 필드라 기존 큐는 전부 1이다. 아직 손대지 않은(=1) 큐에만 카탈로그 값을 한 번 심는다
+                if (entry.Chance < 1f)
+                {
+                    var existing = AssetDatabase.LoadAssetAtPath<SfxCue>(PathOf(entry.Name));
+                    if (existing != null && existing.chance >= 1f) { existing.chance = entry.Chance; EditorUtility.SetDirty(existing); }
+                }
+            }
 
             // 2) Generated 폴더의 이름 규칙 파일
             var groups = new SortedDictionary<string, List<AudioClip>>();
@@ -105,7 +113,7 @@ namespace SandGuard.Audio.Editor
             var entry = SfxCatalog.Find(name);
             if (entry == null) return;
             cue.spatial = entry.Spatial; cue.minDistance = entry.Min; cue.maxDistance = entry.Max;
-            cue.volume = entry.Volume; cue.maxVoices = entry.MaxVoices;
+            cue.volume = entry.Volume; cue.maxVoices = entry.MaxVoices; cue.chance = entry.Chance;
             if (entry.Kind == PlaceholderKind.Drone || entry.Kind == PlaceholderKind.Sting) { cue.pitchJitter = 0f; cue.volumeJitterDb = 0f; }
             if (entry.Kind == PlaceholderKind.Voice) cue.pitchJitter = 0.06f;
         }

@@ -89,6 +89,9 @@ namespace DesertTower.VFX.Editor
         public const string BuildPoofPath = PrefabDir + "/VFX_Build_Poof.prefab";
         public const string FireImpactPath = PrefabDir + "/VFX_Fire_Impact.prefab";
         public const string SandBurstPath = PrefabDir + "/VFX_Sand_Burst.prefab";
+        public const string PierceHitPath = PrefabDir + "/VFX_Pierce_Hit.prefab";
+        public const string RecallDepartPath = PrefabDir + "/VFX_Recall_Depart.prefab";
+        public const string RecallArrivePath = PrefabDir + "/VFX_Recall_Arrive.prefab";
         public const string EnemySpawnPath = PrefabDir + "/VFX_Enemy_Spawn.prefab";
         public const string ManaChargeCompletePath = PrefabDir + "/VFX_Mana_Charge_Complete.prefab";
         public const string CoreDamageEnemyPath = PrefabDir + "/VFX_Core_Damage_Enemy.prefab";
@@ -103,6 +106,9 @@ namespace DesertTower.VFX.Editor
             (BuildPoof(), BuildPoofPath),
             (FireImpact(), FireImpactPath),
             (SandBurst(), SandBurstPath),
+            (PierceHit(), PierceHitPath),
+            (RecallDepart(), RecallDepartPath),
+            (RecallArrive(), RecallArrivePath),
             (EnemySpawn(), EnemySpawnPath),
             (ManaChargeComplete(), ManaChargeCompletePath),
             (CoreDamageEnemy(), CoreDamageEnemyPath),
@@ -241,12 +247,13 @@ namespace DesertTower.VFX.Editor
             BodyHeight = 0.3f,
             FlashSize = 1.8f, FlashColor = new Color(1f, 0.95f, 0.8f),
             CoreCount = 5, CoreSize = 0.3f, CoreA = Color.white, CoreB = Orange, CoreC = BeigeDark,
-            Shockwave = true, ShockwaveSize = 2.2f, ShockwaveColor = Beige, ShockwaveCount = 2, ShockwaveInterval = 0.14f,
-            DebrisCount = 36,
-            DebrisSize = new Vector2(0.06f, 0.12f),
-            DebrisSpeed = new Vector2(1.6f, 3f),
-            DebrisLife = new Vector2(0.6f, 1.0f),
-            DebrisGravity = 0.9f,
+            Shockwave = true, ShockwaveSize = 2.2f, ShockwaveColor = Gold, ShockwaveCount = 2, ShockwaveInterval = 0.14f,
+            // 컨셉의 "튀어오르는 바위": 큼직한 조각이 높이 튀어 무겁게 떨어진다. 지면 균열 룬(Crack)은 SkillVfxBuilder.AddBurstCrack이 덧붙인다.
+            DebrisCount = 30,
+            DebrisSize = new Vector2(0.12f, 0.26f),
+            DebrisSpeed = new Vector2(2.5f, 4.5f),
+            DebrisLife = new Vector2(0.7f, 1.1f),
+            DebrisGravity = 1.1f,
             DebrisA = Orange * 0.75f, DebrisB = Beige * 0.55f, DebrisC = BeigeDark * 0.7f,
             DebrisShape = DebrisShape.ConeUp, DebrisConeAngle = 65f,
             // Sand column: many cubes straight up, slow to fall.
@@ -258,6 +265,74 @@ namespace DesertTower.VFX.Editor
             DustCount = 10,
             DustSize = new Vector2(0.35f, 0.6f),
             LightIntensity = 4f, LightRange = 5f,
+        };
+
+        /// <summary>관통탄 히트: 꿰뚫린 적마다 파란 스파크. 작고 짧다. Spawn at each pierced point.</summary>
+        public static ImpactSpec PierceHit() => new ImpactSpec
+        {
+            PrefabName = "VFX_Pierce_Hit",
+            Scale = 0.8f,
+            FlashSize = 0.9f, FlashColor = new Color(0.8f, 0.9f, 1f),
+            CoreCount = 3, CoreSize = 0.22f, CoreA = Color.white, CoreB = SkillVfxBuilder.Blue, CoreC = SkillVfxBuilder.BlueDark,
+            Shockwave = true, ShockwaveSize = 1f, ShockwaveColor = SkillVfxBuilder.Blue, ShockwaveCount = 1,
+            DebrisCount = 14,
+            DebrisSize = new Vector2(0.05f, 0.1f),
+            DebrisSpeed = new Vector2(2f, 4f),
+            DebrisLife = new Vector2(0.35f, 0.6f),
+            DebrisGravity = 0.6f,
+            DebrisA = Color.white, DebrisB = SkillVfxBuilder.Blue, DebrisC = SkillVfxBuilder.BlueDark,
+            DebrisShape = DebrisShape.Sphere,
+            EmberCount = 0,
+            DustCount = 0,
+            LightIntensity = 3f, LightRange = 3f,
+        };
+
+        /// <summary>흔적 귀환 출발: 서 있던 자리에서 금빛 모래 기둥이 솟으며 흩어진다. Spawn at the departure point (feet).</summary>
+        public static ImpactSpec RecallDepart() => new ImpactSpec
+        {
+            PrefabName = "VFX_Recall_Depart",
+            BodyHeight = 0.9f,
+            GroundCollision = true,
+            FlashSize = 1.6f, FlashColor = new Color(1f, 0.95f, 0.75f),
+            CoreCount = 3, CoreSize = 0.25f, CoreA = Color.white, CoreB = Gold, CoreC = GoldDark,
+            Shockwave = true, ShockwaveSize = 1.6f, ShockwaveColor = Gold, ShockwaveCount = 1,
+            DebrisCount = 0,
+            EmberCount = 30, EmberCubes = true, EmberConeAngle = 8f,
+            EmberSize = new Vector2(0.06f, 0.12f),
+            EmberSpeed = new Vector2(3f, 5f),
+            EmberLife = new Vector2(0.8f, 1.1f),
+            EmberColor = Gold,
+            DustCount = 8,
+            DustColor = new Color(0.72f, 0.58f, 0.36f, 0.7f),
+            DustSize = new Vector2(0.4f, 0.7f),
+            LightIntensity = 4f, LightRange = 4f,
+        };
+
+        /// <summary>흔적 귀환 도착: 룬 자리에서 금빛 링 두 겹이 퍼지고 모래가 튄다. Spawn at the mark (feet).</summary>
+        public static ImpactSpec RecallArrive() => new ImpactSpec
+        {
+            PrefabName = "VFX_Recall_Arrive",
+            BodyHeight = 0.9f,
+            GroundCollision = true,
+            FlashSize = 2f, FlashColor = new Color(1f, 0.95f, 0.75f),
+            CoreCount = 4, CoreSize = 0.3f, CoreA = Color.white, CoreB = Gold, CoreC = GoldDark,
+            Shockwave = true, ShockwaveSize = 2.4f, ShockwaveColor = Gold, ShockwaveCount = 2, ShockwaveInterval = 0.12f,
+            DebrisCount = 18,
+            DebrisSize = new Vector2(0.06f, 0.12f),
+            DebrisSpeed = new Vector2(1.5f, 3f),
+            DebrisLife = new Vector2(0.5f, 0.9f),
+            DebrisGravity = 0.9f,
+            DebrisA = Color.white, DebrisB = Gold, DebrisC = GoldDark,
+            DebrisShape = DebrisShape.ConeUp, DebrisConeAngle = 60f,
+            EmberCount = 12, EmberCubes = true,
+            EmberSize = new Vector2(0.05f, 0.09f),
+            EmberSpeed = new Vector2(0.8f, 1.6f),
+            EmberLife = new Vector2(0.9f, 1.3f),
+            EmberColor = Gold,
+            DustCount = 10,
+            DustColor = new Color(0.72f, 0.58f, 0.36f, 0.7f),
+            DustSize = new Vector2(0.4f, 0.8f),
+            LightIntensity = 5f, LightRange = 5f,
         };
 
         /// <summary>#22 적 스폰(입구): 모래 먼지 구름 + 빨강 링. Spawn at the entrance floor.</summary>

@@ -92,19 +92,55 @@ namespace DesertTower.VFX.Editor
                     Object.DestroyImmediate(afterimage, true);
                 }
 
-                var attack = root.GetComponent<PlayerBasicAttack>(); // 공격 마법 스킬: 관통 빔, 꿰뚫은 적 착탄, 모래 폭발
+                var attack = root.GetComponent<PlayerBasicAttack>(); // 공격 마법 스킬: 관통 빔, 꿰뚫은 적 스파크, 모래 폭발
                 if (attack != null)
                 {
                     attack.beamPrefab = Load(BeamVfxBuilder.PierceBeamPath);
-                    attack.beamHitPrefab = Load(ImpactVfxBuilder.ManaBoltImpactPath);
+                    attack.beamHitPrefab = Load(ImpactVfxBuilder.PierceHitPath);
                     attack.burstPrefab = Load(ImpactVfxBuilder.SandBurstPath);
                 }
-                var caster = root.GetComponent<PlayerSkillCaster>(); // E 모래 소용돌이, R 사막 폭풍 지역 연출
+                var caster = root.GetComponent<PlayerSkillCaster>(); // E 모래 소용돌이, R 사막 폭풍(코어에서 퍼지는 링)
                 if (caster != null)
                 {
                     caster.vortexPrefab = Load(SandZoneVfxBuilder.VortexPath);
                     caster.stormPrefab = Load(SandZoneVfxBuilder.StormPath);
+                    // 폭풍 시전 → 바깥 봉인 폭풍이 잠깐 거세진다(씬에 TempleSandstorm이 있을 때만).
+                    var surge = Ensure<VfxStormSurge>(root);
+                    if (!HasListener(caster.onStormCast, surge))
+                        UnityEventTools.AddPersistentListener(caster.onStormCast, new UnityAction(surge.Trigger));
                 }
+
+                // 관통탄 충전: 손(CastingEffectAnchor)에 파란 마나 응집 루프. 충전 시작/세기/취소/발사를 꽂는다.
+                var pierce = Ensure<PlayerPierceCharge>(root);
+                var pierceChargePrefab = Load(SkillVfxBuilder.PierceChargePath);
+                if (pierceChargePrefab != null)
+                {
+                    var hand = root.transform.Find("CastingEffectAnchor");
+                    if (hand == null) hand = root.transform.Find("DefaultFirePoint");
+                    if (hand == null) hand = root.transform;
+                    var chargeInstance = hand.Find("PierceCharge");
+                    if (chargeInstance == null)
+                    {
+                        chargeInstance = ((GameObject)PrefabUtility.InstantiatePrefab(pierceChargePrefab, hand)).transform;
+                        chargeInstance.name = "PierceCharge";
+                        chargeInstance.localPosition = Vector3.zero;
+                        chargeInstance.localRotation = Quaternion.identity;
+                    }
+                    var loop = chargeInstance.GetComponent<VfxChargeLoop>();
+                    if (loop != null)
+                    {
+                        if (!HasListener(pierce.onChargeStarted, loop)) UnityEventTools.AddPersistentListener(pierce.onChargeStarted, new UnityAction(loop.Begin));
+                        if (!HasListener(pierce.onCharging, loop)) UnityEventTools.AddPersistentListener(pierce.onCharging, new UnityAction<float>(loop.SetIntensity));
+                        if (!HasListener(pierce.onChargeCancelled, loop)) UnityEventTools.AddPersistentListener(pierce.onChargeCancelled, new UnityAction(loop.End));
+                        if (!HasListener(pierce.onFired, loop)) UnityEventTools.AddVoidPersistentListener(pierce.onFired, new UnityAction(loop.End));
+                    }
+                }
+
+                // 흔적 귀환: 표식(룬), 출발 기둥, 도착 링.
+                var recall = Ensure<PlayerRecall>(root);
+                recall.markPrefab = Load(SkillVfxBuilder.RecallMarkPath);
+                recall.departPrefab = Load(ImpactVfxBuilder.RecallDepartPath);
+                recall.arrivePrefab = Load(ImpactVfxBuilder.RecallArrivePath);
 
                 var kick = Ensure<VfxCameraKick>(root); // 발사 → 아주 약한 카메라 킥
                 kick.Strength = 0.02f; kick.Duration = 0.08f;

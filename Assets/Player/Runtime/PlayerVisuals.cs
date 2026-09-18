@@ -50,6 +50,12 @@ namespace SandGuard.Player
         public string dashLayerName = "Dash Legs";
         [Min(0f), Tooltip("대시가 끝난 뒤 하체 레이어를 내리는 시간")]
         public float dashLayerBlendTime = 0.15f;
+        [Header("관통탄 충전·발사 (양팔 오버라이드 레이어. 없으면 손바닥 시전으로 대신한다)")]
+        public string pierceLayerName = "Pierce Casting";
+        public string pierceChargingParameter = "PierceCharging";
+        public string pierceFireTrigger = "PierceFire";
+        [Min(0f), Tooltip("레이어를 올리는 시간")] public float pierceBlendInTime = 0.1f;
+        [Min(0f), Tooltip("레이어를 내리는 시간")] public float pierceBlendOutTime = 0.25f;
         public UnityEvent onFired = new UnityEvent();
         public UnityEvent onDamaged = new UnityEvent();
         public UnityEvent onIncapacitated = new UnityEvent();
@@ -60,7 +66,13 @@ namespace SandGuard.Player
         public UnityEvent onHardLanded = new UnityEvent();
         [SerializeField, HideInInspector] GameObject visualInstance;
         Animator animator;
-        float reactionWeight, dashLayerWeight;
+        float reactionWeight, dashLayerWeight, pierceLayerWeight;
+        bool pierceCharging;
+        /// <summary>컨트롤러에 관통탄 레이어와 발사 트리거가 있는가.</summary>
+        public bool HasPierceAnimation => animator != null && animator.GetLayerIndex(pierceLayerName) >= 0 && HasParameter(pierceFireTrigger, AnimatorControllerParameterType.Trigger);
+        /// <summary>관통탄 레이어가 지금 몸을 잡고 있는가(충전 중이거나 발사 동작이 남아 있다).</summary>
+        public bool PierceAnimating => pierceLayerWeight > 0.01f;
+        public bool PierceCharging => pierceCharging;
         bool awaitingHardLanding, sawHardLanding;
         float hardLandingEntryWait;
         Transform muzzle;
@@ -105,6 +117,40 @@ namespace SandGuard.Player
         /// 근육 값을 고정해 버려서, 이동 중 상체가 골반과 함께 막대처럼 흔들리는 문제가 생긴다.
         /// </summary>
         /// <summary>대시 하체 레이어는 대시 동작이 재생되는 동안만 켠다. Empty 상태에서 가중치 1이면 다리가 굳는다(피격 레이어와 같은 이유).</summary>
+        /// <summary>충전 중이거나 충전·발사 상태가 재생 중이면 1, 아니면 0으로 부드럽게. 죽으면 바로 0.</summary>
+        float PierceLayerWeight(int layer, bool dead)
+        {
+            var current = animator.GetCurrentAnimatorStateInfo(layer);
+            var next = animator.GetNextAnimatorStateInfo(layer);
+            bool firing = (current.IsName("Pierce Fire") && current.normalizedTime < 0.9f) || next.IsName("Pierce Fire");
+            bool charging = pierceCharging || current.IsName("Pierce Charge") || next.IsName("Pierce Charge");
+            float target = !dead && (firing || charging) ? 1f : 0f;
+            float time = target > pierceLayerWeight ? pierceBlendInTime : pierceBlendOutTime;
+            pierceLayerWeight = time <= 0f || dead ? target : Mathf.MoveTowards(pierceLayerWeight, target, Time.deltaTime / time);
+            return pierceLayerWeight;
+        }
+
+        /// <summary>관통탄 충전 시작/끝. 레이어가 있으면 두 손을 모으는 자세로 들어가고 손바닥 시전 IK는 쉰다.</summary>
+        public void SetPierceCharging(bool value)
+        {
+            pierceCharging = value;
+            if (animator != null && HasParameter(pierceChargingParameter, AnimatorControllerParameterType.Bool)) animator.SetBool(pierceChargingParameter, value);
+        }
+
+        /// <summary>관통탄 발사 동작(두 손 내지르기). 레이어가 없으면 false를 돌려주고 아무것도 하지 않는다(호출자가 PlayFire로 대신한다).</summary>
+        public bool PlayPierceFire()
+        {
+            if (!HasPierceAnimation) return false;
+            if (fireEffectAnchor != null && FirePoint != null)
+                fireEffectAnchor.SetPositionAndRotation(FirePoint.position, FirePoint.rotation);
+            pierceCharging = false;
+            if (HasParameter(pierceChargingParameter, AnimatorControllerParameterType.Bool)) animator.SetBool(pierceChargingParameter, false);
+            animator.SetTrigger(pierceFireTrigger);
+            if (Spellcasting != null && Spellcasting.isActiveAndEnabled) Spellcasting.Flash();
+            onFired.Invoke();
+            return true;
+        }
+
         float DashLayerWeight(int layer, bool dead)
         {
             bool playing = !dead && motor != null && (motor.IsDashing
@@ -190,6 +236,13 @@ namespace SandGuard.Player
             if (reactionLayer >= 0) animator.SetLayerWeight(reactionLayer, ReactionWeight(reactionLayer, dead));
             int dashLayer = animator.GetLayerIndex(dashLayerName);
             if (dashLayer >= 0) animator.SetLayerWeight(dashLayer, DashLayerWeight(dashLayer, dead));
+            int pierceLayer = animator.GetLayerIndex(pierceLayerName);
+            if (pierceLayer >= 0)
+            {
+                if (dead && pierceCharging) SetPierceCharging(false);
+                animator.SetLayerWeight(pierceLayer, PierceLayerWeight(pierceLayer, dead));
+                if (Spellcasting != null) Spellcasting.Suppressed = pierceLayerWeight > 0.01f; // 양팔 동작이 잡는 동안 오른손 조준 IK는 쉰다
+            }
             if (dead && Spellcasting != null) Spellcasting.Cancel();
             Vector3 velocity = dead ? Vector3.zero : Vector3.ProjectOnPlane(motor.Velocity, Vector3.up);
             Vector3 localDirection = motor.transform.InverseTransformDirection(velocity.normalized);

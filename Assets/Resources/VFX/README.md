@@ -38,11 +38,15 @@ Unity.exe -batchmode -projectPath . -executeMethod DesertTower.VFX.Editor.VfxBat
 | `VFX_FlameCobra_Breath` | #17 | 코브라 입, 로컬 +Z가 분사 방향 | 루프. 공격 시작/끝에 Play/Stop |
 | `VFX_Fire_Impact` | #17 | 화염 착탄점 | 없음 |
 | `VFX_Burning_Loop` | #17 | 불붙은 적 발밑 | 2초 원샷. 라이트는 남으니 3초 뒤 Destroy |
-| `VFX_Pierce_Beam` | #3 | 시전자, 로컬 +Z가 발사 방향 | `PlayerBasicAttack.beamPrefab` (관통탄). 총구에 놓고 자식 `VfxBeam.SetLength`를 실제 도달 거리로. 꿰뚫은 적마다 `beamHitPrefab` = `VFX_ManaBolt_Impact` |
-| `VFX_Sand_Burst` | #4 | 착탄점(바닥) | `PlayerBasicAttack.burstPrefab` (모래 폭발·폭발 관통탄). 카메라 킥은 `PlayerCameraRig.Kick`. 히트스톱 없음 |
+| `VFX_Pierce_Beam` | #3 | 시전자, 로컬 +Z가 발사 방향 | `PlayerBasicAttack.beamPrefab` (관통탄, 파랑). 총구에 놓고 자식 `VfxBeam`의 `Radius`·`Intensity`를 충전량으로, `SetLength`를 실제 도달 거리로. 자식 `Rings`(빔을 따라 달리는 링)는 충전 `beamRingsFromCharge` 이상일 때만 재생. 꿰뚫은 적마다 `beamHitPrefab` = `VFX_Pierce_Hit` |
+| `VFX_Pierce_Hit` | 관통탄 히트 | 꿰뚫린 점 | 파란 스파크. `PlayerBasicAttack.beamHitPrefab` |
+| `VFX_Pierce_Charge` | 관통탄 충전 | 손(`CastingEffectAnchor`)에 자식으로 | 루프. `VfxChargeLoop`: `Begin` ← `PlayerPierceCharge.onChargeStarted`, `SetIntensity` ← `onCharging`, `End` ← `onChargeCancelled`/`onFired`. 손을 도는 파란 줄기 + 빨려드는 알갱이 + 커지는 코어 |
+| `VFX_Sand_Burst` | #4 | 착탄점(바닥) | `PlayerBasicAttack.burstPrefab` (모래 폭발). 큼직한 바위 조각 + 지면 균열 룬(`Crack`, SkillVfxBuilder가 덧붙임). 반경 안 적은 `IDisplaceable.Launch`로 띄운다. 카메라 킥은 `PlayerCameraRig.Kick` |
 | `VFX_Sand_Root` | 모래 족쇄 | 적 발밑, 적의 자식으로 | `EnemyRestraint.vfxPrefab`. 묶일 때 생성, 풀릴 때 `VfxSandRoot.Release` |
-| `VFX_Sand_Vortex` | ⑮ 모래 소용돌이 | 지면 중심, 반경 1m 기준 루프 | `PlayerSkillCaster.vortexPrefab`. 지역 오브젝트의 자식으로 두고 실제 반경으로 스케일(Hierarchy). 끝나면 방출만 멈춘다 |
-| `VFX_Sand_Storm` | ⑯ 사막 폭풍 | 지면 중심, 반경 1m 기준 루프 | `PlayerSkillCaster.stormPrefab`. 위와 같다 |
+| `VFX_Sand_Vortex` | ⑮ 모래 소용돌이 | 지면 중심, 반경 1m 기준 루프 | `PlayerSkillCaster.vortexPrefab`. 지역 오브젝트의 자식으로 두고 실제 반경으로 스케일(Hierarchy). 위로 좁아지는 금빛 나선 기둥(줄기·링·알갱이·바위). 끝나면 방출을 멈추고 `OnEnd *` 자식(붕괴 버스트·튀는 링)이 재생된다 = 적 쳐올림 순간 |
+| `VFX_Sand_Storm` | ⑯ 사막 폭풍 | 코어(없으면 시전자) 바닥, 스케일 1 | `PlayerSkillCaster.stormPrefab`. 루트 `VfxStormFront.SetFront(앞 반경, 두께, 최대 반경)`를 `PlayerSandStorm`이 매 프레임 부른다: 봉인 폭풍 셰이더를 두른 원통 벽(`Wall`)이 커지고 먼지·알갱이·줄기의 원형 방출 반경이 따라간다. 시작점 플래시·링·기둥은 한 번. 시전 순간 `VfxStormSurge`(Player.prefab, `onStormCast`)가 씬의 `TempleSandstorm`을 잠깐 거세게 한다 |
+| `VFX_Recall_Mark` | 흔적 귀환 표식 | 흔적 자리 바닥 | `PlayerRecall.markPrefab`. 금빛 룬 두 겹 + 알갱이 + 광원. `VfxRecallMark.SetRemaining`으로 남은 시간만큼 어두워지고 `Release`에 번지며 사라진다 |
+| `VFX_Recall_Depart` · `VFX_Recall_Arrive` | 흔적 귀환 | 출발점 · 도착점 바닥 | `PlayerRecall.departPrefab/arrivePrefab`. 출발은 솟는 금빛 기둥, 도착은 링 두 겹 + 모래. 카메라 킥·FOV는 PlayerRecall 인스펙터 |
 | `VFX_LevelUp` | #7 | 플레이어 발밑 | 없음 |
 | `VFX_Mana_Charge` | #10 | 코어 바닥 | 루프. `VfxParticleAttractor.Target = 램프`. 충전 완료 시 Stop 후 램프에 `VFX_Mana_Charge_Complete` |
 | `VFX_Mana_Charge_Complete` | #10 | 램프 | 없음 |
@@ -80,6 +84,9 @@ Unity.exe -batchmode -projectPath . -executeMethod DesertTower.VFX.Editor.VfxBat
 | `VfxAfterimage` | 대시 잔상. `Play(대시 시간)`마다 메시 스냅샷을 틸 실루엣으로 남김. 플레이어 대시에서는 뺐다(눈이 아픔). 필요하면 UnityEvent에 다시 꽂는다 |
 | `VfxChargeLoop` | 충전형 루프 제어기. `Begin`/`SetIntensity(0~1)`/`End`로 방출량·속도·크기 배수를 올리고 내린다 (미리보기용 Play On Awake는 시작 시 멈춤) |
 | `VfxRefractionBubble` | 볼록 렌즈 구체 제어기. `Begin`/`SetIntensity`/`End`/`Pulse`. 대기 중엔 렌더러를 꺼 둔다. 셰이더 `_Strength`는 MaterialPropertyBlock |
+| `VfxStormFront` | 퍼지는 링 제어기. `SetFront(앞 반경, 두께, 최대)`로 벽(`ringScaled`) XZ 스케일과 파티클(`frontEmitters`) 원형 방출 반경·방출량을 옮긴다. 외부 호출이 없으면 `selfExpandSpeed`로 스스로 퍼진다(미리보기) |
+| `VfxStormSurge` | `Trigger()`에 씬의 `TempleSandstorm` 흐름 속도·`_Swirl`·`_LightColor`를 attack→hold→release로 끌어올렸다 되돌린다. 시간을 직접 굴려(previewTime) 무늬가 튀지 않는다 |
+| `VfxRecallMark` | 표식 제어기. `SetRemaining(0~1)`로 룬 밝기, `Release()`로 방출 정지 + 번지며 사라짐 |
 | `VfxFadeOut` | CanvasGroup 페이드 후 제거 (비네트) |
 
 `DesertTower > VFX > Wire Combat VFX Into Demo Assets`가 위 컴포넌트를 `Assets/Enemy/Generated/Enemy.prefab`, `Assets/Player/Generated/Player.prefab`, `EnemyTest.unity`의 표적에 꽂는다. 여러 번 실행해도 안전하다. 데모 프리팹을 다시 생성했으면 다시 실행한다.

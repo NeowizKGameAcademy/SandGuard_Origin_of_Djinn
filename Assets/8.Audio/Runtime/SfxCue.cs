@@ -32,6 +32,7 @@ namespace SandGuard.Audio
         [Tooltip("루프 소리(앰비언트·화염·폭풍). SfxEmitter가 켜져 있는 동안 반복한다")] public bool loop;
         [Min(1), Tooltip("같은 큐가 동시에 낼 수 있는 보이스 수. 초과하면 가장 오래된 것을 재사용한다")] public int maxVoices = 4;
         [Min(0f), Tooltip("이 시간 안의 재요청은 무시한다. 같은 프레임 중복은 항상 합친다")] public float minInterval = 0.02f;
+        [Range(0f, 1f), Tooltip("재생 확률. 점프 기합처럼 매번 나면 지겨운 소리는 0.3 정도. 루프에는 적용되지 않는다")] public float chance = 1f;
         [Min(0f), Tooltip("루프 시작·정지 페이드(초)")] public float loopFade = 0.3f;
 
         public bool HasClips => clips != null && clips.Length > 0;

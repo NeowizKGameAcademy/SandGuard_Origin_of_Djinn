@@ -12,7 +12,7 @@ using Object = UnityEngine.Object;
 
 namespace SandGuard.Player.Tests
 {
-    /// <summary>Q/E/R 액티브 시전: 해금·마나·쿨다운, E 모래 소용돌이(끌어당김·마무리 속박), R 사막 폭풍(틱 피해·둔화). 플레이어는 원점에서 +Z를 본다.</summary>
+    /// <summary>Q/E/R 액티브 시전: 해금·마나·쿨다운, Q 모래 폭발(띄우기), E 모래 소용돌이(끌어당김·마무리 쳐올림), R 사막 폭풍(코어에서 퍼지는 링), 관통탄 충전. 플레이어는 원점에서 +Z를 본다.</summary>
     public sealed class PlayerSkillCastTests
     {
         /// <summary>적 대역: 밀림·둔화·속박을 기록하고, 밀리면 실제로 움직인다.</summary>
@@ -116,10 +116,10 @@ namespace SandGuard.Player.Tests
             Assert.AreEqual(0f, caster.CooldownRemaining(PlayerSkillCaster.Vortex));
         }
 
-        [UnityTest] public IEnumerator VortexPullsEnemiesToItsCentreAndShacklesThemAtTheEnd()
+        [UnityTest] public IEnumerator VortexPullsEnemiesToItsCentreAndLaunchesThemAtTheEnd()
         {
             Slab(6f); // 시전 지점 ≈ (0, 0, 5.5)
-            var near = Dummy(new Vector3(2.5f, 0.5f, 5.5f));     // 반경 4 안
+            var near = Dummy(new Vector3(2.5f, 0.5f, 5.5f));     // 반경 3 안
             var far = Dummy(new Vector3(0f, 0.5f, 12f));        // 반경 밖
             effects.Apply(new SandVortexEffect());
             caster.vortexDuration = 1f; caster.vortexPullSpeed = 3f;
@@ -135,34 +135,153 @@ namespace SandGuard.Player.Tests
             yield return new WaitForSeconds(0.8f);
             Assert.True(ended); Assert.True(vortex == null || vortex.Finished);
             Assert.Less(Vector3.Distance(Flat(near.transform.position), Flat(centre)), 0.6f, "By the end the target sits at the centre (inner radius).");
-            Assert.AreEqual(caster.vortexEndShackle, near.RestrainDuration, 0.0001f, "The vortex shackles what it gathered.");
-            Assert.AreEqual(0f, far.RestrainDuration);
+            Assert.AreEqual(1, near.LaunchCalls, "The vortex launches what it gathered, once.");
+            Assert.AreEqual(caster.vortexEndLaunch, near.Launched.y, 0.0001f); Assert.AreEqual(0f, Flat(near.Launched).magnitude, 0.0001f, "Straight up.");
+            Assert.AreEqual(0, far.LaunchCalls); Assert.AreEqual(0f, near.RestrainDuration, "No shackle by default any more.");
         }
 
-        [UnityTest] public IEnumerator StormTicksDamageAndSlowsWhileInsideThenClears()
+        [UnityTest] public IEnumerator BurstLaunchesEnemiesAroundTheImpact()
         {
-            var slab = Slab(6f); // 시전 지점(≈ z 5.2) 바로 뒤라 폭풍 안에 든다
-            var inside = Dummy(new Vector3(2f, 0.5f, 6f)); var insideTarget = inside.gameObject.AddComponent<PlayerTestTarget>();
-            var outside = Dummy(new Vector3(9f, 0.5f, 6f)); var outsideTarget = outside.gameObject.AddComponent<PlayerTestTarget>();
+            var slab = Slab(6f); // 볼트가 여기 맞고 앞면(z 4.5) 바닥에서 터진다
+            var near = Dummy(new Vector3(1.5f, 0.5f, 4.5f));     // 폭발 반경 2.5 안
+            var far = Dummy(new Vector3(6f, 0.5f, 4.5f));        // 밖
+            effects.Apply(new SandBurstEffect());
+            var launches = new List<(Vector3, int)>(); attack.Launched += (c, n) => launches.Add((c, n));
+            Assert.True(caster.TryCast(PlayerSkillCaster.Burst).Succeeded);
+            float deadline = Time.time + 2f;
+            while (launches.Count == 0 && Time.time < deadline) yield return null;
+            Assert.AreEqual(1, launches.Count, "The bolt detonated and launched something.");
+            Assert.AreEqual(1, launches[0].Item2); Assert.AreEqual(1, attack.LastLaunchCount);
+            Assert.AreEqual(1, near.LaunchCalls); Assert.AreEqual(0, far.LaunchCalls);
+            Assert.AreEqual(attack.burstLaunchUp, near.Launched.y, 0.0001f, "Up at the configured speed.");
+            Assert.Greater(near.Launched.x, 0f, "And away from the burst centre.");
+            Assert.AreEqual(attack.burstLaunchOut, Flat(near.Launched).magnitude, 0.01f);
+            Assert.Greater(slab.HitCount, 0, "The slab still takes the bolt/burst damage.");
+        }
+
+        [UnityTest] public IEnumerator PierceChargeTapFiresABasicBeamAndHoldingScalesItAndPushesPiercedEnemies()
+        {
+            var pierce = player.AddComponent<PlayerPierceCharge>();
+            yield return null;
+            var target = Dummy(new Vector3(0f, 1f, 5f)); var health = target.gameObject.AddComponent<PlayerTestTarget>();
+            var wall = Cube(new Vector3(0f, 1.5f, 9f), new Vector3(3f, 3f, 1f));
+            float baseDamage = attack.Damage;
+            var fired = new List<float>(); pierce.Fired += fired.Add;
+            bool started = false, cancelled = false; pierce.ChargeStarted += () => started = true; pierce.ChargeCancelled += () => cancelled = true;
+            int before = mana.CurrentMana;
+            // 탭: 누른 프레임에 바로 떼면 충전 0으로 기본 빔.
+            Assert.True(pierce.BeginHold(0)); Assert.True(pierce.IsHolding);
+            Assert.True(pierce.EndHold(0).Succeeded);
+            Assert.False(pierce.IsHolding); Assert.False(started);
+            Assert.AreEqual(before - pierce.manaCost, mana.CurrentMana, "A tap costs the base mana only.");
+            Assert.AreEqual(1, fired.Count); Assert.AreEqual(0f, fired[0]); Assert.AreEqual(0f, attack.LastBeamCharge);
+            Assert.AreEqual(1, health.HitCount); Assert.AreEqual(baseDamage, 50f - health.CurrentHealth, 0.0001f);
+            Assert.AreEqual(0, target.KnockCalls, "A tap does not push.");
+            Assert.AreEqual(ActionFailure.Cooldown, pierce.Fire(0f).Failure);
+            Assert.False(pierce.BeginHold(0), "Holding during the cooldown does nothing.");
+            pierce.ResetCooldown();
+            // 홀드: holdToCharge 뒤 충전이 시작되고 chargeTime에 만충. 입력 리더 없이 검사하려고 떼어 둔다.
+            pierce.input = null; pierce.holdToCharge = 0.1f; pierce.chargeTime = 0.4f;
+            before = mana.CurrentMana;
+            Assert.True(pierce.BeginHold(2));
+            yield return new WaitForSeconds(0.05f);
+            Assert.False(pierce.IsCharging, "Still inside the tap window.");
+            yield return new WaitForSeconds(0.6f);
+            Assert.True(started); Assert.True(pierce.IsCharging); Assert.AreEqual(1f, pierce.Charge, 0.0001f, "Fully charged.");
+            Assert.AreEqual(ActionFailure.InvalidRequest, pierce.EndHold(0).Failure, "Releasing a different key is ignored.");
+            Assert.True(pierce.EndHold(2).Succeeded);
+            Assert.False(cancelled);
+            Assert.AreEqual(before - pierce.manaCost - pierce.fullChargeExtraMana, mana.CurrentMana, "Full charge costs the extra mana.");
+            Assert.AreEqual(2, fired.Count); Assert.AreEqual(1f, fired[1], 0.0001f); Assert.AreEqual(1f, attack.LastBeamCharge, 0.0001f);
+            Assert.AreEqual(2, health.HitCount);
+            Assert.AreEqual(baseDamage * attack.chargedDamageMultiplier, 50f - health.CurrentHealth - baseDamage, 0.001f, "Charged damage.");
+            Assert.AreEqual(1, target.KnockCalls); Assert.Greater(target.Knock.z, 0f, "Pushed along the beam.");
+            Assert.AreEqual(attack.chargedKnockback, target.Knock.magnitude, 0.01f);
+            Assert.True(attack.LastBeam.Landed); Assert.Less(attack.LastBeam.End.z, 9f, "The charged beam still stops at the wall.");
+            // 취소: 충전 중 못 쓰는 상태가 되면(여기서는 컴포넌트 비활성) 마나 없이 취소된다.
+            pierce.ResetCooldown(); before = mana.CurrentMana;
+            Assert.True(pierce.BeginHold(1));
+            yield return new WaitForSeconds(0.3f);
+            Assert.True(pierce.IsCharging);
+            pierce.enabled = false;
+            Assert.True(cancelled); Assert.False(pierce.IsHolding); Assert.AreEqual(before, mana.CurrentMana);
+            Assert.AreEqual(2, fired.Count);
+        }
+
+        [UnityTest] public IEnumerator StormRingExpandsFromTheOriginStrikingEachEnemyOnceWithKnockbackAndSlow()
+        {
+            // 코어가 없는 씬이라 링은 시전자 위치에서 시작한다.
+            var near = Dummy(new Vector3(0f, 0.5f, 4f)); var nearTarget = near.gameObject.AddComponent<PlayerTestTarget>();
+            var far = Dummy(new Vector3(0f, 0.5f, 12f)); var farTarget = far.gameObject.AddComponent<PlayerTestTarget>();
             var hits = new List<PlayerHitInfo>(); attack.Hit += hits.Add;
             effects.Apply(new SandStormEffect());
-            caster.stormDuration = 2f; caster.stormTickInterval = 0.5f;
+            caster.stormRadius = 16f; caster.stormExpandSpeed = 8f; caster.stormRingThickness = 3f;
+            Assert.Null(caster.Core);
             Assert.True(caster.TryCast(PlayerSkillCaster.Storm).Succeeded);
             var storm = caster.LastStorm;
-            Assert.AreEqual(caster.StormTickDamage, storm.tickDamage, 0.0001f); Assert.AreEqual(2.5f, storm.tickDamage, 0.0001f);
-            yield return null; yield return null;
-            Assert.AreEqual(1, storm.Ticks, "The first tick happens as the storm appears.");
-            Assert.AreEqual(1, insideTarget.HitCount); Assert.AreEqual(50f - 2.5f, insideTarget.CurrentHealth, 0.001f);
-            Assert.AreEqual(1, slab.HitCount, "Everything inside the radius takes the tick, once each.");
-            Assert.AreEqual(caster.StormSlow, inside.SlowFactor, 0.0001f, "Inside the storm the target is slowed.");
-            Assert.AreEqual(0, outsideTarget.HitCount); Assert.AreEqual(0f, outside.SlowFactor);
-            Assert.AreEqual("player.storm", hits[0].CauseId); Assert.AreEqual(2.5f, hits[0].AppliedDamage, 0.0001f);
-            yield return new WaitForSeconds(2.2f);
-            Assert.That(storm == null || storm.Finished);
-            Assert.That(insideTarget.HitCount, Is.InRange(4, 5), "About one tick per 0.5 s over 2 s.");
-            Assert.AreEqual(insideTarget.HitCount + slab.HitCount, hits.Count, "Every tick hit reaches the attack's Hit event (mana on hit).");
+            Assert.Less(Vector3.Distance(Flat(storm.transform.position), Flat(player.transform.position)), 0.5f, "Without a core the ring starts at the caster.");
+            Assert.Less(storm.transform.position.y, 0.1f, "On the ground.");
+            Assert.AreEqual(caster.StormDamage, storm.damage, 0.0001f); Assert.AreEqual(15f, storm.damage, 0.0001f); // 볼트 10 × 1.5
+            Assert.AreEqual(caster.StormDuration, storm.duration, 0.0001f); Assert.AreEqual(19f / 8f, storm.duration, 0.0001f);
+            Assert.AreEqual(caster.StormSlow, storm.slowFactor, 0.0001f);
+            yield return new WaitForSeconds(0.9f); // 링 앞 ≈ 7.2 m: near(3.5 m)는 지났고 far(11.5 m)는 아직
+            Assert.That(storm.Front, Is.InRange(6f, 8.5f));
+            Assert.AreEqual(1, nearTarget.HitCount); Assert.AreEqual(50f - 15f, nearTarget.CurrentHealth, 0.001f);
+            Assert.AreEqual(1, near.KnockCalls); Assert.Greater(near.Knock.z, 0f, "Pushed outward, away from the origin.");
+            Assert.AreEqual(caster.stormKnockback, near.Knock.magnitude, 0.01f);
+            Assert.AreEqual(caster.StormSlow, near.SlowFactor, 0.0001f, "Struck targets are slowed.");
+            Assert.AreEqual(0, farTarget.HitCount); Assert.AreEqual(0, far.KnockCalls); Assert.AreEqual(0f, far.SlowFactor);
+            Assert.AreEqual(1, hits.Count); Assert.AreEqual("player.storm", hits[0].CauseId); Assert.AreEqual(15f, hits[0].AppliedDamage, 0.0001f);
+            yield return new WaitForSeconds(1.0f); // 링 앞 ≈ 15.2 m: far도 지나갔다
+            Assert.AreEqual(1, farTarget.HitCount); Assert.AreEqual(1, far.KnockCalls);
+            Assert.AreEqual(1, nearTarget.HitCount, "Each enemy is struck once, never again.");
+            Assert.AreEqual(2, storm.TotalHits);
+            yield return new WaitForSeconds(0.6f);
+            Assert.That(storm == null || storm.Finished, "The ring ends once it has passed the max radius.");
+            Assert.AreEqual(2, hits.Count, "Every ring hit reaches the attack's Hit event (mana on hit).");
+        }
+
+        [UnityTest] public IEnumerator PierceChargeRaisesTheTwoHandedLayerAndFireReleasesIt()
+        {
+            var pierce = player.AddComponent<PlayerPierceCharge>();
+            pierce.input = null; pierce.holdToCharge = 0.1f; pierce.chargeTime = 0.4f;
+            yield return null;
+            var visuals = player.GetComponent<PlayerVisuals>();
+            var animator = player.GetComponentInChildren<Animator>();
+            Assert.NotNull(animator);
+            int layer = animator.GetLayerIndex(visuals.pierceLayerName);
+            Assert.GreaterOrEqual(layer, 0, "Protagonist.controller has the Pierce Casting layer (SandGuard > Player > Connect Pierce Charge Animation).");
+            Assert.True(visuals.HasPierceAnimation);
+            Assert.AreEqual(0f, animator.GetLayerWeight(layer), 0.001f);
+            Slab(6f);
+            Assert.True(pierce.BeginHold(0));
+            yield return new WaitForSeconds(0.6f);
+            Assert.True(pierce.IsCharging);
+            Assert.True(visuals.PierceCharging);
+            Assert.Greater(animator.GetLayerWeight(layer), 0.95f, "Charging raises the two-handed layer.");
+            Assert.True(animator.GetCurrentAnimatorStateInfo(layer).IsName("Pierce Charge"), "Charging plays the gather pose.");
+            var casting = visuals.Spellcasting;
+            if (casting != null) Assert.True(casting.Suppressed, "The palm aim IK rests while both hands gather.");
+            Assert.True(pierce.EndHold(0).Succeeded);
+            Assert.False(visuals.PierceCharging);
+            bool sawFire = false;
+            for (float t = 0f; t < 0.5f; t += Time.deltaTime)
+            {
+                var state = animator.GetCurrentAnimatorStateInfo(layer);
+                if (state.IsName("Pierce Fire") || (animator.IsInTransition(layer) && animator.GetNextAnimatorStateInfo(layer).IsName("Pierce Fire"))) sawFire = true;
+                yield return null;
+            }
+            Assert.True(sawFire, "Releasing plays the thrust.");
             yield return new WaitForSeconds(1.2f);
-            Assert.AreEqual(0f, inside.SlowFactor, "The slow expires shortly after the storm ends.");
+            Assert.True(animator.GetCurrentAnimatorStateInfo(layer).IsName("Empty"), "The thrust returns to Empty.");
+            Assert.Less(animator.GetLayerWeight(layer), 0.05f, "The layer lowers after the thrust.");
+            if (casting != null) Assert.False(casting.Suppressed);
+            // 탭(충전 없이)도 내지르기 동작을 쓴다.
+            pierce.ResetCooldown();
+            Assert.True(pierce.Fire(0f).Succeeded);
+            yield return null; yield return null;
+            var tapState = animator.GetCurrentAnimatorStateInfo(layer);
+            Assert.True(tapState.IsName("Pierce Fire") || (animator.IsInTransition(layer) && animator.GetNextAnimatorStateInfo(layer).IsName("Pierce Fire")), "A tap plays the thrust too.");
         }
 
         static Vector3 Flat(Vector3 v) { v.y = 0f; return v; }

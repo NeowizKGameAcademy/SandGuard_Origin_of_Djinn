@@ -15,6 +15,9 @@ namespace DesertTower.VFX.Editor
     public static class BeamVfxBuilder
     {
         public const string PierceBeamPath = PrefabDir + "/VFX_Pierce_Beam.prefab";
+        // 관통탄은 파랑(마나탄 틸과 구분). 만충 시 빔을 따라 달리는 링(자식 Rings)은 PlayerBasicAttack이 충전량으로 켠다.
+        static Color Blue => SkillVfxBuilder.Blue;
+        static Color BlueDark => SkillVfxBuilder.BlueDark;
         public const string SummonPillarPath = PrefabDir + "/VFX_Summon_Pillar.prefab";
 
         [MenuItem("DesertTower/VFX/Build Pierce Beam")]
@@ -30,13 +33,17 @@ namespace DesertTower.VFX.Editor
             var root = new GameObject("VFX_Pierce_Beam");
             AddHub(root);
 
-            var beam = Beam(Child(root, "Beam"), s, length: 6f, radius: 0.14f, duration: 0.35f, scroll: 8f, color: Teal, intensity: 1.8f);
+            var beam = Beam(Child(root, "Beam"), s, length: 6f, radius: 0.14f, duration: 0.35f, scroll: 8f, color: Blue, intensity: 1.8f);
             beam.Width = new AnimationCurve(
                 new Keyframe(0f, 0.3f, 0f, 10f), new Keyframe(0.12f, 1f, 0f, 0f), new Keyframe(0.5f, 0.85f, 0f, 0f), new Keyframe(1f, 0f, -5f, 0f));
 
             BuildBeamCubes(Child(root, "Cubes"), s, length: 6f);
-            var flash = BuildFlash(Child(root, "MuzzleFlash"), s, 1.1f);
-            ParticleLight(flash, s.LightPrefab, 3.5f, 3f, ratio: 1f);
+            // 총구 플래시는 대낮 신전에서 화면을 덮을 만큼 밝아 작고 부드럽게(GlowSoft) 둔다.
+            var flash = BuildFlash(Child(root, "MuzzleFlash"), s, 0.55f);
+            { var main = flash.main; main.startColor = new Color(0.7f, 0.85f, 1f, 0.9f); flash.GetComponent<ParticleSystemRenderer>().sharedMaterial = s.GlowSoft; }
+            ParticleLight(flash, s.LightPrefab, 2f, 2.5f, ratio: 1f);
+            BuildMuzzleRing(Child(root, "MuzzleRing"), s, 0.9f);
+            BuildChargeRings(Child(root, "Rings"), s);
 
             return SavePrefab(root, PierceBeamPath);
         }
@@ -100,9 +107,53 @@ namespace DesertTower.VFX.Editor
             shape.randomDirectionAmount = 1f;
             Tumble(ps, Mathf.PI * 1.5f);
             Size(ps, HoldThenDrop(0.5f));
-            ColorRamp(ps, Color.white, Teal, TealDark, 0.3f);
+            ColorRamp(ps, Color.white, Blue, BlueDark, 0.3f);
 
             UseMesh(r, s.Cube, s.CubeWhite);
+        }
+
+        // 발사 지점의 마법진 링: 빔 축(+Z)을 보는 토러스가 순간 커지며 사라진다.
+        static void BuildMuzzleRing(GameObject go, Shared s, float diameter)
+        {
+            var ps = AddSystem(go, out var r);
+            var main = ps.main;
+            main.duration = 1f;
+            main.startLifetime = 0.3f;
+            main.startSpeed = 0f;
+            main.startColor = Blue;
+            main.startSize = FitScale(s.Torus, diameter);
+            main.maxParticles = 2;
+            main.simulationSpace = ParticleSystemSimulationSpace.Local;
+            var euler = AxisToForward(ThinAxis(s.Torus)).eulerAngles * Mathf.Deg2Rad;
+            main.startRotation3D = true;
+            main.startRotationX = euler.x; main.startRotationY = euler.y; main.startRotationZ = euler.z;
+            Burst(ps, 1);
+            Size(ps, EaseOut(0.35f, 1f));
+            AlphaFade(ps, Color.white, 0.2f);
+            UseMesh(r, s.Torus, s.MeshAdditive);
+        }
+
+        // 만충 링: 빔을 따라 +Z로 달리는 토러스 세 개. PlayerBasicAttack이 충전량이 모자라면 스폰 직후 지우고, 충분하면 수명을 빔 길이에 맞춰 다시 재생한다.
+        static void BuildChargeRings(GameObject go, Shared s)
+        {
+            var ps = AddSystem(go, out var r);
+            var main = ps.main;
+            // playOnAwake는 이펙트 계층 전체가 공유하는 설정이라 여기서 끄면 빔의 모든 파티클이 꺼진다. 스폰 직후 PlayerBasicAttack이 충전이 모자라면 Stop+Clear 한다.
+            main.duration = 1f;
+            main.startLifetime = 0.4f;
+            main.startSpeed = 30f;
+            main.startColor = Blue;
+            main.startSize = FitScale(s.Torus, 0.8f);
+            main.maxParticles = 6;
+            main.simulationSpace = ParticleSystemSimulationSpace.Local;
+            var euler = AxisToForward(ThinAxis(s.Torus)).eulerAngles * Mathf.Deg2Rad;
+            main.startRotation3D = true;
+            main.startRotationX = euler.x; main.startRotationY = euler.y; main.startRotationZ = euler.z;
+            Bursts(ps, 1, 3, 0.05f);
+            ConeShape(ps, 0f, 0.01f); // 로컬 +Z로 발사
+            Size(ps, EaseOut(1f, 0.55f));
+            AlphaFade(ps, Color.white, 0.5f);
+            UseMesh(r, s.Torus, s.MeshAdditive);
         }
 
         static ParticleSystem BuildFlash(GameObject go, Shared s, float size)

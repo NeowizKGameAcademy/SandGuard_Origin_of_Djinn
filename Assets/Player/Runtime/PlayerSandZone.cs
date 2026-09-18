@@ -5,7 +5,8 @@ namespace SandGuard.Player
 {
     /// <summary>
     /// 한 자리에 머무는 지역 스킬(모래 소용돌이·사막 폭풍)의 공통 뼈대. 지속 시간 동안 매 프레임 <see cref="Tick"/>을 돌리고,
-    /// 끝나면 자식 파티클의 방출을 멈춘 뒤 꼬리가 사라질 시간을 두고 스스로 지운다. PlayerSkillCaster가 빈 오브젝트에 붙여 만든다.
+    /// 끝나면 자식 파티클의 방출을 멈춘 뒤 꼬리가 사라질 시간을 두고 스스로 지운다. 이름이 "OnEnd"로 시작하는 자식 파티클은 반대로 그 순간 재생한다(붕괴·쳐올림 버스트).
+    /// PlayerSkillCaster가 빈 오브젝트에 붙여 만든다.
     /// </summary>
     public abstract class PlayerSandZone : MonoBehaviour
     {
@@ -49,7 +50,11 @@ namespace SandGuard.Player
             if (Finished) return;
             Finished = true;
             OnEnd();
-            foreach (var ps in GetComponentsInChildren<ParticleSystem>()) ps.Stop(false, ParticleSystemStopBehavior.StopEmitting);
+            foreach (var ps in GetComponentsInChildren<ParticleSystem>())
+            {
+                if (ps.gameObject.name.StartsWith("OnEnd", StringComparison.Ordinal)) ps.Play(false);
+                else ps.Stop(false, ParticleSystemStopBehavior.StopEmitting);
+            }
             Ended?.Invoke();
             Destroy(gameObject, vfxTail);
         }

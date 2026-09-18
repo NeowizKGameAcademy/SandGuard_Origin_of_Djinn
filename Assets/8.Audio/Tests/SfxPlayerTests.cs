@@ -70,6 +70,15 @@ namespace SandGuard.Audio.Tests
             Assert.IsTrue(second.Active && third.Active);
         }
 
+        [UnityTest] public IEnumerator ChanceZeroNeverPlaysAndChanceOneAlwaysPlays()
+        {
+            var never = MakeCue(); never.chance = 0f;
+            var always = MakeCue(); always.chance = 1f;
+            for (int i = 0; i < 5; i++) { SfxPlayer.Play(never, Vector3.zero); SfxPlayer.Play(always, Vector3.zero); yield return null; }
+            Assert.AreEqual(0, SfxPlayer.Instance.ActiveVoiceCountFor(never));
+            Assert.AreEqual(4, SfxPlayer.Instance.ActiveVoiceCountFor(always), "한도 4까지 매번 재생");
+        }
+
         [UnityTest] public IEnumerator MinIntervalDropsRapidRepeatsAcrossFrames()
         {
             var cue = MakeCue(minInterval: 0.5f);

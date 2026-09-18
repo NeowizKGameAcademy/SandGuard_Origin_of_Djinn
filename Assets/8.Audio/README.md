@@ -35,6 +35,7 @@
 |---|---|---|
 | `SfxAnimatorLoop` | 코어 프리팹의 Circle Effect(Animator, Ground 2초 루프). Level은 `New Core.prefab`(레이어 7 "Circle"), 구형 `Core.prefab`은 레이어 0 | 루프가 감길 때마다 `Core_Ping`. `normalizedTime` 정수부로 판정하므로 속도·일시정지와 어긋나지 않는다. 배선은 "Ground 상태를 가진 애니메이터"를 찾아 걸므로 코어 프리팹을 바꿔도 다시 실행만 하면 된다 |
 | `SfxAnimatorState` | `Player.prefab`의 Character(Animator) | `Falling` 상태 동안 `Player_Fall_Loop` |
+| 음성(기합·신음) | `Player.prefab` `Sfx`의 추가 `SfxOneShot`, `SfxHitReaction`의 `HitVoiceCue/DeathVoiceCue` | 동작음과 **같은 이벤트**에 한 번 더: 점프·공중 점프 → `Player_Voice_Jump`, 대시 → `Player_Voice_Dash`, 기본 공격·Q/E/R(`PlayerSkillCaster.onCast`) → `Player_Voice_Cast`, 하드랜딩 → `Player_Voice_HardLand`, 피격·사망 → `Player_Voice_Hit/Death`. 큐의 **Chance**(재생 확률: 시전 0.2, 점프 0.3, 대시 0.4, 나머지 1)로 빈도를 조절한다 |
 | `SfxAnimationEvents` | Animator와 같은 오브젝트: Player Character, 적 5종 `<이름>_CombatVisual.prefab` | 클립 이벤트 `Swing` / `Impact` / `BodyFall` / `Footstep` / `ReleaseChiefBomb`(족장 던지기)를 받아 큐를 낸다 |
 | `ClipEventBuilder` (에디터) | `<이름>_Attack.fbx`, `<이름>_Death.fbx`, 플레이어 `Death.fbx` | Swing = windup − 0.15초, Impact = `EnemyMeleeAttack.windup`(변형별), BodyFall = 클립을 샘플링해 엉덩이 뼈가 바닥에 닿는 시각. 임포터 이벤트는 0~1 정규화 |
 | `SfxFootsteps` FootBones 모드 | Player·Enemy 루트 | LeftFoot/RightFoot 뼈 높이로 접지 순간 감지(들림 8cm → 접지 3cm, 외형 배율에 비례). 블렌드 트리와 무관하게 애니메이션과 맞는다. 이동 속도 조건으로 제자리 발 구르기는 무시 |

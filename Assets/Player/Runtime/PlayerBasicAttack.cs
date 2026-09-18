@@ -56,6 +56,16 @@ namespace SandGuard.Player
         [Min(0f), Tooltip("폭발 피해 = 볼트 피해 × 이 값. 직접 맞은 적은 볼트 피해와 폭발 피해를 둘 다 받는다")] public float burstDamageRatio = 0.6f;
         [Min(0f), Tooltip("폭발마다 카메라 감쇠 흔들림 진폭(m)")] public float burstCameraKick = 0.08f;
         [Min(0.01f)] public float burstCameraKickDuration = 0.18f;
+        [Min(0f), Tooltip("폭발 반경 안 적을 띄우는 수직 속도(m/s). 0이면 띄우지 않는다. 낙하·착지·복귀는 적의 EnemyFall이 맡는다")] public float burstLaunchUp = 5.5f;
+        [Min(0f), Tooltip("띄울 때 폭발 중심에서 바깥으로 날리는 수평 속도(m/s)")] public float burstLaunchOut = 2.5f;
+        [Header("스킬 — 관통탄 충전 (PlayerPierceCharge가 charge 0~1로 TrySkillPierce를 부른다)")]
+        [Min(1f), Tooltip("만충 시 빔 피해 배수")] public float chargedDamageMultiplier = 2.2f;
+        [Min(1f), Tooltip("만충 시 빔 굵기(판정·연출) 배수")] public float chargedRadiusMultiplier = 2.5f;
+        [Min(0f), Tooltip("만충 시 사거리에 더하는 거리(m)")] public float chargedRangeBonus = 8f;
+        [Min(0f), Tooltip("만충 시 꿰뚫은 적을 진행 방향으로 미는 속도(m/s). 충전량에 비례")] public float chargedKnockback = 6f;
+        [Min(0.01f), Tooltip("VFX_Pierce_Beam의 기본 반경. 충전 배수를 곱해 연출 굵기로 쓴다")] public float beamVfxRadius = 0.14f;
+        [Min(0f), Tooltip("VFX_Pierce_Beam의 기본 밝기(HDR). 만충이면 1.25배. 대낮 신전에서 블룸으로 하얗게 날아가지 않는 값")] public float beamVfxIntensity = 1.1f;
+        [Range(0f, 1f), Tooltip("이 충전량 이상이면 빔을 따라 달리는 링(자식 Rings)을 켠다")] public float beamRingsFromCharge = 0.5f;
         [Header("스킬 — 모래 족쇄 (SandShackle 스탯, 패시브: 모든 모래 폭발 지점에서 속박)")]
         [Min(0.1f)] public float shackleRadius = 2f;
         [Min(0.05f)] public float shackleDuration = 1.5f;
@@ -71,12 +81,19 @@ namespace SandGuard.Player
         public Func<bool> SkillTreePierceAllowed;
         // In tree mode piercing is an equipped active skill, not a free basic-attack upgrade.
         public bool PierceBeam => SkillTreePierceAllowed==null && Flag(PlayerStat.PierceBeam);
-        public bool TrySkillPierce()
+        /// <summary>스킬트리 모드의 관통탄. charge 0 = 탭(기본 빔), 1 = 만충(피해·굵기·사거리·밀어내기 최대).</summary>
+        public bool TrySkillPierce(float charge = 0f)
         {
             if(SkillTreePierceAllowed!=null && !SkillTreePierceAllowed() || !CanFire)return false;
             Aim(out var muzzle,out var direction,out var origin);
-            FireBeam(muzzle,direction,origin);PlayCastVisual();return true;
+            FireBeam(muzzle,direction,origin,Mathf.Clamp01(charge));
+            // 양팔 내지르기 동작이 있으면 그걸로, 없으면 기존 손바닥 시전 동작으로.
+            if (motor != null) motor.FaceCamera();
+            if (visuals == null || !visuals.PlayPierceFire()) PlayCastVisual();
+            return true;
         }
+        /// <summary>마지막 빔의 충전량(0~1).</summary>
+        public float LastBeamCharge { get; private set; }
         public float BeamRange => Stat(PlayerStat.BeamRange, beamRange);
         public bool SandBurst => Flag(PlayerStat.SandBurst);
         public float BurstRadius => Stat(PlayerStat.BurstRadius, burstRadius);
@@ -97,6 +114,9 @@ namespace SandGuard.Player
         public event Action<Vector3> Burst;
         /// <summary>모래 족쇄가 걸린 위치와 묶인 적 수.</summary>
         public event Action<Vector3, int> Shackled;
+        /// <summary>모래 폭발이 띄운 위치와 적 수(실제로 떠오른 것만).</summary>
+        public event Action<Vector3, int> Launched;
+        public int LastLaunchCount { get; private set; }
         public int HitCount { get; private set; }
         public PlayerBeamShot LastBeam { get; private set; }
         IManaWallet Mana => (manaSource as IManaWallet) ?? (motor != null ? motor.manaSource as IManaWallet : null);
@@ -240,28 +260,53 @@ namespace SandGuard.Player
         /// 관통탄: 몸통→총구, 총구→사거리 순으로 훑어 적대 대상은 전부 꿰뚫고(피해 각각) 그 외 콜라이더(벽·아군 시설)에서 멈춘다.
         /// 죽은 개체와 트리거는 통과한다. 폭발 관통탄이면 꿰뚫은 적마다 모래 폭발이 터진다.
         /// </summary>
-        void FireBeam(Vector3 muzzle, Vector3 direction, Vector3 origin)
+        void FireBeam(Vector3 muzzle, Vector3 direction, Vector3 origin, float charge = 0f)
         {
             string faction = Faction;
-            float amount = Damage;
+            float amount = Damage * Mathf.Lerp(1f, chargedDamageMultiplier, charge);
+            float radius = beamRadius * Mathf.Lerp(1f, chargedRadiusMultiplier, charge);
+            float range = BeamRange + chargedRangeBonus * charge;
+            float knock = chargedKnockback * charge;
             var seen = new HashSet<IDamageable>();
             var enemyPoints = new List<Vector3>();
-            Vector3 end = muzzle + direction * BeamRange;
+            var pushed = new List<IDisplaceable>();
+            Vector3 end = muzzle + direction * range;
             bool landed = false;
             // 몸통에서 총구까지 먼저: 총구가 벽 너머로 들어갔으면 빔은 거기서 끝난다.
             Vector3 toMuzzle = muzzle - origin;
             bool blockedBeforeMuzzle = toMuzzle.sqrMagnitude > 0.0001f
-                && Trace(origin, toMuzzle.normalized, toMuzzle.magnitude, faction, amount, seen, enemyPoints, out end);
+                && Trace(origin, toMuzzle.normalized, toMuzzle.magnitude, radius, faction, amount, seen, enemyPoints, pushed, out end);
             if (blockedBeforeMuzzle) landed = true;
-            else landed = Trace(muzzle, direction, BeamRange, faction, amount, seen, enemyPoints, out end);
+            else landed = Trace(muzzle, direction, range, radius, faction, amount, seen, enemyPoints, pushed, out end);
             if (enemyPoints.Count > 0) landed = true;
             Vector3 visualStart = blockedBeforeMuzzle ? end : muzzle;
             LastBeam = new PlayerBeamShot(visualStart, direction, end, enemyPoints.Count, landed);
+            LastBeamCharge = charge;
+            if (knock > 0f) { Vector3 push = direction; push.y = 0f; push = push.sqrMagnitude > 0.0001f ? push.normalized * knock : Vector3.zero; foreach (var target in pushed) target.Knockback(push); }
             if (beamPrefab != null)
             {
                 var beam = PrefabPool.Spawn(beamPrefab, visualStart, Quaternion.LookRotation(direction));
                 var driver = beam.GetComponentInChildren<VfxBeam>();
-                if (driver != null) driver.SetLength(Mathf.Max(0.05f, LastBeam.Length));
+                if (driver != null)
+                {
+                    // 풀에서 다시 빌려도 배율이 쌓이지 않도록 기본 반경에서 매번 계산한다.
+                    driver.Radius = beamVfxRadius * Mathf.Lerp(1f, chargedRadiusMultiplier, charge);
+                    driver.Intensity = beamVfxIntensity * Mathf.Lerp(1f, 1.25f, charge);
+                    driver.SetLength(Mathf.Max(0.05f, LastBeam.Length));
+                }
+                var rings = beam.transform.Find("Rings");
+                var ringSystem = rings != null ? rings.GetComponent<ParticleSystem>() : null;
+                if (ringSystem != null)
+                {
+                    if (charge >= beamRingsFromCharge && charge > 0f)
+                    {
+                        var main = ringSystem.main;
+                        float speed = Mathf.Max(1f, main.startSpeed.constant);
+                        main.startLifetime = Mathf.Max(0.05f, LastBeam.Length / speed); // 링이 빔 끝에서 사라진다
+                        ringSystem.Clear(true); ringSystem.Play(true);
+                    }
+                    else ringSystem.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+                }
                 PrefabPool.Release(beam, skillVfxLifetime);
             }
             if (beamHitPrefab != null)
@@ -272,9 +317,9 @@ namespace SandGuard.Player
         }
 
         /// <summary>한 구간을 훑는다. 막히면 true와 막힌 점, 아니면 false와 구간 끝점을 돌려준다. 꿰뚫은 적은 seen·enemyPoints에 쌓인다.</summary>
-        bool Trace(Vector3 from, Vector3 direction, float distance, string faction, float amount, HashSet<IDamageable> seen, List<Vector3> enemyPoints, out Vector3 end)
+        bool Trace(Vector3 from, Vector3 direction, float distance, float radius, string faction, float amount, HashSet<IDamageable> seen, List<Vector3> enemyPoints, List<IDisplaceable> pushed, out Vector3 end)
         {
-            var hits = Physics.SphereCastAll(from, beamRadius, direction, distance, skillMask, QueryTriggerInteraction.Ignore);
+            var hits = Physics.SphereCastAll(from, radius, direction, distance, skillMask, QueryTriggerInteraction.Ignore);
             Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
             foreach (var hit in hits)
             {
@@ -290,6 +335,8 @@ namespace SandGuard.Player
                 }
                 if (receiver == null) { end = point; return true; } // 지형·벽
                 if (!seen.Add(receiver)) continue; // 콜라이더가 여럿인 적은 한 번만
+                var displaceable = hit.collider.GetComponentInParent<IDisplaceable>();
+                if (displaceable != null && !pushed.Contains(displaceable)) pushed.Add(displaceable);
                 var result = receiver.TakeDamage(new DamageInfo(amount, faction, causeId: "player.pierce", hitPosition: point, hitDirection: direction));
                 if (result.Status == DamageStatus.InvalidRequest) Debug.LogWarning("관통 빔의 피해 요청이 거부되었습니다.", this);
                 if (result.WasApplied && result.AppliedDamage > 0f)
@@ -313,12 +360,24 @@ namespace SandGuard.Player
             string faction = Faction;
             float amount = BurstDamage, radius = BurstRadius;
             var seen = new HashSet<IDamageable>();
+            var launched = new HashSet<IDisplaceable>();
+            int launchCount = 0;
             foreach (var collider in Physics.OverlapSphere(center, radius, skillMask, QueryTriggerInteraction.Ignore))
             {
                 if (collider.transform.IsChildOf(transform)) continue;
-                IDamageable receiver = collider.GetComponentInParent<IDamageable>();
                 ICombatTarget target = collider.GetComponentInParent<ICombatTarget>();
-                if (target != null) receiver = target.IsTargetable && target.FactionId != faction ? target.DamageReceiver : null;
+                if (target != null && (!target.IsTargetable || target.FactionId == faction)) continue;
+                if (burstLaunchUp > 0f)
+                {
+                    var displaceable = collider.GetComponentInParent<IDisplaceable>();
+                    if (displaceable != null && launched.Add(displaceable))
+                    {
+                        Vector3 outward = ((Component)displaceable).transform.position - center; outward.y = 0f;
+                        outward = outward.sqrMagnitude > 0.0001f ? outward.normalized : Vector3.zero;
+                        if (displaceable.Launch(Vector3.up * burstLaunchUp + outward * burstLaunchOut)) launchCount++;
+                    }
+                }
+                IDamageable receiver = target != null ? target.DamageReceiver : collider.GetComponentInParent<IDamageable>();
                 if (receiver == null || !seen.Add(receiver)) continue;
                 Vector3 point = collider.ClosestPoint(center);
                 Vector3 direction = point - center; direction = direction.sqrMagnitude > 0.0001f ? direction.normalized : Vector3.up;
@@ -334,7 +393,9 @@ namespace SandGuard.Player
                 PrefabPool.Release(vfx, skillVfxLifetime);
             }
             if (cameraRig != null && burstCameraKick > 0f) cameraRig.Kick(burstCameraKick, burstCameraKickDuration);
+            LastLaunchCount = launchCount;
             Burst?.Invoke(center);
+            if (launchCount > 0) Launched?.Invoke(center, launchCount);
             if (SandShackle) Shackle(center);
         }
 

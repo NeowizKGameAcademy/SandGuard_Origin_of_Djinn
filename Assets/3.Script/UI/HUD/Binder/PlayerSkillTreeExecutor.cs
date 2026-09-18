@@ -12,14 +12,9 @@ namespace SandGuard.UI.HUD
     public sealed class PlayerSkillTreeExecutor : MonoBehaviour, ISkillExecutor, ISkillHUDStateSource
     {
         public SkillTreeSession session;
-        [Min(0)] public int pierceManaCost=8,recallManaCost=12;
-        [Min(.1f)] public float pierceCooldown=2f,recallCooldown=10f,recallWindow=6f;
-        public LayerMask recallObstacles=~0;
         PlayerMotor motor;PlayerUpdraft updraft;PlayerSkillCaster caster;PlayerBasicAttack attack;PlayerInputReader input;
-        CharacterController controller;PlayerHealth health;IManaWallet mana;
+        CharacterController controller;PlayerHealth health;IManaWallet mana;PlayerRecall recall;PlayerPierceCharge pierce;
         SkillService service;
-        float pierceReady,recallReady,markExpiry;
-        Vector3 mark;bool marked;GameObject marker;
         public string LastResult { get; private set; }
         static readonly string[] AttackIds={"attack.burst","attack.vortex","attack.storm"};
 
@@ -41,12 +36,23 @@ namespace SandGuard.UI.HUD
         {
             motor=GetComponent<PlayerMotor>();updraft=GetComponent<PlayerUpdraft>();caster=GetComponent<PlayerSkillCaster>();attack=GetComponent<PlayerBasicAttack>();
             input=GetComponent<PlayerInputReader>();controller=GetComponent<CharacterController>();health=GetComponent<PlayerHealth>();mana=GetComponent<IManaWallet>();
+            // 흔적 귀환 본체. 프리팹에 없으면 기본값으로 붙인다(연출 연결은 프리팹의 PlayerRecall에서).
+            recall=GetComponent<PlayerRecall>();if(!recall)recall=gameObject.AddComponent<PlayerRecall>();
+            // 관통탄 충전 본체(마나·쿨다운·충전 수치는 이 컴포넌트 인스펙터).
+            pierce=GetComponent<PlayerPierceCharge>();if(!pierce)pierce=gameObject.AddComponent<PlayerPierceCharge>();
+            pierce.Allowed=()=>Allowed("attack.pierce");
             // Install gates before any gameplay input. Missing/disabled service fails closed.
             if(motor){motor.SkillTreeDashAllowed=()=>Allowed("move.dash");motor.SkillTreeAirJumpAllowed=()=>Allowed("move.jump");motor.SkillTreeDashInput=()=>{TryExecute("move.dash",out var reason);LastResult=reason;};}
             if(caster){caster.SkillTreeAllowed=i=>i>=0 && i<3 && Allowed(AttackIds[i]);caster.SkillTreeInput=i=>{if(i>=0 && i<3)Use((EquipSlot)i);};}
             if(attack)attack.SkillTreePierceAllowed=()=>Allowed("attack.pierce");
         }
+        void OnEnable(){if(input)input.SkillReleased+=OnSkillReleased;}
         void Start()=>Connect();
+        void OnSkillReleased(int slot)
+        {
+            if(!pierce || !pierce.IsHolding || pierce.HeldSlot!=slot)return;
+            var result=pierce.EndHold(slot);LastResult=result.Succeeded?"관통탄":result.Failure.ToString();
+        }
         public void Connect()
         {
             if(!session || session.Service==null || !motor || !caster || !attack || !input || !controller || mana==null)
@@ -71,7 +77,7 @@ namespace SandGuard.UI.HUD
         }
         void Sync()
         {
-            if(!Allowed("move.recall"))ClearMark();
+            if(!Allowed("move.recall"))recall.ClearMark();
             if(updraft)
             {
                 bool unlocked=Allowed("move.updraft");
@@ -89,6 +95,8 @@ namespace SandGuard.UI.HUD
         {
             if(!Ready || service==null)return;
             string id=SkillLoadoutAccess.AtSlot(service,slot,Ready);if(id==null)return;
+            // 관통탄은 누르고 있는 동안 충전하고 떼는 순간(OnSkillReleased) 쏜다. 나머지는 누르는 순간 실행.
+            if(id=="attack.pierce"){LastResult=pierce.BeginHold((int)slot)?"관통탄 충전":"재사용 대기";return;}
             TryExecute(id,out var reason);LastResult=reason;
         }
         public bool TryExecute(string id,out string reason)
@@ -100,46 +108,33 @@ namespace SandGuard.UI.HUD
             if(id=="move.jump"){reason="Space 추가 점프 입력으로 사용합니다.";return false;}
             if(id=="attack.pierce")
             {
-                if(Time.time<pierceReady){reason="재사용 대기";return false;}
-                if(!attack.CanFire){reason="공격 불가";return false;}
-                if(!mana.TrySpend(pierceManaCost)){reason="마나 부족";return false;}
-                if(!attack.TrySkillPierce()){mana.Gain(pierceManaCost);reason="발사 실패";return false;}
-                pierceReady=Time.time+pierceCooldown;reason="관통탄";return true;
+                var result=pierce.Fire(0f);
+                reason=result.Succeeded?"관통탄":result.Failure==ActionFailure.Cooldown?"재사용 대기":result.Failure==ActionFailure.InsufficientMana?"마나 부족":result.Failure==ActionFailure.InvalidRequest?"공격 불가":result.Failure.ToString();
+                return result.Succeeded;
             }
             if(id=="move.recall")return Recall(out reason);
             reason="지원하지 않는 스킬";return false;
         }
         bool Recall(out string reason)
         {
-            if(marked && Time.time<=markExpiry)
+            bool wasMarked=recall.IsMarked;
+            var result=recall.TryUse();
+            if(result.Succeeded){reason=wasMarked?"흔적으로 귀환":"흔적 생성 — "+recall.window+"초 안에 같은 키로 귀환";return true;}
+            switch(result.Failure)
             {
-                if(!DestinationClear()){reason="귀환 위치가 막혀 있습니다.";return false;}
-                motor.Teleport(mark);ClearMark();reason="흔적으로 귀환";return true;
+                case ActionFailure.InvalidPlacement:reason=wasMarked?"귀환 위치가 막혀 있습니다.":"지상에서 흔적을 남기세요.";break;
+                case ActionFailure.Cooldown:reason="재사용 대기";break;
+                case ActionFailure.InsufficientMana:reason="마나 부족";break;
+                case ActionFailure.NotAlive:reason="사망 상태";break;
+                default:reason=result.Failure.ToString();break;
             }
-            ClearMark();
-            if(Time.time<recallReady){reason="재사용 대기";return false;}
-            if(!motor.IsGrounded || motor.IsDashing){reason="지상에서 흔적을 남기세요.";return false;}
-            if(!mana.TrySpend(recallManaCost)){reason="마나 부족";return false;}
-            mark=transform.position;marked=true;markExpiry=Time.time+recallWindow;recallReady=markExpiry+recallCooldown;
-            marker=GameObject.CreatePrimitive(PrimitiveType.Sphere);marker.name="Recall Mark";
-            var col=marker.GetComponent<Collider>();col.enabled=false;Destroy(col);
-            marker.transform.position=mark+Vector3.up*.12f;marker.transform.localScale=new Vector3(.65f,.12f,.65f);
-            reason="흔적 생성 — "+recallWindow+"초 안에 같은 키로 귀환";return true;
+            return false;
         }
-        bool DestinationClear()
+        void Update()
         {
-            if(!controller)return false;
-            float scale=Mathf.Max(Mathf.Abs(transform.lossyScale.x),Mathf.Abs(transform.lossyScale.z));
-            float radius=Mathf.Max(.05f,controller.radius*scale-controller.skinWidth);
-            float half=Mathf.Max(radius,controller.height*Mathf.Abs(transform.lossyScale.y)*.5f);
-            Vector3 center=mark+transform.TransformVector(controller.center)+Vector3.up*.08f;
-            foreach(var c in Physics.OverlapCapsule(center+Vector3.up*(half-radius),center-Vector3.up*(half-radius),radius,recallObstacles,QueryTriggerInteraction.Ignore))
-                if(!c.transform.IsChildOf(transform))return false;
-            // A removed platform must not leave a valid-looking floating return point.
-            return Physics.Raycast(mark+Vector3.up*.25f,Vector3.down,.8f,recallObstacles,QueryTriggerInteraction.Ignore);
+            if(recall.IsMarked && !Allowed("move.recall"))recall.ClearMark();
+            if(pierce.IsHolding && (!Ready || !Allowed("attack.pierce")))pierce.Cancel();
         }
-        void Update(){if(marked && (Time.time>markExpiry || !Allowed("move.recall") || health && health.CurrentHealth<=0))ClearMark();}
-        void ClearMark(){marked=false;if(marker)Destroy(marker);marker=null;}
         public bool TryGetHUDState(string id,out SkillHUDState state)
         {
             state=new SkillHUDState(false);if(!Allowed(id))return true;
@@ -147,11 +142,11 @@ namespace SandGuard.UI.HUD
             if(index>=0){float left=caster.CooldownRemaining(index);state=new SkillHUDState(Ready && caster.Unlocked(index) && mana.CurrentMana>=caster.ManaCost(index),left,caster.Cooldown(index));return true;}
             if(id=="move.dash"){state=new SkillHUDState(Ready && motor.State.DashAvailability.Succeeded,motor.DashCooldownRemaining,motor.ActiveDashCooldown);return true;}
             if(id=="move.jump"){state=new SkillHUDState(motor.IsGrounded || motor.RemainingAirJumps>0);return true;}
-            if(id=="attack.pierce"){state=new SkillHUDState(Ready && attack.CanFire && mana.CurrentMana>=pierceManaCost,Mathf.Max(0,pierceReady-Time.time),pierceCooldown);return true;}
-            if(id=="move.recall"){state=new SkillHUDState(Ready && (marked || motor.IsGrounded && mana.CurrentMana>=recallManaCost),marked?0:Mathf.Max(0,recallReady-Time.time),recallWindow+recallCooldown);return true;}
+            if(id=="attack.pierce"){state=new SkillHUDState(Ready && pierce.CanFire,pierce.CooldownRemaining,pierce.cooldown);return true;}
+            if(id=="move.recall"){state=new SkillHUDState(Ready && (recall.IsMarked || recall.CanMark),recall.CooldownRemaining,recall.TotalCooldown);return true;}
             return false;
         }
-        void OnDisable(){ClearMark();if(updraft){updraft.unlocked=false;updraft.Cancel();updraft.RefreshDeferral();}}
-        void OnDestroy(){if(service!=null)service.Changed-=Sync;ClearMark();/* Gates intentionally remain fail-closed until a replacement bridge installs them. */}
+        void OnDisable(){if(input)input.SkillReleased-=OnSkillReleased;if(pierce)pierce.Cancel();if(recall)recall.ClearMark();if(updraft){updraft.unlocked=false;updraft.Cancel();updraft.RefreshDeferral();}}
+        void OnDestroy(){if(service!=null)service.Changed-=Sync;if(recall)recall.ClearMark();/* Gates intentionally remain fail-closed until a replacement bridge installs them. */}
     }
 }

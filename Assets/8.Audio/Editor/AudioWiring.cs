@@ -64,6 +64,11 @@ namespace SandGuard.Audio.Editor
             ("VFX_Sand_Root", "Player_SandShackle", SfxEmitterTrigger.WhileParticlesEmit, null, "Player_SandShackle_Release"),
             ("VFX_Sand_Vortex", "Player_SandVortex_Loop", SfxEmitterTrigger.WhileParticlesEmit, null, "Player_SandVortex_End"),
             ("VFX_Sand_Storm", "Player_SandStorm_Loop", SfxEmitterTrigger.WhileParticlesEmit, null, "Player_SandStorm_End"),
+            ("VFX_Sand_Storm", "Player_SandStorm_Cast", SfxEmitterTrigger.OnEnable, null, null),
+            ("VFX_Pierce_Charge", "Player_Pierce_Charge_Loop", SfxEmitterTrigger.WhileParticlesEmit, null, null),
+            ("VFX_Pierce_Hit", "Player_ManaBolt_Impact", SfxEmitterTrigger.OnEnable, null, null),
+            ("VFX_Recall_Mark", "Player_Recall_Mark", SfxEmitterTrigger.OnEnable, null, null),
+            ("VFX_Recall_Arrive", "Player_Recall_Warp", SfxEmitterTrigger.OnEnable, null, null),
             ("VFX_Updraft_Launch", "Player_Updraft_Launch", SfxEmitterTrigger.OnEnable, null, null),
             ("VFX_Mana_Charge", "Player_ManaCharge_Loop", SfxEmitterTrigger.WhileParticlesEmit, null, null),
             ("VFX_Mana_Charge_Complete", "Player_ManaCharge_Complete", SfxEmitterTrigger.OnEnable, null, null),
@@ -154,7 +159,18 @@ namespace SandGuard.Audio.Editor
                 Listen(visuals?.onHardLanded, OneShot(holder, "Player_HardLand"));
                 Listen(respawner?.onRespawned, OneShot(holder, "Player_Revive"));
 
-                HitReaction(root, "Player_Hit", "Player_Death");
+                // 음성(기합·신음)은 같은 이벤트에 한 번 더 꽂는다. 확률은 큐의 Chance가 정한다
+                var caster = root.GetComponentInChildren<PlayerSkillCaster>(true);
+                var castVoice = OneShot(holder, "Player_Voice_Cast");
+                Listen(visuals?.onFired, castVoice);
+                Listen(caster?.onCast, castVoice);
+                var jumpVoice = OneShot(holder, "Player_Voice_Jump");
+                Listen(visuals?.onJumped, jumpVoice);
+                Listen(visuals?.onAirJumped, jumpVoice);
+                Listen(visuals?.onDashStarted, OneShot(holder, "Player_Voice_Dash"));
+                Listen(visuals?.onHardLanded, OneShot(holder, "Player_Voice_HardLand"));
+
+                HitReaction(root, "Player_Hit", "Player_Death", "Player_Voice_Hit", "Player_Voice_Death");
                 Footsteps(root, "Player_Footstep_Sand", animator, true);
 
                 if (updraft != null)
@@ -169,6 +185,8 @@ namespace SandGuard.Audio.Editor
 
                 if (animator != null)
                 {
+                    // 예전 배선이 남긴 깨진 스크립트(파일명≠클래스명이던 SfxAnimatorState)를 지워야 프리팹이 저장된다
+                    GameObjectUtility.RemoveMonoBehavioursWithMissingScript(animator.gameObject);
                     // 클립 이벤트 수신(사망 쓰러짐)과 Falling 상태 낙하 바람은 Animator와 같은 오브젝트에
                     var events = animator.GetComponent<SfxAnimationEvents>() ?? animator.gameObject.AddComponent<SfxAnimationEvents>();
                     if (events.BodyFallCue == null) events.BodyFallCue = SfxCueBuilder.Load("Player_BodyFall");
@@ -530,13 +548,15 @@ namespace SandGuard.Audio.Editor
                 if (evt.GetPersistentTarget(i) == target) UnityEventTools.RemovePersistentListener(evt, i);
         }
 
-        static void HitReaction(GameObject root, string hitCue, string deathCue)
+        static void HitReaction(GameObject root, string hitCue, string deathCue, string hitVoice = null, string deathVoice = null)
         {
             var events = root.GetComponentInChildren<IDamageEvents>(true) as Component;
             var host = events != null ? events.gameObject : root;
             var r = host.GetComponent<SfxHitReaction>() ?? host.AddComponent<SfxHitReaction>();
             if (r.HitCue == null) r.HitCue = SfxCueBuilder.Load(hitCue);
             if (r.DeathCue == null) r.DeathCue = SfxCueBuilder.Load(deathCue);
+            if (r.HitVoiceCue == null && hitVoice != null) r.HitVoiceCue = SfxCueBuilder.Load(hitVoice);
+            if (r.DeathVoiceCue == null && deathVoice != null) r.DeathVoiceCue = SfxCueBuilder.Load(deathVoice);
         }
 
         /// <summary>발 뼈 모드. Animator가 프리팹 안에 있으면 참조를 넣고, 런타임에 생기면(적) 비워 두어 스스로 찾게 한다.</summary>

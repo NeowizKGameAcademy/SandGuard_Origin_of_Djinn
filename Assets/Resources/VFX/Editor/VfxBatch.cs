@@ -31,6 +31,7 @@ namespace DesertTower.VFX.Editor
             CombatVfxBuilder.BuildAll();
             UpdraftVfxBuilder.Build();
             SandZoneVfxBuilder.Build();
+            SkillVfxBuilder.Build(); // 관통탄 충전·흔적 표식 + 모래 폭발 균열(임팩트 다음)
             RequestedVfxBuilder.Build();
             CoreDestructionBuilder.Build();
             CobraDestructionBuilder.Build();
