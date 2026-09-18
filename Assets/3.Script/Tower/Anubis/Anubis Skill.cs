@@ -21,7 +21,7 @@ public class AnubisSkill : MonoBehaviour
 
     private float skillTimer;
 
-    private void OnEnable()
+    private void Awake()
     {
         TryGetComponent(out findEnemy);
         TryGetComponent(out status);

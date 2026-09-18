@@ -69,6 +69,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d84d375c5a312545b715be04b98d296, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DetectRange
+  Status: {fileID: 0}
   Range: 20
 --- !u!1 &1206884435648381358
 GameObject:
@@ -366,6 +367,7 @@ GameObject:
   - component: {fileID: 8268389459624855497}
   - component: {fileID: 2178062959570823036}
   - component: {fileID: 4670446596344065523}
+  - component: {fileID: 4647213919836085390}
   m_Layer: 0
   m_Name: Mesh
   m_TagString: Untagged
@@ -444,6 +446,28 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &4647213919836085390
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5954387261548125415}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -2432090755550338912, guid: 9040ce8b4968a8e49ad1e0dd32167c29, type: 3}
 --- !u!1 &6125825016980946256
 GameObject:
   m_ObjectHideFlags: 0
@@ -655,8 +679,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f15225beef3f124bbe5007befebcf34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShowRange
+  Player: {fileID: 0}
   detectRange: {fileID: 561771609500174286}
   renderer: {fileID: 744293119959530677}
+  FadeSpeed: 10
 --- !u!1 &7148513550294472814
 GameObject:
   m_ObjectHideFlags: 0

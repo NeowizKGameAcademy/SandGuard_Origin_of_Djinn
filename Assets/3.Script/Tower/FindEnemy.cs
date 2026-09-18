@@ -47,13 +47,16 @@ public class FindEnemy : MonoBehaviour
 
     private string Faction => Owner != null ? Owner.FactionId : "Ally";
 
-    private void OnEnable()
+    private void Awake()
     {
         TryGetComponent(out Range);
 
         if (Range == null)
             Range = GetComponentInParent<DetectRange>();
+    }
 
+    private void OnEnable()
+    {
         Owner = GetComponentInParent<ICombatTarget>(); // [통합 추가]
     }
 

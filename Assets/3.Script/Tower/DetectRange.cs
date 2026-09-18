@@ -22,7 +22,7 @@ public class DetectRange : MonoBehaviour
 
     private ICombatTarget Owner;
 
-    private void OnEnable()
+    private void Awake()
     {
         TryGetComponent(out Status);
         Owner = GetComponentInParent<ICombatTarget>();
