@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Env_DesertWind_Loop
   m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxCue
   clips:
-  - {fileID: 8300000, guid: 30717293b476ac04a9162343137bd825, type: 3}
+  - {fileID: 8300000, guid: da828d8e330fd8c499f5c61b23aa2309, type: 3}
   volume: 1
   volumeJitterDb: 1
   pitch: 1
@@ -27,4 +27,5 @@ MonoBehaviour:
   loop: 1
   maxVoices: 2
   minInterval: 0.02
+  chance: 1
   loopFade: 2

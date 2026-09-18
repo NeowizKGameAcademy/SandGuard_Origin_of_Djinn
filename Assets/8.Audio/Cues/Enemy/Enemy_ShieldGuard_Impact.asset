@@ -12,7 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54a03e5cbec6ac7459a523d1564d4bb0, type: 3}
   m_Name: Enemy_ShieldGuard_Impact
   m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxCue
-  clips: []
+  clips:
+  - {fileID: 8300000, guid: 46657d15449a0e84a91613109fb6e091, type: 3}
+  - {fileID: 8300000, guid: 79228649ae3455744b26a8de96f7bc6d, type: 3}
+  - {fileID: 8300000, guid: bd08a86fcb02d5447b1a30c1e7a14093, type: 3}
+  - {fileID: 8300000, guid: 8bc4c68c491356041b16212170530bef, type: 3}
+  - {fileID: 8300000, guid: ac486d67a21ffaf478165afaf796ba3b, type: 3}
   volume: 0.8
   volumeJitterDb: 1
   pitch: 1
@@ -26,4 +31,5 @@ MonoBehaviour:
   loop: 0
   maxVoices: 2
   minInterval: 0.02
+  chance: 1
   loopFade: 0.3

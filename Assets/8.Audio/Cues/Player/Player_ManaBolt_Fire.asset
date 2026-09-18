@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Player_ManaBolt_Fire
   m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxCue
   clips:
-  - {fileID: 8300000, guid: 8bea04aa82257a64da14113f8ed6c2ae, type: 3}
+  - {fileID: 8300000, guid: eceb71e686c30df4c96d84f52bdfbe52, type: 3}
   volume: 0.8
   volumeJitterDb: 1
   pitch: 1
@@ -27,4 +27,5 @@ MonoBehaviour:
   loop: 0
   maxVoices: 4
   minInterval: 0.03
+  chance: 1
   loopFade: 0.3

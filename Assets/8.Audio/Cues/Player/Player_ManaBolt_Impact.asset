@@ -12,7 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54a03e5cbec6ac7459a523d1564d4bb0, type: 3}
   m_Name: Player_ManaBolt_Impact
   m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxCue
-  clips: []
+  clips:
+  - {fileID: 8300000, guid: 59d9eb4e6bf4b76488da9a79488ffee2, type: 3}
+  - {fileID: 8300000, guid: 7be4248fff01b8b4abbcb328bd0e6721, type: 3}
+  - {fileID: 8300000, guid: 75b1378a058b9d949874d835682fd734, type: 3}
+  - {fileID: 8300000, guid: e5b83868ea21af14abe1d02fb479a58f, type: 3}
+  - {fileID: 8300000, guid: 2a917a12f7adf2447af21f549cb076f8, type: 3}
   volume: 0.8
   volumeJitterDb: 1
   pitch: 1
@@ -26,4 +31,5 @@ MonoBehaviour:
   loop: 0
   maxVoices: 6
   minInterval: 0.02
+  chance: 1
   loopFade: 0.3

@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54a03e5cbec6ac7459a523d1564d4bb0, type: 3}
   m_Name: Enemy_HammerBrute_Swing
   m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxCue
-  clips: []
+  clips:
+  - {fileID: 8300000, guid: 4a213323c69956c45a8e565069814aa3, type: 3}
   volume: 0.8
   volumeJitterDb: 1
   pitch: 1
@@ -26,4 +27,5 @@ MonoBehaviour:
   loop: 0
   maxVoices: 4
   minInterval: 0.02
+  chance: 1
   loopFade: 0.3

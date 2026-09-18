@@ -12,7 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54a03e5cbec6ac7459a523d1564d4bb0, type: 3}
   m_Name: Enemy_BodyFall
   m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxCue
-  clips: []
+  clips:
+  - {fileID: 8300000, guid: 547ee0649216ab349865a8a562e44a2f, type: 3}
+  - {fileID: 8300000, guid: 09605aff4862703479cb0402508bcf20, type: 3}
+  - {fileID: 8300000, guid: 90c8839995e5ddc41ba41c069e175f7f, type: 3}
+  - {fileID: 8300000, guid: 6635aee5e065e7d44ae4a2d75960b000, type: 3}
+  - {fileID: 8300000, guid: 221e9b57ea3e3f04bba380f89d584002, type: 3}
   volume: 0.8
   volumeJitterDb: 1
   pitch: 1
@@ -26,4 +31,5 @@ MonoBehaviour:
   loop: 0
   maxVoices: 4
   minInterval: 0.02
+  chance: 1
   loopFade: 0.3

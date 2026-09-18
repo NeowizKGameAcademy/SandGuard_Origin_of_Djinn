@@ -51,6 +51,8 @@
 큐의 클립은 담당자가 인스펙터에서 넣는다. `Editor/AudioResourceMap.cs`의 대응표는 **비어 있는 큐만** 채우고(같은 소리의 원본과 `_auda`가 있으면 `_auda`), 코드 합성·자리표시 클립(`SFX_*`)은 큐에서 제거한다. 결과와 남은 빈 큐 목록은 `Docs/Audio/audio-resource-map.md`.
 합성·자리표시 WAV(`Synth/`, `Placeholder/`)는 더 이상 큐에 들어가지 않는다. 필요하면 인스펙터에서 직접 드래그한다.
 
+2026-09-18: `Docs/Audio`의 추가 파일(정리본 5개, 원본 8개, kenney 임팩트·발소리 130개 → `AudioResource/kenney/`)을 복사하고, `AudioResourceMap.Overrides` 표로 이미 채워진 큐도 더 맞는 클립으로 한 번 교체했다(메뉴 `Apply Overrides 2026-09-18`, 자동 빌드에는 포함되지 않음). 원칙: 같은 소리는 `_auda` 정리본, 변형은 모두 넣기, 자리와 다른 소리는 바로잡거나 비우기, 한 동작에 같은 클립이 두 번 나는 구성은 한쪽만 남기기.
+
 ## 큐 목록과 자리표시 클립
 
 제안 목록의 모든 소리(89개)가 `Editor/SfxCatalog.cs`에 이름·기본값·자리표시 종류로 정의되어 있고, `Assets/8.Audio/Cues/<분류>/`에 큐 에셋으로 존재한다.

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Wave_Start
   m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxCue
   clips:
-  - {fileID: 8300000, guid: ee7d5093d2c805643b1143987048dbe8, type: 3}
+  - {fileID: 8300000, guid: 32dcf6e37e965f14bb5e6491bf859a46, type: 3}
   volume: 0.8
   volumeJitterDb: 1
   pitch: 1
@@ -27,4 +27,5 @@ MonoBehaviour:
   loop: 0
   maxVoices: 1
   minInterval: 0.02
+  chance: 1
   loopFade: 0.3
