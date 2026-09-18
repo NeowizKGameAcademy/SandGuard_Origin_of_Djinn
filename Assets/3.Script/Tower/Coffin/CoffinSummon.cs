@@ -20,6 +20,13 @@ public class CoffinSummon : MonoBehaviour
 
     private void OnEnable()
     {
+        StartCoroutine(InitializeNextFrame());
+    }
+
+    private IEnumerator InitializeNextFrame()
+    {
+        yield return null;
+
         SetPoints();
         SummonAll();
     }
