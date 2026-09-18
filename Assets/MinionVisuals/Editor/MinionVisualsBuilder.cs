@@ -87,9 +87,50 @@ public static class MinionVisualsBuilder
             }
             finally { Object.DestroyImmediate(root); }
         }
+        if (File.Exists(Root + "/AnubisMinion/Animations/AnubisMinion@Unarmed Idle.fbx"))
+            BuildAnubisIdle();
         AssetDatabase.SaveAssets();
         File.WriteAllText("Docs/model-art/minion-visuals/unity-validation.txt", report.ToString());
         Debug.Log("MINION_VISUALS_BUILD_OK\n" + report);
+    }
+
+    [MenuItem("Tools/Minion Visuals/Connect Anubis Idle")]
+    public static void BuildAnubisIdle()
+    {
+        const string dir = Root + "/AnubisMinion";
+        const string path = dir + "/Animations/AnubisMinion@Unarmed Idle.fbx";
+        AssetDatabase.Refresh();
+        var avatar = AssetDatabase.LoadAllAssetsAtPath(dir + "/Models/AnubisMinion.fbx").OfType<Avatar>().First();
+        Configure(path, AssetDatabase.LoadAssetAtPath<Material>(dir + "/Materials/AnubisMinion.mat"), true, true, avatar);
+        var clip = AssetDatabase.LoadAllAssetsAtPath(path).OfType<AnimationClip>().First(c => !c.name.StartsWith("__preview__"));
+        if (!clip.isLooping || clip.length <= 0) throw new Exception("Invalid idle clip");
+        const string controllerPath = dir + "/Animations/AnubisMinion.controller";
+        var controller = AssetDatabase.LoadAssetAtPath<UnityEditor.Animations.AnimatorController>(controllerPath);
+        if (!controller) controller = UnityEditor.Animations.AnimatorController.CreateAnimatorControllerAtPath(controllerPath);
+        if (controller.layers.Length == 0) controller.AddLayer("Base Layer");
+        var machine = controller.layers[0].stateMachine;
+        var state = machine.states.Select(s => s.state).FirstOrDefault(s => s.name == "Idle") ?? machine.AddState("Idle");
+        state.motion = clip;
+        machine.defaultState = state;
+        EditorUtility.SetDirty(controller);
+        const string prefabPath = dir + "/AnubisMinion_Visual.prefab";
+        var root = PrefabUtility.LoadPrefabContents(prefabPath);
+        try
+        {
+            var model = root.transform.GetChild(0).gameObject;
+            foreach (var binding in AnimationUtility.GetCurveBindings(clip).Where(b => b.type == typeof(Transform)))
+                if (!string.IsNullOrEmpty(binding.path) && !model.transform.Find(binding.path))
+                    throw new Exception("Idle binding missing: " + binding.path);
+            var animator = model.GetComponent<Animator>();
+            if (!animator) animator = model.AddComponent<Animator>();
+            animator.avatar = avatar;
+            animator.runtimeAnimatorController = controller;
+            animator.applyRootMotion = false;
+            PrefabUtility.SaveAsPrefabAsset(root, prefabPath);
+        }
+        finally { PrefabUtility.UnloadPrefabContents(root); }
+        AssetDatabase.SaveAssets();
+        Debug.Log("ANUBIS_IDLE_OK: Unarmed Idle; default=Idle; looping=" + clip.isLooping + "; duration=" + clip.length);
     }
 
     static void Configure(string path, Material material, bool animation, bool rig, Avatar avatar)

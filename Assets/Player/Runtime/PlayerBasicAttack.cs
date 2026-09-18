@@ -47,17 +47,17 @@ namespace SandGuard.Player
         [Header("스킬 — 관통탄 (PierceBeam 스탯이 켜면 볼트 대신 이 빔)")]
         [Tooltip("VFX_Pierce_Beam. 총구에서 +Z가 발사 방향, 자식 VfxBeam의 길이를 실제 도달 거리로 맞춘다")] public GameObject beamPrefab;
         [Tooltip("빔이 꿰뚫은 적마다 재생 (VFX_ManaBolt_Impact)")] public GameObject beamHitPrefab;
-        [Min(0.5f)] public float beamRange = 14f;
+        [Min(0.5f), Tooltip("관통 빔 사거리(m). 맵 크기(신전 외벽 76m, 스폰 90m)를 덮도록 100")] public float beamRange = 100f;
         [Min(0.01f), Tooltip("빔 판정 굵기(반지름)")] public float beamRadius = 0.2f;
         [Header("스킬 — 모래 폭발 (SandBurst 스탯 = Q 해금. 시전은 PlayerSkillCaster, 폭발 관통탄도 이 수치를 쓴다)")]
         [Tooltip("VFX_Sand_Burst. 착탄점(바닥)에 놓는다")] public GameObject burstPrefab;
-        [Min(0.1f)] public float burstRadius = 2.5f;
+        [Min(0.1f)] public float burstRadius = 3.75f;
         [Min(0.1f), Tooltip("폭발 연출 프리팹이 만들어진 기준 반경(m). 실제 반경이 이보다 크거나 작으면 그 비율로 연출을 키우거나 줄여 판정과 맞춘다")] public float burstVfxRadius = 2.5f;
         [Min(0f), Tooltip("폭발 피해 = 볼트 피해 × 이 값. 직접 맞은 적은 볼트 피해와 폭발 피해를 둘 다 받는다")] public float burstDamageRatio = 0.6f;
         [Min(0f), Tooltip("폭발마다 카메라 감쇠 흔들림 진폭(m)")] public float burstCameraKick = 0.08f;
         [Min(0.01f)] public float burstCameraKickDuration = 0.18f;
         [Min(0f), Tooltip("폭발 반경 안 적을 띄우는 수직 속도(m/s). 0이면 띄우지 않는다. 낙하·착지·복귀는 적의 EnemyFall이 맡는다")] public float burstLaunchUp = 5.5f;
-        [Min(0f), Tooltip("띄울 때 폭발 중심에서 바깥으로 날리는 수평 속도(m/s)")] public float burstLaunchOut = 2.5f;
+        [Min(0f), Tooltip("띄울 때 폭발 중심에서 바깥으로 날리는 수평 속도(m/s)")] public float burstLaunchOut = 5f;
         [Header("스킬 — 관통탄 충전 (PlayerPierceCharge가 charge 0~1로 TrySkillPierce를 부른다)")]
         [Min(1f), Tooltip("만충 시 빔 피해 배수")] public float chargedDamageMultiplier = 2.2f;
         [Min(1f), Tooltip("만충 시 빔 굵기(판정·연출) 배수")] public float chargedRadiusMultiplier = 2.5f;
@@ -66,6 +66,8 @@ namespace SandGuard.Player
         [Min(0.01f), Tooltip("VFX_Pierce_Beam의 기본 반경. 충전 배수를 곱해 연출 굵기로 쓴다")] public float beamVfxRadius = 0.14f;
         [Min(0f), Tooltip("VFX_Pierce_Beam의 기본 밝기(HDR). 만충이면 1.25배. 대낮 신전에서 블룸으로 하얗게 날아가지 않는 값")] public float beamVfxIntensity = 1.1f;
         [Range(0f, 1f), Tooltip("이 충전량 이상이면 빔을 따라 달리는 링(자식 Rings)을 켠다")] public float beamRingsFromCharge = 0.5f;
+        [Tooltip("관통탄의 시작점(몸 가운데 앞, 두 팔을 뻗은 자리). 비우면 총구(FirePoint)에서 나간다. 충전 연출도 여기에 붙는다")] public Transform pierceOrigin;
+        [Min(0.05f), Tooltip("관통 빔 연출이 유지되는 시간(초). 발사 동작이 팔을 뻗고 있는 시간과 맞춘다(PlayerPierceAnimationBuilder.FireHoldSeconds)")] public float pierceBeamDuration = 1f;
         [Header("스킬 — 모래 족쇄 (SandShackle 스탯, 패시브: 모든 모래 폭발 지점에서 속박)")]
         [Min(0.1f)] public float shackleRadius = 2f;
         [Min(0.05f)] public float shackleDuration = 1.5f;
@@ -86,6 +88,14 @@ namespace SandGuard.Player
         {
             if(SkillTreePierceAllowed!=null && !SkillTreePierceAllowed() || !CanFire)return false;
             Aim(out var muzzle,out var direction,out var origin);
+            if (pierceOrigin != null)
+            {
+                // 두 손으로 쏘는 빔: 오른손 총구가 아니라 몸 가운데 앞에서, 그 점에서 조준점을 향해.
+                muzzle = pierceOrigin.position;
+                Vector3 aim = aimer != null ? aimer.GetAimPoint() : muzzle + transform.forward * 10f;
+                direction = (aim - muzzle).normalized;
+                if (direction.sqrMagnitude < 0.01f) direction = transform.forward;
+            }
             FireBeam(muzzle,direction,origin,Mathf.Clamp01(charge));
             // 양팔 내지르기 동작이 있으면 그걸로, 없으면 기존 손바닥 시전 동작으로.
             if (motor != null) motor.FaceCamera();
@@ -292,6 +302,7 @@ namespace SandGuard.Player
                     // 풀에서 다시 빌려도 배율이 쌓이지 않도록 기본 반경에서 매번 계산한다.
                     driver.Radius = beamVfxRadius * Mathf.Lerp(1f, chargedRadiusMultiplier, charge);
                     driver.Intensity = beamVfxIntensity * Mathf.Lerp(1f, 1.25f, charge);
+                    if (charge > 0f || pierceOrigin != null) driver.Duration = pierceBeamDuration; // 스킬 관통탄은 팔을 뻗고 있는 동안 빔이 남는다
                     driver.SetLength(Mathf.Max(0.05f, LastBeam.Length));
                 }
                 var rings = beam.transform.Find("Rings");
@@ -379,7 +390,7 @@ namespace SandGuard.Player
                 }
                 IDamageable receiver = target != null ? target.DamageReceiver : collider.GetComponentInParent<IDamageable>();
                 if (receiver == null || !seen.Add(receiver)) continue;
-                Vector3 point = collider.ClosestPoint(center);
+                Vector3 point = PlayerSandZone.ClosestPointSafe(collider, center);
                 Vector3 direction = point - center; direction = direction.sqrMagnitude > 0.0001f ? direction.normalized : Vector3.up;
                 var result = receiver.TakeDamage(new DamageInfo(amount, faction, causeId: "player.burst", hitPosition: point, hitDirection: direction));
                 if (result.WasApplied && result.AppliedDamage > 0f)

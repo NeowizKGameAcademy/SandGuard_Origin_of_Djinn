@@ -1,6 +1,6 @@
 # AudioResource 대응 결과
 
-생성: 2026-09-18 09:53. 표: `Assets/8.Audio/Editor/AudioResourceMap.cs`.
+생성: 2026-09-18 10:03. 표: `Assets/8.Audio/Editor/AudioResourceMap.cs`.
 
 ## 대응된 큐
 

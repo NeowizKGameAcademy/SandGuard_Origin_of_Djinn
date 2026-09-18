@@ -44,6 +44,10 @@ namespace SandGuard.Player
 
         protected Collider[] Overlap() => Physics.OverlapSphere(transform.position, radius, mask, QueryTriggerInteraction.Ignore);
 
+        /// <summary>Collider.ClosestPoint는 오목한 MeshCollider(신전 지형)에서 매 프레임 오류를 찍으므로 그 경우 경계 상자 기준으로 대신한다.</summary>
+        public static Vector3 ClosestPointSafe(Collider collider, Vector3 point)
+            => collider is MeshCollider mesh && !mesh.convex ? collider.ClosestPointOnBounds(point) : collider.ClosestPoint(point);
+
         /// <summary>지금 끝낸다. 지속 시간이 다하면 자동으로 불린다.</summary>
         public void End()
         {

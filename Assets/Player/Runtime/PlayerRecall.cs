@@ -6,8 +6,8 @@ using UnityEngine.Events;
 namespace SandGuard.Player
 {
     /// <summary>
-    /// 흔적 귀환: 지상에서 쓰면 그 자리에 흔적을 남기고, <see cref="window"/>초 안에 다시 쓰면 흔적으로 순간이동한다.
-    /// 흔적이 만료되거나 귀환하면 그때부터 <see cref="cooldown"/>이 돈다. 스킬트리 실행기(PlayerSkillTreeExecutor)가 호출하고,
+    /// 흔적 귀환: 지상에서 쓰면 그 자리에 흔적을 남기고, 다시 쓰면 흔적으로 순간이동한다. 흔적은 기본적으로 귀환할 때까지 영구히 남는다(<see cref="window"/> 0).
+    /// window를 0보다 크게 두면 그 시간 뒤 스스로 사라진다. 흔적이 사라진(귀환·만료·사망·해금 취소) 순간부터 <see cref="cooldown"/>이 돈다. 스킬트리 실행기(PlayerSkillTreeExecutor)가 호출하고,
     /// 연출·소리는 <see cref="onMarked"/>·<see cref="onRecalled"/>·<see cref="onMarkCleared"/>(UnityEvent)와 같은 이름의 C# 이벤트에 붙인다.
     /// 표식 프리팹(<see cref="markPrefab"/>, VfxRecallMark가 있으면 남은 시간으로 어두워지고 풀릴 때 번지며 사라짐)이 있으면 흔적 자리에 세우고, 없으면 납작한 구를 임시로 놓는다.
     /// 귀환 순간에는 출발점에 <see cref="departPrefab"/>, 도착점에 <see cref="arrivePrefab"/>을 놓고 카메라를 짧게 킥·줌한다.
@@ -19,7 +19,7 @@ namespace SandGuard.Player
         public PlayerHealth health;
         [Tooltip("IManaWallet. 비우면 같은 오브젝트에서 찾는다")] public MonoBehaviour manaSource;
         [Min(0)] public int manaCost = 12;
-        [Min(0.1f), Tooltip("흔적이 남아 있는 시간. 이 안에 다시 쓰면 귀환")] public float window = 6f;
+        [Min(0f), Tooltip("흔적이 남아 있는 시간. 0이면 귀환할 때까지 영구히 남는다")] public float window = 0f;
         [Min(0.1f), Tooltip("흔적이 사라진 뒤(귀환·만료) 다시 흔적을 남길 때까지")] public float cooldown = 10f;
         [Tooltip("귀환 지점이 막혔는지 볼 레이어")] public LayerMask obstacles = ~0;
         [Header("연출")]
@@ -46,11 +46,13 @@ namespace SandGuard.Player
         public bool IsMarked { get; private set; }
         public Vector3 MarkPosition { get; private set; }
         /// <summary>흔적이 사라질 때까지 남은 시간. 흔적이 없으면 0.</summary>
-        public float MarkRemaining => IsMarked ? Mathf.Max(0f, markExpiry - Time.time) : 0f;
+        public float MarkRemaining => IsMarked ? (HasWindow ? Mathf.Max(0f, markExpiry - Time.time) : float.PositiveInfinity) : 0f;
+        /// <summary>흔적에 만료 시간이 있는가. 0이면 영구.</summary>
+        public bool HasWindow => window > 0f;
         /// <summary>다시 흔적을 남길 수 있을 때까지. 흔적이 있는 동안은 0(귀환 가능).</summary>
         public float CooldownRemaining => IsMarked ? 0f : Mathf.Max(0f, readyAt - Time.time);
         /// <summary>HUD 게이지용 전체 길이.</summary>
-        public float TotalCooldown => window + cooldown;
+        public float TotalCooldown => (HasWindow ? window : 0f) + cooldown;
         public GameObject MarkObject { get; private set; }
         public int MarkCount { get; private set; }
         public int RecallCount { get; private set; }
@@ -88,8 +90,7 @@ namespace SandGuard.Player
             if (!mana.TrySpend(manaCost)) return ActionResult.Fail(ActionFailure.InsufficientMana);
             MarkPosition = transform.position;
             IsMarked = true; MarkCount++;
-            markExpiry = Time.time + window;
-            readyAt = markExpiry + cooldown;
+            markExpiry = HasWindow ? Time.time + window : float.PositiveInfinity;
             SpawnMark();
             Marked?.Invoke(MarkPosition);
             onMarked.Invoke();
@@ -124,6 +125,7 @@ namespace SandGuard.Player
         void Clear(bool recalled)
         {
             IsMarked = false;
+            readyAt = Time.time + cooldown; // 흔적이 사라진 순간부터 다시 남길 수 있을 때까지
             if (MarkObject != null)
             {
                 if (markVfx != null) markVfx.Release();
@@ -174,7 +176,7 @@ namespace SandGuard.Player
         void Update()
         {
             if (IsMarked && (Time.time > markExpiry || !Alive)) Clear(false);
-            if (IsMarked && markVfx != null) markVfx.SetRemaining(MarkRemaining / window);
+            if (IsMarked && markVfx != null) markVfx.SetRemaining(HasWindow ? MarkRemaining / window : 1f);
             if (fovRemaining > 0f && cameraRig != null)
             {
                 fovRemaining -= Time.deltaTime;

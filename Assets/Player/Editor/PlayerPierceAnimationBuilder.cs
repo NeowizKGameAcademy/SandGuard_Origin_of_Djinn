@@ -9,7 +9,8 @@ namespace SandGuard.Player.Editor
 {
     /// <summary>
     /// 관통탄 충전·발사 동작. Mixamo "Standing 2H Magic Attack 04"(30fps, 101프레임: 1~22 두 손을 모아 가슴으로 끌어올림, 23~30 앞으로 내지름, 31~78 뻗은 채 유지, 79~ 복귀)를
-    /// 두 클립으로 자른다: <b>Pierce Charge</b> = 4~22(비루프, 마지막 프레임 = 가슴 앞에서 구슬을 감싼 자세로 멈춤), <b>Pierce Fire</b> = 22~42(내지르기, 1.6배속).
+    /// 두 클립으로 자른다: <b>Pierce Charge</b> = 4~22(비루프, 마지막 프레임 = 가슴 앞에서 구슬을 감싼 자세로 멈춤),
+    /// <b>Pierce Fire</b> = 22~78(내지르기 뒤 뻗은 채 유지, 1.6배속 ≈ 1.17s: 내지르기 0.17s + 유지 1.0s = PlayerBasicAttack.pierceBeamDuration과 맞춤).
     /// 양팔만 덮는 오버라이드 레이어 "Pierce Casting"(기본 가중치 0)에 Empty / Pierce Charge / Pierce Fire 상태를 두고
     /// PlayerVisuals가 PierceCharging(bool)·PierceFire(trigger)와 레이어 가중치를 몬다. 다리는 Base Layer 그대로라 충전 중 이동이 자연스럽다.
     /// 메뉴: SandGuard > Player > Connect Pierce Charge Animation. 배치: -executeMethod SandGuard.Player.Editor.PlayerPierceAnimationBuilder.Build
@@ -22,7 +23,10 @@ namespace SandGuard.Player.Editor
         const string Source = "Docs/model-art/protagonist/character-protagonist-mixamo@Standing 2H Magic Attack 04.fbx";
         const string Folder = ProtagonistArtBuilder.Art + "/CombatAnimations";
         const string File = "PierceCast";
-        const int ChargeFirst = 4, ChargeLast = 22, FireFirst = 22, FireLast = 42;
+        // 빔 유지 시간(PlayerBasicAttack.pierceBeamDuration)만큼 팔을 뻗고 있도록 발사 클립 끝 = 뻗음 완료(30) + 유지 초 × 30fps × 배속 1.6. 원본의 유지 구간은 78프레임까지다.
+        public const float FireHoldSeconds = 1f;
+        const int ChargeFirst = 4, ChargeLast = 22, FireFirst = 22, ThrustDone = 30;
+        static int FireLast => Mathf.Min(78, ThrustDone + Mathf.RoundToInt(FireHoldSeconds * 30f * FireSpeed));
         const float ChargeSpeed = 1.2f, FireSpeed = 1.6f;
 
         [MenuItem("SandGuard/Player/Connect Pierce Charge Animation")]
@@ -59,7 +63,7 @@ namespace SandGuard.Player.Editor
             var tap = Transition(empty.AddTransition(fireState), "Tap Fire", 0.08f); tap.AddCondition(AnimatorConditionMode.If, 0, FireTrigger);
             var release = Transition(chargeState.AddTransition(fireState), "Release", 0.05f); release.AddCondition(AnimatorConditionMode.If, 0, FireTrigger);
             var cancel = Transition(chargeState.AddTransition(empty), "Cancel", 0.25f); cancel.AddCondition(AnimatorConditionMode.IfNot, 0, ChargingParameter);
-            var done = Transition(fireState.AddTransition(empty), "Done", 0.2f); done.hasExitTime = true; done.exitTime = 0.85f;
+            var done = Transition(fireState.AddTransition(empty), "Done", 0.2f); done.hasExitTime = true; done.exitTime = 0.92f;
             var again = Transition(fireState.AddTransition(chargeState), "Charge Again", 0.15f); again.hasExitTime = true; again.exitTime = 0.6f; again.AddCondition(AnimatorConditionMode.If, 0, ChargingParameter);
             controller.layers = layers;
             EditorUtility.SetDirty(controller);

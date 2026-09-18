@@ -52,13 +52,14 @@ namespace SandGuard.Player
             {
                 var collider = buffer[i];
                 if (!Hostile(collider, out ICombatTarget target)) continue;
-                Vector3 point = collider.ClosestPoint(center);
-                Vector3 flat = point - center; flat.y = 0f;
-                float distance = flat.magnitude;
-                if (distance > Front || distance < back) continue;
                 IDamageable receiver = target != null ? target.DamageReceiver : collider.GetComponentInParent<IDamageable>();
                 var displaceable = collider.GetComponentInParent<IDisplaceable>();
                 var slowable = collider.GetComponentInParent<ISlowable>();
+                if (target == null && receiver == null && displaceable == null && slowable == null) continue; // 지형·장식: 할 일이 없다
+                Vector3 point = ClosestPointSafe(collider, center);
+                Vector3 flat = point - center; flat.y = 0f;
+                float distance = flat.magnitude;
+                if (distance > Front || distance < back) continue;
                 object key = (object)target ?? (object)receiver ?? (object)displaceable ?? (object)slowable ?? collider;
                 if (!struck.Add(key)) continue;
                 swept++;

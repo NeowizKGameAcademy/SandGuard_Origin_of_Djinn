@@ -198,6 +198,8 @@ namespace SandGuard.Player.Tests
             Assert.AreEqual(1, target.KnockCalls); Assert.Greater(target.Knock.z, 0f, "Pushed along the beam.");
             Assert.AreEqual(attack.chargedKnockback, target.Knock.magnitude, 0.01f);
             Assert.True(attack.LastBeam.Landed); Assert.Less(attack.LastBeam.End.z, 9f, "The charged beam still stops at the wall.");
+            if (attack.pierceOrigin != null)
+                Assert.Less(Vector3.Distance(attack.LastBeam.Origin, attack.pierceOrigin.position), 0.05f, "The two-handed beam leaves from the centre-front anchor, not the right palm.");
             // 취소: 충전 중 못 쓰는 상태가 되면(여기서는 컴포넌트 비활성) 마나 없이 취소된다.
             pierce.ResetCooldown(); before = mana.CurrentMana;
             Assert.True(pierce.BeginHold(1));
@@ -272,8 +274,11 @@ namespace SandGuard.Player.Tests
                 yield return null;
             }
             Assert.True(sawFire, "Releasing plays the thrust.");
+            yield return new WaitForSeconds(0.3f); // 발사 0.8s 뒤: 내지르기(0.17s) 끝나고 1초 유지 구간 한가운데
+            Assert.True(animator.GetCurrentAnimatorStateInfo(layer).IsName("Pierce Fire"), "The arms stay extended while the beam holds.");
+            Assert.Greater(animator.GetLayerWeight(layer), 0.95f);
             yield return new WaitForSeconds(1.2f);
-            Assert.True(animator.GetCurrentAnimatorStateInfo(layer).IsName("Empty"), "The thrust returns to Empty.");
+            Assert.True(animator.GetCurrentAnimatorStateInfo(layer).IsName("Empty"), "The thrust returns to Empty after the hold.");
             Assert.Less(animator.GetLayerWeight(layer), 0.05f, "The layer lowers after the thrust.");
             if (casting != null) Assert.False(casting.Suppressed);
             // 탭(충전 없이)도 내지르기 동작을 쓴다.
@@ -282,6 +287,32 @@ namespace SandGuard.Player.Tests
             yield return null; yield return null;
             var tapState = animator.GetCurrentAnimatorStateInfo(layer);
             Assert.True(tapState.IsName("Pierce Fire") || (animator.IsInTransition(layer) && animator.GetNextAnimatorStateInfo(layer).IsName("Pierce Fire")), "A tap plays the thrust too.");
+        }
+
+        [UnityTest] public IEnumerator RecallMarkPersistsUntilUsedAndCooldownStartsAfterTheReturn()
+        {
+            var recall = player.GetComponent<PlayerRecall>() ?? player.AddComponent<PlayerRecall>();
+            recall.window = 0f; recall.cooldown = 3f; recall.markPrefab = null;
+            yield return null;
+            var motor = player.GetComponent<PlayerMotor>();
+            for (float t = 0f; t < 1f && !motor.IsGrounded; t += Time.deltaTime) yield return null;
+            Assert.True(recall.HasWindow == false);
+            int before = mana.CurrentMana;
+            Assert.True(recall.TryMark().Succeeded);
+            Assert.AreEqual(before - recall.manaCost, mana.CurrentMana);
+            Vector3 mark = recall.MarkPosition;
+            yield return new WaitForSeconds(1.5f);
+            Assert.True(recall.IsMarked, "A permanent mark does not expire.");
+            Assert.True(float.IsPositiveInfinity(recall.MarkRemaining));
+            Assert.AreEqual(0f, recall.CooldownRemaining, "No cooldown while the mark stands.");
+            Assert.AreEqual(recall.cooldown, recall.TotalCooldown, 0.0001f, "The HUD gauge is only the cooldown.");
+            motor.Teleport(mark + new Vector3(3f, 0f, 0f));
+            yield return new WaitForSeconds(0.3f);
+            Assert.True(recall.TryRecall().Succeeded);
+            Assert.False(recall.IsMarked);
+            Assert.Less(Vector3.Distance(Flat(player.transform.position), Flat(mark)), 0.3f, "Back at the mark.");
+            Assert.That(recall.CooldownRemaining, Is.InRange(recall.cooldown - 0.1f, recall.cooldown), "The cooldown starts when the mark is consumed.");
+            Assert.AreEqual(ActionFailure.Cooldown, recall.TryMark().Failure);
         }
 
         static Vector3 Flat(Vector3 v) { v.y = 0f; return v; }

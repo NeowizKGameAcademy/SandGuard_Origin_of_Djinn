@@ -110,22 +110,33 @@ namespace DesertTower.VFX.Editor
                         UnityEventTools.AddPersistentListener(caster.onStormCast, new UnityAction(surge.Trigger));
                 }
 
-                // 관통탄 충전: 손(CastingEffectAnchor)에 파란 마나 응집 루프. 충전 시작/세기/취소/발사를 꽂는다.
+                // 관통탄 원점: 몸 가운데 앞, 두 팔을 뻗은 자리. 빔 시작점·충전 연출·발사 연출이 모두 여기서 나간다.
+                var pierceAnchor = root.transform.Find("PierceAnchor");
+                if (pierceAnchor == null) { pierceAnchor = new GameObject("PierceAnchor").transform; pierceAnchor.SetParent(root.transform, false); }
+                pierceAnchor.localPosition = new Vector3(0f, 1.2f, 0.55f); pierceAnchor.localRotation = Quaternion.identity;
+                if (attack != null) attack.pierceOrigin = pierceAnchor;
+                if (visuals != null) visuals.pierceAnchor = pierceAnchor;
+
+                // 관통탄 충전: 원점에 파란 마나 응집 루프. 충전 시작/세기/취소/발사를 꽂는다.
                 var pierce = Ensure<PlayerPierceCharge>(root);
                 var pierceChargePrefab = Load(SkillVfxBuilder.PierceChargePath);
                 if (pierceChargePrefab != null)
                 {
-                    var hand = root.transform.Find("CastingEffectAnchor");
-                    if (hand == null) hand = root.transform.Find("DefaultFirePoint");
-                    if (hand == null) hand = root.transform;
-                    var chargeInstance = hand.Find("PierceCharge");
+                    // 예전 배선(손 앵커 아래)에 있으면 원점으로 옮긴다.
+                    var chargeInstance = pierceAnchor.Find("PierceCharge");
                     if (chargeInstance == null)
                     {
-                        chargeInstance = ((GameObject)PrefabUtility.InstantiatePrefab(pierceChargePrefab, hand)).transform;
-                        chargeInstance.name = "PierceCharge";
-                        chargeInstance.localPosition = Vector3.zero;
-                        chargeInstance.localRotation = Quaternion.identity;
+                        foreach (var t in root.GetComponentsInChildren<Transform>(true))
+                            if (t.name == "PierceCharge" && t.parent != pierceAnchor) { chargeInstance = t; break; }
+                        if (chargeInstance != null) chargeInstance.SetParent(pierceAnchor, false);
                     }
+                    if (chargeInstance == null)
+                    {
+                        chargeInstance = ((GameObject)PrefabUtility.InstantiatePrefab(pierceChargePrefab, pierceAnchor)).transform;
+                        chargeInstance.name = "PierceCharge";
+                    }
+                    chargeInstance.localPosition = Vector3.zero;
+                    chargeInstance.localRotation = Quaternion.identity;
                     var loop = chargeInstance.GetComponent<VfxChargeLoop>();
                     if (loop != null)
                     {
