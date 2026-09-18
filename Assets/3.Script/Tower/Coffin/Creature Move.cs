@@ -42,10 +42,14 @@ public class CreatureMove : CreatureController
 
     private void Return()
     {
-        Vector3 direction = (summonPoint - transform.position).normalized;
-        Quaternion targetRotation = Quaternion.LookRotation(direction);
+        Vector3 direction = summonPoint - transform.position;
+
+        if (direction.sqrMagnitude > 0.0001f)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * RotateSpeed * 5f);
+        }
 
         transform.position = Vector3.MoveTowards(transform.position, summonPoint, MoveSpeed * 2f * Time.deltaTime);
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * RotateSpeed * 5f);
     }
 }

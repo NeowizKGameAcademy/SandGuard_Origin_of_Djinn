@@ -15,7 +15,7 @@ public class AnubisStatus : MonoBehaviour
 
     //Properties
     public float maxHp => MaxHP;
-    public float currentHP => currentHP;
+    public float currentHP => CurrentHP;
     public float moveSpeed => MoveSpeed;
     public float attackPower => AttackPower;
     public float respawnCoolDown => RespawnCoolDown;
