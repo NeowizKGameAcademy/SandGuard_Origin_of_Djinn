@@ -1,6 +1,6 @@
 # AudioResource 대응 결과
 
-생성: 2026-09-18 13:05. 표: `Assets/8.Audio/Editor/AudioResourceMap.cs`.
+생성: 2026-09-18 15:32. 표: `Assets/8.Audio/Editor/AudioResourceMap.cs`.
 
 ## 대응된 큐
 
@@ -27,7 +27,6 @@
 - `Facility_Cobra_Destroy` ← 타워파괴2_auda, 타워파괴음
 - `Enemy_Chief_Bomb_Explosion` ← 폭발, 폭발2
 - `Enemy_Hit` ← 피격음, 피격음2, 피격음3_auda
-- `Player_Pierce_Charge_Loop` ← 기 모으기
 - `Player_SandStorm_Cast` ← 폭풍
 - `Player_Recall_Warp` ← whoosh모음
 - `Env_Lightning` ← 천둥-가까운 거리, 천둥-중간, 천둥-먼 거리
@@ -54,7 +53,7 @@
 - `Facility_Cobra_Destroy_Debris` ← impactMining_000, impactMining_001, impactMining_002
 - `Core_Warning` ← impactBell_heavy_000
 
-## 클립이 없는 큐 (51개) — 담당자가 채울 것
+## 클립이 없는 큐 (46개) — 담당자가 채울 것
 
 - `Core_Destroy_Charge`: 코어 파괴 충전 상승음 (0~0.2초)
 - `Enemy_Burning`: 불타는 적 지글 2초
@@ -75,18 +74,13 @@
 - `Facility_Obelisk_Loop`: 오벨리스크 둔화 필드 (모래시계 + 저역 펄스)
 - `Facility_Summon_Circle_Loop`: 소환진 룬 공명
 - `Facility_Summon_Pillar`: 빛기둥 소환 + 해골 달그락
-- `Music_Boss_Loop`: 보스 테마
 - `Music_Boss_Sting`: 보스 등장 스팅어
 - `Music_Danger_Loop`: 코어 위험 긴장 레이어 (전투 위에 겹침)
-- `Music_Defeat`: 패배 스팅어
-- `Music_Victory`: 승리 팡파르
 - `Music_WaveClear_Sting`: 웨이브 클리어 스팅어
 - `Player_ManaBolt_Flight_Loop`: 투사체 비행 윙윙
 - `Player_ManaCharge_Complete`: 마나 충전 완료 차임
 - `Player_ManaCharge_Loop`: 코어 근처 마나 충전
-- `Player_PierceBeam_Fire`: 관통 빔 '즈왕'
-- `Player_Recall_Mark`: 흔적 생성 룬
-- `Player_Revive`: 부활 마력 응집
+- `Player_Pierce_Charge_Loop`: 관통탄 충전: 손에 마나 응집(세기에 따라 상승)
 - `Player_SandShackle`: 모래 족쇄 조임
 - `Player_SandShackle_Release`: 모래 족쇄 풀림 (방출 정지)
 - `Player_SandStorm_End`: 폭풍 잦아듦
@@ -108,7 +102,7 @@
 - `Wave_Clear`: 웨이브 클리어 팡파르 (VFX_Wave_Clear)
 - `Wave_Countdown_Tick`: 카운트다운 틱
 
-## AudioResource에 있지만 쓰지 않은 파일 (126개)
+## AudioResource에 있지만 쓰지 않은 파일 (154개)
 
 - footstep_carpet_000
 - footstep_carpet_001
@@ -211,28 +205,56 @@
 - impactWood_medium_003
 - impactWood_medium_004
 - UI버튼 클릭음
+- whoosh모음
 - 강한착지음
+- 기 모으기
 - 기본 사막환경 배경음
+- 기본 사막환경 배경음_auda
 - 기본공격
 - 대쉬 효과음
+- 대쉬 효과음_auda
 - 대쉬효과음2
 - 더블점프
 - 레벨업
+- 레벨업팡파레
 - 마나부족스킬잠금건설불가
+- 몬스터발소리
+- 바람소리_auda
 - 발걸음2
+- 발자국 사운드
 - 방패타격음
+- 방패타격음_auda
+- 보스테마곡
+- 부활_auda
 - 아누비스발소리
 - 웨이브 시작음
+- 웨이브 시작음_auda
+- 웨이브시작_auda
+- 웨이브테마곡
 - 점프
+- 천둥-가까운 거리
+- 천둥-중간
 - 추락바람소리
+- 추락바람소리_auda
 - 코브라타워 화염방사
 - 코어핑
+- 코어핑_auda
 - 타워 건설음
+- 타워파괴2_auda
+- 타워파괴음
 - 폭발
 - 폭발2
+- 폭발3
 - 폭발4
+- 폭발5
 - 폭발6
 - 폭발7
 - 폭발8
 - 폭발9
+- 폭풍
+- 폭풍_auda
+- 피격음2
 - 피격음3
+- 피격음3_auda
+- 휘두르는소리
+- 흔적귀환워프완료

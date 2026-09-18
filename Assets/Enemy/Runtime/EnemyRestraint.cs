@@ -19,6 +19,8 @@ namespace SandGuard.Enemy
         public GameObject vfxPrefab;
         [Tooltip("연출을 붙일 발 기준점. 비우면 이 오브젝트")]
         public Transform feet;
+        [Min(0f), Tooltip("외부 밀림 배율. 0이면 면역, 0.5면 절반, 1이면 그대로 받는다. Displace 이동량과 Knockback/Launch 입력 속도에 적용된다")]
+        public float displacementMultiplier = 1f;
         [Min(0.1f), Tooltip("넉백 속도가 초당 줄어드는 양(m/s²). 클수록 짧게 밀린다. 총 거리는 세기²/(2×이 값)")]
         public float knockbackDamping = 12f;
         float endTime = -1f;
@@ -93,13 +95,18 @@ namespace SandGuard.Enemy
         public void Displace(Vector3 delta)
         {
             if (!isActiveAndEnabled || (health != null && !health.IsAlive) || motor == null) return;
-            motor.Displace(delta);
+            if (!CanBeDisplaced) return;
+            motor.Displace(delta * displacementMultiplier);
         }
+
+        bool CanBeDisplaced => displacementMultiplier > 0f && !float.IsInfinity(displacementMultiplier);
 
         /// <summary>방향과 세기(m/s)를 받아 두고 멈출 때까지 Update에서 스스로 민다. 미는 쪽은 한 번만 부르면 된다.</summary>
         public void Knockback(Vector3 velocity)
         {
             if (!isActiveAndEnabled || (health != null && !health.IsAlive)) return;
+            if (!CanBeDisplaced) return;
+            velocity *= displacementMultiplier;
             velocity.y = 0f; // 띄우기는 EnemyFall이 맡는다
             if (velocity.sqrMagnitude > knock.sqrMagnitude) knock = velocity; // 더 센 쪽이 덮어쓴다
         }
@@ -108,7 +115,8 @@ namespace SandGuard.Enemy
         public bool Launch(Vector3 velocity)
         {
             if (!isActiveAndEnabled || (health != null && !health.IsAlive) || motor == null) return false;
-            if (motor.Fall == null || !motor.Fall.Launch(velocity)) return false;
+            if (!CanBeDisplaced) return false;
+            if (motor.Fall == null || !motor.Fall.Launch(velocity * displacementMultiplier)) return false;
             knock = Vector3.zero; // 땅에서 밀리던 힘은 버리고 공중의 수평 속도에 넘긴다
             return true;
         }

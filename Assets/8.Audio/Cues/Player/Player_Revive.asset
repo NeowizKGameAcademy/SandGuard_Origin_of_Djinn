@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54a03e5cbec6ac7459a523d1564d4bb0, type: 3}
   m_Name: Player_Revive
   m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxCue
-  clips: []
+  clips:
+  - {fileID: 8300000, guid: 30368ece8e09631449a877d5a8e385ea, type: 3}
   volume: 0.8
   volumeJitterDb: 0
   pitch: 1
@@ -26,4 +27,5 @@ MonoBehaviour:
   loop: 0
   maxVoices: 4
   minInterval: 0.02
+  chance: 1
   loopFade: 0.3

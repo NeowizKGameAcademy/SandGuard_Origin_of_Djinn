@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54a03e5cbec6ac7459a523d1564d4bb0, type: 3}
+  m_Name: Core_Absorb
+  m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxCue
+  clips:
+  - {fileID: 8300000, guid: f83c8d486554e1241a268f4b8954a7dd, type: 3}
+  - {fileID: 8300000, guid: 9cc0d24c0825c9e438fb23791616d7bb, type: 3}
+  - {fileID: 8300000, guid: f80eda866f66a834b852f85499262e3e, type: 3}
+  - {fileID: 8300000, guid: a748f27f90014de43aba2d491e89af2e, type: 3}
+  - {fileID: 8300000, guid: b0e4b28e8c29d374089ea5a72bf4dd52, type: 3}
+  - {fileID: 8300000, guid: dad8760c7c75dc14e92aefc23cae417d, type: 3}
+  volume: 0.8
+  volumeJitterDb: 1
+  pitch: 1
+  pitchJitter: 0.04
+  mixerGroup: {fileID: -6147871996741235955, guid: 1fae13e4ac1874e45988f79fc0bae7ec, type: 2}
+  priority: 128
+  spatial: 1
+  minDistance: 6
+  maxDistance: 60
+  rolloff: 0
+  loop: 0
+  maxVoices: 3
+  minInterval: 0.02
+  chance: 1
+  loopFade: 1

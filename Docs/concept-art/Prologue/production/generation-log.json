@@ -1,0 +1,136 @@
+{
+  "createdAt": "2026-09-18",
+  "sources": {
+    "1": {
+      "media_id": "fd157e14-d2e5-48e5-b8d0-70250478dfbc",
+      "status": "uploaded",
+      "type": "image",
+      "filename": "Prologue1.png",
+      "content_type": "image/png",
+      "size_bytes": 2328764,
+      "source_file_id": "file_000000002c6081f79d8f703eb41a1289"
+    },
+    "2": {
+      "media_id": "5cad4198-8414-4d4c-982b-2bb42c81d709",
+      "status": "uploaded",
+      "type": "image",
+      "filename": "Prologue2.png",
+      "content_type": "image/png",
+      "size_bytes": 2407413,
+      "source_file_id": "file_00000000b02481f5991f75005d828fdb"
+    },
+    "3": {
+      "media_id": "ad450c88-9ec8-4027-9f14-dd315875713f",
+      "status": "uploaded",
+      "type": "image",
+      "filename": "Prologue3.png",
+      "content_type": "image/png",
+      "size_bytes": 2436545,
+      "source_file_id": "file_0000000071e0822f9461abe1fe717cf3"
+    },
+    "4": {
+      "media_id": "85865155-afa3-4ec9-9b19-05d6d4f2e307",
+      "status": "uploaded",
+      "type": "image",
+      "filename": "Prologue4.png",
+      "content_type": "image/png",
+      "size_bytes": 2649271,
+      "source_file_id": "file_00000000a4c08206b971be840c8d1936"
+    },
+    "5": {
+      "media_id": "ff03ee01-2141-414d-b068-7b465b868e68",
+      "status": "uploaded",
+      "type": "image",
+      "filename": "Prologue5.png",
+      "content_type": "image/png",
+      "size_bytes": 2440740,
+      "source_file_id": "file_00000000dce881fd976fe1266dd17200"
+    },
+    "6": {
+      "media_id": "a015e0ab-df23-48df-9fe9-47f5fa98fb91",
+      "status": "uploaded",
+      "type": "image",
+      "filename": "Prologue6.png",
+      "content_type": "image/png",
+      "size_bytes": 1985022,
+      "source_file_id": "file_0000000013a882309193e487e4640099"
+    },
+    "7": {
+      "media_id": "b4fdb8ec-b01c-4a7b-8009-9b6211df085f",
+      "status": "uploaded",
+      "type": "image",
+      "filename": "Prologue7.png",
+      "content_type": "image/png",
+      "size_bytes": 2138048,
+      "source_file_id": "file_000000007ef082118788c008ba0afae9"
+    }
+  },
+  "pilot": {
+    "scene": 5,
+    "job_id": "3ed17ead-5d60-4ee0-9819-efa6d7dbb2d3",
+    "estimated_credits": 63,
+    "status": "ip_detected",
+    "output_created": false,
+    "raw_status": {
+      "jobs": [
+        {
+          "index": 5,
+          "job_id": "3ed17ead-5d60-4ee0-9819-efa6d7dbb2d3",
+          "status": "ip_detected",
+          "type": "image",
+          "model": "seedance_2_5"
+        }
+      ],
+      "summary": {
+        "total": 1,
+        "completed": 0,
+        "failed": 1,
+        "active": 0,
+        "errors": 0
+      },
+      "all_terminal": true
+    }
+  },
+  "model": "seedance_2_5",
+  "target_duration_seconds": 50,
+  "credits_before": 3010,
+  "credits_after": 3010,
+  "observed_net_credit_change": 0,
+  "remaining_estimates": [
+    {
+      "scene": 1,
+      "credits": 54,
+      "credits_exact": 54
+    },
+    {
+      "scene": 2,
+      "credits": 45,
+      "credits_exact": 45
+    },
+    {
+      "scene": 3,
+      "credits": 54,
+      "credits_exact": 54
+    },
+    {
+      "scene": 4,
+      "credits": 63,
+      "credits_exact": 63
+    },
+    {
+      "scene": 6,
+      "credits": 72,
+      "credits_exact": 72
+    },
+    {
+      "scene": 7,
+      "credits": 99,
+      "credits_exact": 99
+    }
+  ],
+  "estimated_full_pass_credits": 450,
+  "remaining_jobs_submitted": false,
+  "blocker": "User confirmed rights. Checking provider-supported rights-holder confirmation.",
+  "help_url": "https://higgsfield.ai/creator-hub/help-center/troubleshooting/my-generation-blocked-for-copyright-or-ip",
+  "rights_confirmed_by_user": true
+}

@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Env_Lightning
   m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxCue
   clips:
-  - {fileID: 8300000, guid: bd5570e6db158f949993a5e9e01cd5ba, type: 3}
+  - {fileID: 8300000, guid: e6ec1001a4e9cb64da33ccb779db6b57, type: 3}
   - {fileID: 8300000, guid: d83871cd3346d734983e5473b4dcefe4, type: 3}
-  - {fileID: 8300000, guid: 51f38533b07032144972a76939475433, type: 3}
+  - {fileID: 8300000, guid: 6bd43c0d25a14ec9b80d87d55c22c8d5, type: 3}
   volume: 0.14
   volumeJitterDb: 1
   pitch: 1
@@ -29,4 +29,5 @@ MonoBehaviour:
   loop: 0
   maxVoices: 2
   minInterval: 3
+  chance: 1
   loopFade: 1.5

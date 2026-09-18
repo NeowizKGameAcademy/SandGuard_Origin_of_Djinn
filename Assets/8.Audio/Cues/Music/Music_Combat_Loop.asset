@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Music_Combat_Loop
   m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxCue
   clips:
-  - {fileID: 8300000, guid: 212dc0f6d23dc7b4caceea1e63b7b67b, type: 3}
+  - {fileID: 8300000, guid: cd1264c1a9de9c6448613943506e9db3, type: 3}
   volume: 0.5
   volumeJitterDb: 0
   pitch: 1
@@ -27,4 +27,5 @@ MonoBehaviour:
   loop: 1
   maxVoices: 1
   minInterval: 0.02
+  chance: 1
   loopFade: 2

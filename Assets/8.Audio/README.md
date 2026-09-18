@@ -51,6 +51,10 @@
 큐의 클립은 담당자가 인스펙터에서 넣는다. `Editor/AudioResourceMap.cs`의 대응표는 **비어 있는 큐만** 채우고(같은 소리의 원본과 `_auda`가 있으면 `_auda`), 코드 합성·자리표시 클립(`SFX_*`)은 큐에서 제거한다. 결과와 남은 빈 큐 목록은 `Docs/Audio/audio-resource-map.md`.
 합성·자리표시 WAV(`Synth/`, `Placeholder/`)는 더 이상 큐에 들어가지 않는다. 필요하면 인스펙터에서 직접 드래그한다.
 
+2026-09-18 클립 점검·수정: 점검 스크립트(길이·클리핑·직류·앞뒤 무음·끝 끊김·루프 이음매·변형 크기 차·3D 스테레오·임포트 설정) 결과는 `Docs/Audio/cue-clip-audit.md`. 수정본은 원본을 보존한 채 `AudioResource/Repaired/`에 두고 `Docs/Audio/repair-2026-09-18/manifest.json`에 기록한다(1차는 다른 작업, 2차는 `second_pass`). 연결은 `AudioResourceMap.Repair2`(메뉴 `Apply Repair 2026-09-18 (second pass)`). 3D 큐에서만 쓰는 클립은 Force To Mono(`ForceMonoFor3D`). 교체 표에서 빈 배열로 비운 큐는 자동 채우기가 다시 채우지 않는다(마지막 표 기준). 음악 루프는 `MusicDirector.SongEndCrossfade`(기본 3초)로 곡 끝 전에 처음부터 겹쳐 넘긴다.
+
+2026-09-18 오후(`Overrides0918b`, 배치 `AudioWiring.Update0918b`): 흔적 귀환은 출발(`VFX_Recall_Depart`)=워프, 도착(`VFX_Recall_Arrive`)=워프 완료로 나눔. 관통탄 충전은 루프 대신 충전 시작 원샷(짧은 충전음 1.2s, 충전 0.9s). 레벨업은 차임 + 팡파레(`Player_LevelUp_Fanfare`)를 겹침. 코어 흡수(`VFX_Core_Damage_Enemy`)에 호로록 6조각(`AudioResource/호로록_01~06`, ffmpeg로 분할). 음악: 전투=웨이브테마곡, 보스=보스테마곡(`MusicDirector`가 `EnemyBossInfo.Active`로 전환), 승리=승리음악, 패배=게임오버. 30초 넘는 음악·앰비언스는 Streaming 임포트. 분석은 Python/librosa·ffmpeg(경로는 메모리 `audio-analysis-tools`).
+
 2026-09-18: `Docs/Audio`의 추가 파일(정리본 5개, 원본 8개, kenney 임팩트·발소리 130개 → `AudioResource/kenney/`)을 복사하고, `AudioResourceMap.Overrides` 표로 이미 채워진 큐도 더 맞는 클립으로 한 번 교체했다(메뉴 `Apply Overrides 2026-09-18`, 자동 빌드에는 포함되지 않음). 원칙: 같은 소리는 `_auda` 정리본, 변형은 모두 넣기, 자리와 다른 소리는 바로잡거나 비우기, 한 동작에 같은 클립이 두 번 나는 구성은 한쪽만 남기기.
 
 ## 큐 목록과 자리표시 클립

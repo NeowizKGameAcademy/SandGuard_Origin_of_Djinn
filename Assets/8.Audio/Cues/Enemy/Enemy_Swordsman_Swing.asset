@@ -13,11 +13,13 @@ MonoBehaviour:
   m_Name: Enemy_Swordsman_Swing
   m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxCue
   clips:
-  - {fileID: 8300000, guid: 4a213323c69956c45a8e565069814aa3, type: 3}
+  - {fileID: 8300000, guid: 70a4fe8535002d648ab41955321fbbe4, type: 3}
+  - {fileID: 8300000, guid: 4a3806edb49ecdb4198547d60ffa5b45, type: 3}
+  - {fileID: 8300000, guid: 4e104e7cc03ff9f409a786ff554efb9e, type: 3}
   volume: 0.8
   volumeJitterDb: 1
   pitch: 1
-  pitchJitter: 0.04
+  pitchJitter: 0.08
   mixerGroup: {fileID: -6147871996741235955, guid: 1fae13e4ac1874e45988f79fc0bae7ec, type: 2}
   priority: 128
   spatial: 1

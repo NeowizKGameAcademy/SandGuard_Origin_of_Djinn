@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: Enemy_HammerBrute_Swing
   m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxCue
   clips:
-  - {fileID: 8300000, guid: 4a213323c69956c45a8e565069814aa3, type: 3}
+  - {fileID: 8300000, guid: 5d8b062cc7d619342a8c5e50bfa3b214, type: 3}
+  - {fileID: 8300000, guid: 9025b5e9fa6c5904aa7aa53e1428e9bf, type: 3}
   volume: 0.8
   volumeJitterDb: 1
-  pitch: 1
-  pitchJitter: 0.04
+  pitch: 0.9
+  pitchJitter: 0.06
   mixerGroup: {fileID: -6147871996741235955, guid: 1fae13e4ac1874e45988f79fc0bae7ec, type: 2}
   priority: 128
   spatial: 1
