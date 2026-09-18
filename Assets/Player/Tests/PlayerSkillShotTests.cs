@@ -160,17 +160,17 @@ namespace SandGuard.Player.Tests
         [UnityTest] public IEnumerator BurstRadiusModifierWidensBothTheHitAndTheVisual()
         {
             Slab(5f);
-            var mid = Cube(new Vector3(4f, 1f, 5f), Vector3.one).AddComponent<PlayerTestTarget>(); // 착탄점에서 약 3.4m: 기본 2.5m 밖, 5m 안
+            var mid = Cube(new Vector3(6f, 1f, 5f), Vector3.one).AddComponent<PlayerTestTarget>(); // 착탄점에서 약 5.5m: 기본 3.75m 밖, 두 배(7.5m) 안
             var template = Track(new GameObject("BurstVfx")); // 빈 오브젝트라 켜 둬도 무해하고, 복제본을 Find로 찾을 수 있다
             attack.burstPrefab = template;
             effects.Apply(new SandBurstEffect());
             stats.Add(PlayerStat.BurstRadius, StatModifierKind.PercentAdd, 1f, "wider"); // 2.5 → 5
-            Assert.AreEqual(5f, attack.BurstRadius, 0.0001f);
+            Assert.AreEqual(attack.burstRadius * 2f, attack.BurstRadius, 0.0001f);
             yield return CastBurst();
             Assert.AreEqual(1, mid.HitCount, "The wider radius reaches the target the default radius misses.");
             var instance = GameObject.Find("BurstVfx(Clone)");
             Assert.NotNull(instance, "The burst visual is spawned.");
-            Assert.AreEqual(2f, instance.transform.localScale.x, 0.0001f, "The visual scales with radius ÷ burstVfxRadius.");
+            Assert.AreEqual(attack.BurstRadius / attack.burstVfxRadius, instance.transform.localScale.x, 0.0001f, "The visual scales with radius ÷ burstVfxRadius.");
         }
 
         [UnityTest] public IEnumerator SandShackleRestrainsEnemiesAroundEveryBurst()
@@ -192,8 +192,8 @@ namespace SandGuard.Player.Tests
 
         [UnityTest] public IEnumerator ExplosivePierceBurstsAtEveryPiercedEnemy()
         {
-            var first = Slab(5f); var second = Slab(9f);
-            var beside = Cube(new Vector3(2.0f, 1f, 9f), Vector3.one).AddComponent<PlayerTestTarget>(); // 두 번째 표적 옆, 첫 표적에서는 4m 이상
+            var first = Slab(5f); var second = Slab(10f); // 폭발 반경 3.75m가 서로 닿지 않게 5m 간격
+            var beside = Cube(new Vector3(2.0f, 1f, 10f), Vector3.one).AddComponent<PlayerTestTarget>(); // 두 번째 표적 옆, 첫 표적에서는 5m 이상
             var bursts = new List<Vector3>(); attack.Burst += bursts.Add;
             effects.Apply(new ExplosivePierceEffect());
             Assert.True(attack.PierceBeam); Assert.True(attack.BurstPerPierce);

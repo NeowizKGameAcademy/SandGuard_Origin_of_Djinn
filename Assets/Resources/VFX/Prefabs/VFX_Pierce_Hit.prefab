@@ -34,7 +34,7 @@ Transform:
   - {fileID: 7064517716946991648}
   - {fileID: 3715464012781899603}
   - {fileID: 702237076444980726}
-  - {fileID: 6183817997572439941}
+  - {fileID: 6974833108036093069}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!198 &7318781644015033630
@@ -14704,7 +14704,7 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
---- !u!1 &5112117847277530165
+--- !u!1 &3070977221246225397
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -14712,8 +14712,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 6183817997572439941}
-  - component: {fileID: 6151944743303729019}
+  - component: {fileID: 6974833108036093069}
+  - component: {fileID: 3750019507702363784}
   m_Layer: 0
   m_Name: Sfx
   m_TagString: Untagged
@@ -14721,13 +14721,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &6183817997572439941
+--- !u!4 &6974833108036093069
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5112117847277530165}
+  m_GameObject: {fileID: 3070977221246225397}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -14736,13 +14736,13 @@ Transform:
   m_Children: []
   m_Father: {fileID: 5370118062694336840}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6151944743303729019
+--- !u!114 &3750019507702363784
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5112117847277530165}
+  m_GameObject: {fileID: 3070977221246225397}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a2bd5ad3d6c26d243a66a793301b2e53, type: 3}

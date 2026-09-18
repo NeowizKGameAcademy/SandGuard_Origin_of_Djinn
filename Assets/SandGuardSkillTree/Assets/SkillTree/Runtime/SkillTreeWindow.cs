@@ -257,7 +257,7 @@ namespace SandGuard.Skills.Unity
         }
         static string DefaultDescription(string id)
         {
-            switch(id){case "move.dash":return "바라보는 방향으로 빠르게 이동합니다.";case "move.jump":return "공중에서 한 번 더 점프합니다.";case "move.updraft":return "지상에서 Space를 길게 눌러 충전하고, 놓으면 높이 도약합니다.";case "move.recall":return "지상에 흔적(룬)을 남기고, 제한 시간 안에 다시 사용하면 그 자리로 순간이동합니다.";case "attack.pierce":return "전방의 적을 꿰뚫는 마나 빔을 쏩니다. 키를 누르고 있으면 손에 마나를 모아 더 굵고 강하게, 멀리 쏘며 적을 밀어냅니다.";case "attack.burst":return "볼트가 닿은 자리에서 모래가 폭발해 주변 적에게 피해를 주고 공중으로 띄웁니다.";case "attack.vortex":return "조준 지점에 모래 소용돌이를 일으켜 적을 중심으로 끌어모으고, 끝날 때 위로 쳐올립니다.";case "attack.storm":return "신전 바깥 폭풍의 힘을 빌려 코어에서 모래 폭풍이 온 맵으로 퍼집니다. 지나가는 적을 밀어내고 피해와 둔화를 줍니다.";default:return "구매하면 해당 스킬 또는 시설을 해금합니다.";}
+            switch(id){case "move.dash":return "바라보는 방향으로 빠르게 이동합니다.";case "move.jump":return "공중에서 한 번 더 점프합니다.";case "move.updraft":return "지상에서 Space를 길게 눌러 충전하고, 놓으면 높이 도약합니다.";case "move.recall":return "지상에 흔적(룬)을 남기고, 다시 사용하면 그 자리로 순간이동합니다. 흔적은 귀환할 때까지 남습니다.";case "attack.pierce":return "전방의 적을 꿰뚫는 마나 빔을 쏩니다. 키를 누르고 있으면 손에 마나를 모아 더 굵고 강하게, 멀리 쏘며 적을 밀어냅니다.";case "attack.burst":return "볼트가 닿은 자리에서 모래가 폭발해 주변 적에게 피해를 주고 공중으로 띄웁니다.";case "attack.vortex":return "조준 지점에 모래 소용돌이를 일으켜 적을 중심으로 끌어모으고, 끝날 때 위로 쳐올립니다.";case "attack.storm":return "신전 바깥 폭풍의 힘을 빌려 코어에서 모래 폭풍이 온 맵으로 퍼집니다. 지나가는 적을 밀어내고 피해와 둔화를 줍니다.";default:return "구매하면 해당 스킬 또는 시설을 해금합니다.";}
         }
     }
 }

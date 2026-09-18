@@ -111,7 +111,8 @@ VFX: 관통 빔 `VFX_Pierce_Beam`(자식 `VfxBeam` 길이를 실제 도달 거�
 
 ## 관통탄 충전·발사 (양팔 동작)
 
-관통탄(스킬트리 attack.pierce)은 누르고 있으면 두 손을 모아 가슴 앞에 구슬을 감싸는 자세(`Pierce Charge`, Mixamo Standing 2H Magic Attack 04의 4~22프레임에서 멈춤)로 충전하고, 떼면 두 손을 앞으로 내지른다(`Pierce Fire`, 22~42프레임 1.6배속). 탭도 내지르기를 쓴다.
+관통탄(스킬트리 attack.pierce)은 누르고 있으면 두 손을 모아 가슴 앞에 구슬을 감싸는 자세(`Pierce Charge`, Mixamo Standing 2H Magic Attack 04의 4~22프레임에서 멈춤)로 충전하고, 떼면 두 손을 앞으로 내지른 뒤 1초 동안 뻗은 채 유지한다(`Pierce Fire`, 22~78프레임 1.6배속). 탭도 내지르기를 쓴다.
+빔·충전 연출·발사 연출의 원점은 오른손 총구가 아니라 Player.prefab의 `PierceAnchor`(몸 가운데 앞 0.55m, 높이 1.2m)이고, 빔 연출은 `PlayerBasicAttack.pierceBeamDuration`(1초) 동안 남는다. 유지 시간을 바꾸려면 이 값과 빌더의 `FireHoldSeconds`를 같이 바꾼다. 판정은 발사 순간 한 번이다.
 `SandGuard > Player > Connect Pierce Charge Animation`이 `CombatAnimations/PierceCast.fbx`를 가져와 양팔 마스크 `PierceArms.mask`의 오버라이드 레이어 `Pierce Casting`을 만든다.
 런타임은 `PlayerVisuals`가 `PierceCharging`(Bool)·`PierceFire`(Trigger)와 레이어 가중치를 몰고, 그동안 `PlayerSpellcasting`의 오른손 조준 IK는 쉰다(`Suppressed`). 레이어가 없는 컨트롤러에서는 예전처럼 손바닥 시전 동작으로 대신한다.
 

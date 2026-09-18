@@ -1,0 +1,365 @@
+[Licensing::Module] Trying to connect to existing licensing client channel...
+Built from '6000.2/respin/6000.2.8f1-e4064264ae96' branch; Version is '6000.2.8f1 (c9992ac36c34) revision 13211946'; Using compiler version '194234433'; Build Type 'Release'
+OS: 'Windows 11  (10.0.26200) 64bit Core' Language: 'ko' Physical Memory: 32471 MB
+BatchMode: 1, IsHumanControllingUs: 0, StartBugReporterOnCrash: 0, Is64bit: 1
+Date: 2026-09-18T01:17:20Z
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-m" at "2026-09-18T01:17:20.4382772Z"
+
+COMMAND LINE ARGUMENTS:
+C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Unity.exe
+-batchmode
+-nographics
+-quit
+-projectPath
+C:\Users\m\AppData\Local\Temp\SandGuard-AnubisIdle-Verify
+-executeMethod
+MinionVisualsBuilder.BuildAnubisIdle
+-logFile
+C:\course\unity\SandGuard\Docs\model-art\minion-visuals\anubis-idle.log
+Successfully changed project path to: C:\Users\m\AppData\Local\Temp\SandGuard-AnubisIdle-Verify
+C:/Users/m/AppData/Local/Temp/SandGuard-AnubisIdle-Verify
+[UnityMemory] Configuration Parameters - Can be set up in boot.config
+    "memorysetup-allocator-temp-initial-block-size-main=262144"
+    "memorysetup-allocator-temp-initial-block-size-worker=262144"
+    "memorysetup-bucket-allocator-granularity=16"
+    "memorysetup-bucket-allocator-bucket-count=8"
+    "memorysetup-bucket-allocator-block-size=33554432"
+    "memorysetup-bucket-allocator-block-count=8"
+    "memorysetup-main-allocator-block-size=16777216"
+    "memorysetup-thread-allocator-block-size=16777216"
+    "memorysetup-gfx-main-allocator-block-size=16777216"
+    "memorysetup-gfx-thread-allocator-block-size=16777216"
+    "memorysetup-cache-allocator-block-size=4194304"
+    "memorysetup-typetree-allocator-block-size=2097152"
+    "memorysetup-profiler-bucket-allocator-granularity=16"
+    "memorysetup-profiler-bucket-allocator-bucket-count=8"
+    "memorysetup-profiler-bucket-allocator-block-size=33554432"
+    "memorysetup-profiler-bucket-allocator-block-count=8"
+    "memorysetup-profiler-allocator-block-size=16777216"
+    "memorysetup-profiler-editor-allocator-block-size=1048576"
+    "memorysetup-temp-allocator-size-main=16777216"
+    "memorysetup-job-temp-allocator-block-size=2097152"
+    "memorysetup-job-temp-allocator-block-size-background=1048576"
+    "memorysetup-job-temp-allocator-reduction-small-platforms=262144"
+    "memorysetup-temp-allocator-size-background-worker=32768"
+    "memorysetup-temp-allocator-size-job-worker=262144"
+    "memorysetup-temp-allocator-size-preload-manager=33554432"
+    "memorysetup-temp-allocator-size-nav-mesh-worker=65536"
+    "memorysetup-temp-allocator-size-audio-worker=65536"
+    "memorysetup-temp-allocator-size-cloud-worker=32768"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gfx=262144"
+Player connection [16976]  Target information:
+
+Player connection [16976]  * "[IP] 192.168.1.39 [Port] 55504 [Flags] 2 [Guid] 970236447 [EditorId] 970236447 [Version] 1048832 [Id] WindowsEditor(7,DESKTOP-LKQ38HD) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" 
+
+Player connection [16976] Host joined multi-casting on [225.0.0.222:54997]...
+Player connection [16976] Host joined alternative multi-casting on [225.0.0.222:34997]...
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+[Licensing::Client] Code 10 while verifying Licensing Client signature (process Id: 15512, path: "C:/Program Files/Unity Hub/UnityLicensingClient_V1/Unity.Licensing.Client.exe")
+[Licensing::Module] LicensingClient has failed validation; ignoring
+[Licensing::Client] Handshaking with LicensingClient:
+  Version:                 1.18.3+d7ffd15
+  Session Id:              d15a17cf5d484eca94f30b54fede660d
+  Correlation Id:          ddf24e057dd5ce04b127cc16eb857047
+  External correlation Id: 8399037665612984286
+  Machine Id:              LB3ncWW38BJdHmRzKztJP09Q3ig=
+[Licensing::Module] Successfully connected to LicensingClient on channel: "LicenseClient-m" (connect: 0.00s, validation: 0.00s, handshake: 0.04s)
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-m-notifications" at "2026-09-18T01:17:20.4804421Z"
+[Licensing::Module] Error: Access token is unavailable; failed to update
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: F4-K5YW-SH7J-TNEA-5VZ3-XXXX
+  Product: Unity Personal
+  Type: ULF
+  Expiration: 2026-10-26T02:16:39Z
+[Licensing::Module] License group:
+  Id: 14568940251572-UnityPersXXXX
+  Product: Unity Personal
+  Type: Assigned
+  Expiration: Unlimited
+[Licensing::Client] Successfully updated license, isAsync: True, time: 0.00
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: F4-K5YW-SH7J-TNEA-5VZ3-XXXX
+  Product: Unity Personal
+  Type: ULF
+  Expiration: 2026-10-26T02:16:39Z
+[Licensing::Module] License group:
+  Id: 14568940251572-UnityPersXXXX
+  Product: Unity Personal
+  Type: Assigned
+  Expiration: Unlimited
+[Licensing::Module] Licensing Background thread has ended after 0.05s
+[Package Manager] Connected to IPC stream "Upm-39352" after 0.2 seconds.
+Library Redirect Path: Library/
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+Refreshing native plugins compatible for Editor in 0.00 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Initialize engine version: 6000.2.8f1 (c9992ac36c34)
+[Subsystems] Discovering subsystems at path C:/Program Files/Unity/Hub/Editor/6000.2.8f1/Editor/Data/Resources/UnitySubsystems
+[Subsystems] Discovering subsystems at path C:/Users/m/AppData/Local/Temp/SandGuard-AnubisIdle-Verify/Assets
+Forcing GfxDevice: Null
+GfxDevice: creating device client; kGfxThreadingModeNonThreaded
+NullGfxDevice:
+    Version:  NULL 1.0 [1.0]
+    Renderer: Null Device
+    Vendor:   Unity Technologies
+Initialize mono
+Mono path[0] = 'C:/Program Files/Unity/Hub/Editor/6000.2.8f1/Editor/Data/Managed'
+Mono path[1] = 'C:/Program Files/Unity/Hub/Editor/6000.2.8f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32'
+Mono config path = 'C:/Program Files/Unity/Hub/Editor/6000.2.8f1/Editor/Data/MonoBleedingEdge/etc'
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56352
+Using cacheserver namespaces - metadata:defaultmetadata, artifacts:defaultartifacts
+Using cacheserver namespaces - metadata:defaultmetadata, artifacts:defaultartifacts
+ImportWorker Server TCP listen port: 0
+AcceleratorClientConnectionCallback - disconnected - :0
+Begin MonoManager ReloadAssembly
+Registering precompiled unity dll's ...
+Register platform support module: C:/Program Files/Unity/Hub/Editor/6000.2.8f1/Editor/Data/PlaybackEngines/WebGLSupport/UnityEditor.WebGL.Extensions.dll
+Register platform support module: C:/Program Files/Unity/Hub/Editor/6000.2.8f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: F4-K5YW-SH7J-TNEA-5VZ3-XXXX
+  Product: Unity Personal
+  Type: ULF
+  Expiration: 2026-10-26T02:16:39Z
+[Licensing::Module] License group:
+  Id: 14568940251572-UnityPersXXXX
+  Product: Unity Personal
+  Type: Assigned
+  Expiration: Unlimited
+Register platform support module: C:/Program Files/Unity/Hub/Editor/6000.2.8f1/Editor/Data/PlaybackEngines/AndroidPlayer/UnityEditor.Android.Extensions.dll
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: F4-K5YW-SH7J-TNEA-5VZ3-XXXX
+  Product: Unity Personal
+  Type: ULF
+  Expiration: 2026-10-26T02:16:39Z
+[Licensing::Module] License group:
+  Id: 14568940251572-UnityPersXXXX
+  Product: Unity Personal
+  Type: Assigned
+  Expiration: Unlimited
+Register platform support module: C:/Program Files/Unity/Hub/Editor/6000.2.8f1/Editor/Data/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.dll
+Registered in 0.010903 seconds.
+- Loaded All Assemblies, in  0.370 seconds
+Native extension for iOS target not found
+Native extension for Android target not found
+Android Extension - Scanning For ADB Devices 2184 ms
+Native extension for WindowsStandalone target not found
+Native extension for WebGL target not found
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  2.550 seconds
+Domain Reload Profiling: 2918ms
+	BeginReloadAssembly (108ms)
+		ExecutionOrderSort (0ms)
+		DisableScriptedObjects (0ms)
+		BackupInstance (0ms)
+		ReleaseScriptingObjects (0ms)
+		CreateAndSetChildDomain (1ms)
+	RebuildCommonClasses (30ms)
+	RebuildNativeTypeToScriptingClass (10ms)
+	initialDomainReloadingComplete (53ms)
+	LoadAllAssembliesAndSetupDomain (167ms)
+		LoadAssemblies (106ms)
+		RebuildTransferFunctionScriptingTraits (0ms)
+		AnalyzeDomain (164ms)
+			TypeCache.Refresh (162ms)
+				TypeCache.ScanAssembly (150ms)
+			BuildScriptInfoCaches (0ms)
+			ResolveRequiredComponents (0ms)
+	FinalizeReload (2550ms)
+		ReleaseScriptCaches (0ms)
+		RebuildScriptCaches (0ms)
+		SetupLoadedEditorAssemblies (2518ms)
+			LogAssemblyErrors (0ms)
+			InitializePlatformSupportModulesInManaged (2329ms)
+			SetLoadedEditorAssemblies (3ms)
+			BeforeProcessingInitializeOnLoad (54ms)
+			ProcessInitializeOnLoadAttributes (90ms)
+			ProcessInitializeOnLoadMethodAttributes (42ms)
+			AfterProcessingInitializeOnLoad (0ms)
+			EditorAssembliesLoaded (0ms)
+		ExecutionOrderSort2 (0ms)
+		AwakeInstancesAfterBackupRestoration (0ms)
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: F4-K5YW-SH7J-TNEA-5VZ3-XXXX
+  Product: Unity Personal
+  Type: ULF
+  Expiration: 2026-10-26T02:17:20Z
+[Licensing::Module] License group:
+  Id: 14568940251572-UnityPersXXXX
+  Product: Unity Personal
+  Type: Assigned
+  Expiration: Unlimited
+Application.AssetDatabase Initial Refresh Start
+Package Manager log level set to [2]
+[Package Manager] Restoring resolved packages state from cache
+[Licensing::Client] Successfully resolved entitlement details
+[Package Manager] Registered 1 packages:
+  Built-in packages:
+    com.unity.modules.animation@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.animation)
+[Subsystems] No new subsystems found in resolved package list.
+[Package Manager] Done registering packages in 0.00 seconds
+[ScriptCompilation] Requested script compilation because: Assetdatabase observed changes in script compilation related files
+Starting: C:\Program Files\Unity\Hub\Editor\6000.2.8f1\Editor\Data\bee_backend.exe --ipc --defer-dag-verification --dagfile="Library/Bee/1900b0aE.dag" --continue-on-failure --profile="Library/Bee/backend1.traceevents" ScriptAssemblies
+WorkingDir: C:/Users/m/AppData/Local/Temp/SandGuard-AnubisIdle-Verify
+DisplayProgressbar: Compiling Scripts
+ExitCode: 0 Duration: 1s877ms
+[140/143    1s] Csc Library/Bee/artifacts/1900b0aE.dag/Assembly-CSharp-Editor.dll (+2 others)
+[141/143    0s] CopyFiles Library/ScriptAssemblies/Assembly-CSharp-Editor.pdb
+[142/143    0s] CopyFiles Library/ScriptAssemblies/Assembly-CSharp-Editor.dll
+*** Tundra build success (1.85 seconds), 3 items updated, 143 evaluated
+AssetDatabase: script compilation time: 2.264151s
+Begin MonoManager ReloadAssembly
+- Loaded All Assemblies, in  0.539 seconds
+Refreshing native plugins compatible for Editor in 0.00 ms, found 0 plugins.
+Native extension for iOS target not found
+Native extension for Android target not found
+Native extension for WindowsStandalone target not found
+Native extension for WebGL target not found
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  0.368 seconds
+Domain Reload Profiling: 905ms
+	BeginReloadAssembly (316ms)
+		ExecutionOrderSort (0ms)
+		DisableScriptedObjects (11ms)
+		BackupInstance (0ms)
+		ReleaseScriptingObjects (0ms)
+		CreateAndSetChildDomain (157ms)
+	RebuildCommonClasses (29ms)
+	RebuildNativeTypeToScriptingClass (12ms)
+	initialDomainReloadingComplete (18ms)
+	LoadAllAssembliesAndSetupDomain (161ms)
+		LoadAssemblies (247ms)
+		RebuildTransferFunctionScriptingTraits (0ms)
+		AnalyzeDomain (20ms)
+			TypeCache.Refresh (16ms)
+				TypeCache.ScanAssembly (11ms)
+			BuildScriptInfoCaches (0ms)
+			ResolveRequiredComponents (1ms)
+	FinalizeReload (368ms)
+		ReleaseScriptCaches (0ms)
+		RebuildScriptCaches (0ms)
+		SetupLoadedEditorAssemblies (237ms)
+			LogAssemblyErrors (0ms)
+			InitializePlatformSupportModulesInManaged (47ms)
+			SetLoadedEditorAssemblies (2ms)
+			BeforeProcessingInitializeOnLoad (73ms)
+			ProcessInitializeOnLoadAttributes (94ms)
+			ProcessInitializeOnLoadMethodAttributes (16ms)
+			AfterProcessingInitializeOnLoad (5ms)
+			EditorAssembliesLoaded (0ms)
+		ExecutionOrderSort2 (0ms)
+		AwakeInstancesAfterBackupRestoration (10ms)
+Refreshing native plugins compatible for Editor in 0.00 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=26e1efa388e26f54fab936224996cbbf): Total: 3.319 seconds - Initiated by InitialRefreshV2(ForceSynchronousImport)
+	Summary:
+		Imports: total=0 (actual=0, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=458 ms
+		Asset DB Callback time: managed=42 ms, native=7 ms
+		Scripting: domain reloads=1, domain reload time=539 ms, compile time=2266 ms, other=4 ms
+		Project Asset Count: scripts=35, non-scripts=31
+		Asset File Changes: new=0, changed=1, moved=0, deleted=0
+		Scan Filter Count: 0
+	InvokeCustomDependenciesCallbacks: 0.001ms
+	InvokePackagesCallback: 6.309ms
+	ApplyChangesToAssetFolders: 0.237ms
+	Scan: 30.070ms
+	OnSourceAssetsModified: 0.713ms
+	CategorizeAssetsWithTransientArtifact: 0.029ms
+	ProcessAssetsWithTransientArtifactChanges: 0.222ms
+	CategorizeAssets: 0.386ms
+	ImportOutOfDateAssets: 369.502ms (-1897.812ms without children)
+		CompileScripts: 2266.414ms
+		ReloadNativeAssets: 0.001ms
+		UnloadImportedAssets: 0.758ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 0.015ms
+		InitializingProgressBar: 0.000ms
+		PostProcessAllAssetNotificationsAddChangedAssets: 0.000ms
+		OnDemandSchedulerStart: 0.124ms
+	PostProcessAllAssets: 43.393ms
+	Hotreload: 0.388ms
+	GatherAllCurrentPrimaryArtifactRevisions: 0.002ms
+	UnloadStreamsBegin: 0.923ms
+	PersistCurrentRevisions: 0.002ms
+	UnloadStreamsEnd: 0.002ms
+	GenerateScriptTypeHashes: 0.001ms
+	Untracked: 2866.438ms
+
+Application.AssetDatabase Initial Refresh End
+Scanning for USB devices : 2.866ms
+Initializing Unity extensions:
+[MODES] ModeService[none].Initialize
+[MODES] ModeService[none].LoadModes
+[MODES] Loading mode Default (0) for mode-current-id-SandGuard-AnubisIdle-Verify
+Unloading 3 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 17 unused Assets / (1.0 MB). Loaded Objects now: 536.
+Memory consumption went from 82.0 MB to 81.0 MB.
+Total: 3.399600 ms (FindLiveObjects: 0.040100 ms CreateObjectMapping: 0.003700 ms MarkObjects: 3.003400 ms  DeleteObjects: 0.347000 ms)
+
+Asset Pipeline Refresh (id=491e3618ae8e36a4a9f13b93f1a43285): Total: 0.011 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/AnubisMinion/Animations/AnubisMinion@Unarmed Idle.fbx using Guid(787dba1749f21c748b3e6eaf81bade5b) (FBXImporter)Keyframe reduction: Ratio: 18.810535%;
+ -> (artifact id: '7cc1c6fff69bf54fb76f4d94fafe2092') in 0.0917959 seconds
+Refreshing native plugins compatible for Editor in 0.00 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=566f400c2219ee34ea347b7a014a69ad): Total: 0.118 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing Assets/MinionVisuals/AnubisMinion/Animations/AnubisMinion@Unarmed Idle.fbx using Guid(787dba1749f21c748b3e6eaf81bade5b) (FBXImporter)Keyframe reduction: Ratio: 18.810535%;
+ -> (artifact id: '7cc1c6fff69bf54fb76f4d94fafe2092') in 0.0630968 seconds
+Refreshing native plugins compatible for Editor in 0.00 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=17865ad0c99ecfb4a83e8fb23ea2efbb): Total: 0.071 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Loaded scene 'Library/Unused/ef34ade0341435b4eacf008406088b39'
+	Deserialize:            0.967 ms
+	Integration:            0.114 ms
+	Integration of assets:  0.001 ms
+	Thread Wait Time:       0.013 ms
+	Total Operation Time:   1.095 ms
+Start importing Assets/MinionVisuals/AnubisMinion/AnubisMinion_Visual.prefab using Guid(1246b2ddb61d8264e84096d2652fbeb0) (PrefabImporter) -> (artifact id: '9418e1f21d8fd5d34cd3fbd75b14cf7d') in 0.0033041 seconds
+Refreshing native plugins compatible for Editor in 0.00 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=3cdf6bf19da226f478e6a4a1d3a0a2e3): Total: 0.030 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Start importing ProjectSettings/ProjectSettings.asset using Guid(00000000000000004000000000000000) (LibraryAssetImporter) -> (artifact id: 'cc0a08e5b1b99885741f609cec473c15') in 0.0024651 seconds
+Start importing Assets/MinionVisuals/AnubisMinion/Animations/AnubisMinion.controller using Guid(27ec29efb58401140aa43c045b8455ef) (NativeFormatImporter) -> (artifact id: 'a21f5cb42aee9503a95e0c269bbede10') in 0.0015059 seconds
+Refreshing native plugins compatible for Editor in 0.00 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=9984935d28f3bde468627ab6fd5cdb32): Total: 0.031 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+ANUBIS_IDLE_OK: Unarmed Idle; default=Idle; looping=True; duration=1.9
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+MinionVisualsBuilder:BuildAnubisIdle () (at Assets/MinionVisuals/Editor/MinionVisualsBuilder.cs:133)
+
+(Filename: Assets/MinionVisuals/Editor/MinionVisualsBuilder.cs Line: 133)
+
+Batchmode quit successfully invoked - shutting down!
+Curl error 42: Callback aborted
+Killing ADB server in 0.042992 seconds.
+[Physics::Module] Cleanup current backend.
+[Physics::Module] Id: 0xf2b8ea05
+Input System module state changed to: ShutdownInProgress.
+Input System polling thread exited.
+Input System module state changed to: Shutdown.
+[Licensing::IpcConnector] LicenseClient-m-notifications channel disconnected successfully.
+[Licensing::IpcConnector] LicenseClient-m channel disconnected successfully.
+AcceleratorClientConnectionCallback - disconnected - :0
+Cleanup mono
+Exiting batchmode successfully now!
+Exiting without the bug reporter. Application will terminate with return code 0

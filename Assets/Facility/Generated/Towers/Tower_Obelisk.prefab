@@ -99,6 +99,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d84d375c5a312545b715be04b98d296, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DetectRange
+  Status: {fileID: 0}
   Range: 20
 --- !u!114 &5311971400325422931
 MonoBehaviour:
@@ -184,6 +185,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RangeController
   type: 1
+  Status: {fileID: 0}
   DetectRange: {fileID: 4870365367856357660}
   SlowRatio: 0.5
   Tick_Interval: 0.25
@@ -267,6 +269,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d84d375c5a312545b715be04b98d296, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DetectRange
+  Status: {fileID: 0}
   Range: 20
 --- !u!114 &7113206675939555038
 MonoBehaviour:

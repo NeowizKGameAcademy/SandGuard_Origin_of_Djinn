@@ -56,6 +56,7 @@ namespace SandGuard.Player
         public string pierceFireTrigger = "PierceFire";
         [Min(0f), Tooltip("레이어를 올리는 시간")] public float pierceBlendInTime = 0.1f;
         [Min(0f), Tooltip("레이어를 내리는 시간")] public float pierceBlendOutTime = 0.25f;
+        [Tooltip("관통탄 발사 연출의 원점(몸 가운데 앞). 비우면 총구")] public Transform pierceAnchor;
         public UnityEvent onFired = new UnityEvent();
         public UnityEvent onDamaged = new UnityEvent();
         public UnityEvent onIncapacitated = new UnityEvent();
@@ -141,8 +142,9 @@ namespace SandGuard.Player
         public bool PlayPierceFire()
         {
             if (!HasPierceAnimation) return false;
-            if (fireEffectAnchor != null && FirePoint != null)
-                fireEffectAnchor.SetPositionAndRotation(FirePoint.position, FirePoint.rotation);
+            var origin = pierceAnchor != null ? pierceAnchor : FirePoint;
+            if (fireEffectAnchor != null && origin != null)
+                fireEffectAnchor.SetPositionAndRotation(origin.position, origin.rotation);
             pierceCharging = false;
             if (HasParameter(pierceChargingParameter, AnimatorControllerParameterType.Bool)) animator.SetBool(pierceChargingParameter, false);
             animator.SetTrigger(pierceFireTrigger);

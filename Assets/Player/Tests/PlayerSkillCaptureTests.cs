@@ -58,6 +58,7 @@ namespace SandGuard.Player.Tests
             if (SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Null) Assert.Ignore("그래픽 장치가 없어 캡처를 건너뛴다(-nographics). -batchmode만으로 실행하세요.");
             Directory.CreateDirectory(OutDir);
             Time.timeScale = 1f;
+            LogAssert.ignoreFailingMessages = true; // 눈으로 보는 캡처다. 웨이브·오디오 등 다른 시스템의 오류 로그로 실패하지 않는다
             yield return EditorSceneManager.LoadSceneInPlayMode(ScenePath, new LoadSceneParameters(LoadSceneMode.Single));
             float deadline = Time.realtimeSinceStartup + 20f;
             PlayerInputReader input = null;
@@ -77,6 +78,9 @@ namespace SandGuard.Player.Tests
             // 스킬트리 게이트를 풀고 효과로 해금한다. Level의 스킬트리 실행기는 미장착 스킬의 충전·흔적을 매 프레임 취소하므로 꺼 둔다.
             foreach (var behaviour in player.GetComponents<MonoBehaviour>())
                 if (behaviour != null && behaviour.GetType().Name == "PlayerSkillTreeExecutor") behaviour.enabled = false;
+            // 웨이브는 돌리지 않는다(준비 시간이 끝나면 적을 쏟아내 캡처를 가린다).
+            foreach (var behaviour in Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None))
+                if (behaviour != null && behaviour.GetType().Name == "WaveDirector") behaviour.enabled = false;
             yield return null;
             caster.SkillTreeAllowed = null; caster.SkillTreeInput = null; attack.SkillTreePierceAllowed = null; pierce.Allowed = null; pierce.input = null;
             effects.Apply(new SandBurstEffect()); effects.Apply(new SandVortexEffect()); effects.Apply(new SandStormEffect());
@@ -91,6 +95,10 @@ namespace SandGuard.Player.Tests
             overview.transform.LookAt(origin - Vector3.up * 20f);
             // 시작 지점(코어 바로 옆 꼭대기)은 카메라가 코어 크리스탈 안에 들어가 화면이 온통 청록이다. 평평한 마당 바닥(계단 아님)을 찾아 내려가 코어를 바라본다.
             Vector3 ground = origin + new Vector3(0f, 0f, -26f);
+            bool foundFlat = false;
+            float searchDeadline = Time.realtimeSinceStartup + 10f; // NavMesh가 늦게 준비될 수 있어 찾을 때까지 잠시 반복한다
+            while (!foundFlat && Time.realtimeSinceStartup < searchDeadline)
+            {
             foreach (var dir in new[] { Vector3.back, Vector3.forward, Vector3.left, Vector3.right })
             {
                 bool found = false;
@@ -103,10 +111,13 @@ namespace SandGuard.Player.Tests
                     // 앞쪽 6m도 같은 높이의 평지여야 적을 세울 수 있다.
                     Vector3 ahead = probeNav.position + (origin - probeNav.position).normalized * 6f; ahead.y = probeNav.position.y + 1f;
                     if (!Physics.Raycast(ahead + Vector3.up * 5f, Vector3.down, out var aheadHit, 20f, ~0, QueryTriggerInteraction.Ignore) || Mathf.Abs(aheadHit.point.y - probeNav.position.y) > 0.6f) continue;
-                    ground = probeNav.position; found = true;
+                    ground = probeNav.position; found = true; foundFlat = true;
                 }
                 if (found) break;
             }
+            if (!foundFlat) yield return new WaitForSecondsRealtime(0.5f);
+            }
+            Debug.Log("[Capture] flat spot " + (foundFlat ? "found" : "NOT found, using fallback") + " at " + ground);
             motor.Teleport(ground + Vector3.up * 0.1f);
             Vector3 toCore = origin - ground; toCore.y = 0f;
             if (toCore.sqrMagnitude > 0.01f) player.transform.rotation = Quaternion.LookRotation(toCore.normalized);
@@ -194,6 +205,7 @@ namespace SandGuard.Player.Tests
             var charged = pierce.IsHolding ? pierce.EndHold(0) : pierce.Fire(1f); Check(charged.Succeeded, "만충 발사 " + charged.Failure);
             yield return Wait(0.05f); Shoot("14_pierce_charged_a"); Shoot("16_pierce_charged_side", side);
             yield return Wait(0.15f); Shoot("15_pierce_charged_b");
+            yield return Wait(0.5f); Shoot("17_pierce_hold"); Shoot("18_pierce_hold_side", side);
             Debug.Log("[Capture] charged beam len=" + attack.LastBeam.Length + " enemiesHit=" + attack.LastBeam.EnemiesHit + " landed=" + attack.LastBeam.Landed);
             yield return Wait(0.8f);
 

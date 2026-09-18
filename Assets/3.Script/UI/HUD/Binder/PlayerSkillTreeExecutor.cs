@@ -119,7 +119,7 @@ namespace SandGuard.UI.HUD
         {
             bool wasMarked=recall.IsMarked;
             var result=recall.TryUse();
-            if(result.Succeeded){reason=wasMarked?"흔적으로 귀환":"흔적 생성 — "+recall.window+"초 안에 같은 키로 귀환";return true;}
+            if(result.Succeeded){reason=wasMarked?"흔적으로 귀환":recall.HasWindow?"흔적 생성 — "+recall.window+"초 안에 같은 키로 귀환":"흔적 생성 — 같은 키로 귀환";return true;}
             switch(result.Failure)
             {
                 case ActionFailure.InvalidPlacement:reason=wasMarked?"귀환 위치가 막혀 있습니다.":"지상에서 흔적을 남기세요.";break;

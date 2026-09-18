@@ -33,9 +33,10 @@ namespace DesertTower.VFX.Editor
             var root = new GameObject("VFX_Pierce_Beam");
             AddHub(root);
 
-            var beam = Beam(Child(root, "Beam"), s, length: 6f, radius: 0.14f, duration: 0.35f, scroll: 8f, color: Blue, intensity: 1.8f);
+            // 스킬 관통탄은 PlayerBasicAttack이 Duration을 pierceBeamDuration(1s)으로 덮어쓴다: 빠르게 켜져 대부분의 시간을 유지하다 끝에 짧게 꺼진다.
+            var beam = Beam(Child(root, "Beam"), s, length: 6f, radius: 0.14f, duration: 1f, scroll: 8f, color: Blue, intensity: 1.8f);
             beam.Width = new AnimationCurve(
-                new Keyframe(0f, 0.3f, 0f, 10f), new Keyframe(0.12f, 1f, 0f, 0f), new Keyframe(0.5f, 0.85f, 0f, 0f), new Keyframe(1f, 0f, -5f, 0f));
+                new Keyframe(0f, 0.3f, 0f, 12f), new Keyframe(0.04f, 1f, 0f, 0f), new Keyframe(0.88f, 0.9f, 0f, 0f), new Keyframe(1f, 0f, -8f, 0f));
 
             BuildBeamCubes(Child(root, "Cubes"), s, length: 6f);
             // 총구 플래시는 대낮 신전에서 화면을 덮을 만큼 밝아 작고 부드럽게(GlowSoft) 둔다.

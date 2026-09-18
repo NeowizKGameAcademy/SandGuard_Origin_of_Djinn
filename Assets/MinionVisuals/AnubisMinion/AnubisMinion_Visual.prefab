@@ -1873,6 +1873,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1837483018260859816}
+  - component: {fileID: 3470108545540771714}
   m_Layer: 0
   m_Name: AnubisMinion
   m_TagString: Untagged
@@ -1897,6 +1898,28 @@ Transform:
   - {fileID: 7735020858977011648}
   m_Father: {fileID: 8754715845632146525}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &3470108545540771714
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8193509218348506074}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: 4c1eade38b8451d428cbc66a91482efe, type: 3}
+  m_Controller: {fileID: 9100000, guid: 27ec29efb58401140aa43c045b8455ef, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &8276775392917877524
 GameObject:
   m_ObjectHideFlags: 0

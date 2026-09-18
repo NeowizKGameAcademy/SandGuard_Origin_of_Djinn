@@ -45,7 +45,7 @@ Unity.exe -batchmode -projectPath . -executeMethod DesertTower.VFX.Editor.VfxBat
 | `VFX_Sand_Root` | 모래 족쇄 | 적 발밑, 적의 자식으로 | `EnemyRestraint.vfxPrefab`. 묶일 때 생성, 풀릴 때 `VfxSandRoot.Release` |
 | `VFX_Sand_Vortex` | ⑮ 모래 소용돌이 | 지면 중심, 반경 1m 기준 루프 | `PlayerSkillCaster.vortexPrefab`. 지역 오브젝트의 자식으로 두고 실제 반경으로 스케일(Hierarchy). 위로 좁아지는 금빛 나선 기둥(줄기·링·알갱이·바위). 끝나면 방출을 멈추고 `OnEnd *` 자식(붕괴 버스트·튀는 링)이 재생된다 = 적 쳐올림 순간 |
 | `VFX_Sand_Storm` | ⑯ 사막 폭풍 | 코어(없으면 시전자) 바닥, 스케일 1 | `PlayerSkillCaster.stormPrefab`. 루트 `VfxStormFront.SetFront(앞 반경, 두께, 최대 반경)`를 `PlayerSandStorm`이 매 프레임 부른다: 봉인 폭풍 셰이더를 두른 원통 벽(`Wall`)이 커지고 먼지·알갱이·줄기의 원형 방출 반경이 따라간다. 시작점 플래시·링·기둥은 한 번. 시전 순간 `VfxStormSurge`(Player.prefab, `onStormCast`)가 씬의 `TempleSandstorm`을 잠깐 거세게 한다 |
-| `VFX_Recall_Mark` | 흔적 귀환 표식 | 흔적 자리 바닥 | `PlayerRecall.markPrefab`. 금빛 룬 두 겹 + 알갱이 + 광원. `VfxRecallMark.SetRemaining`으로 남은 시간만큼 어두워지고 `Release`에 번지며 사라진다 |
+| `VFX_Recall_Mark` | 흔적 귀환 표식 | 흔적 자리 바닥 | `PlayerRecall.markPrefab`. 금빛 룬 두 겹 + 알갱이 + 광원. `VfxRecallMark.SetRemaining`으로 남은 시간만큼 어두워지고(기본은 영구 흔적이라 항상 밝음) `Release`(귀환·소멸)에 번지며 사라진다 |
 | `VFX_Recall_Depart` · `VFX_Recall_Arrive` | 흔적 귀환 | 출발점 · 도착점 바닥 | `PlayerRecall.departPrefab/arrivePrefab`. 출발은 솟는 금빛 기둥, 도착은 링 두 겹 + 모래. 카메라 킥·FOV는 PlayerRecall 인스펙터 |
 | `VFX_LevelUp` | #7 | 플레이어 발밑 | 없음 |
 | `VFX_Mana_Charge` | #10 | 코어 바닥 | 루프. `VfxParticleAttractor.Target = 램프`. 충전 완료 시 Stop 후 램프에 `VFX_Mana_Charge_Complete` |
