@@ -9,8 +9,10 @@ namespace Tower
     {
         [Header("Slow")]
         [SerializeField] private float SlowRatio = 0.3f;
+        [Min(0.01f)] [SerializeField] private float TickInterval = 1f;
 
         //Properties
         public float slowRatio => SlowRatio;
+        public float tickInterval => TickInterval;
     }
 }

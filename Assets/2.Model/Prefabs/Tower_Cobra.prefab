@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3745164174891472542}
-  - component: {fileID: 3152472514144520858}
+  - component: {fileID: 1467645284353636843}
   - component: {fileID: 7580368432980398963}
   m_Layer: 0
   m_Name: Fire Point
@@ -35,7 +35,7 @@ Transform:
   - {fileID: 5114344735357437017}
   m_Father: {fileID: 559005201874876587}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3152472514144520858
+--- !u!114 &1467645284353636843
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -44,10 +44,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 524735005140228906}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a3b7b848454231440963d93731c4b1f8, type: 3}
+  m_Script: {fileID: 11500000, guid: d4d4a79171bc6174ba37136aa3afd273, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FirePointAim
-  findEnemy: {fileID: 7057216676064026827}
+  m_EditorClassIdentifier: Assembly-CSharp::Tower.AimToTarget
+  Target: {fileID: 0}
   aimPivot: {fileID: 3745164174891472542}
 --- !u!114 &7580368432980398963
 MonoBehaviour:
@@ -61,7 +61,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b41426d179a81d14ab3361e1d88ccf0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FireOnOff
-  detectRange: {fileID: 3477409069980780067}
+  detectRange: {fileID: 0}
   DamageRange: {fileID: 5579938382294534682}
   Flames: {fileID: 4451867046615025911}
   Cubes: {fileID: 1953273162524322391}
@@ -78,10 +78,10 @@ GameObject:
   m_Component:
   - component: {fileID: 559005201874876587}
   - component: {fileID: 5266200475067860405}
-  - component: {fileID: 5651857099929563370}
-  - component: {fileID: 3477409069980780067}
-  - component: {fileID: 7057216676064026827}
-  - component: {fileID: 3911644756337111258}
+  - component: {fileID: 4713017677532141849}
+  - component: {fileID: 1374678196038239994}
+  - component: {fileID: 813335302849942234}
+  - component: {fileID: 1335174029469829321}
   m_Layer: 0
   m_Name: Tower (Cobra)
   m_TagString: Untagged
@@ -134,7 +134,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 94
   m_CollisionDetection: 0
---- !u!114 &5651857099929563370
+--- !u!114 &4713017677532141849
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -143,20 +143,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 2280082227556136165}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dcdd94ce2f020834c894010bf3855ed3, type: 3}
+  m_Script: {fileID: 11500000, guid: 64ef1fb8b3a3fd8448b83849e091353d, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TowerStatus
+  m_EditorClassIdentifier: Assembly-CSharp::Tower.TowerStatus
+  Tower: 0
   MaxHP: 200
-  CurrentHP: 0
   DetectRange: 20
-  TickDamage: 10
-  TickInterval: 1
-  SlowRatio: 0.3
-  ManaGain: 10
-  GainTick: 1
-  CreatureNum: 7
-  SummonDistance: 0.3
---- !u!114 &3477409069980780067
+  cobraConfig:
+    TickDamage: 10
+    TickInterval: 0.5
+  obeliskConfig:
+    SlowRatio: 0.3
+  coffinConfig:
+    Num: 7
+    Distance: 0.3
+  anubisConfig:
+    SpawnPoint: {fileID: 0}
+--- !u!114 &1374678196038239994
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -165,29 +168,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 2280082227556136165}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d84d375c5a312545b715be04b98d296, type: 3}
+  m_Script: {fileID: 11500000, guid: 0026018aee309d14f857286a3ae8aa56, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DetectRange
-  Status: {fileID: 0}
-  Range: 20
---- !u!114 &7057216676064026827
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2280082227556136165}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0b1b74fe2153f0848a4ca364425c316c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FindEnemy
-  Range: {fileID: 0}
-  SearchTime: 0.2
-  Target_Mask:
+  m_EditorClassIdentifier: Assembly-CSharp::Tower.TargetDetector
+  status: {fileID: 4713017677532141849}
+  targetMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &3911644756337111258
+--- !u!114 &813335302849942234
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -196,12 +184,26 @@ MonoBehaviour:
   m_GameObject: {fileID: 2280082227556136165}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7803494834230644b8960ea48d3dea24, type: 3}
+  m_Script: {fileID: 11500000, guid: 0409a90ee751b0d48b2f55100e27673f, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RotateTower
-  findEnemy: {fileID: 0}
+  m_EditorClassIdentifier: Assembly-CSharp::Tower.TargetSelector
+  detector: {fileID: 1374678196038239994}
+  searchInterval: 0.2
+--- !u!114 &1335174029469829321
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2280082227556136165}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d9ae47dcf929304c87dcda5a637d308, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Tower.RotateToTarget
+  Target: {fileID: 0}
   rigidbody: {fileID: 0}
-  Rotation_Speed: 2
+  Rotation_Speed: 100
 --- !u!1 &3973086944220426594
 GameObject:
   m_ObjectHideFlags: 0
@@ -14928,7 +14930,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f076b6f6d31ff644e9a3afdb04e79f4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TowerOnOff
-  detectRange: {fileID: 3477409069980780067}
+  detectRange: {fileID: 0}
   meshRenderer: {fileID: 6680144610731387246}
   materials:
   - {fileID: 2100000, guid: a9ae31e869215d645840712457e4841a, type: 2}
@@ -15093,8 +15095,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RangeController
   type: 0
   Player: {fileID: 0}
-  Status: {fileID: 5651857099929563370}
-  DetectRange: {fileID: 3477409069980780067}
+  Status: {fileID: 0}
+  DetectRange: {fileID: 0}
   SlowRatio: 0.5
   ManaGain: 0
   GainTick: 0
