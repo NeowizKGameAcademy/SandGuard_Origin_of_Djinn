@@ -64,9 +64,9 @@ namespace SandGuard.Cutscenes.Editor
             panel.preserveAspect = true;
             panel.raycastTarget = false;
 
-            var font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/9.Font/Cafe24Shiningstar-v2.0 SDF.asset");
-            var cutsceneMaterial = AssetDatabase.LoadAssetAtPath<Material>("Assets/9.Font/Cafe24Shiningstar-v2.0 Cutscene Outline.mat");
-            if (!font) Debug.LogWarning("Prologue: Cafe24 Shiningstar TMP 폰트를 찾지 못했습니다. SandGuard/UI/Apply Cafe24 Shiningstar Font를 먼저 실행하세요.");
+            var font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/9.Font/Pretendard-Bold SDF.asset");
+            Material cutsceneMaterial = null;
+            if (!font) Debug.LogWarning("Prologue: Pretendard-Bold SDF 폰트를 찾지 못했습니다.");
             var title = Text("Cut Title", panel.transform, font, sequence.cuts[0].title, 44, new Color(1f, 0.82f, 0.48f));
             Box(title.rectTransform, new Vector2(0, 253), new Vector2(540, 56));
             title.alignment = TextAlignmentOptions.Center;

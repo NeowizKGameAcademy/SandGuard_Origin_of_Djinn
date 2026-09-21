@@ -7,6 +7,7 @@ namespace SandGuard.Cutscenes
     {
         const string SeenPrefix = "SandGuard.Story.Seen.";
         static string replayStoryId;
+        static bool openStoryMenuAfterReplay;
 
         public static bool IsSeen(string storyId)
         {
@@ -23,6 +24,18 @@ namespace SandGuard.Cutscenes
         public static void RequestReplay(string storyId)
         {
             replayStoryId = storyId;
+        }
+
+        public static void RequestStoryMenuReturn()
+        {
+            openStoryMenuAfterReplay = true;
+        }
+
+        public static bool ConsumeStoryMenuReturn()
+        {
+            if (!openStoryMenuAfterReplay) return false;
+            openStoryMenuAfterReplay = false;
+            return true;
         }
 
         public static bool ConsumeReplayRequest(string storyId)
@@ -45,6 +58,7 @@ namespace SandGuard.Cutscenes
             ResetSeen("Intro");
             ResetSeen("Ending");
             replayStoryId = null;
+            openStoryMenuAfterReplay = false;
         }
     }
 }

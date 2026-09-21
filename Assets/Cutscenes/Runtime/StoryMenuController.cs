@@ -38,6 +38,7 @@ namespace SandGuard.Cutscenes
                 if (captured.button) captured.button.onClick.AddListener(() => Play(captured));
             }
             Close();
+            if (StoryProgress.ConsumeStoryMenuReturn()) Open();
         }
 
         void OnDestroy()

@@ -2301,7 +2301,7 @@ MonoBehaviour:
     stateText: {fileID: 621997632}
   - storyId: Intro
     sceneName: IntroCutscene
-    available: 0
+    available: 1
     button: {fileID: 814526099}
     stateText: {fileID: 1822293823}
   - storyId: Ending
@@ -5184,14 +5184,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SandGuard.Cutscenes.SlantedStoryCardGraphic
   m_Material: {fileID: 0}
-  m_Color: {r: 0.9, g: 0.9, b: 0.9, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  sprite: {fileID: 0}
+  sprite: {fileID: 21300000, guid: 69ec5c5332c5848428f36561709b5bf2, type: 3}
   slant: 42
 --- !u!222 &1796802078
 CanvasRenderer:

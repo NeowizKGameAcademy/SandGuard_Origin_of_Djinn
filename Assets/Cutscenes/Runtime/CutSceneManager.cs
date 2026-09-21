@@ -24,6 +24,7 @@ namespace SandGuard.Cutscenes
         float elapsed;
         bool advancing;
         bool finished;
+        bool replayPlayback;
 
         void Start()
         {
@@ -34,8 +35,8 @@ namespace SandGuard.Cutscenes
                 return;
             }
 
-            bool replayRequested = StoryProgress.ConsumeReplayRequest(sequence.storyId);
-            if (sequence.playOnceAutomatically && StoryProgress.IsSeen(sequence.storyId) && !replayRequested)
+            replayPlayback = StoryProgress.ConsumeReplayRequest(sequence.storyId);
+            if (sequence.playOnceAutomatically && StoryProgress.IsSeen(sequence.storyId) && !replayPlayback)
             {
                 visibleGroup.alpha = 0f;
                 StartCoroutine(LoadNextScene());
@@ -127,12 +128,14 @@ namespace SandGuard.Cutscenes
 
         IEnumerator LoadNextScene()
         {
-            if (!Application.CanStreamedLevelBeLoaded(sequence.nextScene))
+            string targetScene = replayPlayback ? "MainScene" : sequence.nextScene;
+            if (replayPlayback) StoryProgress.RequestStoryMenuReturn();
+            if (!Application.CanStreamedLevelBeLoaded(targetScene))
             {
-                Debug.LogError($"CutSceneManager: Build Settings에 '{sequence.nextScene}' 씬이 없습니다.", this);
+                Debug.LogError($"CutSceneManager: Build Settings에 '{targetScene}' 씬이 없습니다.", this);
                 yield break;
             }
-            var operation = SceneManager.LoadSceneAsync(sequence.nextScene, LoadSceneMode.Single);
+            var operation = SceneManager.LoadSceneAsync(targetScene, LoadSceneMode.Single);
             while (operation != null && !operation.isDone) yield return null;
         }
     }
