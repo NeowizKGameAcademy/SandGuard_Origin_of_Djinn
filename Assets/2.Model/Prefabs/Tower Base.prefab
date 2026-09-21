@@ -132,7 +132,6 @@ GameObject:
   - component: {fileID: 696931632667872335}
   - component: {fileID: 6014151463747315308}
   - component: {fileID: 4555399034584637351}
-  - component: {fileID: 3522855406758183990}
   m_Layer: 0
   m_Name: Tower Base
   m_TagString: Untagged
@@ -194,20 +193,6 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 1
   m_Center: {x: 0, y: 1.1, z: 0}
   m_TimeToStationary: 0.5
---- !u!114 &3522855406758183990
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5524017310559581631}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c613db96b48af244d936f78fa1909095, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Tower.TowerHitBox
-  towerHealth: {fileID: 0}
-  hitCollider: {fileID: 6014151463747315308}
 --- !u!1 &7027910299319517965
 GameObject:
   m_ObjectHideFlags: 0
