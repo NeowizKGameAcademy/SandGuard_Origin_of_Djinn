@@ -58,6 +58,7 @@ namespace SandGuard.Player
         [Min(0.01f)] public float burstCameraKickDuration = 0.18f;
         [Min(0f), Tooltip("폭발 반경 안 적을 띄우는 수직 속도(m/s). 0이면 띄우지 않는다. 낙하·착지·복귀는 적의 EnemyFall이 맡는다")] public float burstLaunchUp = 5.5f;
         [Min(0f), Tooltip("띄울 때 폭발 중심에서 바깥으로 날리는 수평 속도(m/s)")] public float burstLaunchOut = 5f;
+        [Range(0f, 1f), Tooltip("관통탄이 꿰뚫은 자리에서 터지는 폭발의 띄우기·밀어내기 배율. 연출과 같이 절반(0.5). Q 폭발은 항상 1배")] public float piercedBurstLaunchScale = 0.5f;
         [Header("스킬 — 관통탄 충전 (PlayerPierceCharge가 charge 0~1로 TrySkillPierce를 부른다)")]
         [Min(1f), Tooltip("만충 시 빔 피해 배수")] public float chargedDamageMultiplier = 3.5f;
         [Min(1f), Tooltip("만충 시 빔 굵기(판정·연출) 배수")] public float chargedRadiusMultiplier = 5f;
@@ -324,7 +325,7 @@ namespace SandGuard.Player
                 foreach (var point in enemyPoints)
                     PrefabPool.Release(PrefabPool.Spawn(beamHitPrefab, point, Quaternion.identity), skillVfxLifetime);
             BeamFired?.Invoke(LastBeam);
-            if (explodeOnPierce || BurstPerPierce) foreach (var point in enemyPoints) Detonate(point);
+            if (explodeOnPierce || BurstPerPierce) foreach (var point in enemyPoints) DetonateExplosion(point, 0.5f, piercedBurstLaunchScale);
         }
 
         /// <summary>한 구간을 훑는다. 막히면 true와 막힌 점, 아니면 false와 구간 끝점을 돌려준다. 꿰뚫은 적은 seen·enemyPoints에 쌓인다.</summary>
@@ -366,6 +367,9 @@ namespace SandGuard.Player
         /// 그리고 모래 족쇄(패시브)가 켜져 있으면 같은 자리에서 속박까지 건다.
         /// </summary>
         public void Detonate(Vector3 center)
+            => DetonateExplosion(center, 1f);
+
+        void DetonateExplosion(Vector3 center, float visualScale, float launchScale = 1f)
         {
             if (this == null) return; // 볼트가 플레이어보다 오래 살 수 있다
             string faction = Faction;
@@ -378,14 +382,14 @@ namespace SandGuard.Player
                 if (collider.transform.IsChildOf(transform)) continue;
                 ICombatTarget target = collider.GetComponentInParent<ICombatTarget>();
                 if (target != null && (!target.IsTargetable || target.FactionId == faction)) continue;
-                if (burstLaunchUp > 0f)
+                if (burstLaunchUp * launchScale > 0f)
                 {
                     var displaceable = collider.GetComponentInParent<IDisplaceable>();
                     if (displaceable != null && launched.Add(displaceable))
                     {
                         Vector3 outward = ((Component)displaceable).transform.position - center; outward.y = 0f;
                         outward = outward.sqrMagnitude > 0.0001f ? outward.normalized : Vector3.zero;
-                        if (displaceable.Launch(Vector3.up * burstLaunchUp + outward * burstLaunchOut)) launchCount++;
+                        if (displaceable.Launch((Vector3.up * burstLaunchUp + outward * burstLaunchOut) * launchScale)) launchCount++;
                     }
                 }
                 IDamageable receiver = target != null ? target.DamageReceiver : collider.GetComponentInParent<IDamageable>();
@@ -400,7 +404,7 @@ namespace SandGuard.Player
             {
                 var vfx = PrefabPool.Spawn(burstPrefab, center, Quaternion.identity);
                 // 풀이 대여할 때 원본 크기로 되돌리므로 배율이 재사용마다 겹쳐 쌓이지 않는다.
-                vfx.transform.localScale *= radius / burstVfxRadius; // 반경을 키우면 연출도 같이 커진다
+                vfx.transform.localScale *= radius / burstVfxRadius * visualScale; // 관통탄은 모래 폭발의 절반 크기로 연출한다
                 PrefabPool.Release(vfx, skillVfxLifetime);
             }
             if (cameraRig != null && burstCameraKick > 0f) cameraRig.Kick(burstCameraKick, burstCameraKickDuration);

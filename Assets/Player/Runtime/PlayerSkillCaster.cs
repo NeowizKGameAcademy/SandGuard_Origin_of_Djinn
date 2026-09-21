@@ -46,7 +46,7 @@ namespace SandGuard.Player
         [Min(0.1f), Tooltip("링이 퍼지는 속도(m/s)")] public float stormExpandSpeed = 14f;
         [Min(0.1f), Tooltip("링 두께(m)")] public float stormRingThickness = 4f;
         [Min(0f), Tooltip("링 피해 = 볼트 피해 × 이 값(한 번)")] public float stormDamageRatio = 5f;
-        [Min(0f), Tooltip("링이 바깥으로 미는 속도(m/s). EnemyRestraint가 knockbackDamping(12m/s²)으로 감속시키므로 밀리는 거리는 대략 v²/24 m다")] public float stormKnockback = 20f;
+        [Min(0f), Tooltip("링이 바깥으로 미는 속도(m/s). EnemyRestraint가 knockbackDamping(12m/s²)으로 감속시키므로 밀리는 거리는 대략 v²/24 m다. 20이면 16.7m라 적이 마당 밖 폭풍 벽까지 밀려났다")] public float stormKnockback = 8f;
         [Range(0f, 1f), Tooltip("둔화 비율. 0.5면 속도 50%")] public float stormSlow = 0.5f;
         [Min(0f)] public float stormSlowDuration = 3f;
         [Tooltip("VFX_Sand_Storm. 자식 VfxStormFront가 링 반경을 따라간다(스케일하지 않음)")] public GameObject stormPrefab;
