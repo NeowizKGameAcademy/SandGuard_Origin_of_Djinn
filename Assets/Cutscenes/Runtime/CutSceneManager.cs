@@ -24,6 +24,7 @@ namespace SandGuard.Cutscenes
         float elapsed;
         bool advancing;
         bool finished;
+        bool replayPlayback;
 
         void Start()
         {
@@ -31,6 +32,14 @@ namespace SandGuard.Cutscenes
             {
                 Debug.LogError("CutSceneManager: 재생할 컷이 없습니다.", this);
                 enabled = false;
+                return;
+            }
+
+            replayPlayback = StoryProgress.ConsumeReplayRequest(sequence.storyId);
+            if (sequence.playOnceAutomatically && StoryProgress.IsSeen(sequence.storyId) && !replayPlayback)
+            {
+                visibleGroup.alpha = 0f;
+                StartCoroutine(LoadNextScene());
                 return;
             }
             if (nextButton) nextButton.onClick.AddListener(Next);
@@ -76,6 +85,7 @@ namespace SandGuard.Cutscenes
             if (index + 1 >= sequence.cuts.Length)
             {
                 finished = true;
+                StoryProgress.MarkSeen(sequence.storyId);
                 yield return LoadNextScene();
                 yield break;
             }
@@ -87,6 +97,7 @@ namespace SandGuard.Cutscenes
         IEnumerator Finish()
         {
             yield return Fade(visibleGroup.alpha, 0f);
+            StoryProgress.MarkSeen(sequence.storyId);
             yield return LoadNextScene();
         }
 
@@ -117,12 +128,14 @@ namespace SandGuard.Cutscenes
 
         IEnumerator LoadNextScene()
         {
-            if (!Application.CanStreamedLevelBeLoaded(sequence.nextScene))
+            string targetScene = replayPlayback ? "MainScene" : sequence.nextScene;
+            if (replayPlayback) StoryProgress.RequestStoryMenuReturn();
+            if (!Application.CanStreamedLevelBeLoaded(targetScene))
             {
-                Debug.LogError($"CutSceneManager: Build Settings에 '{sequence.nextScene}' 씬이 없습니다.", this);
+                Debug.LogError($"CutSceneManager: Build Settings에 '{targetScene}' 씬이 없습니다.", this);
                 yield break;
             }
-            var operation = SceneManager.LoadSceneAsync(sequence.nextScene, LoadSceneMode.Single);
+            var operation = SceneManager.LoadSceneAsync(targetScene, LoadSceneMode.Single);
             while (operation != null && !operation.isDone) yield return null;
         }
     }

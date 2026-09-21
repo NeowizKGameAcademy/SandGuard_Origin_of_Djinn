@@ -254,7 +254,7 @@ MonoBehaviour:
   m_text: WAVE 1
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9a6b3d0b4eb136f48bc0872b1cc4e94f, type: 2}
-  m_sharedMaterial: {fileID: 0}
+  m_sharedMaterial: {fileID: 1274732785150258582, guid: 9a6b3d0b4eb136f48bc0872b1cc4e94f, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1500,6 +1500,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3960883916973997788}
     m_Modifications:
+    - target: {fileID: 392514474723533888, guid: 9f202fb900999804f936ef6f2f9d09de, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 9a6b3d0b4eb136f48bc0872b1cc4e94f, type: 2}
+    - target: {fileID: 392514474723533888, guid: 9f202fb900999804f936ef6f2f9d09de, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 1274732785150258582, guid: 9a6b3d0b4eb136f48bc0872b1cc4e94f, type: 2}
     - target: {fileID: 1585367805972727638, guid: 9f202fb900999804f936ef6f2f9d09de, type: 3}
       propertyPath: m_Name
       value: WaveHUD
@@ -1584,6 +1592,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4137801062758309193, guid: 9f202fb900999804f936ef6f2f9d09de, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 9a6b3d0b4eb136f48bc0872b1cc4e94f, type: 2}
+    - target: {fileID: 4137801062758309193, guid: 9f202fb900999804f936ef6f2f9d09de, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 1274732785150258582, guid: 9a6b3d0b4eb136f48bc0872b1cc4e94f, type: 2}
     - target: {fileID: 5006844090302977032, guid: 9f202fb900999804f936ef6f2f9d09de, type: 3}
       propertyPath: m_fontAsset
       value: 
