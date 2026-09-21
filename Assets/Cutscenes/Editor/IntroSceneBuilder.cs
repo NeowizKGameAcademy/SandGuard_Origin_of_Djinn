@@ -67,6 +67,7 @@ namespace SandGuard.Cutscenes.Editor
 
             var panel = Image("Story Panel", visual, AssetDatabase.LoadAssetAtPath<Sprite>(Art + "CutScene_Pannel.png"));
             Place(panel.rectTransform, new Vector2(0.78f, 0.5f), new Vector2(760, 760));
+            panel.color = new Color(1f, 1f, 1f, 200f / 255f);
             panel.preserveAspect = true;
             panel.raycastTarget = false;
 

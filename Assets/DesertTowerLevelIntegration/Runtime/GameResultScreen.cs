@@ -17,6 +17,7 @@ namespace DesertTower.LevelIntegration
         [SerializeField] TMP_Text[] statNames;
         [SerializeField] Button retryButton, mainMenuButton;
         [SerializeField] string mainMenuScene = "MainScene";
+        [SerializeField] string endingCutsceneScene = "EndingCutscene";
         [SerializeField] string retrySceneOverride;
         [SerializeField] bool previewOnly;
 
@@ -54,6 +55,18 @@ namespace DesertTower.LevelIntegration
         {
             if (!director || showing || (director.State != RunState.Won && director.State != RunState.Lost)) return;
             bool won = director.State == RunState.Won;
+            if (won && PlayerPrefs.GetInt("SandGuard.Story.Seen.Ending", 0) != 1)
+            {
+                if (!Application.CanStreamedLevelBeLoaded(endingCutsceneScene))
+                {
+                    Debug.LogError($"GameResultScreen: Build Settings에 '{endingCutsceneScene}' 씬이 없습니다.", this);
+                }
+                else
+                {
+                    SceneManager.LoadScene(endingCutsceneScene, LoadSceneMode.Single);
+                    return;
+                }
+            }
             if (title) { title.text = won ? "CLEAR" : "FAILED"; title.color = won ? new Color(1f,.84f,.47f) : new Color(1f,.34f,.27f); }
             if (subtitle) { subtitle.text = won ? "사막의 평화가 다시 찾아왔습니다!" : "마석코어가 무너졌습니다..."; subtitle.color = won ? new Color(.13f,.09f,.05f) : new Color(1f,.85f,.65f); }
             if (timeLabel) { int seconds = Mathf.FloorToInt(director.RunElapsedSeconds); timeLabel.text = $"{seconds / 60:00}:{seconds % 60:00}"; }
