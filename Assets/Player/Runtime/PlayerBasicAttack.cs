@@ -53,14 +53,14 @@ namespace SandGuard.Player
         [Tooltip("VFX_Sand_Burst. 착탄점(바닥)에 놓는다")] public GameObject burstPrefab;
         [Min(0.1f)] public float burstRadius = 3.75f;
         [Min(0.1f), Tooltip("폭발 연출 프리팹이 만들어진 기준 반경(m). 실제 반경이 이보다 크거나 작으면 그 비율로 연출을 키우거나 줄여 판정과 맞춘다")] public float burstVfxRadius = 2.5f;
-        [Min(0f), Tooltip("폭발 피해 = 볼트 피해 × 이 값. 직접 맞은 적은 볼트 피해와 폭발 피해를 둘 다 받는다")] public float burstDamageRatio = 0.6f;
+        [Min(0f), Tooltip("폭발 피해 = 볼트 피해 × 이 값. 직접 맞은 적은 볼트 피해와 폭발 피해를 둘 다 받는다")] public float burstDamageRatio = 1f;
         [Min(0f), Tooltip("폭발마다 카메라 감쇠 흔들림 진폭(m)")] public float burstCameraKick = 0.08f;
         [Min(0.01f)] public float burstCameraKickDuration = 0.18f;
         [Min(0f), Tooltip("폭발 반경 안 적을 띄우는 수직 속도(m/s). 0이면 띄우지 않는다. 낙하·착지·복귀는 적의 EnemyFall이 맡는다")] public float burstLaunchUp = 5.5f;
         [Min(0f), Tooltip("띄울 때 폭발 중심에서 바깥으로 날리는 수평 속도(m/s)")] public float burstLaunchOut = 5f;
         [Header("스킬 — 관통탄 충전 (PlayerPierceCharge가 charge 0~1로 TrySkillPierce를 부른다)")]
-        [Min(1f), Tooltip("만충 시 빔 피해 배수")] public float chargedDamageMultiplier = 2.2f;
-        [Min(1f), Tooltip("만충 시 빔 굵기(판정·연출) 배수")] public float chargedRadiusMultiplier = 2.5f;
+        [Min(1f), Tooltip("만충 시 빔 피해 배수")] public float chargedDamageMultiplier = 3.5f;
+        [Min(1f), Tooltip("만충 시 빔 굵기(판정·연출) 배수")] public float chargedRadiusMultiplier = 5f;
         [Min(0f), Tooltip("만충 시 사거리에 더하는 거리(m)")] public float chargedRangeBonus = 8f;
         [Min(0f), Tooltip("만충 시 꿰뚫은 적을 진행 방향으로 미는 속도(m/s). 충전량에 비례")] public float chargedKnockback = 6f;
         [Min(0.01f), Tooltip("VFX_Pierce_Beam의 기본 반경. 충전 배수를 곱해 연출 굵기로 쓴다")] public float beamVfxRadius = 0.14f;
@@ -83,7 +83,7 @@ namespace SandGuard.Player
         public Func<bool> SkillTreePierceAllowed;
         // In tree mode piercing is an equipped active skill, not a free basic-attack upgrade.
         public bool PierceBeam => SkillTreePierceAllowed==null && Flag(PlayerStat.PierceBeam);
-        /// <summary>스킬트리 모드의 관통탄. charge 0 = 탭(기본 빔), 1 = 만충(피해·굵기·사거리·밀어내기 최대).</summary>
+        /// <summary>스킬트리 모드의 폭발 관통탄. 꿰뚫은 적마다 폭발한다. charge 0 = 탭, 1 = 만충(피해·굵기·사거리·밀어내기 최대).</summary>
         public bool TrySkillPierce(float charge = 0f)
         {
             if(SkillTreePierceAllowed!=null && !SkillTreePierceAllowed() || !CanFire)return false;
@@ -96,7 +96,7 @@ namespace SandGuard.Player
                 direction = (aim - muzzle).normalized;
                 if (direction.sqrMagnitude < 0.01f) direction = transform.forward;
             }
-            FireBeam(muzzle,direction,origin,Mathf.Clamp01(charge));
+            FireBeam(muzzle,direction,origin,Mathf.Clamp01(charge), explodeOnPierce: true);
             // 양팔 내지르기 동작이 있으면 그걸로, 없으면 기존 손바닥 시전 동작으로.
             if (motor != null) motor.FaceCamera();
             if (visuals == null || !visuals.PlayPierceFire()) PlayCastVisual();
@@ -270,7 +270,7 @@ namespace SandGuard.Player
         /// 관통탄: 몸통→총구, 총구→사거리 순으로 훑어 적대 대상은 전부 꿰뚫고(피해 각각) 그 외 콜라이더(벽·아군 시설)에서 멈춘다.
         /// 죽은 개체와 트리거는 통과한다. 폭발 관통탄이면 꿰뚫은 적마다 모래 폭발이 터진다.
         /// </summary>
-        void FireBeam(Vector3 muzzle, Vector3 direction, Vector3 origin, float charge = 0f)
+        void FireBeam(Vector3 muzzle, Vector3 direction, Vector3 origin, float charge = 0f, bool explodeOnPierce = false)
         {
             string faction = Faction;
             float amount = Damage * Mathf.Lerp(1f, chargedDamageMultiplier, charge);
@@ -324,7 +324,7 @@ namespace SandGuard.Player
                 foreach (var point in enemyPoints)
                     PrefabPool.Release(PrefabPool.Spawn(beamHitPrefab, point, Quaternion.identity), skillVfxLifetime);
             BeamFired?.Invoke(LastBeam);
-            if (BurstPerPierce) foreach (var point in enemyPoints) Detonate(point);
+            if (explodeOnPierce || BurstPerPierce) foreach (var point in enemyPoints) Detonate(point);
         }
 
         /// <summary>한 구간을 훑는다. 막히면 true와 막힌 점, 아니면 false와 구간 끝점을 돌려준다. 꿰뚫은 적은 seen·enemyPoints에 쌓인다.</summary>

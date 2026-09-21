@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-21 01:17:10Z" end-time="2026-09-21 01:17:38Z" duration="27.8102664">
+  <test-suite type="TestSuite" id="1280" name="DesertTower" fullname="DesertTower" runstate="Runnable" testcasecount="208" result="Passed" start-time="2026-09-21 01:17:10Z" end-time="2026-09-21 01:17:38Z" duration="27.810266" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1132" name="SandGuard.Enemy.Tests.dll" fullname="C:/course/unity/SandGuard/Library/ScriptAssemblies/SandGuard.Enemy.Tests.dll" runstate="Runnable" testcasecount="60" result="Passed" start-time="2026-09-21 01:17:10Z" end-time="2026-09-21 01:17:38Z" duration="27.800833" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="6160" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1133" name="SandGuard" fullname="SandGuard" runstate="Runnable" testcasecount="60" result="Passed" start-time="2026-09-21 01:17:10Z" end-time="2026-09-21 01:17:38Z" duration="27.799283" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1134" name="Enemy" fullname="SandGuard.Enemy" runstate="Runnable" testcasecount="60" result="Passed" start-time="2026-09-21 01:17:10Z" end-time="2026-09-21 01:17:38Z" duration="27.797986" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1135" name="Tests" fullname="SandGuard.Enemy.Tests" runstate="Runnable" testcasecount="60" result="Passed" start-time="2026-09-21 01:17:10Z" end-time="2026-09-21 01:17:38Z" duration="27.796779" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1124" name="TempleT1RampNavigationTests" fullname="SandGuard.Enemy.Tests.TempleT1RampNavigationTests" classname="SandGuard.Enemy.Tests.TempleT1RampNavigationTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-09-21 01:17:10Z" end-time="2026-09-21 01:17:38Z" duration="27.794462" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1125" name="EnemiesWalkSavedLevelRampBothWays" fullname="SandGuard.Enemy.Tests.TempleT1RampNavigationTests.EnemiesWalkSavedLevelRampBothWays" methodname="EnemiesWalkSavedLevelRampBothWays" classname="SandGuard.Enemy.Tests.TempleT1RampNavigationTests" runstate="Runnable" seed="1359700605" result="Passed" start-time="2026-09-21 01:17:10Z" end-time="2026-09-21 01:17:38Z" duration="27.782799" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="300000" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Mana Gained
+Saving results to: C:/Users/m/AppData/LocalLow/DefaultCompany/DesertTower\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

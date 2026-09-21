@@ -69,7 +69,7 @@ namespace SandGuard.Audio.Editor
             E("Player_LevelUp", PlaceholderKind.Sting, "레벨업 금빛 아르페지오").Flat().Vol(0.9f).Voices(1),
             E("Player_Xp_Drop", PlaceholderKind.Ping, "경험치 조각 드롭 짤랑").At(2, 25).Vol(0.4f).Voices(6),
             E("Player_ManaCharge_Loop", PlaceholderKind.Loop, "코어 근처 마나 충전").At(3, 30),
-            E("Player_ManaCharge_Complete", PlaceholderKind.Ping, "마나 충전 완료 차임").At(3, 30),
+            E("Player_ManaCharge_Complete", PlaceholderKind.Ping, "마나 회복 1틱. 코어·오벨리스크 근처").At(3, 30),
             E("Player_Voice_Cast", PlaceholderKind.Voice, "시전 기합 (기본 공격·Q/E/R 스킬). 매번 나면 지겨우니 확률 20%").At(2, 25).Vol(0.6f).Odds(0.2f),
             E("Player_Voice_Jump", PlaceholderKind.Voice, "점프·공중 점프 기합. 확률 30%").At(2, 25).Vol(0.5f).Odds(0.3f),
             E("Player_Voice_Dash", PlaceholderKind.Voice, "대시 기합. 확률 40%").At(2, 25).Vol(0.5f).Odds(0.4f),

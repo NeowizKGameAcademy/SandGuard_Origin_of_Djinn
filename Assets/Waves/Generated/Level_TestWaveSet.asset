@@ -24,34 +24,23 @@ MonoBehaviour:
       count: 6
       delay: 0
       interval: 2
-  - label: "Wave 2 - 방패 진형"
-    preparationSeconds: 15
-    groups:
-    - spawnId: 8ca42bbaa0e6424086dec32cb6b1c6ff
+    - spawnId: 50dd3b485a11450c937f9325ec9e1d77
       targetId: 835bc8b2a0bc4807985b5eebbd309dd8
       routeId:
       element: {fileID: 0}
       enemyKey: bandit.swordsman
-      count: 3
+      count: 6
       delay: 0
       interval: 2
-    - spawnId: e01621156d5d496bad4a33a0b0e6c782
+    - spawnId: 6ca1b69a93364dc0a8a5cfe841b4c3bb
       targetId: 835bc8b2a0bc4807985b5eebbd309dd8
       routeId:
       element: {fileID: 0}
-      enemyKey: bandit.shieldguard
-      count: 2
-      delay: 6
-      interval: 2
-    - spawnId: 8ca42bbaa0e6424086dec32cb6b1c6ff
-      targetId: 835bc8b2a0bc4807985b5eebbd309dd8
-      routeId:
-      element: {fileID: 0}
-      enemyKey: bandit.swordsman
-      count: 3
-      delay: 10
-      interval: 2
-  - label: "Wave 3 - 기습 부대"
+      enemyKey: bandit.assassin
+      count: 5
+      delay: 0
+      interval: 1.5
+  - label: "Wave 2 - 방패 진형"
     preparationSeconds: 20
     groups:
     - spawnId: 8ca42bbaa0e6424086dec32cb6b1c6ff
@@ -61,13 +50,29 @@ MonoBehaviour:
       enemyKey: bandit.swordsman
       count: 5
       delay: 0
-      interval: 1.5
+      interval: 2
+    - spawnId: e01621156d5d496bad4a33a0b0e6c782
+      targetId: 835bc8b2a0bc4807985b5eebbd309dd8
+      routeId:
+      element: {fileID: 0}
+      enemyKey: bandit.shieldguard
+      count: 5
+      delay: 6
+      interval: 2
+    - spawnId: 8ca42bbaa0e6424086dec32cb6b1c6ff
+      targetId: 835bc8b2a0bc4807985b5eebbd309dd8
+      routeId:
+      element: {fileID: 0}
+      enemyKey: bandit.swordsman
+      count: 5
+      delay: 10
+      interval: 2
     - spawnId: 50dd3b485a11450c937f9325ec9e1d77
       targetId: 835bc8b2a0bc4807985b5eebbd309dd8
       routeId:
       element: {fileID: 0}
       enemyKey: bandit.hammerbrute
-      count: 1
+      count: 5
       delay: 0
       interval: 2
     - spawnId: 6ca1b69a93364dc0a8a5cfe841b4c3bb
@@ -75,8 +80,75 @@ MonoBehaviour:
       routeId:
       element: {fileID: 0}
       enemyKey: bandit.assassin
-      count: 4
-      delay: 6
+      count: 7
+      delay: 0
+      interval: 1.5
+  - label: "Wave 3 - 기습 부대"
+    preparationSeconds: 20
+    groups:
+    - spawnId: 8ca42bbaa0e6424086dec32cb6b1c6ff
+      targetId: 835bc8b2a0bc4807985b5eebbd309dd8
+      routeId:
+      element: {fileID: 0}
+      enemyKey: bandit.swordsman
+      count: 10
+      delay: 0
+      interval: 1.5
+    - spawnId: 8ca42bbaa0e6424086dec32cb6b1c6ff
+      targetId: 835bc8b2a0bc4807985b5eebbd309dd8
+      routeId:
+      element: {fileID: 0}
+      enemyKey: bandit.assassin
+      count: 5
+      delay: 0
+      interval: 1.5
+    - spawnId: 50dd3b485a11450c937f9325ec9e1d77
+      targetId: 835bc8b2a0bc4807985b5eebbd309dd8
+      routeId:
+      element: {fileID: 0}
+      enemyKey: bandit.swordsman
+      count: 10
+      delay: 0
+      interval: 2
+    - spawnId: 50dd3b485a11450c937f9325ec9e1d77
+      targetId: 835bc8b2a0bc4807985b5eebbd309dd8
+      routeId:
+      element: {fileID: 0}
+      enemyKey: bandit.shieldguard
+      count: 5
+      delay: 0
+      interval: 2
+    - spawnId: 6ca1b69a93364dc0a8a5cfe841b4c3bb
+      targetId: 835bc8b2a0bc4807985b5eebbd309dd8
+      routeId:
+      element: {fileID: 0}
+      enemyKey: bandit.swordsman
+      count: 10
+      delay: 0
+      interval: 2
+    - spawnId: 6ca1b69a93364dc0a8a5cfe841b4c3bb
+      targetId: 835bc8b2a0bc4807985b5eebbd309dd8
+      routeId:
+      element: {fileID: 0}
+      enemyKey: bandit.hammerbrute
+      count: 5
+      delay: 0
+      interval: 2
+    - spawnId: e01621156d5d496bad4a33a0b0e6c782
+      targetId: 835bc8b2a0bc4807985b5eebbd309dd8
+      routeId:
+      element: {fileID: 0}
+      enemyKey: bandit.swordsman
+      count: 10
+      delay: 0
+      interval: 2
+    - spawnId: e01621156d5d496bad4a33a0b0e6c782
+      targetId: 835bc8b2a0bc4807985b5eebbd309dd8
+      routeId:
+      element: {fileID: 0}
+      enemyKey: bandit.assassin
+      count: 5
+      delay: 0
       interval: 1.5
   - label: "Wave 4 - 총공세"
     preparationSeconds: 20
@@ -146,7 +218,7 @@ MonoBehaviour:
       delay: 12
       interval: 1.5
   - label: "Wave 5 - 자히르의 습격"
-    preparationSeconds: 25
+    preparationSeconds: 20
     groups:
     - spawnId: 8ca42bbaa0e6424086dec32cb6b1c6ff
       targetId: 835bc8b2a0bc4807985b5eebbd309dd8

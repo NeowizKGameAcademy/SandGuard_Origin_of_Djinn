@@ -12,6 +12,9 @@ namespace SandGuard.Enemy
         public Transform attackOrigin;
         [Min(0.1f)] public float range = 1.8f;
         [Min(0f)] public float damage = 10f;
+        [Min(0f), Tooltip("타워에 가하는 근접 피해 배수")] public float towerDamageMultiplier = 1f;
+        [Min(0f), Tooltip("플레이어에 가하는 근접 피해 배수")] public float playerDamageMultiplier = 1f;
+        [Min(0f), Tooltip("미니언에 가하는 근접 피해 배수")] public float minionDamageMultiplier = 1f;
         [Min(0.05f), Tooltip("공격 시작부터 실제로 맞히기까지의 시간")]
         public float windup = 0.35f;
         [Min(0.05f), Tooltip("공격 시작 사이의 간격")]
@@ -75,7 +78,15 @@ namespace SandGuard.Enemy
             direction = direction.sqrMagnitude > 0.0001f ? direction.normalized : transform.forward;
             IDamageable receiver = target.DamageReceiver;
             if (receiver == null) yield break;
-            DamageResult result = receiver.TakeDamage(new DamageInfo(damage, self.FactionId, self.EntityId, "enemy.melee", point, direction));
+            float multiplier = target.Kind switch
+            {
+                CombatTargetKind.Tower => towerDamageMultiplier,
+                CombatTargetKind.Player => playerDamageMultiplier,
+                CombatTargetKind.Minion => minionDamageMultiplier,
+                _ => 1f
+            };
+            float amount = damage * multiplier;
+            DamageResult result = receiver.TakeDamage(new DamageInfo(amount, self.FactionId, self.EntityId, "enemy.melee", point, direction));
             if (result.WasApplied) HitCount++;
         }
 

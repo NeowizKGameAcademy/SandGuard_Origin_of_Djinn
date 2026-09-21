@@ -44,7 +44,9 @@ namespace SandGuard.Enemy
 
         void ClearDebris()
         {
-            if (debris != null) { debris.SetActive(false); Destroy(debris); }
+            // 수명이 다해 이미 풀로 돌아간 파편은 그대로 둔다. 두 번 돌려보내면 다음에 빌려 간 쪽의 것을 거둔다.
+            if (debris != null && (!debris.TryGetComponent(out PooledInstance pooled) || !pooled.IsIdle))
+                PrefabPool.Release(debris);
             debris = null;
         }
 
@@ -56,13 +58,16 @@ namespace SandGuard.Enemy
             if (shieldVisual == null) return;
 
             // Keep the attached original for pool reuse; its world-space copy becomes debris.
-            debris = Instantiate(shieldVisual.gameObject, shieldVisual.position, shieldVisual.rotation);
+            // 풀이 방패 외형을 원본 삼아 파편을 만들고 돌려 쓴다. 같은 적이 다시 나와도 같은 파편을 꺼내 쓴다.
+            debris = PrefabPool.Spawn(shieldVisual.gameObject, shieldVisual.position, shieldVisual.rotation);
             debris.name = "BrokenEnemyShield";
             debris.transform.localScale = shieldVisual.lossyScale;
             shieldVisual.gameObject.SetActive(false);
             foreach (var child in debris.GetComponentsInChildren<Transform>(true)) child.gameObject.layer = 2; // Ignore Raycast
             foreach (var collider in debris.GetComponentsInChildren<Collider>()) collider.enabled = false;
-            var box = debris.AddComponent<BoxCollider>();
+            // 재사용한 파편에는 지난번 상자·물체가 그대로 붙어 있다. 새로 붙이지 않고 값만 다시 잡는다.
+            if (!debris.TryGetComponent(out BoxCollider box)) box = debris.AddComponent<BoxCollider>();
+            box.enabled = true;
             var bounds = new Bounds(Vector3.zero, Vector3.zero);
             bool first = true;
             foreach (var renderer in debris.GetComponentsInChildren<Renderer>())
@@ -79,13 +84,15 @@ namespace SandGuard.Enemy
             }
             box.center = bounds.center;
             box.size = first ? new Vector3(.6f, 1f, .1f) : Vector3.Max(bounds.size, Vector3.one * .02f);
-            var body = debris.AddComponent<Rigidbody>();
+            if (!debris.TryGetComponent(out Rigidbody body)) body = debris.AddComponent<Rigidbody>();
             body.mass = 3f;
+            body.useGravity = true;
+            body.isKinematic = false;
             body.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
             body.linearVelocity = direction.normalized * 1.5f + Vector3.up * .5f;
             body.angularVelocity = transform.right * 3f;
             foreach (var collider in GetComponentsInChildren<Collider>(true)) Physics.IgnoreCollision(box, collider);
-            Destroy(debris, Mathf.Max(.1f, debrisLifetime));
+            PrefabPool.Release(debris, Mathf.Max(.1f, debrisLifetime));
         }
         /// <summary>모델이 EnemyScaleBuilder로 커진 배율. 사람 크기 기준으로 만든 연출을 몸에 맞출 때 쓴다.</summary>
         float BodyScale { get { var visuals = GetComponent<EnemyVisuals>(); return visuals ? visuals.BodyScale : 1f; } }

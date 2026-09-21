@@ -25,7 +25,11 @@ namespace SandGuard.Enemy.Editor
         public static EnemyShield Ensure(GameObject root)
         {
             var shield = root.GetComponent<EnemyShield>();
-            if (shield == null) shield = root.AddComponent<EnemyShield>();
+            if (shield == null)
+            {
+                shield = root.AddComponent<EnemyShield>();
+                shield.maxHealth = 60f;
+            }
             if (shield.guardVfx == null) shield.guardVfx = AssetDatabase.LoadAssetAtPath<GameObject>(GuardVfxPath);
             return shield;
         }

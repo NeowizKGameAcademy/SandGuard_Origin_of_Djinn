@@ -85,6 +85,37 @@ namespace SandGuard.Player.Tests
         }
         StatusDummy Dummy(Vector3 position) => Cube(position, Vector3.one).AddComponent<StatusDummy>();
 
+        [Test] public void VortexDamageTicksDeduplicateTargetsClampLifetimeAndReset()
+        {
+            var target = Cube(new Vector3(20, 1, 20), Vector3.one).AddComponent<PlayerTestTarget>();
+            target.gameObject.AddComponent<SphereCollider>();
+            var outside = Cube(new Vector3(30, 1, 20), Vector3.one).AddComponent<PlayerTestTarget>();
+            var zone = Track(new GameObject("Vortex damage test")).AddComponent<PlayerSandVortex>();
+            zone.transform.position = target.transform.position;
+            zone.radius = 3f; zone.duration = 2.5f; zone.pullSpeed = 0f;
+            int reported = 0;
+            zone.hitSink = _ => reported++;
+            Physics.SyncTransforms();
+            var tick = typeof(PlayerSandVortex).GetMethod("Tick", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            tick.Invoke(zone, new object[] { 0.49f });
+            Assert.AreEqual(0, target.HitCount, "No damage before the first half second.");
+            tick.Invoke(zone, new object[] { 0.5f });
+            Assert.AreEqual(1, target.HitCount, "Multiple colliders receive one hit per tick.");
+            Assert.AreEqual(48f, target.CurrentHealth);
+            tick.Invoke(zone, new object[] { 3f });
+            Assert.AreEqual(5, target.HitCount, "Catch up missed ticks, but never tick beyond the lifetime.");
+            Assert.AreEqual(40f, target.CurrentHealth);
+            Assert.AreEqual(5, reported);
+            Assert.AreEqual(0, outside.HitCount);
+            zone.ResetForReuse();
+            tick.Invoke(zone, new object[] { 0.5f });
+            Assert.AreEqual(6, target.HitCount, "A reused vortex starts its tick schedule again.");
+            Assert.AreEqual(5, reported, "Reuse clears the old hit callback.");
+            zone.ResetForReuse(); zone.owner = target.transform;
+            tick.Invoke(zone, new object[] { 0.5f });
+            Assert.AreEqual(6, target.HitCount, "The owner cannot damage itself.");
+        }
+
         [UnityTest] public IEnumerator CastsNeedTheNodeManaAndCooldownAndTheKeysWork()
         {
             Slab(6f);
@@ -97,7 +128,8 @@ namespace SandGuard.Player.Tests
             Assert.True(caster.TryCast(PlayerSkillCaster.Vortex).Succeeded);
             Assert.AreEqual(before - caster.vortexManaCost, mana.CurrentMana, "E costs mana.");
             Assert.AreEqual(ActionFailure.Cooldown, caster.TryCast(PlayerSkillCaster.Vortex).Failure, "E is on cooldown right after a cast.");
-            Assert.That(caster.CooldownRemaining(PlayerSkillCaster.Vortex), Is.InRange(caster.vortexCooldown - 0.1f, caster.vortexCooldown));
+            float vortexLock = caster.VortexDuration + caster.vortexCooldown; // 장판이 사라진 뒤부터 쿨다운이 돈다
+            Assert.That(caster.CooldownRemaining(PlayerSkillCaster.Vortex), Is.InRange(vortexLock - 0.1f, vortexLock));
             Assert.AreEqual(1, casts.Count); Assert.AreEqual(PlayerSkillCaster.Vortex, casts[0].Item1);
             Assert.Less(Vector3.Distance(casts[0].Item2, new Vector3(0, 0, 5.2f)), 1f, "The zone lands on the ground just in front of the aimed wall face (z 5.5), not on top of it.");
             Assert.Less(casts[0].Item2.y, 0.1f);
@@ -122,7 +154,7 @@ namespace SandGuard.Player.Tests
             var near = Dummy(new Vector3(2.5f, 0.5f, 5.5f));     // 반경 3 안
             var far = Dummy(new Vector3(0f, 0.5f, 12f));        // 반경 밖
             effects.Apply(new SandVortexEffect());
-            caster.vortexDuration = 1f; caster.vortexPullSpeed = 3f;
+            caster.vortexRadius = 3f; caster.vortexDuration = 1f; caster.vortexPullSpeed = 3f; // 기본값이 아니라 이 수치로 검증한다
             Assert.True(caster.TryCast(PlayerSkillCaster.Vortex).Succeeded);
             var vortex = caster.LastVortex;
             Vector3 centre = vortex.transform.position;
@@ -138,6 +170,7 @@ namespace SandGuard.Player.Tests
             Assert.AreEqual(1, near.LaunchCalls, "The vortex launches what it gathered, once.");
             Assert.AreEqual(caster.vortexEndLaunch, near.Launched.y, 0.0001f); Assert.AreEqual(0f, Flat(near.Launched).magnitude, 0.0001f, "Straight up.");
             Assert.AreEqual(0, far.LaunchCalls); Assert.AreEqual(0f, near.RestrainDuration, "No shackle by default any more.");
+            Assert.That(caster.CooldownRemaining(PlayerSkillCaster.Vortex), Is.InRange(caster.vortexCooldown - 0.6f, caster.vortexCooldown), "쿨다운은 소용돌이가 사라진 순간부터 돈다.");
         }
 
         [UnityTest] public IEnumerator BurstLaunchesEnemiesAroundTheImpact()
@@ -164,6 +197,7 @@ namespace SandGuard.Player.Tests
             var pierce = player.AddComponent<PlayerPierceCharge>();
             yield return null;
             var target = Dummy(new Vector3(0f, 1f, 5f)); var health = target.gameObject.AddComponent<PlayerTestTarget>();
+            health.maxHealth = 1000f;
             var wall = Cube(new Vector3(0f, 1.5f, 9f), new Vector3(3f, 3f, 1f));
             float baseDamage = attack.Damage;
             var fired = new List<float>(); pierce.Fired += fired.Add;
@@ -175,7 +209,7 @@ namespace SandGuard.Player.Tests
             Assert.False(pierce.IsHolding); Assert.False(started);
             Assert.AreEqual(before - pierce.manaCost, mana.CurrentMana, "A tap costs the base mana only.");
             Assert.AreEqual(1, fired.Count); Assert.AreEqual(0f, fired[0]); Assert.AreEqual(0f, attack.LastBeamCharge);
-            Assert.AreEqual(1, health.HitCount); Assert.AreEqual(baseDamage, 50f - health.CurrentHealth, 0.0001f);
+            Assert.AreEqual(2, health.HitCount); Assert.AreEqual(baseDamage + attack.BurstDamage, health.maxHealth - health.CurrentHealth, 0.0001f);
             Assert.AreEqual(0, target.KnockCalls, "A tap does not push.");
             Assert.AreEqual(ActionFailure.Cooldown, pierce.Fire(0f).Failure);
             Assert.False(pierce.BeginHold(0), "Holding during the cooldown does nothing.");
@@ -193,8 +227,9 @@ namespace SandGuard.Player.Tests
             Assert.False(cancelled);
             Assert.AreEqual(before - pierce.manaCost - pierce.fullChargeExtraMana, mana.CurrentMana, "Full charge costs the extra mana.");
             Assert.AreEqual(2, fired.Count); Assert.AreEqual(1f, fired[1], 0.0001f); Assert.AreEqual(1f, attack.LastBeamCharge, 0.0001f);
-            Assert.AreEqual(2, health.HitCount);
-            Assert.AreEqual(baseDamage * attack.chargedDamageMultiplier, 50f - health.CurrentHealth - baseDamage, 0.001f, "Charged damage.");
+            Assert.AreEqual(4, health.HitCount);
+            Assert.AreEqual(baseDamage * attack.chargedDamageMultiplier + attack.BurstDamage,
+                health.maxHealth - health.CurrentHealth - baseDamage - attack.BurstDamage, 0.001f, "Charged beam plus explosion damage.");
             Assert.AreEqual(1, target.KnockCalls); Assert.Greater(target.Knock.z, 0f, "Pushed along the beam.");
             Assert.AreEqual(attack.chargedKnockback, target.Knock.magnitude, 0.01f);
             Assert.True(attack.LastBeam.Landed); Assert.Less(attack.LastBeam.End.z, 9f, "The charged beam still stops at the wall.");

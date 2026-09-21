@@ -240,7 +240,7 @@ namespace DesertTower.VFX.Editor
                 main.startSize = Range(3f, 5f);
                 main.startColor = new Color(0.66f, 0.54f, 0.35f, 0.5f);
                 main.startRotation = Range(-Mathf.PI, Mathf.PI);
-                main.maxParticles = 500;
+                main.maxParticles = 800;
                 Rate(lowDust, 6f);
                 CircleShape(lowDust, 1f, 0.15f); Flat(lowDust);
                 Orbit(lowDust, 0f, 0f, 2f, 4f, 1.5f, 5f, ParticleSystemSimulationSpace.World);
@@ -262,7 +262,7 @@ namespace DesertTower.VFX.Editor
                 main.startSize = Range(3f, 5f);
                 main.startColor = new Color(0.66f, 0.54f, 0.35f, 0.45f);
                 main.startRotation = Range(-Mathf.PI, Mathf.PI);
-                main.maxParticles = 500;
+                main.maxParticles = 800;
                 Rate(highDust, 5f);
                 CircleShape(highDust, 1f, 0.15f); Flat(highDust);
                 Orbit(highDust, 0f, 0f, 2f, 4f, 2f, 6f, ParticleSystemSimulationSpace.World);
@@ -283,7 +283,7 @@ namespace DesertTower.VFX.Editor
                 main.startSize = Range(1.2f, 2.2f);
                 main.startColor = new Color(0.66f, 0.54f, 0.35f, 0.6f);
                 main.startRotation = Range(-Mathf.PI, Mathf.PI);
-                main.maxParticles = 900;
+                main.maxParticles = 1600;
                 Rate(dust, 10f);
                 CircleShape(dust, 1f, 0.15f); Flat(dust);
                 Orbit(dust, 0f, 0f, 2f, 4f, 1.5f, 3f, ParticleSystemSimulationSpace.World);
@@ -387,8 +387,13 @@ namespace DesertTower.VFX.Editor
             }
 
             front.ringScaled = new[] { wall.transform };
+            front.ringRenderers = layers;
+            front.wallFlow = flow;
             front.frontEmitters = new[] { dust, lowDust, highDust, grains, streaks };
-            front.maxRate = 500f;
+            // 무늬 폭 24m·접선 7m/s는 셰이더 스크롤(무늬 하나가 3.4초마다 지나간다)과 맞춘 값이다. 반경 90m에서도 벽과 먼지가 같은 속도로 흐른다.
+            front.patternWidth = 24f; front.minTiles = 8f; front.orbitSpeed = 7f; front.spinKeepsAngularSpeed = 0.85f;
+            front.fadeStart = 0.8f; front.fadeEnd = 0f;   // 반경 72m(약 5.1초)부터 1.3초에 걸쳐 흩어진다 → 최대 반경에서 멈춘 채 끝나지 않는다
+            front.maxRate = 900f;   // 반경 90m(둘레 565m)에서 미터당 1.6개. maxParticles 상한과 맞춘 값이다.
             front.selfExpandSpeed = 6f; front.selfMaxRadius = 12f; // 미리보기·쇼케이스용. 런타임(PlayerSandStorm)이 SetFront를 부르면 무시된다
             front.SetFront(0.01f, 4f, 12f);
             return SavePrefab(root, StormPath);

@@ -218,6 +218,28 @@ namespace SandGuard.Player.Tests
             Assert.AreEqual(1, first.HitCount); Assert.AreEqual(0, beside.HitCount);
         }
 
+        [UnityTest] public IEnumerator ActivePierceExplodesAtEveryEnemyWithoutPassiveUnlocks()
+        {
+            var first = Slab(4f); first.maxHealth = 1000f;
+            var second = Slab(8f); second.maxHealth = 1000f;
+            var beside = Cube(new Vector3(2f, 1f, 4f), Vector3.one).AddComponent<PlayerTestTarget>();
+            beside.maxHealth = 1000f;
+            var bursts = new List<Vector3>(); attack.Burst += bursts.Add;
+            attack.SkillTreePierceAllowed = () => true;
+            Assert.False(attack.BurstPerPierce);
+            Assert.False(attack.SandBurst);
+            Assert.True(attack.TrySkillPierce());
+            Assert.AreEqual(2, attack.LastBeam.EnemiesHit);
+            Assert.AreEqual(2, bursts.Count);
+            Assert.Greater(beside.HitCount, 0, "The explosion reaches enemies beside the beam.");
+            Assert.Greater(first.HitCount, 1);
+            Assert.Greater(second.HitCount, 1);
+            attack.SkillTreePierceAllowed = () => false;
+            Assert.False(attack.TrySkillPierce());
+            Assert.AreEqual(2, bursts.Count, "A locked skill cannot create explosions.");
+            yield return null;
+        }
+
         [UnityTest] public IEnumerator CondensedBoltDealsMoreDamageAndFiresABiggerBolt()
         {
             var target = Slab(5f);

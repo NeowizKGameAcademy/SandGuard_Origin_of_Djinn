@@ -2290,13 +2290,13 @@ MonoBehaviour:
   burstPrefab: {fileID: 5299723019764337286, guid: 889645eca7f0271498372df135f51d91, type: 3}
   burstRadius: 3.75
   burstVfxRadius: 2.5
-  burstDamageRatio: 0.6
+  burstDamageRatio: 1
   burstCameraKick: 0.08
   burstCameraKickDuration: 0.18
   burstLaunchUp: 5.5
   burstLaunchOut: 5
-  chargedDamageMultiplier: 2.2
-  chargedRadiusMultiplier: 2.5
+  chargedDamageMultiplier: 3.5
+  chargedRadiusMultiplier: 5
   chargedRangeBonus: 8
   chargedKnockback: 6
   beamVfxRadius: 0.14
@@ -2808,15 +2808,17 @@ MonoBehaviour:
   skillMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  maxCastDistance: 20
+  maxCastDistance: 300
   groundSnapHeight: 3
   burstManaCost: 15
   burstCooldown: 4
   vortexManaCost: 25
   vortexCooldown: 8
-  vortexRadius: 3
-  vortexDuration: 2.5
+  vortexRadius: 9
+  vortexDuration: 10
   vortexPullSpeed: 4
+  vortexDamage: 2
+  vortexDamageInterval: 0.5
   vortexEndLaunch: 4.5
   vortexEndShackle: 0
   vortexPrefab: {fileID: 7703356908835638667, guid: 69f2fe8b8c8670c48b932b0978d69dab, type: 3}
@@ -2826,8 +2828,8 @@ MonoBehaviour:
   stormRadius: 90
   stormExpandSpeed: 14
   stormRingThickness: 4
-  stormDamageRatio: 1.5
-  stormKnockback: 7
+  stormDamageRatio: 5
+  stormKnockback: 20
   stormSlow: 0.5
   stormSlowDuration: 3
   stormPrefab: {fileID: 895128081417247708, guid: 15a92a70bb563134bb9012fb6dd562a4, type: 3}
@@ -3567,6 +3569,7 @@ GameObject:
   - component: {fileID: 492785368682030996}
   - component: {fileID: 3095722438558445215}
   - component: {fileID: 1304035167768191799}
+  - component: {fileID: 7000000000000000003}
   m_Layer: 0
   m_Name: Sfx
   m_TagString: Untagged
@@ -5430,3 +5433,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc58ec520c3a19d4eaeb2e9ca4c1fa49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: DesertTower.VFX.Runtime::DesertTower.VFX.VfxRefractionBubble
+--- !u!114 &7000000000000000003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5464598391117406770}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4275639b120f4bf38255bfe6014246a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxManaGain
+  Cue: {fileID: 11400000, guid: 4df34ef8548521a49b4e0a9fef2ab2a8, type: 2}
+  MinInterval: 0.8

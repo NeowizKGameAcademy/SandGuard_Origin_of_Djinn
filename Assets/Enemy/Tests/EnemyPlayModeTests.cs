@@ -74,6 +74,38 @@ namespace SandGuard.Enemy.Tests
             yield return null;
         }
 
+        [UnityTest] public IEnumerator HammerBruteDealsDoubleDamageOnlyToTowers()
+            => CheckMeleeDamage("Enemy_HammerBrute", new[] { 40f, 20f, 20f, 20f, 20f });
+
+        [UnityTest] public IEnumerator AssassinDealsDoubleDamageOnlyToPlayersAndMinions()
+            => CheckMeleeDamage("Enemy_Assassin", new[] { 10f, 20f, 20f, 10f, 10f });
+
+        [UnityTest] public IEnumerator ChiefDealsThirtyMeleeDamageToEveryTargetKind()
+            => CheckMeleeDamage("Enemy_Chief", new[] { 30f, 30f, 30f, 30f, 30f });
+
+        IEnumerator CheckMeleeDamage(string prefab, float[] expected)
+        {
+            Bake(new Vector3(16, 1, 30));
+            var enemy = Enemy(Vector3.zero, prefab);
+            enemy.GetComponent<EnemyBrain>().AIEnabled = false;
+            var attack = enemy.GetComponent<EnemyMeleeAttack>();
+            var target = Target("Damage target", CombatTargetKind.Tower,
+                attack.Origin + Vector3.forward, Vector3.one, 1000f);
+            Physics.SyncTransforms();
+            int index = 0;
+            foreach (var kind in new[] { CombatTargetKind.Tower, CombatTargetKind.Player, CombatTargetKind.Minion, CombatTargetKind.Wall, CombatTargetKind.Core })
+            {
+                target.kind = kind;
+                attack.ResetForReuse();
+                float before = target.CurrentHealth;
+                int hits = target.HitCount;
+                Assert.True(attack.TryAttack(target));
+                yield return Until(() => target.HitCount > hits, 3f, prefab + " must hit " + kind);
+                Assert.AreEqual(expected[index++],
+                    before - target.CurrentHealth, .001f, "Damage against " + kind);
+            }
+        }
+
         [UnityTest] public IEnumerator WalksAroundWallAndAttacksCore()
         {
             Bake(new Vector3(16, 1, 30), (new Vector3(-2, 1.5f, 8), new Vector3(10, 3, 0.5f)));
