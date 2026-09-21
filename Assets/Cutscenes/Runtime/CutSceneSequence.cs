@@ -18,6 +18,8 @@ namespace SandGuard.Cutscenes
         }
 
         public Cut[] cuts = Array.Empty<Cut>();
+        public string storyId = "Prologue";
+        public bool playOnceAutomatically = true;
         public string nextScene = "MainScene";
         [Min(0f)] public float fadeDuration = 0.6f;
     }
