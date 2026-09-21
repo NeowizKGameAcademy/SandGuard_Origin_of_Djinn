@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Tower
 {
     [RequireComponent(typeof(TowerStatus))]
-    public class TowerHealth : MonoBehaviour, ICombatTarget, IDamageable, ILifeState, IHealth, IDamageEvents
+    public class TowerHealth : MonoBehaviour, ICombatTarget, IDamageable, ILifeState, IHealth, IDamageEvents, IRepairable
     {
         [Header("Status")]
         [SerializeField] private TowerStatus status;
@@ -168,6 +168,24 @@ namespace Tower
 
             StateChanged?.Invoke(new LifeStateChangedInfo(entityId, previous, state));
             Despawned?.Invoke(entityId);
+        }
+
+        float IRepairable.Repair(float amount)
+        {
+            if (state != LifeState.Alive || amount <= 0f)
+                return 0f;
+
+            float previous = HP;
+            HP = Mathf.Min(MaxHealth, HP + amount);
+
+            float repaired = HP - previous;
+
+            if (repaired > 0f)
+                HealthChanged?.Invoke(
+                    new HealthChangedInfo(entityId, previous, HP, MaxHealth, MaxHealth)
+                );
+
+            return repaired;
         }
     }
 }
