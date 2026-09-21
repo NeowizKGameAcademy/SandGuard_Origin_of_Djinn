@@ -22,6 +22,7 @@ namespace Tower
         //Properties
         public int num => Num;
         public float distance => Distance;
+
         public float maxHP => MaxHP;
         public float attack => Attack;
         public float attackInterval => AttackInterval;

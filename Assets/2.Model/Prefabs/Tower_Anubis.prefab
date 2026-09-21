@@ -80,6 +80,7 @@ GameObject:
   - component: {fileID: 613620459773671449}
   - component: {fileID: 3584302775588211290}
   - component: {fileID: 1888138731361792429}
+  - component: {fileID: 8625658474575844885}
   m_Layer: 0
   m_Name: Tower (Anubis)
   m_TagString: Untagged
@@ -103,7 +104,6 @@ Transform:
   - {fileID: 8268389459624855497}
   - {fileID: 6042461878137222701}
   - {fileID: 4964246725060955287}
-  - {fileID: 5533876512967110399}
   m_Father: {fileID: 8318035740673722136}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &613620459773671449
@@ -130,8 +130,21 @@ MonoBehaviour:
   coffinConfig:
     Num: 7
     Distance: 0.3
+    MaxHP: 100
+    Attack: 10
+    AttackInterval: 1
+    MoveSpeed: 5
+    RotateSpeed: 0.5
+    RespawnCooldown: 5
   anubisConfig:
     SpawnPoint: {fileID: 4964246725060955287}
+    MaxHP: 1000
+    Attack: 30
+    AttackInterval: 1.5
+    MoveSpeed: 5
+    RotateSpeed: 5
+    RespawnCooldown: 15
+    KnockBackCooldown: 5
 --- !u!114 &3584302775588211290
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -165,6 +178,20 @@ MonoBehaviour:
   targetMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &8625658474575844885
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 870966564151246436}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13eed43c4f63e2247bf54f1ef6622edf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Tower.AnubisSummoner
+  prefab: {fileID: 6432636508301414559, guid: 415469ac9136590449c705fffef6578f, type: 3}
+  status: {fileID: 613620459773671449}
 --- !u!1 &1206884435648381358
 GameObject:
   m_ObjectHideFlags: 0
@@ -590,65 +617,3 @@ Transform:
   - {fileID: 9046746375185033831}
   m_Father: {fileID: 3769913684679723408}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &6033497800097736280
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 3769913684679723408}
-    m_Modifications:
-    - target: {fileID: 2267295326310566055, guid: 415469ac9136590449c705fffef6578f, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2267295326310566055, guid: 415469ac9136590449c705fffef6578f, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2267295326310566055, guid: 415469ac9136590449c705fffef6578f, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 2267295326310566055, guid: 415469ac9136590449c705fffef6578f, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2267295326310566055, guid: 415469ac9136590449c705fffef6578f, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2267295326310566055, guid: 415469ac9136590449c705fffef6578f, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2267295326310566055, guid: 415469ac9136590449c705fffef6578f, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2267295326310566055, guid: 415469ac9136590449c705fffef6578f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2267295326310566055, guid: 415469ac9136590449c705fffef6578f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2267295326310566055, guid: 415469ac9136590449c705fffef6578f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6432636508301414559, guid: 415469ac9136590449c705fffef6578f, type: 3}
-      propertyPath: m_Name
-      value: Anubis
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 415469ac9136590449c705fffef6578f, type: 3}
---- !u!4 &5533876512967110399 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2267295326310566055, guid: 415469ac9136590449c705fffef6578f, type: 3}
-  m_PrefabInstance: {fileID: 6033497800097736280}
-  m_PrefabAsset: {fileID: 0}
