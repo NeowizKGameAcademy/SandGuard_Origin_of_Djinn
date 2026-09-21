@@ -9,7 +9,6 @@ namespace DesertTower.LevelIntegration
     public sealed class PauseMenuController : MonoBehaviour
     {
         [SerializeField] GameObject popupRoot;
-        [SerializeField] Button pauseButton;
         [SerializeField] Button resumeButton;
         [SerializeField] Button mainButton;
 
@@ -18,9 +17,6 @@ namespace DesertTower.LevelIntegration
         void Awake()
         {
             popupRoot.SetActive(false);
-            pauseButton.onClick.AddListener(Open);
-            resumeButton.onClick.AddListener(Resume);
-            mainButton.onClick.AddListener(ReturnToMain);
         }
 
         void Update()
@@ -51,7 +47,7 @@ namespace DesertTower.LevelIntegration
             Cursor.visible = false;
         }
 
-        void ReturnToMain()
+        public void ReturnToMain()
         {
             if (!ownsPause) return;
             ownsPause = false;

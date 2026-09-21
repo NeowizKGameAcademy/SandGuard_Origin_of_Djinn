@@ -2,8 +2,10 @@ using DesertTower.LevelIntegration;
 using TMPro;
 using UnityEditor;
 using UnityEditor.SceneManagement;
+using UnityEditor.Events;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.UI;
 using UnityEngine.UI;
 
 namespace DesertTower.LevelIntegration.Editor
@@ -26,6 +28,7 @@ namespace DesertTower.LevelIntegration.Editor
             ConfigureSprite(Art + "PauseDivider.png", Vector4.zero);
 
             var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+            EnsureEventSystem();
             var old = GameObject.Find("PauseMenuCanvas");
             if (old) Object.DestroyImmediate(old);
 
@@ -37,9 +40,6 @@ namespace DesertTower.LevelIntegration.Editor
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1920, 1080);
             scaler.matchWidthOrHeight = .5f;
-
-            var pause = ImageButton("PauseButton", canvasGo.transform, Sprite("PauseHudButton.png"));
-            SetRect(pause.GetComponent<RectTransform>(), new Vector2(1, 1), new Vector2(1, 1), new Vector2(-54, -54), new Vector2(74, 74));
 
             var popup = new GameObject("PausePopup", typeof(RectTransform), typeof(Image));
             popup.transform.SetParent(canvasGo.transform, false);
@@ -67,9 +67,12 @@ namespace DesertTower.LevelIntegration.Editor
             var note = Text("Hint", panel.transform, "ESC 키로 게임을 계속할 수 있습니다", 21, new Vector2(0, -235), new Vector2(440, 45), new Color(.76f, .69f, .57f));
             note.fontStyle = FontStyles.Normal;
 
-            var so = new SerializedObject(canvasGo.GetComponent<PauseMenuController>());
+            var controller = canvasGo.GetComponent<PauseMenuController>();
+            UnityEventTools.AddPersistentListener(resume.onClick, controller.Resume);
+            UnityEventTools.AddPersistentListener(main.onClick, controller.ReturnToMain);
+
+            var so = new SerializedObject(controller);
             so.FindProperty("popupRoot").objectReferenceValue = popup;
-            so.FindProperty("pauseButton").objectReferenceValue = pause;
             so.FindProperty("resumeButton").objectReferenceValue = resume;
             so.FindProperty("mainButton").objectReferenceValue = main;
             so.ApplyModifiedPropertiesWithoutUndo();
@@ -87,8 +90,13 @@ namespace DesertTower.LevelIntegration.Editor
             var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
             var root = GameObject.Find("PauseMenuCanvas");
             if (!root || !root.GetComponent<PauseMenuController>()) throw new System.Exception("PauseMenuCanvas/controller missing");
+            var eventSystem = Object.FindFirstObjectByType<EventSystem>();
+            if (!eventSystem || !eventSystem.GetComponent<InputSystemUIInputModule>())
+                throw new System.Exception("Input System EventSystem missing");
             var buttons = root.GetComponentsInChildren<Button>(true);
-            if (buttons.Length != 3) throw new System.Exception($"Expected 3 pause buttons, found {buttons.Length}");
+            if (buttons.Length != 2) throw new System.Exception($"Expected 2 pause buttons, found {buttons.Length}");
+            if (buttons[0].onClick.GetPersistentEventCount() == 0 || buttons[1].onClick.GetPersistentEventCount() == 0)
+                throw new System.Exception("Pause button actions are not serialized");
             var popup = root.transform.Find("PausePopup");
             if (!popup || popup.gameObject.activeSelf) throw new System.Exception("PausePopup initial state invalid");
             Debug.Log("PAUSE_MENU_VALIDATION_PASS");
@@ -115,6 +123,24 @@ namespace DesertTower.LevelIntegration.Editor
         static void SetRect(RectTransform rect, Vector2 min, Vector2 max, Vector2 pos, Vector2 size)
         { rect.anchorMin = min; rect.anchorMax = max; rect.pivot = new Vector2(.5f, .5f); rect.anchoredPosition = pos; rect.sizeDelta = size; }
         static Sprite Sprite(string file) => AssetDatabase.LoadAssetAtPath<Sprite>(Art + file);
+        static void EnsureEventSystem()
+        {
+            var systems = Object.FindObjectsByType<EventSystem>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            EventSystem eventSystem = systems.Length > 0 ? systems[0] : null;
+            if (!eventSystem)
+            {
+                var go = new GameObject("EventSystem", typeof(EventSystem));
+                eventSystem = go.GetComponent<EventSystem>();
+            }
+
+            var legacy = eventSystem.GetComponent<StandaloneInputModule>();
+            if (legacy) Object.DestroyImmediate(legacy);
+            var input = eventSystem.GetComponent<InputSystemUIInputModule>();
+            if (!input) input = eventSystem.gameObject.AddComponent<InputSystemUIInputModule>();
+            input.AssignDefaultActions();
+            eventSystem.firstSelectedGameObject = null;
+        }
+
         static void ConfigureSprite(string path, Vector4 border)
         {
             AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
