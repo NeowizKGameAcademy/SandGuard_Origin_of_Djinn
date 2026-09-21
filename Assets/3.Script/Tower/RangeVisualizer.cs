@@ -71,7 +71,7 @@ namespace Tower
 
         private void ShowTowerRange(float range)
         {
-            if (player == null) ;
+            if (player == null)
                 player = FindAnyObjectByType<PlayerMotor>();
 
             bool isNear = range > 0f && player != null && player.isActiveAndEnabled

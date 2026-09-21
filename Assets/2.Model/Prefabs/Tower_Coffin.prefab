@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2665476923257253141}
   m_Layer: 0
-  m_Name: Coffin Emmit
+  m_Name: Coffin Emit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -278,6 +278,7 @@ MonoBehaviour:
   Player: {fileID: 0}
   detectRange: {fileID: 5403715890460991991}
   renderer: {fileID: 9045109304775121660}
+  ShowDistance: 7.5
   FadeSpeed: 10
 --- !u!1 &6975441834006194836
 GameObject:
@@ -446,6 +447,8 @@ MonoBehaviour:
   TickDamage: 10
   TickInterval: 1
   SlowRatio: 0.3
+  ManaGain: 10
+  GainTick: 1
   CreatureNum: 7
   SummonDistance: 0.3
 --- !u!114 &5403715890460991991

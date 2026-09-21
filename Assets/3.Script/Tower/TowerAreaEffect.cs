@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace Tower
 {
-    // 범위 판정과 주기만 공유한다. 실제 효과는 자식 클래스가 처리한다.
     public abstract class TowerAreaEffect : MonoBehaviour
     {
         [Header("Components")]
@@ -55,8 +54,7 @@ namespace Tower
 
         private void Update()
         {
-            if (status == null || !HasConfig || area == null || !area.enabled
-                || !area.gameObject.activeInHierarchy || detector == null || !detector.isActiveAndEnabled)
+            if (status == null || !HasConfig || area == null || !area.enabled || !area.gameObject.activeInHierarchy || detector == null || !detector.isActiveAndEnabled)
                 return;
 
             if (Owner != null && !Owner.IsTargetable)
@@ -89,8 +87,7 @@ namespace Tower
 
             for (int i = 0; i < count; i++)
             {
-                if (!isActiveAndEnabled || !area.enabled || !detector.isActiveAndEnabled
-                    || (Owner != null && !Owner.IsTargetable))
+                if (!isActiveAndEnabled || !area.enabled || !detector.isActiveAndEnabled || (Owner != null && !Owner.IsTargetable))
                     break;
 
                 Collider other = buffer[i];
@@ -120,19 +117,14 @@ namespace Tower
             switch (area)
             {
                 case BoxCollider box:
-                    return Physics.OverlapBoxNonAlloc(areaTransform.TransformPoint(box.center),
-                        Vector3.Scale(box.size * 0.5f, scale), buffer, areaTransform.rotation,
-                        targetMask, QueryTriggerInteraction.Ignore);
+                    return Physics.OverlapBoxNonAlloc(areaTransform.TransformPoint(box.center), Vector3.Scale(box.size * 0.5f, scale), buffer, areaTransform.rotation, targetMask, QueryTriggerInteraction.Ignore);
 
                 case SphereCollider sphere:
                     float radius = sphere.radius * Mathf.Max(scale.x, Mathf.Max(scale.y, scale.z));
-                    return Physics.OverlapSphereNonAlloc(areaTransform.TransformPoint(sphere.center),
-                        radius, buffer, targetMask, QueryTriggerInteraction.Ignore);
+                    return Physics.OverlapSphereNonAlloc(areaTransform.TransformPoint(sphere.center), radius, buffer, targetMask, QueryTriggerInteraction.Ignore);
 
                 default:
-                    // 기존 RangeController와 동일하게 다른 형태는 월드 bounds로 근사한다.
-                    return Physics.OverlapBoxNonAlloc(area.bounds.center, area.bounds.extents,
-                        buffer, Quaternion.identity, targetMask, QueryTriggerInteraction.Ignore);
+                    return Physics.OverlapBoxNonAlloc(area.bounds.center, area.bounds.extents,buffer, Quaternion.identity, targetMask, QueryTriggerInteraction.Ignore);
             }
         }
     }

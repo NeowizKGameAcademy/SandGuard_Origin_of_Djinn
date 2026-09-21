@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3745164174891472542}
   - component: {fileID: 1467645284353636843}
-  - component: {fileID: 7580368432980398963}
+  - component: {fileID: 1549894732001504314}
   m_Layer: 0
   m_Name: Fire Point
   m_TagString: Untagged
@@ -49,7 +49,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Tower.AimToTarget
   Target: {fileID: 0}
   aimPivot: {fileID: 3745164174891472542}
---- !u!114 &7580368432980398963
+--- !u!114 &1549894732001504314
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -58,10 +58,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 524735005140228906}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b41426d179a81d14ab3361e1d88ccf0d, type: 3}
+  m_Script: {fileID: 11500000, guid: 64b80a4df9575d247bf0e51449318b47, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FireOnOff
-  detectRange: {fileID: 0}
+  m_EditorClassIdentifier: Assembly-CSharp::Tower.FireActivate
+  detect: {fileID: 1374678196038239994}
   DamageRange: {fileID: 5579938382294534682}
   Flames: {fileID: 4451867046615025911}
   Cubes: {fileID: 1953273162524322391}
@@ -154,6 +154,7 @@ MonoBehaviour:
     TickInterval: 0.5
   obeliskConfig:
     SlowRatio: 0.3
+    TickInterval: 1
   coffinConfig:
     Num: 7
     Distance: 0.3
@@ -172,6 +173,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tower.TargetDetector
   status: {fileID: 4713017677532141849}
+  detectionRange: 25
   targetMask:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -202,8 +204,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tower.RotateToTarget
   Target: {fileID: 0}
-  rigidbody: {fileID: 0}
-  Rotation_Speed: 100
+  rigidbody: {fileID: 5266200475067860405}
+  Rotation_Speed: 1
 --- !u!1 &3973086944220426594
 GameObject:
   m_ObjectHideFlags: 0
@@ -14839,7 +14841,7 @@ GameObject:
   - component: {fileID: 1353359170120932991}
   - component: {fileID: 566044846975435498}
   - component: {fileID: 6680144610731387246}
-  - component: {fileID: 4224066759677971965}
+  - component: {fileID: 3314473245204695959}
   m_Layer: 0
   m_Name: Mesh
   m_TagString: Untagged
@@ -14918,7 +14920,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &4224066759677971965
+--- !u!114 &3314473245204695959
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -14927,10 +14929,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 4746046274553020109}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f076b6f6d31ff644e9a3afdb04e79f4b, type: 3}
+  m_Script: {fileID: 11500000, guid: de2d534758ac2a84e883e573c475e67e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TowerOnOff
-  detectRange: {fileID: 0}
+  m_EditorClassIdentifier: Assembly-CSharp::Tower.TowerEmit
+  detector: {fileID: 1374678196038239994}
   meshRenderer: {fileID: 6680144610731387246}
   materials:
   - {fileID: 2100000, guid: a9ae31e869215d645840712457e4841a, type: 2}
@@ -14981,7 +14983,6 @@ GameObject:
   - component: {fileID: 3161632231354284991}
   - component: {fileID: 7266251282418455940}
   - component: {fileID: 2373411471983659850}
-  - component: {fileID: 9088670168564490344}
   m_Layer: 0
   m_Name: Damage Range
   m_TagString: Untagged
@@ -15081,31 +15082,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.0000001, y: 2, z: 2}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &9088670168564490344
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5579938382294534682}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 09153b3a9c4378e4b87caee75fecf309, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RangeController
-  type: 0
-  Player: {fileID: 0}
-  Status: {fileID: 0}
-  DetectRange: {fileID: 0}
-  SlowRatio: 0.5
-  ManaGain: 0
-  GainTick: 0
-  Tick_Interval: 0.25
-  Fire_Damage: 5
-  Cause_Id: tower.fire
-  Target_Mask:
-    serializedVersion: 2
-    m_Bits: 4294967295
 --- !u!1 &5798453035665498066
 GameObject:
   m_ObjectHideFlags: 0
@@ -20104,7 +20080,7 @@ GameObject:
   - component: {fileID: 6298068404228029436}
   - component: {fileID: 4169894826091176053}
   - component: {fileID: 4445096993401758971}
-  - component: {fileID: 6431214698356306980}
+  - component: {fileID: 2611026519258725640}
   m_Layer: 0
   m_Name: Range Circle
   m_TagString: Untagged
@@ -20183,7 +20159,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &6431214698356306980
+--- !u!114 &2611026519258725640
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -20192,14 +20168,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 7872359986087140683}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3f15225beef3f124bbe5007befebcf34, type: 3}
+  m_Script: {fileID: 11500000, guid: ee114b24ad5924b46a252299fde1373e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ShowRange
-  Player: {fileID: 0}
-  detectRange: {fileID: 0}
-  renderer: {fileID: 4445096993401758971}
-  ShowDistance: 7.5
-  FadeSpeed: 10
+  m_EditorClassIdentifier: Assembly-CSharp::Tower.RangeVisualizer
+  detector: {fileID: 1374678196038239994}
+  rangeRenderer: {fileID: 4445096993401758971}
+  player: {fileID: 0}
+  visualType: 0
+  showDistance: 7.5
+  fadeSpeed: 10
 --- !u!1 &8051442605204366221
 GameObject:
   m_ObjectHideFlags: 0
@@ -20210,7 +20187,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5118322825130568057}
   m_Layer: 0
-  m_Name: Cobra Emmit
+  m_Name: Cobra Emit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
