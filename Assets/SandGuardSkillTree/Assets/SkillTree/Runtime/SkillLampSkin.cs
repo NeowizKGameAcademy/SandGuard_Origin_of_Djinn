@@ -9,6 +9,7 @@ namespace SandGuard.Skills.Unity
     {
         static readonly Dictionary<string,Sprite> Sprites=new Dictionary<string,Sprite>();
         static Texture2D sheet, reference;
+        static Sprite prompt;
         static Texture2D Sheet=>sheet?sheet:sheet=Resources.Load<Texture2D>("SandGuardLampSkin/SpriteSheet");
         static Texture2D Reference=>reference?reference:reference=Resources.Load<Texture2D>("SandGuardLampSkin/Reference");
         public static bool Available=>Sheet;
@@ -42,6 +43,7 @@ namespace SandGuard.Skills.Unity
         public static Sprite Background=>Slice("DesertBackground",Sheet,469,824,400,182);
         public static Sprite Lamp=>Slice("LampHeader",Reference,738,0,284,96);
         public static Sprite Node=>Slice("OrnateNode",Sheet,31,305,90,90,0,false,true);
+        public static Sprite Prompt=>prompt?prompt:prompt=Resources.Load<Sprite>("SandGuardLampSkin/InteractionPromptRounded");
 
         public static void StyleButton(Button button,bool selected=false)
         {
