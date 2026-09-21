@@ -1,0 +1,60 @@
+Baked Level navigation: Assets/DesertTowerLevels/Navigation/Navigation 41.asset
+PASS T1 z=-65.3 up=True status=PathComplete length=6.159
+PASS T1 z=-65.3 up=False status=PathComplete length=6.159
+PASS T1 z=-64 up=True status=PathComplete length=6.148
+PASS T1 z=-64 up=False status=PathComplete length=6.148
+PASS T1 z=-62.7 up=True status=PathComplete length=6.149
+PASS T1 z=-62.7 up=False status=PathComplete length=6.149
+PASS T2 z=-65.3 up=True status=PathComplete length=6.149
+PASS T2 z=-65.3 up=False status=PathComplete length=6.149
+PASS T2 z=-64 up=True status=PathComplete length=6.147
+PASS T2 z=-64 up=False status=PathComplete length=6.147
+PASS T2 z=-62.7 up=True status=PathComplete length=6.159
+PASS T2 z=-62.7 up=False status=PathComplete length=6.159
+PASS T3 z=-65.3 up=True status=PathComplete length=6.159
+PASS T3 z=-65.3 up=False status=PathComplete length=6.159
+PASS T3 z=-64 up=True status=PathComplete length=6.147
+PASS T3 z=-64 up=False status=PathComplete length=6.147
+PASS T3 z=-62.7 up=True status=PathComplete length=6.149
+PASS T3 z=-62.7 up=False status=PathComplete length=6.149
+PASS T4 z=-65.3 up=True status=PathComplete length=6.149
+PASS T4 z=-65.3 up=False status=PathComplete length=6.149
+PASS T4 z=-64 up=True status=PathComplete length=6.148
+PASS T4 z=-64 up=False status=PathComplete length=6.148
+PASS T4 z=-62.7 up=True status=PathComplete length=6.159
+PASS T4 z=-62.7 up=False status=PathComplete length=6.159
+PASS node T1
+PASS graph T1 -> T5
+PASS node SW Spawn
+PASS graph SW Spawn -> T3
+PASS node T6
+PASS graph T6 -> SW L3
+PASS graph T6 -> NW L3
+PASS node NW Spawn
+PASS graph NW Spawn -> T4
+PASS node T2
+PASS graph T2 -> T5
+PASS node NW L3
+PASS graph NW L3 -> T8
+PASS node T4
+PASS graph T4 -> T6
+PASS node T5
+PASS graph T5 -> NE L3
+PASS graph T5 -> SE L3
+PASS node SE L3
+PASS graph SE L3 -> T7
+PASS node NE Spawn
+PASS graph NE Spawn -> T1
+PASS node NE L3
+PASS graph NE L3 -> T8
+PASS node SW L3
+PASS graph SW L3 -> T7
+PASS node T7
+PASS graph T7 -> Core
+PASS node T8
+PASS graph T8 -> Core
+PASS node Core
+PASS node SE Spawn
+PASS graph SE Spawn -> T2
+PASS node T3
+PASS graph T3 -> T6

@@ -93,6 +93,58 @@ namespace SandGuard.Audio.Tests
             Assert.IsNull(emitter.Voice, "방출 정지 → 루프 정지");
         }
 
+        /// <summary>마나 회복음: 늘어날 때만, 틱마다 한 번. 스폰·부활의 일괄 회복은 제외.</summary>
+        [UnityTest] public IEnumerator ManaGainPlaysOncePerTickAndSkipsSpendingAndRevive()
+        {
+            var cue = MakeCue();
+            var player = Track(new GameObject("Player"));
+            var wallet = player.AddComponent<FakeWallet>();
+            var holder = new GameObject("Sfx"); holder.transform.SetParent(player.transform, false);
+            var gain = holder.AddComponent<SfxManaGain>();
+            gain.Cue = cue; gain.MinInterval = 0.2f;
+            wallet.Change(100);
+            Assert.AreEqual(0, gain.Played, "스폰 직후 가득 차는 것은 회복이 아니다");
+            yield return new WaitForSeconds(0.25f);
+            wallet.Change(10);
+            Assert.AreEqual(1, gain.Played);
+            wallet.Change(10);
+            Assert.AreEqual(1, gain.Played, "코어와 오벨리스크가 같은 순간에 주면 한 번만");
+            wallet.Change(-10);
+            Assert.AreEqual(1, gain.Played, "마나를 쓰는 것은 소리를 내지 않는다");
+            yield return new WaitForSeconds(0.25f);
+            wallet.Change(10);
+            Assert.AreEqual(2, gain.Played, "다음 회복 틱은 다시 낸다");
+            yield return new WaitForSeconds(0.25f);
+            wallet.Revive();
+            wallet.Change(100);
+            Assert.AreEqual(2, gain.Played, "부활의 일괄 회복은 부활음이 맡는다");
+        }
+
+        /// <summary>지갑 겸 생명 상태 대역. SfxManaGain은 Changed와 StateChanged만 듣는다.</summary>
+        sealed class FakeWallet : MonoBehaviour, IManaReader, ILifeState
+        {
+            public int CurrentMana { get; private set; }
+            public int MaxMana => 200;
+            public LifeState State { get; private set; } = LifeState.Alive;
+            public event System.Action<ManaChangedInfo> Changed;
+            public event System.Action<LifeStateChangedInfo> StateChanged;
+#pragma warning disable 67 // 이 대역이 쓰지 않는 ILifeState 멤버
+            public event System.Action<DeathInfo> Died;
+            public event System.Action<System.Guid> Revived;
+            public event System.Action<System.Guid> Despawned;
+#pragma warning restore 67
+            public void Change(int amount)
+            {
+                int previous = CurrentMana; CurrentMana += amount;
+                Changed?.Invoke(new ManaChangedInfo(previous, CurrentMana, MaxMana));
+            }
+            public void Revive()
+            {
+                State = LifeState.Alive;
+                StateChanged?.Invoke(new LifeStateChangedInfo(System.Guid.NewGuid(), LifeState.Incapacitated, LifeState.Alive));
+            }
+        }
+
         [UnityTest] public IEnumerator MusicDirectorRestartsLongSongBeforeItEnds()
         {
             var song = MakeCue(spatial: false, loop: true, length: 2.5f);

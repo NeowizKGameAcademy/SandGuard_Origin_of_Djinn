@@ -8,13 +8,15 @@ namespace SandGuard.Player
         public Transform owner;
         [Min(1f)] public float maxDistance = 100f;
         public LayerMask aimMask = ~0;
-        public Vector3 GetAimPoint()
+        public Vector3 GetAimPoint() => GetAimPoint(maxDistance);
+
+        public Vector3 GetAimPoint(float distance)
         {
-            if (viewCamera == null) return transform.position + transform.forward * maxDistance;
+            if (viewCamera == null) return transform.position + transform.forward * distance;
             Ray ray = viewCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f));
-            Vector3 point = ray.GetPoint(maxDistance);
-            float nearest = maxDistance;
-            foreach (var hit in Physics.RaycastAll(ray, maxDistance, aimMask, QueryTriggerInteraction.Ignore))
+            Vector3 point = ray.GetPoint(distance);
+            float nearest = distance;
+            foreach (var hit in Physics.RaycastAll(ray, distance, aimMask, QueryTriggerInteraction.Ignore))
             {
                 if (owner != null && hit.transform.IsChildOf(owner)) continue;
                 if (hit.distance < nearest) { nearest = hit.distance; point = hit.point; }

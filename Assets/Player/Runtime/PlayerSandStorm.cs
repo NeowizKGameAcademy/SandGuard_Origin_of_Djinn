@@ -15,8 +15,8 @@ namespace SandGuard.Player
     {
         [Min(0.1f), Tooltip("링이 바깥으로 퍼지는 속도(m/s)")] public float expandSpeed = 14f;
         [Min(0.1f), Tooltip("링 두께(m). 이 띠 안에 든 적이 맞는다")] public float ringThickness = 4f;
-        [Min(0f), Tooltip("링이 지나갈 때 한 번 주는 피해")] public float damage = 15f;
-        [Min(0f), Tooltip("바깥으로 미는 속도(m/s). 0이면 밀지 않는다")] public float knockback = 7f;
+        [Min(0f), Tooltip("링이 지나갈 때 한 번 주는 피해")] public float damage = 50f;
+        [Min(0f), Tooltip("바깥으로 미는 속도(m/s). 0이면 밀지 않는다")] public float knockback = 20f;
         [Range(0f, 1f), Tooltip("둔화 비율. 0.5면 속도 50%")] public float slowFactor = 0.5f;
         [Min(0f), Tooltip("둔화 지속(초)")] public float slowDuration = 3f;
         [Min(0f), Tooltip("링이 훑는 높이(시작점 위로, m)")] public float sweepHeight = 30f;
@@ -76,5 +76,14 @@ namespace SandGuard.Player
         }
 
         protected override void OnEnd() { if (vfx != null) vfx.SetFront(radius, ringThickness, radius); }
+
+        // 풀 재사용: 맞은 대상 기록과 집계를 지우고, 연출은 이번 시전에 새로 붙는 것을 다시 찾는다.
+        protected override void OnReset()
+        {
+            struck.Clear();
+            Front = 0f; TotalStruck = 0; TotalHits = 0;
+            Swept = null; hitSink = null;
+            vfx = null; vfxSearched = false;
+        }
     }
 }

@@ -25,6 +25,7 @@ namespace SandGuard.Audio.Editor
             ("Player_Dash", new[] { "대쉬 효과음_auda" }),
             ("Player_AirJump", new[] { "더블점프_auda" }),
             ("Player_LevelUp", new[] { "레벨업_auda" }),
+            ("Player_ManaCharge_Complete", new[] { "짧은 충전음" }), // 2026-09-21 마나 회복 1틱(코어·오벨리스크 근처). 관통탄 충전과 같은 클립을 쓴다
             ("UI_Fail", new[] { "마나부족스킬잠금건설불가_auda" }),
             ("Music_Menu_Loop", new[] { "메인화면 배경음" }),
             ("Player_Footstep_Sand", new[] { "플레이어 발걸음 _auda" }), // 2026-09-18: 한 클립만 (딛는 소리 + 모래, 가장 빠른 어택). 적은 발걸음2로 구분

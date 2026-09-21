@@ -68,7 +68,7 @@ namespace SandGuard.Enemy.Tests
             Assert.True(health.TakeDamage(Hit(Vector3.forward)).WasApplied);
             Assert.True(health.TakeDamage(new DamageInfo(1, "World")).WasApplied);
             Assert.True(skill.Visual.IsVisible);
-            Assert.False(skill.TryUse(target), "Cannot overlap casts");
+            Assert.False(skill.TryUse(), "Cannot overlap casts");
             yield return Until(() => skill.State == ChiefGoldenShieldSkill.Phase.Dismissing, "Shield expires");
             Assert.False(skill.shield.enabled);
             Assert.True(health.TakeDamage(Hit(Vector3.back)).WasApplied);
@@ -77,14 +77,14 @@ namespace SandGuard.Enemy.Tests
             yield return new WaitForSeconds(1f);
             Assert.AreEqual(1, skill.CastCount, "쿨다운 뒤에도 다시 쓰지 않는다");
             Assert.True(skill.IsSpent);
-            Assert.False(skill.TryUse(target));
+            Assert.False(skill.TryUse());
         }
-        [Test] public void ChiefPrefabShieldLastsTwentySecondsAndBothSkillsAreUsedOnce()
+        [Test] public void ChiefPrefabShieldLastsTenMinutesAndBothSkillsAreUsedOnce()
         {
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Enemy/Generated/Enemy_Chief.prefab");
             var shieldRules = prefab.GetComponent<ChiefGoldenShieldSkill>();
             var bombRules = prefab.GetComponent<ChiefBombThrowSkill>();
-            Assert.AreEqual(20f, shieldRules.activeDuration, "황금 방패는 20초 유지된다");
+            Assert.AreEqual(600f, shieldRules.activeDuration, "황금 방패는 10분 유지된다");
             Assert.AreEqual(1, shieldRules.maxUses, "황금 방패는 한 번만 쓴다");
             Assert.AreEqual(0.7f, shieldRules.healthThreshold, "황금 방패는 체력이 70% 이하일 때 쓴다");
             Assert.AreEqual(1, bombRules.maxUses, "철거 폭탄은 한 번만 던진다");
@@ -95,14 +95,14 @@ namespace SandGuard.Enemy.Tests
             skill.healthThreshold = 0.7f;
             brain.AIEnabled = true;
             float max = health.MaxHealth;
-            Assert.False(skill.TryUse(target), "체력이 가득하면 시전하지 않는다");
+            Assert.False(skill.TryUse(), "체력이 가득하면 시전하지 않는다");
             brain.Think();
             Assert.AreEqual(ChiefGoldenShieldSkill.Phase.Ready, skill.State, "브레인도 체력이 충분하면 방패를 꺼내지 않는다");
 
             health.TakeDamage(new DamageInfo(max * 0.2f, "World"));
             Assert.Greater(health.CurrentHealth, max * 0.7f);
             Assert.False(skill.IsHealthLowEnough);
-            Assert.False(skill.TryUse(target), "체력이 70%보다 높으면 아직 시전하지 않는다");
+            Assert.False(skill.TryUse(), "체력이 70%보다 높으면 아직 시전하지 않는다");
 
             health.TakeDamage(new DamageInfo(max * 0.15f, "World"));
             Assert.LessOrEqual(health.CurrentHealth, max * 0.7f);
@@ -115,37 +115,43 @@ namespace SandGuard.Enemy.Tests
         [UnityTest] public IEnumerator DeathAndReuseClearShieldAndResetCooldown()
         {
             brain.AIEnabled = true;
-            Assert.True(skill.TryUse(target));
+            Assert.True(skill.TryUse());
             yield return Until(() => skill.shield.enabled, "Shield activates");
             health.ReleaseHandler = _ => chief.SetActive(false);
             health.TakeDamage(Hit(Vector3.forward, 100000));
             Assert.False(skill.shield.enabled);
             Assert.False(skill.Visual.gameObject.activeSelf);
-            Assert.False(skill.TryUse(target));
+            Assert.False(skill.TryUse());
             chief.SetActive(false);
             health.ResetForReuse(); brain.ResetForReuse(); chief.SetActive(true);
             Assert.AreEqual(ChiefGoldenShieldSkill.Phase.Ready, skill.State);
             Assert.AreEqual(0, skill.CastCount);
-            Assert.True(skill.TryUse(target));
+            Assert.True(skill.TryUse());
             Assert.AreEqual(1, chief.GetComponentsInChildren<DesertTower.VFX.VfxGoldenShield>(true).Length);
             brain.AIEnabled = false;
             yield return null;
             Assert.False(skill.shield.enabled);
             Assert.False(skill.Visual.gameObject.activeSelf);
         }
-        [UnityTest] public IEnumerator InvalidTargetsAndDisabledSkillCannotCast()
+        [UnityTest] public IEnumerator LowHealthCastsWithoutTargetAndDisabledSkillCannotCast()
         {
+            skill.healthThreshold = 0.7f;
+            targetObject.SetActive(false);
+            chief.GetComponent<EnemyTargetSelector>().ClearTarget();
+            Physics.SyncTransforms();
             brain.AIEnabled = true;
-            Assert.False(skill.TryUse(null));
-            target.factionId = health.FactionId;
-            Assert.False(skill.TryUse(target));
-            target.factionId = "Ally"; targetObject.transform.position = Vector3.forward * 20;
-            Assert.False(skill.TryUse(target));
-            targetObject.transform.position = new Vector3(0, 1, 2);
-            Assert.True(skill.TryUse(target));
+            brain.Think();
+            Assert.IsNull(brain.CurrentTarget);
+            Assert.AreEqual(ChiefGoldenShieldSkill.Phase.Ready, skill.State);
+            health.TakeDamage(new DamageInfo(health.MaxHealth * 0.35f, "World"));
+            brain.Think();
+            Assert.IsNull(brain.CurrentTarget);
+            Assert.AreEqual(ChiefGoldenShieldSkill.Phase.Summoning, skill.State);
+            Assert.AreEqual(1, skill.CastCount);
             skill.enabled = false;
             Assert.False(skill.shield.enabled); Assert.False(skill.Visual.gameObject.activeSelf);
-            Assert.False(skill.TryUse(target));
+            skill.ResetForReuse();
+            Assert.False(skill.TryUse());
             yield return null;
         }
     }

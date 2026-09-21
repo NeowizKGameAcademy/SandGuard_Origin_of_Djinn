@@ -48,7 +48,7 @@ namespace SandGuard.Enemy.Tests
             brain.AIEnabled = true;
             Assert.True(skill.TryUse(target));
             Assert.NotNull(skill.HeldBomb); Assert.False(skill.HeldBomb.hitCollider.enabled);
-            Assert.False(chief.GetComponent<ChiefGoldenShieldSkill>().TryUse(target), "No simultaneous shield cast");
+            Assert.False(chief.GetComponent<ChiefGoldenShieldSkill>().TryUse(), "No simultaneous shield cast");
             Assert.False(skill.TryUse(target), "No duplicate throw");
             var prop = skill.HeldBomb;
             float width = prop.GetComponentInChildren<MeshRenderer>().bounds.size.magnitude;

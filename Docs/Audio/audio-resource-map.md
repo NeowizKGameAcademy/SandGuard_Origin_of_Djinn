@@ -1,6 +1,6 @@
 # AudioResource 대응 결과
 
-생성: 2026-09-18 15:32. 표: `Assets/8.Audio/Editor/AudioResourceMap.cs`.
+생성: 2026-09-21 11:49. 표: `Assets/8.Audio/Editor/AudioResourceMap.cs`.
 
 ## 대응된 큐
 
@@ -11,9 +11,10 @@
 - `Player_Dash` ← 대쉬 효과음_auda
 - `Player_AirJump` ← 더블점프_auda
 - `Player_LevelUp` ← 레벨업_auda
+- `Player_ManaCharge_Complete` ← 짧은 충전음
 - `UI_Fail` ← 마나부족스킬잠금건설불가_auda
 - `Music_Menu_Loop` ← 메인화면 배경음
-- `Player_Footstep_Sand` ← 발걸음2_auda, 발자국 사운드, 플레이어 발걸음 _auda
+- `Player_Footstep_Sand` ← 플레이어 발걸음 _auda
 - `Enemy_ShieldBlock` ← 방패타격음_auda
 - `Wave_Start` ← 웨이브 시작음_auda
 - `Music_Preparation_Loop` ← 인게임 배경음
@@ -53,7 +54,7 @@
 - `Facility_Cobra_Destroy_Debris` ← impactMining_000, impactMining_001, impactMining_002
 - `Core_Warning` ← impactBell_heavy_000
 
-## 클립이 없는 큐 (46개) — 담당자가 채울 것
+## 클립이 없는 큐 (38개) — 담당자가 채울 것
 
 - `Core_Destroy_Charge`: 코어 파괴 충전 상승음 (0~0.2초)
 - `Enemy_Burning`: 불타는 적 지글 2초
@@ -78,7 +79,6 @@
 - `Music_Danger_Loop`: 코어 위험 긴장 레이어 (전투 위에 겹침)
 - `Music_WaveClear_Sting`: 웨이브 클리어 스팅어
 - `Player_ManaBolt_Flight_Loop`: 투사체 비행 윙윙
-- `Player_ManaCharge_Complete`: 마나 충전 완료 차임
 - `Player_ManaCharge_Loop`: 코어 근처 마나 충전
 - `Player_Pierce_Charge_Loop`: 관통탄 충전: 손에 마나 응집(세기에 따라 상승)
 - `Player_SandShackle`: 모래 족쇄 조임
@@ -92,17 +92,10 @@
 - `Player_Voice_Hit`: 피격 음성. 항상
 - `Player_Voice_Jump`: 점프·공중 점프 기합. 확률 30%
 - `Player_Xp_Drop`: 경험치 조각 드롭 짤랑
-- `UI_Cooldown_Ready`: 스킬 쿨다운 완료
-- `UI_Health_Low_Loop`: 체력 20% 이하 심장 박동
 - `UI_Hover`: 버튼 호버
-- `UI_Menu_Close`: 닫힘
-- `UI_Menu_Open`: 건설 메뉴·스킬트리 열림
-- `UI_Skill_Equip`: 슬롯 장착 클릭
-- `UI_Skill_Learn`: 스킬 해금 금빛 차임
 - `Wave_Clear`: 웨이브 클리어 팡파르 (VFX_Wave_Clear)
-- `Wave_Countdown_Tick`: 카운트다운 틱
 
-## AudioResource에 있지만 쓰지 않은 파일 (154개)
+## AudioResource에 있지만 쓰지 않은 파일 (146개)
 
 - footstep_carpet_000
 - footstep_carpet_001
@@ -129,28 +122,20 @@
 - footstep_wood_002
 - footstep_wood_003
 - footstep_wood_004
-- impactBell_heavy_001
-- impactBell_heavy_002
+- impactBell_heavy_000
 - impactBell_heavy_003
-- impactBell_heavy_004
 - impactGeneric_light_000
-- impactGeneric_light_001
 - impactGeneric_light_002
-- impactGeneric_light_003
 - impactGeneric_light_004
 - impactGlass_heavy_003
 - impactGlass_heavy_004
-- impactGlass_medium_003
-- impactGlass_medium_004
 - impactMetal_heavy_000
 - impactMetal_heavy_001
 - impactMetal_heavy_002
 - impactMetal_heavy_003
 - impactMetal_heavy_004
 - impactMetal_medium_000
-- impactMetal_medium_001
 - impactMetal_medium_002
-- impactMetal_medium_003
 - impactMetal_medium_004
 - impactPlank_medium_000
 - impactPlank_medium_001
@@ -204,6 +189,7 @@
 - impactWood_medium_002
 - impactWood_medium_003
 - impactWood_medium_004
+- SandStep_01
 - UI버튼 클릭음
 - whoosh모음
 - 강한착지음
@@ -237,7 +223,6 @@
 - 추락바람소리
 - 추락바람소리_auda
 - 코브라타워 화염방사
-- 코어핑
 - 코어핑_auda
 - 타워 건설음
 - 타워파괴2_auda

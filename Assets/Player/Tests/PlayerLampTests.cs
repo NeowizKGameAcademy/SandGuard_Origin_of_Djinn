@@ -126,7 +126,7 @@ namespace SandGuard.Player.Tests
             Assert.Less(lamp.Brightness, 0.001f, "A zero-capacity wallet must not produce NaN or light.");
         }
 
-        [UnityTest] public IEnumerator AbsorptionPreviewIsBoundedPausesAndReturnsToManaBrightness()
+        [UnityTest] public IEnumerator ManaGainPulsesLampBoundedPausesAndReturnsToManaBrightness()
         {
             Time.timeScale = 1f;
             Time.captureDeltaTime = 1f / 60f; // Render each stage of the 0.3-second pulse deterministically.
@@ -140,17 +140,16 @@ namespace SandGuard.Player.Tests
             yield return new WaitForSeconds(0.4f);
             var lamp = player.GetComponentInChildren<PlayerLampEquipment>();
             var mana = player.GetComponent<PlayerManaWallet>();
-            mana.TrySpend(50);
+            mana.TrySpend(60);
             yield return new WaitForSeconds(0.8f);
             Capture(player, "absorption-before", true);
             // First Camera.Render can compile shaders and stall the frame past the whole pulse.
             yield return new WaitForSeconds(0.2f);
-            InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.H));
+            mana.Gain(10); // 마나를 얻으면 램프가 반짝인다.
             yield return new WaitForSeconds(0.1f);
             Assert.Greater(lamp.AbsorptionPulse, 0.85f, $"enabled={lamp.isActiveAndEnabled}, glowing={lamp.IsGlowing}, life={player.GetComponent<PlayerHealth>().State}, dt={Time.deltaTime}, rise={lamp.absorptionRiseTime}, fade={lamp.absorptionFadeTime}");
             Capture(player, "absorption-peak", true);
             Capture(player, "absorption-peak-wide", false);
-            InputSystem.QueueStateEvent(keyboard, new KeyboardState());
             float paused = lamp.AbsorptionPulse;
             Time.timeScale = 0;
             yield return new WaitForSecondsRealtime(0.1f);

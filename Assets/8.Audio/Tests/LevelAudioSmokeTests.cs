@@ -16,6 +16,59 @@ namespace SandGuard.Audio.Tests
     {
         const string ScenePath = "Assets/1.Scene/Level.unity";
 
+        [UnityTest] public IEnumerator EnemyDeathCreatesAudibleVoiceInLevel()
+        {
+            LogAssert.ignoreFailingMessages = true;
+            yield return EditorSceneManager.LoadSceneInPlayMode(ScenePath, new LoadSceneParameters(LoadSceneMode.Single));
+            yield return new WaitForSeconds(2f);
+            var director = Object.FindFirstObjectByType<DesertTower.LevelIntegration.WaveDirector>();
+            Assert.IsNotNull(director);
+            director.SkipPreparation();
+            SfxHitReaction reaction = null;
+            for (int frame = 0; frame < 1200 && reaction == null; frame++)
+            {
+                foreach (var candidate in Object.FindObjectsByType<SfxHitReaction>(FindObjectsSortMode.None))
+                {
+                    var target = candidate.GetComponent<ICombatTarget>();
+                    if (target != null && target.Kind == CombatTargetKind.Enemy && target.IsTargetable)
+                    { reaction = candidate; break; }
+                }
+                if (reaction == null) yield return null;
+            }
+            Assert.IsNotNull(reaction, "No live enemy spawned: " + director.LastError);
+            var cue = reaction.DeathCue;
+            Assert.IsNotNull(cue);
+            Assert.IsTrue(cue.HasClips);
+            var listener = Object.FindFirstObjectByType<AudioListener>();
+            Assert.IsNotNull(listener);
+            // Exercise the same spawned enemy at close range, without distance attenuation.
+            reaction.transform.position = listener.transform.position + listener.transform.forward * 2f - Vector3.up;
+            int before = reaction.DeathCount;
+            reaction.GetComponent<IDamageable>().TakeDamage(new DamageInfo(100000f, "Ally"));
+            Assert.AreEqual(before + 1, reaction.DeathCount, "Death event did not reach audio hook");
+            Assert.Greater(SfxPlayer.Instance.ActiveVoiceCountFor(cue), 0, "No death voice created");
+            var voice = SfxPlayer.Instance.ActiveVoices(cue)[0];
+            float distance = Vector3.Distance(listener.transform.position, voice.transform.position);
+            Debug.Log($"ENEMY_DEATH_DIAGNOSTIC enemy={reaction.name} clip={voice.Source.clip.name} playing={voice.Source.isPlaying} volume={voice.Source.volume} muted={SfxPlayer.Instance.muted} listenerVolume={AudioListener.volume} listenerPaused={AudioListener.pause} distance={distance} min={voice.Source.minDistance} max={voice.Source.maxDistance} listener={listener.transform.position} source={voice.transform.position}");
+            Assert.IsFalse(SfxPlayer.Instance.muted);
+            Assert.Greater(voice.Source.volume, 0f);
+            Assert.IsTrue(voice.Source.isPlaying, "AudioSource did not start playback");
+            var samples = new float[1024];
+            // Prime Unity's output history before inspecting samples on subsequent audio updates.
+            voice.Source.GetOutputData(samples, 0);
+            float rms = 0f;
+            for (int i = 0; i < 5; i++)
+            {
+                yield return new WaitForSecondsRealtime(.03f);
+                voice.Source.GetOutputData(samples, 0);
+                float energy = 0f;
+                foreach (float sample in samples) energy += sample * sample;
+                rms = Mathf.Max(rms, Mathf.Sqrt(energy / samples.Length));
+            }
+            Debug.Log($"ENEMY_DEATH_OUTPUT rms={rms} virtual={voice.Source.isVirtual} distance={distance}");
+            Assert.Greater(rms, .0001f, "Death source produces no audio samples");
+        }
+
         [UnityTest] public IEnumerator CorePingFiresInLevelScene()
         {
             LogAssert.ignoreFailingMessages = true; // 레벨 자체의 검증 오류("코어 마커 위치…")는 이 테스트의 관심사가 아니다

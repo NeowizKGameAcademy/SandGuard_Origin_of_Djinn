@@ -55,7 +55,6 @@ namespace SandGuard.Player
         ILifeState life;
         bool handSuppressed;
         PlayerSpellcasting spellcasting;
-        PlayerBasicAttack attack;
         float absorptionPulse, pulseStart, pulseElapsed;
         bool pulsing;
         Material[] originalLampMaterials, pulseMaterials;
@@ -92,8 +91,6 @@ namespace SandGuard.Player
         {
             mana = GetComponentInParent<IManaReader>();
             life = GetComponentInParent<ILifeState>();
-            attack = GetComponentInParent<PlayerBasicAttack>();
-            if (attack != null) attack.ManaAbsorbed += OnManaAbsorbed;
             if (mana != null) mana.Changed += OnManaChanged;
             if (life != null) life.StateChanged += OnLifeChanged;
             if (motor != null) motor.Teleported += ResetSway;
@@ -114,17 +111,21 @@ namespace SandGuard.Player
             if (mana != null) mana.Changed -= OnManaChanged;
             if (life != null) life.StateChanged -= OnLifeChanged;
             if (motor != null) motor.Teleported -= ResetSway;
-            if (attack != null) attack.ManaAbsorbed -= OnManaAbsorbed;
             ClearAbsorptionPulse();
             ResetSway();
         }
 
-        void OnManaChanged(ManaChangedInfo info) => RefreshBrightness();
+        /// <summary>마나가 늘어날 때마다 반짝인다. 타격 흡수든 코어·타워 보상이든 출처를 가리지 않는다.</summary>
+        void OnManaChanged(ManaChangedInfo info)
+        {
+            RefreshBrightness();
+            if (info.CurrentMana > info.PreviousMana) OnManaAbsorbed(info.CurrentMana - info.PreviousMana);
+        }
         void OnLifeChanged(LifeStateChangedInfo info) { ResetSway(); ClearAbsorptionPulse(); }
 
-        void OnManaAbsorbed(int recovered)
+        void OnManaAbsorbed(int gained)
         {
-            if (recovered <= 0 || !isActiveAndEnabled || forcedOff || Time.timeScale <= 0f
+            if (gained <= 0 || !isActiveAndEnabled || forcedOff || Time.timeScale <= 0f
                 || (life != null && life.State != LifeState.Alive)) return;
             pulseStart = absorptionPulse; pulseElapsed = 0f; pulsing = true;
         }
@@ -237,16 +238,6 @@ namespace SandGuard.Player
             ApplyLight();
             if (!IsHeld && beltSocket != null) StepSway(dt);
             ApplyPose();
-        }
-
-        void Update()
-        {
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-            var keyboard = UnityEngine.InputSystem.Keyboard.current;
-            if (keyboard != null && keyboard.hKey.wasPressedThisFrame && motor != null
-                && motor.input != null && motor.input.GameplayEnabled && Time.timeScale > 0f)
-                PreviewManaAbsorption();
-#endif
         }
 
         Quaternion Heading => Quaternion.Euler(0f, (motor != null ? motor.transform : transform).eulerAngles.y, 0f);

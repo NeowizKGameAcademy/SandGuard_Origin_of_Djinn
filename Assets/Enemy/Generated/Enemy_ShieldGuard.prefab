@@ -2190,6 +2190,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 754703791412322535, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+      propertyPath: displacementMultiplier
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1342337955418082952, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+      propertyPath: maxHealth
+      value: 90
+      objectReference: {fileID: 0}
     - target: {fileID: 658155196757490767, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
       propertyPath: m_Name
       value: Enemy_ShieldGuard
@@ -2335,7 +2343,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: SandGuard.Enemy.Runtime::SandGuard.Enemy.EnemyShield
   frontHalfAngle: 60
   frontMultiplier: 0
-  maxHealth: 30
+  maxHealth: 60
   shieldVisual: {fileID: 0}
   debrisLifetime: 6
   guardVfx: {fileID: 8929661459040911821, guid: 443d163808b76b844bf439c8b3cc50d6, type: 3}

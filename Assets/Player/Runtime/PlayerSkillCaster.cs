@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using DesertTower.VFX;
 using UnityEngine;
 
 namespace SandGuard.Player
@@ -20,7 +22,7 @@ namespace SandGuard.Player
         [Tooltip("IManaWallet. 비우면 같은 오브젝트에서 찾는다")] public MonoBehaviour manaSource;
         [Header("공통")]
         [Tooltip("지역 스킬이 훑는 레이어와 바닥 판정")] public LayerMask skillMask = ~0;
-        [Min(1f), Tooltip("지정 지점의 최대 거리(m). 조준점이 더 멀면 그 방향 이 거리에 놓는다")] public float maxCastDistance = 20f;
+        [Min(1f), Tooltip("지정 지점의 최대 거리(m). 신전 맵 반대편까지 조준할 수 있는 거리")] public float maxCastDistance = 300f;
         [Min(0.1f), Tooltip("지정 지점을 바닥에 붙일 때 위아래로 찾는 높이")] public float groundSnapHeight = 3f;
         [Header("Q 모래 폭발")]
         [Min(0)] public int burstManaCost = 15;
@@ -28,9 +30,11 @@ namespace SandGuard.Player
         [Header("E 모래 소용돌이")]
         [Min(0)] public int vortexManaCost = 25;
         [Min(0f)] public float vortexCooldown = 8f;
-        [Min(0.1f)] public float vortexRadius = 3f;
-        [Min(0.05f)] public float vortexDuration = 2.5f;
+        [Min(0.1f)] public float vortexRadius = 9f;
+        [Min(0.05f)] public float vortexDuration = 10f;
         [Min(0f)] public float vortexPullSpeed = 4f;
+        [Min(0f)] public float vortexDamage = 2f;
+        [Min(0.01f)] public float vortexDamageInterval = 0.5f;
         [Min(0f), Tooltip("끝날 때 모인 적을 위로 쳐올리는 속도(m/s). 0이면 안 띄운다")] public float vortexEndLaunch = 4.5f;
         [Min(0f), Tooltip("끝날 때 모인 적을 묶는 시간(예전 방식). 0이면 묶지 않는다")] public float vortexEndShackle = 0f;
         [Tooltip("VFX_Sand_Vortex. 반경 vortexVfxRadius 기준으로 만들어져 실제 반경 비율로 스케일한다")] public GameObject vortexPrefab;
@@ -41,8 +45,8 @@ namespace SandGuard.Player
         [Min(1f), Tooltip("링이 닿는 최대 반경(m). 신전 외벽 76m와 스폰 지점 90m를 덮는다")] public float stormRadius = 90f;
         [Min(0.1f), Tooltip("링이 퍼지는 속도(m/s)")] public float stormExpandSpeed = 14f;
         [Min(0.1f), Tooltip("링 두께(m)")] public float stormRingThickness = 4f;
-        [Min(0f), Tooltip("링 피해 = 볼트 피해 × 이 값(한 번)")] public float stormDamageRatio = 1.5f;
-        [Min(0f), Tooltip("링이 바깥으로 미는 속도(m/s)")] public float stormKnockback = 7f;
+        [Min(0f), Tooltip("링 피해 = 볼트 피해 × 이 값(한 번)")] public float stormDamageRatio = 5f;
+        [Min(0f), Tooltip("링이 바깥으로 미는 속도(m/s). EnemyRestraint가 knockbackDamping(12m/s²)으로 감속시키므로 밀리는 거리는 대략 v²/24 m다. 20이면 16.7m라 적이 마당 밖 폭풍 벽까지 밀려났다")] public float stormKnockback = 8f;
         [Range(0f, 1f), Tooltip("둔화 비율. 0.5면 속도 50%")] public float stormSlow = 0.5f;
         [Min(0f)] public float stormSlowDuration = 3f;
         [Tooltip("VFX_Sand_Storm. 자식 VfxStormFront가 링 반경을 따라간다(스케일하지 않음)")] public GameObject stormPrefab;
@@ -101,6 +105,18 @@ namespace SandGuard.Player
         /// <summary>부활 등으로 자원을 회복할 때 쿨다운을 지운다.</summary>
         public void ResetCooldowns() => Array.Clear(cooldowns, 0, cooldowns.Length);
 
+        /// <summary>
+        /// 장판 스킬은 장판이 사라진 뒤부터 쿨다운을 센다(지금은 소용돌이만. 폭풍은 쿨다운 45초가 지속 6.7초보다 훨씬 길어 겹치지 않는다).
+        /// 시전 순간에는 "지속 시간 + 쿨다운"을 걸어 두고,
+        /// 실제로 끝나는 순간 순수 쿨다운으로 줄인다(예정보다 일찍 끝난 경우). 늘리지는 않으므로 부활의 ResetCooldowns는 그대로 유지된다.
+        /// </summary>
+        void CooldownAfterZone(int slot, PlayerSandZone zone)
+        {
+            if (zone == null) return;
+            cooldowns[slot] = zone.duration + Cooldown(slot);
+            zone.Ended += () => cooldowns[slot] = Mathf.Min(cooldowns[slot], Cooldown(slot));
+        }
+
         public ActionResult TryCast(int slot)
         {
             if (slot < Burst || slot > Storm) return ActionResult.Fail(ActionFailure.InvalidRequest);
@@ -124,6 +140,7 @@ namespace SandGuard.Player
             {
                 point = CastPoint();
                 LastVortex = SpawnVortex(point);
+                CooldownAfterZone(slot, LastVortex);
                 attack.PlayCastVisual();
             }
             else
@@ -133,7 +150,7 @@ namespace SandGuard.Player
                 attack.PlayCastVisual();
                 onStormCast.Invoke();
             }
-            cooldowns[slot] = Cooldown(slot);
+            cooldowns[slot] = Mathf.Max(cooldowns[slot], Cooldown(slot)); // 장판 스킬은 CooldownAfterZone이 이미 더 길게 걸어 뒀다
             LastCastPoint = point;
             Cast?.Invoke(slot, point);
             onCast.Invoke();
@@ -144,7 +161,7 @@ namespace SandGuard.Player
         public Vector3 CastPoint()
         {
             Vector3 origin = transform.position + Vector3.up;
-            Vector3 point = aimer != null ? aimer.GetAimPoint() : origin + transform.forward * maxCastDistance;
+            Vector3 point = aimer != null ? aimer.GetAimPoint(maxCastDistance) : origin + transform.forward * maxCastDistance;
             Vector3 offset = point - origin;
             if (offset.magnitude > maxCastDistance) point = origin + offset.normalized * maxCastDistance;
             Vector3 back = offset; back.y = 0f;
@@ -194,6 +211,8 @@ namespace SandGuard.Player
         {
             var zone = Zone<PlayerSandVortex>("SandVortex", point, VortexRadius, VortexDuration, vortexPrefab, vortexVfxRadius);
             zone.pullSpeed = vortexPullSpeed; zone.endLaunch = vortexEndLaunch; zone.endShackle = vortexEndShackle;
+            zone.damage = vortexDamage; zone.damageInterval = vortexDamageInterval;
+            zone.hitSink = attack.ReportHit;
             return zone;
         }
 
@@ -209,21 +228,58 @@ namespace SandGuard.Player
 
         T Zone<T>(string name, Vector3 point, float radius, float duration, GameObject prefab, float prefabRadius) where T : PlayerSandZone
         {
-            var go = new GameObject(name);
-            go.transform.position = point;
-            var zone = go.AddComponent<T>();
+            T zone = RentZone<T>(name);
+            zone.transform.position = point;
             zone.owner = transform; zone.faction = (attack.lifeSource as ICombatTarget)?.FactionId ?? attack.factionId;
             zone.radius = radius; zone.duration = duration; zone.mask = skillMask;
+            zone.ReleaseHandler = ReturnZone;
             if (prefab != null)
             {
-                var vfx = Instantiate(prefab, go.transform);
+                var vfx = PrefabPool.Spawn(prefab, point, Quaternion.identity, zone.transform);
                 vfx.transform.localPosition = Vector3.zero;
+                vfx.transform.localRotation = prefab.transform.localRotation;
                 vfx.transform.localScale = Vector3.one * (radius / Mathf.Max(0.01f, prefabRadius));
                 // Play On Awake는 이펙트 계층이 공유하므로 끝날 때 터질 "OnEnd*" 자식은 여기서 멈춰 두고 PlayerSandZone.End가 재생한다.
                 foreach (var ps in vfx.GetComponentsInChildren<ParticleSystem>())
                     if (ps.gameObject.name.StartsWith("OnEnd", StringComparison.Ordinal)) ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+                zone.VfxInstance = vfx;
             }
             return zone;
+        }
+
+        // ---- 지역 스킬 풀 ----
+        // 장판은 코드로 만드는 오브젝트라 PrefabPool을 쓸 수 없어 종류별로 여기서 돌려 쓴다. 연출만 PrefabPool에 맡긴다.
+        // 쉬는 장판은 시전자 아래에 비활성으로 두고(씬과 함께 정리된다), 시전 중에는 부모 없이 월드에 둔다.
+        readonly Dictionary<Type, Stack<PlayerSandZone>> idleZones = new Dictionary<Type, Stack<PlayerSandZone>>();
+
+        Stack<PlayerSandZone> IdleZones(Type type)
+        {
+            if (!idleZones.TryGetValue(type, out var stack)) idleZones[type] = stack = new Stack<PlayerSandZone>();
+            return stack;
+        }
+
+        T RentZone<T>(string name) where T : PlayerSandZone
+        {
+            var stack = IdleZones(typeof(T));
+            PlayerSandZone zone = null;
+            while (stack.Count > 0 && zone == null) zone = stack.Pop(); // 씬과 함께 지워진 장판은 건너뛴다
+            if (zone == null) zone = new GameObject(name).AddComponent<T>();
+            zone.transform.SetParent(null, false);
+            zone.gameObject.SetActive(true);
+            zone.ResetForReuse();
+            return (T)zone;
+        }
+
+        /// <summary>연출 꼬리까지 끝난 장판을 거둔다. 시전자가 먼저 사라졌으면 그냥 지운다.</summary>
+        void ReturnZone(PlayerSandZone zone)
+        {
+            if (zone == null) return;
+            PrefabPool.Release(zone.VfxInstance);
+            zone.VfxInstance = null;
+            if (this == null) { Destroy(zone.gameObject); return; }
+            zone.gameObject.SetActive(false);
+            zone.transform.SetParent(transform, false);
+            IdleZones(zone.GetType()).Push(zone);
         }
     }
 }

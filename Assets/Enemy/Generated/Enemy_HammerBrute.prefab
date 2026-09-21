@@ -1940,9 +1940,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 754703791412322535, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+      propertyPath: displacementMultiplier
+      value: 0.7
+      objectReference: {fileID: 0}
     - target: {fileID: 658155196757490767, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
       propertyPath: m_Name
       value: Enemy_HammerBrute
+      objectReference: {fileID: 0}
+    - target: {fileID: 1342337955418082952, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+      propertyPath: maxHealth
+      value: 80
       objectReference: {fileID: 0}
     - target: {fileID: 1342337955418082952, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
       propertyPath: removeDelay
@@ -1997,12 +2005,20 @@ PrefabInstance:
       value: 2.3
       objectReference: {fileID: 0}
     - target: {fileID: 2233741487118629176, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+      propertyPath: damage
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 2233741487118629176, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
       propertyPath: windup
       value: 0.93
       objectReference: {fileID: 0}
     - target: {fileID: 2233741487118629176, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
       propertyPath: interval
       value: 1.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 2233741487118629176, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+      propertyPath: towerDamageMultiplier
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3525879857054782480, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
       propertyPath: experience
@@ -2051,6 +2067,18 @@ PrefabInstance:
     - target: {fileID: 5845018073376050768, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
       propertyPath: m_Center.y
       value: 1.6628392
+      objectReference: {fileID: 0}
+    - target: {fileID: 8456077327485986399, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+      propertyPath: towerPriority
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8456077327485986399, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+      propertyPath: minionPriority
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8456077327485986399, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+      propertyPath: playerPriority
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8614648122362487322, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
       propertyPath: m_Height

@@ -16,10 +16,7 @@ public class ObjectPooling : MonoBehaviour
 
         for (int i = 0; i < Objects.Length; i++)
         {
-            Objects[i] = Instantiate(
-                Pool_Prefab,
-                transform
-            );
+            Objects[i] = Instantiate(Pool_Prefab, transform);
 
             Objects[i].name = $"{Pool_Prefab.name}_{i}";
 

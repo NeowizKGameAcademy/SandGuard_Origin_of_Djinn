@@ -11,7 +11,7 @@ namespace SandGuard.Enemy
         [Min(0f)] public float cooldown = 6f;
         [Min(.1f)] public float flightTime = 1f;
         [Min(.05f)] public float fuseAfterLanding = .35f;
-        [Min(0f)] public float damage = 20f;
+        [Min(0f)] public float damage = 50f;
         [Min(.1f)] public float blastRadius = 2.5f;
         [Min(0f), Tooltip("타워 정지 요청 시간. 실제 정지와 VFX는 타워 시스템에서 처리한다. 0이면 요청하지 않는다.")]
         public float towerDisableDuration = 5f;

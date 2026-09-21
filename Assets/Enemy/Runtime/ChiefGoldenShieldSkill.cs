@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace SandGuard.Enemy
 {
-    /// <summary>교전 시 소환하는 정면 방패. 판정은 방패병의 EnemyShield를 재사용한다.</summary>
+    /// <summary>체력이 낮아지면 소환하는 정면 방패. 판정은 방패병의 EnemyShield를 재사용한다.</summary>
     [DisallowMultipleComponent]
     [RequireComponent(typeof(EnemyHealth), typeof(EnemyShield))]
     public sealed class ChiefGoldenShieldSkill : MonoBehaviour
@@ -12,13 +12,12 @@ namespace SandGuard.Enemy
         public VfxGoldenShield vfxPrefab;
         public Vector3 localPosition = new Vector3(0f, 1.15f, .65f);
         [Min(.01f)] public float summonDuration = .35f;
-        [Min(.01f)] public float activeDuration = 20f;
+        [Min(.01f)] public float activeDuration = 600f;
         [Min(0), Tooltip("한 생애에 쓸 수 있는 횟수. 0이면 제한 없이 쿨다운마다 다시 쓴다")]
         public int maxUses = 1;
         [Range(0f, 1f), Tooltip("남은 체력 비율이 이 값 이하가 되어야 시전한다. 0.7이면 체력이 70% 이하일 때. 1이면 조건 없음")]
         public float healthThreshold = 0.7f;
         [Min(0f)] public float cooldown = 8f;
-        [Min(.1f)] public float castRange = 8f;
         public enum Phase { Ready, Summoning, Active, Dismissing, Cooldown }
         public Phase State { get; private set; }
         public bool IsCasting => State == Phase.Summoning;
@@ -60,13 +59,11 @@ namespace SandGuard.Enemy
         void OnLifeChanged(LifeStateChangedInfo info) { if (info.CurrentState != LifeState.Alive) Cancel(); }
         void OnGuarded(DamageInfo _) { if (visual) visual.PulseHit(); }
 
-        public bool TryUse(ICombatTarget target)
+        public bool TryUse()
         {
             if (!isActiveAndEnabled || !health.IsAlive || !vfxPrefab || State != Phase.Ready || IsSpent || !IsHealthLowEnough ||
                 (brain && (!brain.enabled || !brain.AIEnabled)) || (motor && motor.IsDetached) ||
-                (melee && melee.IsAttacking) || (bombSkill && bombSkill.IsCasting) || target == null || !target.IsTargetable ||
-                target.FactionId == health.FactionId ||
-                Vector3.Distance(health.HitPosition, target.HitPosition) > castRange) return false;
+                (melee && melee.IsAttacking) || (bombSkill && bombSkill.IsCasting)) return false;
             if (!visual)
             {
                 visual = Instantiate(vfxPrefab, transform);
