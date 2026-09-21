@@ -20,6 +20,7 @@ namespace Tower
         private ICombatTarget owner;
 
         protected TowerStatus Status => status;
+        protected Collider Area => area;
         protected Vector3 Origin => detector != null ? detector.transform.position : transform.position;
         protected ICombatTarget Owner => owner is Component component && component != null ? owner : null;
         protected string Faction => Owner != null ? Owner.FactionId : "Ally";

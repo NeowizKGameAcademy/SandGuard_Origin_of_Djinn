@@ -43,6 +43,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8523374225334838551}
+  - component: {fileID: 2014127623673398669}
   - component: {fileID: 5239265221464859391}
   - component: {fileID: 1643321092591165380}
   m_Layer: 0
@@ -67,6 +68,29 @@ Transform:
   m_Children: []
   m_Father: {fileID: 9021732084228742961}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &2014127623673398669
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 779376680899890532}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &5239265221464859391
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -81,7 +105,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Tower.SlowArea
   status: {fileID: 7371817408673049065}
   detector: {fileID: 7868287532647626503}
-  area: {fileID: 0}
+  area: {fileID: 2014127623673398669}
   targetMask:
     serializedVersion: 2
     m_Bits: 4294967295
