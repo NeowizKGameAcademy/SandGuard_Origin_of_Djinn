@@ -516,7 +516,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 671420828100811580}
+  - component: {fileID: 4719702606409126342}
   - component: {fileID: 1092052264656876467}
+  - component: {fileID: 1821749495090932666}
   m_Layer: 0
   m_Name: Skeleton
   m_TagString: Untagged
@@ -540,6 +542,20 @@ Transform:
   - {fileID: 2352024124961311043}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4719702606409126342
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3243937516737615563}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0409a90ee751b0d48b2f55100e27673f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Tower.TargetSelector
+  detector: {fileID: 0}
+  searchInterval: 0.2
 --- !u!114 &1092052264656876467
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -552,6 +568,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c02e720d0bdc354a83af77207bb6da8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tower.SkeletonController
+--- !u!114 &1821749495090932666
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3243937516737615563}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f958cdd6ad9d2d46b0b276f986b2395, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SkeletonMovement
 --- !u!1 &3881028422900815880
 GameObject:
   m_ObjectHideFlags: 0

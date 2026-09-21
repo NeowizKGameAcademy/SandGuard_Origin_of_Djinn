@@ -2,7 +2,6 @@ using UnityEngine;
 
 namespace Tower
 {
-    [RequireComponent(typeof(TargetDetector))]
     public class TargetSelector : MonoBehaviour
     {
         [Header("Detection")]
@@ -22,6 +21,9 @@ namespace Tower
         {
             if (detector == null)
                 TryGetComponent(out detector);
+
+            if (detector == null)
+                detector = GetComponentInParent<TargetDetector>();
         }
 
         private void OnEnable()
