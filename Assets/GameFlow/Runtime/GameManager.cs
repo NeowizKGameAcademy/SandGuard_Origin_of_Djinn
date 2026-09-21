@@ -13,6 +13,7 @@ namespace SandGuard.GameFlow
     {
         public const string DefaultMainMenuScene = "MainScene";
         public const string DefaultGameScene = "Level";
+        public const string IntroCutsceneScene = "IntroCutscene";
 
         static GameManager instance;
         readonly Dictionary<int,UnityEngine.Object> pauseOwners=new Dictionary<int,UnityEngine.Object>();
@@ -67,7 +68,7 @@ namespace SandGuard.GameFlow
             ApplyPauseState();
         }
 
-        public void StartGame()=>LoadScene(GameScene);
+        public void StartGame()=>LoadScene(PlayerPrefs.GetInt("SandGuard.Story.Seen.Intro",0)==1 ? GameScene : IntroCutsceneScene);
         public void ReturnToMainMenu()=>LoadScene(MainMenuScene);
         public void RestartGame()=>LoadScene(SceneManager.GetActiveScene().name);
 

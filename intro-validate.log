@@ -1,0 +1,380 @@
+[Licensing::Module] Trying to connect to existing licensing client channel...
+Built from '6000.2/respin/6000.2.8f1-e4064264ae96' branch; Version is '6000.2.8f1 (c9992ac36c34) revision 13211946'; Using compiler version '194234433'; Build Type 'Release'
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-m" at "2026-09-21T04:09:30.9281652Z"
+OS: 'Windows 11  (10.0.26200) 64bit Core' Language: 'ko' Physical Memory: 32469 MB
+BatchMode: 1, IsHumanControllingUs: 0, StartBugReporterOnCrash: 0, Is64bit: 1
+Date: 2026-09-21T04:09:30Z
+
+COMMAND LINE ARGUMENTS:
+C:\Program Files\Unity\Hub\Editor\6000.2.8f1-x86_64\Editor\Unity.exe
+-batchmode
+-quit
+-projectPath
+C:\훈련생폴더\3. 유니티\SandGuard-Origin-of-Djinn
+-executeMethod
+SandGuard.Cutscenes.Editor.IntroSceneBuilder.Validate
+-logFile
+C:\훈련생폴더\3. 유니티\SandGuard-Origin-of-Djinn\intro-validate.log
+Successfully changed project path to: C:\훈련생폴더\3. 유니티\SandGuard-Origin-of-Djinn
+C:/훈련생폴더/3. 유니티/SandGuard-Origin-of-Djinn
+[UnityMemory] Configuration Parameters - Can be set up in boot.config
+    "memorysetup-allocator-temp-initial-block-size-main=262144"
+    "memorysetup-allocator-temp-initial-block-size-worker=262144"
+    "memorysetup-bucket-allocator-granularity=16"
+    "memorysetup-bucket-allocator-bucket-count=8"
+    "memorysetup-bucket-allocator-block-size=33554432"
+    "memorysetup-bucket-allocator-block-count=8"
+    "memorysetup-main-allocator-block-size=16777216"
+    "memorysetup-thread-allocator-block-size=16777216"
+    "memorysetup-gfx-main-allocator-block-size=16777216"
+    "memorysetup-gfx-thread-allocator-block-size=16777216"
+    "memorysetup-cache-allocator-block-size=4194304"
+    "memorysetup-typetree-allocator-block-size=2097152"
+    "memorysetup-profiler-bucket-allocator-granularity=16"
+    "memorysetup-profiler-bucket-allocator-bucket-count=8"
+    "memorysetup-profiler-bucket-allocator-block-size=33554432"
+    "memorysetup-profiler-bucket-allocator-block-count=8"
+    "memorysetup-profiler-allocator-block-size=16777216"
+    "memorysetup-profiler-editor-allocator-block-size=1048576"
+    "memorysetup-temp-allocator-size-main=16777216"
+    "memorysetup-job-temp-allocator-block-size=2097152"
+    "memorysetup-job-temp-allocator-block-size-background=1048576"
+    "memorysetup-job-temp-allocator-reduction-small-platforms=262144"
+    "memorysetup-temp-allocator-size-background-worker=32768"
+    "memorysetup-temp-allocator-size-job-worker=262144"
+    "memorysetup-temp-allocator-size-preload-manager=33554432"
+    "memorysetup-temp-allocator-size-nav-mesh-worker=65536"
+    "memorysetup-temp-allocator-size-audio-worker=65536"
+    "memorysetup-temp-allocator-size-cloud-worker=32768"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gfx=262144"
+Player connection [23760]  Target information:
+
+Player connection [23760]  * "[IP] 192.168.1.47 [Port] 55504 [Flags] 2 [Guid] 1898737810 [EditorId] 1898737810 [Version] 1048832 [Id] WindowsEditor(7,DESKTOP-LKQ38HD) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" 
+
+Player connection [23760] Host joined multi-casting on [225.0.0.222:54997]...
+Player connection [23760] Host joined alternative multi-casting on [225.0.0.222:34997]...
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+[Licensing::Client] Code 10 while verifying Licensing Client signature (process Id: 436, path: "C:/Program Files/Unity Hub/UnityLicensingClient_V1/Unity.Licensing.Client.exe")
+[Licensing::Module] LicensingClient has failed validation; ignoring
+[Licensing::Client] Handshaking with LicensingClient:
+  Version:                 1.17.4+4293ba1
+  Session Id:              2d0f05450da7403a86d43e46827cee12
+  Correlation Id:          e3643a1ac6a3745dd7d27aa264eaea45
+  External correlation Id: 9167463195552164438
+  Machine Id:              64RP13i/LTV/zT9b3edfwZJgXn0=
+[Licensing::Module] Successfully connected to LicensingClient on channel: "LicenseClient-m" (connect: 0.00s, validation: 0.00s, handshake: 0.03s)
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-m-notifications" at "2026-09-21T04:09:30.9637435Z"
+[Licensing::Module] Error: Access token is unavailable; failed to update
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: 14568846920955-UnityPersXXXX
+  Product: Unity Personal
+  Type: Assigned
+  Expiration: Unlimited
+[Licensing::Client] Successfully updated license, isAsync: True, time: 0.00
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] Licensing Background thread has ended after 0.04s
+[Package Manager] Connected to IPC stream "Upm-7284" after 0.2 seconds.
+Library Redirect Path: Library/
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+Refreshing native plugins compatible for Editor in 0.26 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Initialize engine version: 6000.2.8f1 (c9992ac36c34)
+[Subsystems] Discovering subsystems at path C:/Program Files/Unity/Hub/Editor/6000.2.8f1-x86_64/Editor/Data/Resources/UnitySubsystems
+[Subsystems] Discovering subsystems at path C:/훈련생폴더/3. 유니티/SandGuard-Origin-of-Djinn/Assets
+GfxDevice: creating device client; kGfxThreadingModeNonThreaded
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: NVIDIA GeForce RTX 4060 Laptop GPU (ID=0x28a0)
+    Vendor:   NVIDIA
+    VRAM:     7956 MB
+    Driver:   32.0.16.1078
+Initialize mono
+Mono path[0] = 'C:/Program Files/Unity/Hub/Editor/6000.2.8f1-x86_64/Editor/Data/Managed'
+Mono path[1] = 'C:/Program Files/Unity/Hub/Editor/6000.2.8f1-x86_64/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32'
+Mono config path = 'C:/Program Files/Unity/Hub/Editor/6000.2.8f1-x86_64/Editor/Data/MonoBleedingEdge/etc'
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56284
+Using cacheserver namespaces - metadata:defaultmetadata, artifacts:defaultartifacts
+Using cacheserver namespaces - metadata:defaultmetadata, artifacts:defaultartifacts
+ImportWorker Server TCP listen port: 0
+AcceleratorClientConnectionCallback - disconnected - :0
+Begin MonoManager ReloadAssembly
+Registering precompiled unity dll's ...
+Register platform support module: C:/Program Files/Unity/Hub/Editor/6000.2.8f1-x86_64/Editor/Data/PlaybackEngines/WebGLSupport/UnityEditor.WebGL.Extensions.dll
+Register platform support module: C:/Program Files/Unity/Hub/Editor/6000.2.8f1-x86_64/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
+[Licensing::Client] Successfully resolved entitlement details
+Register platform support module: C:/Program Files/Unity/Hub/Editor/6000.2.8f1-x86_64/Editor/Data/PlaybackEngines/AndroidPlayer/UnityEditor.Android.Extensions.dll
+[Licensing::Client] Successfully resolved entitlement details
+Register platform support module: C:/Program Files/Unity/Hub/Editor/6000.2.8f1-x86_64/Editor/Data/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.dll
+Registered in 0.004783 seconds.
+- Loaded All Assemblies, in  0.315 seconds
+Native extension for iOS target not found
+Native extension for Android target not found
+Android Extension - Scanning For ADB Devices 2189 ms
+Native extension for WindowsStandalone target not found
+Native extension for WebGL target not found
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  2.497 seconds
+Domain Reload Profiling: 2811ms
+	BeginReloadAssembly (106ms)
+		ExecutionOrderSort (0ms)
+		DisableScriptedObjects (0ms)
+		BackupInstance (0ms)
+		ReleaseScriptingObjects (0ms)
+		CreateAndSetChildDomain (1ms)
+	RebuildCommonClasses (29ms)
+	RebuildNativeTypeToScriptingClass (9ms)
+	initialDomainReloadingComplete (42ms)
+	LoadAllAssembliesAndSetupDomain (128ms)
+		LoadAssemblies (104ms)
+		RebuildTransferFunctionScriptingTraits (0ms)
+		AnalyzeDomain (125ms)
+			TypeCache.Refresh (123ms)
+				TypeCache.ScanAssembly (113ms)
+			BuildScriptInfoCaches (0ms)
+			ResolveRequiredComponents (0ms)
+	FinalizeReload (2498ms)
+		ReleaseScriptCaches (0ms)
+		RebuildScriptCaches (0ms)
+		SetupLoadedEditorAssemblies (2472ms)
+			LogAssemblyErrors (0ms)
+			InitializePlatformSupportModulesInManaged (2298ms)
+			SetLoadedEditorAssemblies (3ms)
+			BeforeProcessingInitializeOnLoad (45ms)
+			ProcessInitializeOnLoadAttributes (87ms)
+			ProcessInitializeOnLoadMethodAttributes (40ms)
+			AfterProcessingInitializeOnLoad (0ms)
+			EditorAssembliesLoaded (0ms)
+		ExecutionOrderSort2 (0ms)
+		AwakeInstancesAfterBackupRestoration (0ms)
+[Licensing::Client] Successfully resolved entitlement details
+Application.AssetDatabase Initial Refresh Start
+Package Manager log level set to [2]
+[Package Manager] Restoring resolved packages state from cache
+[Licensing::Client] Successfully resolved entitlement details
+[Package Manager] Registered 59 packages:
+  Packages from [https://packages.unity.com]:
+    com.unity.ai.navigation@2.0.9 (location: C:\훈련생폴더\3. 유니티\SandGuard-Origin-of-Djinn\Library\PackageCache\com.unity.ai.navigation@5218e4bf7edc)
+    com.unity.collab-proxy@2.9.3 (location: C:\훈련생폴더\3. 유니티\SandGuard-Origin-of-Djinn\Library\PackageCache\com.unity.collab-proxy@ab839cc7d2ad)
+    com.unity.ide.rider@3.0.38 (location: C:\훈련생폴더\3. 유니티\SandGuard-Origin-of-Djinn\Library\PackageCache\com.unity.ide.rider@1f60b3138684)
+    com.unity.ide.visualstudio@2.0.23 (location: C:\훈련생폴더\3. 유니티\SandGuard-Origin-of-Djinn\Library\PackageCache\com.unity.ide.visualstudio@198cdf337d13)
+    com.unity.inputsystem@1.14.2 (location: C:\훈련생폴더\3. 유니티\SandGuard-Origin-of-Djinn\Library\PackageCache\com.unity.inputsystem@be6c4fd0abf5)
+    com.unity.pipeline@0.6.0-exp.1 (location: C:\훈련생폴더\3. 유니티\SandGuard-Origin-of-Djinn\Library\PackageCache\com.unity.pipeline@9bb4172c603c)
+    com.unity.timeline@1.8.9 (location: C:\훈련생폴더\3. 유니티\SandGuard-Origin-of-Djinn\Library\PackageCache\com.unity.timeline@6b9e48457ddb)
+    com.unity.visualscripting@1.9.7 (location: C:\훈련생폴더\3. 유니티\SandGuard-Origin-of-Djinn\Library\PackageCache\com.unity.visualscripting@6279e2b7c485)
+    com.unity.nuget.mono-cecil@1.11.6 (location: C:\훈련생폴더\3. 유니티\SandGuard-Origin-of-Djinn\Library\PackageCache\com.unity.nuget.mono-cecil@ecb9724e46ff)
+    com.unity.nuget.newtonsoft-json@3.2.1 (location: C:\훈련생폴더\3. 유니티\SandGuard-Origin-of-Djinn\Library\PackageCache\com.unity.nuget.newtonsoft-json@74deb55db2a0)
+    com.unity.searcher@4.9.3 (location: C:\훈련생폴더\3. 유니티\SandGuard-Origin-of-Djinn\Library\PackageCache\com.unity.searcher@1e17ce91558d)
+    com.unity.burst@1.8.25 (location: C:\훈련생폴더\3. 유니티\SandGuard-Origin-of-Djinn\Library\PackageCache\com.unity.burst@1df634d836b8)
+    com.unity.mathematics@1.3.2 (location: C:\훈련생폴더\3. 유니티\SandGuard-Origin-of-Djinn\Library\PackageCache\com.unity.mathematics@8017b507cc74)
+    com.unity.collections@2.5.7 (location: C:\훈련생폴더\3. 유니티\SandGuard-Origin-of-Djinn\Library\PackageCache\com.unity.collections@d49facba0036)
+    com.unity.test-framework.performance@3.2.0 (location: C:\훈련생폴더\3. 유니티\SandGuard-Origin-of-Djinn\Library\PackageCache\com.unity.test-framework.performance@0840f58e4562)
+  Built-in packages:
+    com.unity.2d.sprite@1.0.0 (location: C:\훈련생폴더\3. 유니티\SandGuard-Origin-of-Djinn\Library\PackageCache\com.unity.2d.sprite@331abd9a1e2f)
+    com.unity.multiplayer.center@1.0.0 (location: C:\훈련생폴더\3. 유니티\SandGuard-Origin-of-Djinn\Library\PackageCache\com.unity.multiplayer.center@f3fb577b3546)
+    com.unity.render-pipelines.universal@17.2.0 (location: C:\훈련생폴더\3. 유니티\SandGuard-Origin-of-Djinn\Library\PackageCache\com.unity.render-pipelines.universal@cc5029882822)
+    com.unity.test-framework@1.6.0 (location: C:\훈련생폴더\3. 유니티\SandGuard-Origin-of-Djinn\Library\PackageCache\com.unity.test-framework@d97b7cd61ded)
+    com.unity.ugui@2.0.0 (location: C:\훈련생폴더\3. 유니티\SandGuard-Origin-of-Djinn\Library\PackageCache\com.unity.ugui@8d7885e629a4)
+    com.unity.modules.accessibility@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1-x86_64\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.accessibility)
+    com.unity.modules.ai@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1-x86_64\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.ai)
+    com.unity.modules.androidjni@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1-x86_64\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.androidjni)
+    com.unity.modules.animation@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1-x86_64\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.animation)
+    com.unity.modules.assetbundle@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1-x86_64\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.assetbundle)
+    com.unity.modules.audio@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1-x86_64\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.audio)
+    com.unity.modules.cloth@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1-x86_64\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.cloth)
+    com.unity.modules.director@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1-x86_64\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.director)
+    com.unity.modules.imageconversion@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1-x86_64\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.imageconversion)
+    com.unity.modules.imgui@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1-x86_64\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.imgui)
+    com.unity.modules.jsonserialize@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1-x86_64\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.jsonserialize)
+    com.unity.modules.particlesystem@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1-x86_64\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.particlesystem)
+    com.unity.modules.physics@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1-x86_64\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.physics)
+    com.unity.modules.physics2d@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1-x86_64\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.physics2d)
+    com.unity.modules.screencapture@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1-x86_64\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.screencapture)
+    com.unity.modules.terrain@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1-x86_64\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.terrain)
+    com.unity.modules.terrainphysics@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1-x86_64\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.terrainphysics)
+    com.unity.modules.tilemap@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1-x86_64\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.tilemap)
+    com.unity.modules.ui@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1-x86_64\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.ui)
+    com.unity.modules.uielements@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1-x86_64\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.uielements)
+    com.unity.modules.umbra@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1-x86_64\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.umbra)
+    com.unity.modules.unityanalytics@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1-x86_64\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.unityanalytics)
+    com.unity.modules.unitywebrequest@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1-x86_64\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.unitywebrequest)
+    com.unity.modules.unitywebrequestassetbundle@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1-x86_64\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.unitywebrequestassetbundle)
+    com.unity.modules.unitywebrequestaudio@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1-x86_64\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.unitywebrequestaudio)
+    com.unity.modules.unitywebrequesttexture@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1-x86_64\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.unitywebrequesttexture)
+    com.unity.modules.unitywebrequestwww@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1-x86_64\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.unitywebrequestwww)
+    com.unity.modules.vehicles@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1-x86_64\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.vehicles)
+    com.unity.modules.video@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1-x86_64\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.video)
+    com.unity.modules.vr@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1-x86_64\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.vr)
+    com.unity.modules.wind@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1-x86_64\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.wind)
+    com.unity.modules.xr@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1-x86_64\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.xr)
+    com.unity.modules.subsystems@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1-x86_64\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.subsystems)
+    com.unity.modules.hierarchycore@1.0.0 (location: C:\Program Files\Unity\Hub\Editor\6000.2.8f1-x86_64\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.hierarchycore)
+    com.unity.ext.nunit@2.0.5 (location: C:\훈련생폴더\3. 유니티\SandGuard-Origin-of-Djinn\Library\PackageCache\com.unity.ext.nunit@031a54704bff)
+    com.unity.render-pipelines.core@17.2.0 (location: C:\훈련생폴더\3. 유니티\SandGuard-Origin-of-Djinn\Library\PackageCache\com.unity.render-pipelines.core@60896ea171dc)
+    com.unity.shadergraph@17.2.0 (location: C:\훈련생폴더\3. 유니티\SandGuard-Origin-of-Djinn\Library\PackageCache\com.unity.shadergraph@2c9221ffedf4)
+    com.unity.render-pipelines.universal-config@17.0.3 (location: C:\훈련생폴더\3. 유니티\SandGuard-Origin-of-Djinn\Library\PackageCache\com.unity.render-pipelines.universal-config@8dc1aab4af1d)
+    com.unity.rendering.light-transport@1.0.1 (location: C:\훈련생폴더\3. 유니티\SandGuard-Origin-of-Djinn\Library\PackageCache\com.unity.rendering.light-transport@2c9279f90d7c)
+[Subsystems] No new subsystems found in resolved package list.
+[Package Manager] Done registering packages in 0.01 seconds
+Duplicate assembly 'System.Runtime.CompilerServices.Unsafe.dll' with different versions detected, using 'Packages/com.unity.collections/Unity.Collections.Tests/System.Runtime.CompilerServices.Unsafe/System.Runtime.CompilerServices.Unsafe.dll, AssemblyName=System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a' and ignoring 'Packages/com.unity.pipeline/Runtime/Plugins/CodeAnalysis/System.Runtime.CompilerServices.Unsafe.dll, AssemblyName=System.Runtime.CompilerServices.Unsafe, Version=4.0.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a'.Starting: C:\Program Files\Unity\Hub\Editor\6000.2.8f1-x86_64\Editor\Data\bee_backend.exe --ipc --defer-dag-verification --dagfile="Library/Bee/1900b0aE.dag" --continue-on-failure --profile="Library/Bee/backend1.traceevents" ScriptAssemblies
+WorkingDir: C:/훈련생폴더/3. 유니티/SandGuard-Origin-of-Djinn
+DisplayProgressbar: Compiling Scripts
+ExitCode: 0 Duration: 0s255ms
+[ 976/1283  0s] ILPP-Configuration Library/ilpp-configuration.nevergeneratedoutput
+*** Tundra build success (0.23 seconds), 1 items updated, 1283 evaluated
+AssetDatabase: script compilation time: 0.666418s
+Begin MonoManager ReloadAssembly
+Duplicate assembly 'System.Runtime.CompilerServices.Unsafe.dll' with different versions detected, using 'Packages/com.unity.collections/Unity.Collections.Tests/System.Runtime.CompilerServices.Unsafe/System.Runtime.CompilerServices.Unsafe.dll, AssemblyName=System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a' and ignoring 'Packages/com.unity.pipeline/Runtime/Plugins/CodeAnalysis/System.Runtime.CompilerServices.Unsafe.dll, AssemblyName=System.Runtime.CompilerServices.Unsafe, Version=4.0.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a'.- Loaded All Assemblies, in  0.872 seconds
+Refreshing native plugins compatible for Editor in 0.75 ms, found 3 plugins.
+Native extension for iOS target not found
+Native extension for Android target not found
+Native extension for WindowsStandalone target not found
+Native extension for WebGL target not found
+Duplicate assembly 'System.Runtime.CompilerServices.Unsafe.dll' with different versions detected, using 'Packages/com.unity.collections/Unity.Collections.Tests/System.Runtime.CompilerServices.Unsafe/System.Runtime.CompilerServices.Unsafe.dll, AssemblyName=System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a' and ignoring 'Packages/com.unity.pipeline/Runtime/Plugins/CodeAnalysis/System.Runtime.CompilerServices.Unsafe.dll, AssemblyName=System.Runtime.CompilerServices.Unsafe, Version=4.0.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a'.Start HTTP server: port:7800
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  3.035 seconds
+Domain Reload Profiling: 3904ms
+	BeginReloadAssembly (239ms)
+		ExecutionOrderSort (0ms)
+		DisableScriptedObjects (10ms)
+		BackupInstance (0ms)
+		ReleaseScriptingObjects (0ms)
+		CreateAndSetChildDomain (124ms)
+	RebuildCommonClasses (26ms)
+	RebuildNativeTypeToScriptingClass (9ms)
+	initialDomainReloadingComplete (26ms)
+	LoadAllAssembliesAndSetupDomain (567ms)
+		LoadAssemblies (349ms)
+		RebuildTransferFunctionScriptingTraits (0ms)
+		AnalyzeDomain (297ms)
+			TypeCache.Refresh (236ms)
+				TypeCache.ScanAssembly (220ms)
+			BuildScriptInfoCaches (47ms)
+			ResolveRequiredComponents (10ms)
+	FinalizeReload (3036ms)
+		ReleaseScriptCaches (0ms)
+		RebuildScriptCaches (0ms)
+		SetupLoadedEditorAssemblies (2841ms)
+			LogAssemblyErrors (0ms)
+			InitializePlatformSupportModulesInManaged (44ms)
+			SetLoadedEditorAssemblies (4ms)
+			BeforeProcessingInitializeOnLoad (130ms)
+			ProcessInitializeOnLoadAttributes (2588ms)
+			ProcessInitializeOnLoadMethodAttributes (70ms)
+			AfterProcessingInitializeOnLoad (4ms)
+			EditorAssembliesLoaded (0ms)
+		ExecutionOrderSort2 (0ms)
+		AwakeInstancesAfterBackupRestoration (14ms)
+Asset Pipeline Refresh (id=71cf3f05799fe904abd71a9d2ab0348b): Total: 5.116 seconds - Initiated by InitialRefreshV2(ForceSynchronousImport)
+	Summary:
+		Imports: total=0 (actual=0, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=3474 ms
+		Asset DB Callback time: managed=40 ms, native=12 ms
+		Scripting: domain reloads=1, domain reload time=873 ms, compile time=668 ms, other=48 ms
+		Project Asset Count: scripts=1711, non-scripts=4819
+		Asset File Changes: new=0, changed=0, moved=0, deleted=0
+		Scan Filter Count: 0
+	InvokeCustomDependenciesCallbacks: 0.001ms
+	InvokePackagesCallback: 13.652ms
+	ApplyChangesToAssetFolders: 0.553ms
+	Scan: 152.483ms
+	OnSourceAssetsModified: 0.002ms
+	CategorizeAssetsWithTransientArtifact: 42.876ms
+	ProcessAssetsWithTransientArtifactChanges: 64.203ms
+	CategorizeAssets: 54.611ms
+	ImportOutOfDateAssets: 3045.477ms (2375.051ms without children)
+		CompileScripts: 668.206ms
+		ReloadNativeAssets: 0.019ms
+		UnloadImportedAssets: 0.530ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 0.848ms
+		InitializingProgressBar: 0.000ms
+		PostProcessAllAssetNotificationsAddChangedAssets: 0.000ms
+		OnDemandSchedulerStart: 0.824ms
+	PostProcessAllAssets: 40.004ms
+	GatherAllCurrentPrimaryArtifactRevisions: 0.002ms
+	UnloadStreamsBegin: 2.058ms
+	PersistCurrentRevisions: 0.211ms
+	UnloadStreamsEnd: 0.008ms
+	GenerateScriptTypeHashes: 5.286ms
+	Untracked: 1700.233ms
+
+Application.AssetDatabase Initial Refresh End
+Launched and connected shader compiler UnityShaderCompiler.exe after 0.01 seconds
+Scanning for USB devices : 3.246ms
+Initializing Unity extensions:
+[MODES] ModeService[none].Initialize
+[MODES] ModeService[none].LoadModes
+[MODES] Loading mode Default (0) for mode-current-id-DesertTower
+Unloading 17 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 7011 unused Assets / (5.0 MB). Loaded Objects now: 7771.
+Memory consumption went from 207.0 MB to 202.0 MB.
+Total: 8.169000 ms (FindLiveObjects: 0.391000 ms CreateObjectMapping: 0.323200 ms MarkObjects: 5.526200 ms  DeleteObjects: 1.923100 ms)
+
+Opening scene 'Assets/1.Scene/IntroCutscene.unity'
+Unloading 15 Unused Serialized files (Serialized files now loaded: 0)
+Loaded scene 'Assets/1.Scene/IntroCutscene.unity'
+	Deserialize:            46.966 ms
+	Integration:            295.714 ms
+	Integration of assets:  1.987 ms
+	Thread Wait Time:       -0.016 ms
+	Total Operation Time:   344.651 ms
+Unloading 2 unused Assets / (1.0 KB). Loaded Objects now: 7887.
+Memory consumption went from 269.3 MB to 269.3 MB.
+Total: 5.439000 ms (FindLiveObjects: 0.258300 ms CreateObjectMapping: 0.122600 ms MarkObjects: 5.035700 ms  DeleteObjects: 0.021700 ms)
+
+INTRO_VALIDATED: 7 images, 7 texts, panel, font, manager, build scene.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+SandGuard.Cutscenes.Editor.IntroSceneBuilder:Validate () (at Assets/Cutscenes/Editor/IntroSceneBuilder.cs:146)
+
+(Filename: Assets/Cutscenes/Editor/IntroSceneBuilder.cs Line: 146)
+
+Batchmode quit successfully invoked - shutting down!
+Pipeline Server stopped
+Clearing [Pretendard-Bold SDF] dynamic font asset data.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+TMPro.EditorEventCallbacks/<>c:<InitializeFontAssetResourceChangeCallBacks>b__0_0 () (at ./Library/PackageCache/com.unity.ugui@8d7885e629a4/Editor/TMP/TMP_EditorResourceManager.cs:36)
+UnityEditor.EditorApplication:Internal_EditorApplicationQuit ()
+
+(Filename: ./Library/PackageCache/com.unity.ugui@8d7885e629a4/Editor/TMP/TMP_EditorResourceManager.cs Line: 36)
+
+Killing ADB server in 0.0441349 seconds.
+Start importing Assets/9.Font/Pretendard-Bold SDF.asset using Guid(9a6b3d0b4eb136f48bc0872b1cc4e94f) (NativeFormatImporter) -> (artifact id: 'd7ed691f4baf0e5e048d48094404ec9c') in 0.013724 seconds
+Refreshing native plugins compatible for Editor in 0.80 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=4d8632bae4ee4b440aa1663383f45656): Total: 0.213 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+ConsistencyChecker - guid: 9a6b3d0b4eb136f48bc0872b1cc4e94f, dependenciesHash.value: 89062455e15d1fe517bafdb1c0d2b77e, artifactid: d7ed691f4baf0e5e048d48094404ec9c, producedFiles[0].extension: , producedFiles[0].contentHash: 8a08c766c149aa5e93ffc25894e2d697
+ConsistencyChecker - guid: 9a6b3d0b4eb136f48bc0872b1cc4e94f, dependenciesHash.value: 89062455e15d1fe517bafdb1c0d2b77e, artifactid: ae7d1d4e2bd8bbfb6104b17df299cc44, producedFiles[0].extension: , producedFiles[0].contentHash: 8a08c766c149aa5e93ffc25894e2d697
+Importer(NativeFormatImporter) generated inconsistent result for asset(guid:9a6b3d0b4eb136f48bc0872b1cc4e94f) "Assets/9.Font/Pretendard-Bold SDF.asset"
+[Physics::Module] Cleanup current backend.
+[Physics::Module] Id: 0xf2b8ea05
+Input System module state changed to: ShutdownInProgress.
+Input System polling thread exited.
+Input System module state changed to: Shutdown.
+[Licensing::IpcConnector] LicenseClient-m-notifications channel disconnected successfully.
+[Licensing::IpcConnector] LicenseClient-m channel disconnected successfully.
+AcceleratorClientConnectionCallback - disconnected - :0
+Cleanup mono
+Exiting batchmode successfully now!
+Exiting without the bug reporter. Application will terminate with return code 0
