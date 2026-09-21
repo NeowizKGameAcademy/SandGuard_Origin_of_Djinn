@@ -17,6 +17,8 @@ namespace SandGuard.Enemy
         NavMeshAgent agent;
         NavMeshPath scratch;
         Vector3 destination;
+        /// <summary>마지막으로 NavMesh 위에 서 있던 자리. 이탈을 되돌릴 때 기준이 된다.</summary>
+        Vector3 lastOnMesh;
 
         public NavMeshAgent Agent => agent;
         public Vector3 Position => transform.position;
@@ -61,7 +63,8 @@ namespace SandGuard.Enemy
         {
             if (!IsOnNavMesh)
             {
-                if (Fall != null && Fall.IsOffMesh) Fall.Push(delta); else transform.position += delta;
+                if (Fall != null && Fall.IsOffMesh) Fall.Push(delta);
+                else if (agent == null || !agent.enabled || !Reground()) transform.position += delta;
                 return;
             }
             Vector3 planar = delta; planar.y = 0f;
@@ -95,8 +98,30 @@ namespace SandGuard.Enemy
             agent.isStopped = Held;
             return true;
         }
+        /// <summary>
+        /// NavMesh를 놓친 에이전트를 가장 가까운 지점(없으면 마지막으로 서 있던 자리)에 다시 세운다. 올라서지 못하면 false.
+        /// 목적지는 버리므로 두뇌가 다음 판단에서 다시 잡는다.
+        /// </summary>
+        bool Reground()
+        {
+            if (!NavMesh.SamplePosition(transform.position, out NavMeshHit hit, Mathf.Max(sampleRadius, 5f), agent.areaMask)
+                && !NavMesh.SamplePosition(lastOnMesh, out hit, Mathf.Max(sampleRadius, 5f), agent.areaMask)) return false;
+            agent.Warp(hit.position);
+            HasDestination = false; PathState = MovementPathState.None; destination = hit.position; PathEndPosition = hit.position;
+            if (!agent.isOnNavMesh) return false;
+            agent.isStopped = Held;
+            return true;
+        }
+
         void Update()
         {
+            if (agent != null && agent.enabled)
+            {
+                // 큰 밀림에 에이전트가 NavMesh를 놓치면 목적지를 잡을 수 없어(TrySetDestination이 IsOnNavMesh를 요구한다) 두뇌가 영영 멈춘다.
+                // 떼어 낸 것(낙하)은 EnemyFall이 되돌리므로 그 외의 이탈만 여기서 스스로 복구한다.
+                if (agent.isOnNavMesh) lastOnMesh = transform.position;
+                else if (Fall == null || !Fall.IsOffMesh) Reground();
+            }
             if (displacedUntil > 0f && Time.time >= displacedUntil)
             {
                 displacedUntil = 0f;
@@ -111,6 +136,7 @@ namespace SandGuard.Enemy
             agent.autoBraking = true;
             agent.autoRepath = true;
             PathEndPosition = transform.position;
+            lastOnMesh = transform.position;
         }
 
         public bool TrySetDestination(Vector3 target)
@@ -179,6 +205,7 @@ namespace SandGuard.Enemy
             restrained = false; displacedUntil = 0f; SpeedMultiplier = 1f; // 풀 재사용: 상태이상은 새 개체로 넘기지 않는다
             if (agent.isOnNavMesh) agent.isStopped = false;
             HasDestination = false; PathState = MovementPathState.None; destination = position; PathEndPosition = position;
+            lastOnMesh = position; // 풀 재사용: 지난 생의 자리로 되돌아가지 않게 한다
         }
 
         void Apply(NavMeshPathStatus status, Vector3[] corners)

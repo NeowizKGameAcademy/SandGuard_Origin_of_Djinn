@@ -124,12 +124,16 @@ namespace SandGuard.UI.HUD
 
         void RefreshCore()
         {
-            if (core == null) return;
+            if (core == null) { hud.CoreStatus.HideAttackWarning(); return; }
             float current, max;
             if (core is CoreReceiver receiver) { current = receiver.Current; max = receiver.maximum; }
             else if (core is EnemyTestTarget target) { current = target.CurrentHealth; max = target.maxHealth; }
             else if (core is IHealth reader) { current = reader.CurrentHealth; max = reader.MaxHealth; }
             else return;
+            // Initial binding, healing and capacity changes must not look like an attack.
+            if (current <= 0f) hud.CoreStatus.HideAttackWarning();
+            else if (!float.IsNaN(coreValue) && current < coreValue && max == coreMax)
+                hud.CoreStatus.ShowAttackWarning();
             if (current != coreValue || max != coreMax) hud.CoreStatus.SetStability(coreValue = current, coreMax = max);
         }
 

@@ -36,7 +36,7 @@ namespace SandGuard.Player
             Vector3 center = transform.position + Vector3.up * bodyHeight;
             if (launchPrefab != null)
             {
-                launch = PrefabPool.Spawn(launchPrefab, center - direction * .3f, rotation);
+                launch = PrefabPool.Spawn(launchPrefab, center, rotation);
                 PrefabPool.Release(launch, .6f);
             }
             if (airflowPrefab != null) airflow = PrefabPool.Spawn(airflowPrefab, center, rotation);

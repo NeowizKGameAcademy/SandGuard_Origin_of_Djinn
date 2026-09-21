@@ -11,6 +11,7 @@ namespace SandGuard.Enemy.Editor
         {
             ChiefBombSkillSetup.Ensure(root);
             var shield = root.GetComponent<EnemyShield>() ?? root.AddComponent<EnemyShield>();
+            shield.maxHealth = 100f;
             shield.enabled = false;
             var skill = root.GetComponent<ChiefGoldenShieldSkill>() ?? root.AddComponent<ChiefGoldenShieldSkill>();
             skill.shield = shield;

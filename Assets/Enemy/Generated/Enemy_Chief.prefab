@@ -2364,6 +2364,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 754703791412322535, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+      propertyPath: displacementMultiplier
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2233741487118629176, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+      propertyPath: damage
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 1342337955418082952, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+      propertyPath: maxHealth
+      value: 250
+      objectReference: {fileID: 0}
     - target: {fileID: 658155196757490767, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
       propertyPath: m_Name
       value: Enemy_Chief
@@ -2538,7 +2550,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: SandGuard.Enemy.Runtime::SandGuard.Enemy.EnemyShield
   frontHalfAngle: 60
   frontMultiplier: 0
-  maxHealth: 30
+  maxHealth: 100
   shieldVisual: {fileID: 0}
   debrisLifetime: 6
   guardVfx: {fileID: 0}
@@ -2559,11 +2571,10 @@ MonoBehaviour:
   vfxPrefab: {fileID: 5241151560336676957, guid: 0c9aa1c929206cd43b101304158273d8, type: 3}
   localPosition: {x: 0, y: 1.15, z: 0.65}
   summonDuration: 0.35
-  activeDuration: 20
+  activeDuration: 600
   maxUses: 1
   healthThreshold: 0.7
   cooldown: 8
-  castRange: 8
 --- !u!114 &6845969559114640935
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2581,7 +2592,7 @@ MonoBehaviour:
   cooldown: 6
   flightTime: 1
   fuseAfterLanding: 0.35
-  damage: 20
+  damage: 50
   blastRadius: 2.5
   towerDisableDuration: 5
   damageMask:

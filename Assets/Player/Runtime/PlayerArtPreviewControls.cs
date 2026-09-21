@@ -35,7 +35,7 @@ namespace SandGuard.Player
         {
             var casting = motor != null ? motor.GetComponent<PlayerVisuals>()?.Spellcasting : null;
             string style = casting != null ? casting.castStyle.ToString() : "None";
-            GUI.Box(new Rect(12, Screen.height - 100, 680, 88), "Character preview: WASD + mouse | V: walk/run\nG: lamp light | H: mana absorption preview | Esc: release cursor\nB: casting style (" + style + ") | K: test hit (10 damage)");
+            GUI.Box(new Rect(12, Screen.height - 100, 680, 88), "Character preview: WASD + mouse | V: walk/run\nG: lamp light | Esc: release cursor\nB: casting style (" + style + ") | K: test hit (10 damage)");
         }
     }
 }

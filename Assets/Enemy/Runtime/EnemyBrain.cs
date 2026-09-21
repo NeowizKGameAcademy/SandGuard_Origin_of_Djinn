@@ -127,6 +127,7 @@ namespace SandGuard.Enemy
             { attack?.Cancel(); selector?.ClearTarget(); State = EnemyBrainState.Idle; return; }
             if (!IsSteered && objective == null && EnemyObjective.Current != null) objective = EnemyObjective.Current.transform;
             motor?.Refresh();
+            if (shieldSkill != null && shieldSkill.TryUse()) return;
             TargetSelection selection = selector != null ? selector.SelectTarget() : default;
             if (selection.HasTarget) { Engage(selection.Target); return; }
             attack?.Cancel();
@@ -142,7 +143,6 @@ namespace SandGuard.Enemy
         void Engage(ICombatTarget target)
         {
             State = EnemyBrainState.Engaging;
-            if (shieldSkill != null && shieldSkill.TryUse(target)) return;
             if (bombSkill != null && bombSkill.TryUse(target)) return;
             if (attack != null && attack.IsInRange(target)) { motor?.Stop(); attack.TryAttack(target); return; }
             if (attack != null && attack.IsAttacking) return; // 휘두르는 중에는 움직이지 않는다.

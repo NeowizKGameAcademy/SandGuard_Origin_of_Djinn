@@ -177,6 +177,10 @@ namespace SandGuard.Audio.Editor
                 Listen(visuals?.onHardLanded, OneShot(holder, "Player_HardLand"));
                 Listen(respawner?.onRespawned, OneShot(holder, "Player_Revive"));
 
+                // 마나 회복(코어·오벨리스크 근처 틱)은 UnityEvent가 없어 지갑을 직접 듣는다
+                var manaGain = holder.GetComponent<SfxManaGain>() ?? holder.AddComponent<SfxManaGain>();
+                if (manaGain.Cue == null) manaGain.Cue = SfxCueBuilder.Load("Player_ManaCharge_Complete");
+
                 // 음성(기합·신음)은 같은 이벤트에 한 번 더 꽂는다. 확률은 큐의 Chance가 정한다
                 var caster = root.GetComponentInChildren<PlayerSkillCaster>(true);
                 var castVoice = OneShot(holder, "Player_Voice_Cast");
