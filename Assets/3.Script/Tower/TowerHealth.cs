@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace Tower
 {
-    [DisallowMultipleComponent]
     [RequireComponent(typeof(TowerStatus))]
     public class TowerHealth : MonoBehaviour, ICombatTarget, IDamageable, ILifeState, IHealth, IDamageEvents
     {
@@ -52,26 +51,32 @@ namespace Tower
 
         private void Awake()
         {
-            if(status == null)
+            if (status == null)
                 TryGetComponent(out status);
 
-            if (towerRoot == null)
-            {
-                var hitBox = GetComponentInParent<TowerHitBox>();
-                var root = transform;
-
-                if (hitBox != null && hitBox.transform != transform)
-                {
-                    while (root.parent != hitBox.transform)
-                        root = root.parent;
-                }
-
-                towerRoot = root.gameObject;
-            }
+            towerRoot = ResolveTowerRoot();
 
             bodies = towerRoot.GetComponentsInChildren<Collider>(true);
+
             HP = MaxHealth;
             state = LifeState.Alive;
+        }
+
+        private GameObject ResolveTowerRoot()
+        {
+            var hitBox = GetComponentInParent<TowerHitBox>();
+            if (hitBox != null && hitBox.transform != transform)
+            {
+                var root = transform;
+                while (root.parent != null && root.parent != hitBox.transform)
+                    root = root.parent;
+
+                if (root.parent == hitBox.transform)
+                    return root.gameObject;
+            }
+
+            // TowerHitBox 없이 단독으로 쓰는 프리팹은 명시적 본체를 존중한다.
+            return towerRoot != null ? towerRoot : gameObject;
         }
 
         public event Action<LifeStateChangedInfo> StateChanged;

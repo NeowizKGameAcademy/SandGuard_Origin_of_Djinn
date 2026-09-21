@@ -8,7 +8,7 @@ public class TowerHPBar : MonoBehaviour
 
     [SerializeField] private Vector3 offset = new Vector3(0, 2.5f, 0);
 
-    private TowerStatus target;
+    private LegacyTowerStatus target;
     private Camera mainCamera;
 
     private void Awake()
@@ -22,7 +22,7 @@ public class TowerHPBar : MonoBehaviour
             canvasGroup = GetComponent<CanvasGroup>();
     }
 
-    public void SetTarget(TowerStatus tower)
+    public void SetTarget(LegacyTowerStatus tower)
     {
         target = tower;
 

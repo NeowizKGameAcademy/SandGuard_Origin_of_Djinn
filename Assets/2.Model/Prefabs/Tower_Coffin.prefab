@@ -76,7 +76,7 @@ GameObject:
   - component: {fileID: 7127328386223887722}
   - component: {fileID: 9010609735619874097}
   - component: {fileID: 6761823458433665481}
-  - component: {fileID: 299759571966940431}
+  - component: {fileID: 3810709367462364472}
   m_Layer: 0
   m_Name: Mesh
   m_TagString: Untagged
@@ -155,7 +155,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &299759571966940431
+--- !u!114 &3810709367462364472
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -164,10 +164,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 4985858091748978583}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f076b6f6d31ff644e9a3afdb04e79f4b, type: 3}
+  m_Script: {fileID: 11500000, guid: de2d534758ac2a84e883e573c475e67e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TowerOnOff
-  detectRange: {fileID: 5403715890460991991}
+  m_EditorClassIdentifier: Assembly-CSharp::Tower.TowerEmit
+  detector: {fileID: 8616122271569774879}
   meshRenderer: {fileID: 6761823458433665481}
   materials:
   - {fileID: 2100000, guid: a9ae31e869215d645840712457e4841a, type: 2}
@@ -184,7 +184,7 @@ GameObject:
   - component: {fileID: 7601906011569512971}
   - component: {fileID: 2882367876516440245}
   - component: {fileID: 9045109304775121660}
-  - component: {fileID: 8126747482013259947}
+  - component: {fileID: 6876522435976213744}
   m_Layer: 0
   m_Name: Range Circle
   m_TagString: Untagged
@@ -263,7 +263,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &8126747482013259947
+--- !u!114 &6876522435976213744
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -272,14 +272,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 5708760561090822712}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3f15225beef3f124bbe5007befebcf34, type: 3}
+  m_Script: {fileID: 11500000, guid: ee114b24ad5924b46a252299fde1373e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ShowRange
-  Player: {fileID: 0}
-  detectRange: {fileID: 5403715890460991991}
-  renderer: {fileID: 9045109304775121660}
-  ShowDistance: 7.5
-  FadeSpeed: 10
+  m_EditorClassIdentifier: Assembly-CSharp::Tower.RangeVisualizer
+  detector: {fileID: 8616122271569774879}
+  rangeRenderer: {fileID: 9045109304775121660}
+  player: {fileID: 0}
+  visualType: 0
+  showDistance: 7.5
+  fadeSpeed: 10
 --- !u!1 &6975441834006194836
 GameObject:
   m_ObjectHideFlags: 0
@@ -401,8 +402,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2412935827806608620}
-  - component: {fileID: 6021023803101005073}
-  - component: {fileID: 5403715890460991991}
+  - component: {fileID: 6848232614247635211}
+  - component: {fileID: 4694803086763727897}
+  - component: {fileID: 8616122271569774879}
   - component: {fileID: 4786476516919969561}
   m_Layer: 0
   m_Name: Tower (Coffin)
@@ -429,7 +431,7 @@ Transform:
   - {fileID: 1787765321126928813}
   m_Father: {fileID: 8788206534501324332}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6021023803101005073
+--- !u!114 &6848232614247635211
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -438,20 +440,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 7654825979927693885}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dcdd94ce2f020834c894010bf3855ed3, type: 3}
+  m_Script: {fileID: 11500000, guid: 64ef1fb8b3a3fd8448b83849e091353d, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TowerStatus
+  m_EditorClassIdentifier: Assembly-CSharp::Tower.TowerStatus
+  Tower: 2
   MaxHP: 200
-  CurrentHP: 0
   DetectRange: 20
-  TickDamage: 10
-  TickInterval: 1
-  SlowRatio: 0.3
-  ManaGain: 10
-  GainTick: 1
-  CreatureNum: 7
-  SummonDistance: 0.3
---- !u!114 &5403715890460991991
+  cobraConfig:
+    TickDamage: 10
+    TickInterval: 0.5
+  obeliskConfig:
+    SlowRatio: 0.3
+    TickInterval: 1
+  coffinConfig:
+    Num: 7
+    Distance: 0.3
+  anubisConfig:
+    SpawnPoint: {fileID: 0}
+--- !u!114 &4694803086763727897
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -460,11 +466,30 @@ MonoBehaviour:
   m_GameObject: {fileID: 7654825979927693885}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d84d375c5a312545b715be04b98d296, type: 3}
+  m_Script: {fileID: 11500000, guid: 2aff2300e2cada54b9f6181429b5aecd, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DetectRange
-  Status: {fileID: 0}
-  Range: 20
+  m_EditorClassIdentifier: Assembly-CSharp::Tower.TowerHealth
+  status: {fileID: 6848232614247635211}
+  HP: 0
+  towerRoot: {fileID: 0}
+  removeDelay: 0.5
+--- !u!114 &8616122271569774879
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7654825979927693885}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0026018aee309d14f857286a3ae8aa56, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Tower.TargetDetector
+  status: {fileID: 6848232614247635211}
+  detectionRange: 25
+  targetMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!114 &4786476516919969561
 MonoBehaviour:
   m_ObjectHideFlags: 0

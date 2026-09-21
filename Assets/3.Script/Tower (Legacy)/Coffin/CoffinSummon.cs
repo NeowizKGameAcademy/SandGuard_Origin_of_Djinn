@@ -5,7 +5,7 @@ public class CoffinSummon : MonoBehaviour
 {
     [Header("Components")]
     [SerializeField] private DetectRange Range;
-    [SerializeField] private TowerStatus Status;
+    [SerializeField] private LegacyTowerStatus Status;
     [SerializeField] private ObjectPooling CreaturePool;
     [SerializeField] private float RespawnCoolDown = 5f;
 

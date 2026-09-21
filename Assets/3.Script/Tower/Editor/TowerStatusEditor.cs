@@ -2,7 +2,7 @@ using UnityEditor;
 using UnityEngine;
 using Tower;
 
-[CustomEditor(typeof(Tower.TowerStatus))]
+[CustomEditor(typeof(TowerStatus))]
 public class TowerStatusEditor : Editor
 {
     private SerializedProperty towerType;

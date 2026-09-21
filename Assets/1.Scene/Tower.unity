@@ -313,6 +313,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5618390394069938801, guid: ae2c5109b509e1d4da161fc871ac6b88, type: 3}
+      propertyPath: maxHealth
+      value: 3000
+      objectReference: {fileID: 0}
     - target: {fileID: 6231369605046583478, guid: ae2c5109b509e1d4da161fc871ac6b88, type: 3}
       propertyPath: m_Name
       value: Enemy_Assassin
@@ -623,6 +627,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 827239759}
     m_Modifications:
+    - target: {fileID: 4713017677532141849, guid: 14d3dfb518ce1754090d6396734ed7ad, type: 3}
+      propertyPath: MaxHP
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 4713017677532141849, guid: 14d3dfb518ce1754090d6396734ed7ad, type: 3}
+      propertyPath: Tower
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4802331615216252121, guid: 14d3dfb518ce1754090d6396734ed7ad, type: 3}
       propertyPath: m_Name
       value: Tower_Cobra
@@ -670,10 +682,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 2280082227556136165, guid: 14d3dfb518ce1754090d6396734ed7ad, type: 3}
-      insertIndex: 3
-      addedObject: {fileID: 1324428340}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 14d3dfb518ce1754090d6396734ed7ad, type: 3}
 --- !u!1 &727414763
 GameObject:
@@ -928,11 +937,6 @@ Transform:
   - {fileID: 1293378189}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &827239756 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5524017310559581631, guid: 2be48436742efe84f80c0aea2da12832, type: 3}
-  m_PrefabInstance: {fileID: 417218949}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &827239759 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 696931632667872335, guid: 2be48436742efe84f80c0aea2da12832, type: 3}
@@ -1285,38 +1289,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 737630548}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1324428333 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2280082227556136165, guid: 14d3dfb518ce1754090d6396734ed7ad, type: 3}
-  m_PrefabInstance: {fileID: 655234313}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1324428335 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4713017677532141849, guid: 14d3dfb518ce1754090d6396734ed7ad, type: 3}
-  m_PrefabInstance: {fileID: 655234313}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1324428333}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64ef1fb8b3a3fd8448b83849e091353d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Tower.TowerStatus
---- !u!114 &1324428340
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1324428333}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2aff2300e2cada54b9f6181429b5aecd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Tower.TowerHealth
-  status: {fileID: 1324428335}
-  HP: 0
-  towerRoot: {fileID: 827239756}
-  removeDelay: 0.5
 --- !u!4 &1477623126 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 696931632667872335, guid: 2be48436742efe84f80c0aea2da12832, type: 3}

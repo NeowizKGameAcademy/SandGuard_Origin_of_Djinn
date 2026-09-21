@@ -12,7 +12,7 @@ public class TowerHPBarManager : MonoBehaviour
 
     private Queue<TowerHPBar> pool = new Queue<TowerHPBar>();
 
-    private Dictionary<TowerStatus, TowerHPBar> activeHPBars = new Dictionary<TowerStatus, TowerHPBar>();
+    private Dictionary<LegacyTowerStatus, TowerHPBar> activeHPBars = new Dictionary<LegacyTowerStatus, TowerHPBar>();
 
     private void Awake()
     {
@@ -49,11 +49,11 @@ public class TowerHPBarManager : MonoBehaviour
 
     private void FindTowers()
     {
-        TowerStatus[] towers = FindObjectsByType<TowerStatus>(
+        LegacyTowerStatus[] towers = FindObjectsByType<LegacyTowerStatus>(
             FindObjectsSortMode.None
         );
 
-        foreach (TowerStatus tower in towers)
+        foreach (LegacyTowerStatus tower in towers)
         {
             // 이미 HPBar가 있으면 무시
             if (activeHPBars.ContainsKey(tower))
@@ -68,11 +68,11 @@ public class TowerHPBarManager : MonoBehaviour
 
     private void RemoveTowers()
     {
-        List<TowerStatus> removeTowers = new List<TowerStatus>();
+        List<LegacyTowerStatus> removeTowers = new List<LegacyTowerStatus>();
 
         foreach (var pair in activeHPBars)
         {
-            TowerStatus tower = pair.Key;
+            LegacyTowerStatus tower = pair.Key;
 
             if (tower == null || !tower.gameObject.activeInHierarchy)
             {
@@ -81,13 +81,13 @@ public class TowerHPBarManager : MonoBehaviour
             }
         }
 
-        foreach (TowerStatus tower in removeTowers)
+        foreach (LegacyTowerStatus tower in removeTowers)
         {
             activeHPBars.Remove(tower);
         }
     }
 
-    private TowerHPBar GetHPBar(TowerStatus tower)
+    private TowerHPBar GetHPBar(LegacyTowerStatus tower)
     {
         if (pool.Count == 0)
             return null;

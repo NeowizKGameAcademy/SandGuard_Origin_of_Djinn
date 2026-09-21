@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TowerStatus : MonoBehaviour
+public class LegacyTowerStatus : MonoBehaviour
 {
     [Header("Basic Status")]
     [SerializeField] private float MaxHP = 200f;

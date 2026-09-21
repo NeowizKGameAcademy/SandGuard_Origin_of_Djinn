@@ -44,7 +44,7 @@ public class RangeController : MonoBehaviour
     [SerializeField] private PlayerManaWallet Player;
 
     [Header("Status")]
-    [SerializeField] private TowerStatus Status;
+    [SerializeField] private LegacyTowerStatus Status;
 
     [Header("Detect")]
     [SerializeField] private DetectRange DetectRange;

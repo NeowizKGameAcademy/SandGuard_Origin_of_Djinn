@@ -79,6 +79,7 @@ GameObject:
   - component: {fileID: 559005201874876587}
   - component: {fileID: 5266200475067860405}
   - component: {fileID: 4713017677532141849}
+  - component: {fileID: 5554542459475700025}
   - component: {fileID: 1374678196038239994}
   - component: {fileID: 813335302849942234}
   - component: {fileID: 1335174029469829321}
@@ -160,6 +161,22 @@ MonoBehaviour:
     Distance: 0.3
   anubisConfig:
     SpawnPoint: {fileID: 0}
+--- !u!114 &5554542459475700025
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2280082227556136165}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2aff2300e2cada54b9f6181429b5aecd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Tower.TowerHealth
+  status: {fileID: 0}
+  HP: 0
+  towerRoot: {fileID: 0}
+  removeDelay: 0.5
 --- !u!114 &1374678196038239994
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14983,6 +15000,7 @@ GameObject:
   - component: {fileID: 3161632231354284991}
   - component: {fileID: 7266251282418455940}
   - component: {fileID: 2373411471983659850}
+  - component: {fileID: 1857075255952536254}
   m_Layer: 0
   m_Name: Damage Range
   m_TagString: Untagged
@@ -15082,6 +15100,24 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.0000001, y: 2, z: 2}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1857075255952536254
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5579938382294534682}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44ff97cce9c76b14e8763bc894aa8143, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Tower.FireDamageArea
+  status: {fileID: 4713017677532141849}
+  detector: {fileID: 1374678196038239994}
+  area: {fileID: 2373411471983659850}
+  targetMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!1 &5798453035665498066
 GameObject:
   m_ObjectHideFlags: 0

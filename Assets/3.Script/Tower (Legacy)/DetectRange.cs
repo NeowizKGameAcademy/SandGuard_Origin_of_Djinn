@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DetectRange : MonoBehaviour
 {
-    [SerializeField] private TowerStatus Status;
+    [SerializeField] private LegacyTowerStatus Status;
 
     [SerializeField] private float Range = 20f;
 
