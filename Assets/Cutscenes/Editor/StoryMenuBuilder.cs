@@ -15,6 +15,8 @@ namespace SandGuard.Cutscenes.Editor
         const string MainScenePath = "Assets/1.Scene/MainScene.unity";
         const string PrologueSceneName = "PrologueCutscene";
         const string PrologueImagePath = "Assets/Cutscenes/Art/Prologue7.png";
+        const string IntroImagePath = "Assets/Cutscenes/Art/Intro7.png";
+        const string EndingImagePath = "Assets/Cutscenes/Art/Ending9.png";
         const string StoryButtonPath = "Assets/4.Sprite/UI/MainScene/Button_Story.png";
         const string RuntimeCursorPath = "Assets/4.Sprite/UI/MainScene/Cursor_Runtime.png";
 
@@ -55,12 +57,14 @@ namespace SandGuard.Cutscenes.Editor
 
             Button close = CreateSimpleButton("Close", frame.transform, font, "×", new Vector2(695f, 362f), new Vector2(58f, 58f));
             Sprite prologue = AssetDatabase.LoadAssetAtPath<Sprite>(PrologueImagePath);
+            Sprite intro = AssetDatabase.LoadAssetAtPath<Sprite>(IntroImagePath);
+            Sprite ending = AssetDatabase.LoadAssetAtPath<Sprite>(EndingImagePath);
             Button prologueButton = CreateCard(frame.transform, font, "PrologueCard", new Vector2(-455f, -30f), prologue,
                 new Color(1f, 1f, 1f), "01", "PROLOGUE", "모래가 가리킨 곳", out TMP_Text prologueState);
-            Button introButton = CreateCard(frame.transform, font, "IntroCard", new Vector2(0f, -30f), null,
-                new Color(0.9f, 0.9f, 0.9f), "02", "INTRO", "준비 중인 이야기", out TMP_Text introState);
-            Button endingButton = CreateCard(frame.transform, font, "EndingCard", new Vector2(455f, -30f), null,
-                Color.white, "03", "ENDING", "준비 중인 이야기", out TMP_Text endingState);
+            Button introButton = CreateCard(frame.transform, font, "IntroCard", new Vector2(0f, -30f), intro,
+                new Color(0.9f, 0.9f, 0.9f), "02", "INTRO", "깨어난 마석", out TMP_Text introState);
+            Button endingButton = CreateCard(frame.transform, font, "EndingCard", new Vector2(455f, -30f), ending,
+                Color.white, "03", "ENDING", "첫 번째 지니", out TMP_Text endingState);
 
             var controller = system.GetComponent<StoryMenuController>();
             var so = new SerializedObject(controller);
@@ -70,8 +74,8 @@ namespace SandGuard.Cutscenes.Editor
             var entries = so.FindProperty("stories");
             entries.arraySize = 3;
             SetEntry(entries.GetArrayElementAtIndex(0), "Prologue", PrologueSceneName, true, prologueButton, prologueState);
-            SetEntry(entries.GetArrayElementAtIndex(1), "Intro", "IntroCutscene", false, introButton, introState);
-            SetEntry(entries.GetArrayElementAtIndex(2), "Ending", "EndingCutscene", false, endingButton, endingState);
+            SetEntry(entries.GetArrayElementAtIndex(1), "Intro", "IntroCutscene", true, introButton, introState);
+            SetEntry(entries.GetArrayElementAtIndex(2), "Ending", "EndingCutscene", true, endingButton, endingState);
             so.ApplyModifiedPropertiesWithoutUndo();
 
             popup.SetActive(false);
@@ -116,6 +120,7 @@ namespace SandGuard.Cutscenes.Editor
             innerRect.offsetMin = new Vector2(5f, 5f); innerRect.offsetMax = new Vector2(-5f, -5f);
             var art = inner.GetComponent<SlantedStoryCardGraphic>();
             art.Sprite = sprite;
+            art.PreserveAspectFill = true;
             art.color = sprite ? tint : new Color(tint.r, tint.g, tint.b, 1f);
             outer.GetComponent<Button>().targetGraphic = art;
 
