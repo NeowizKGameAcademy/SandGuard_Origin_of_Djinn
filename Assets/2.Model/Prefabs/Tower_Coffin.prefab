@@ -578,7 +578,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tower.SummonManager
   status: {fileID: 6848232614247635211}
-  Creature: {fileID: 5238717034265097383, guid: 68925d585fec78941afcb0e6c0d87484, type: 3}
+  CreaturePool: {fileID: 4059667861324291647}
   spawnPoints: []
   summonedRoot: {fileID: 0}
 --- !u!1 &9094358653251219660
@@ -625,5 +625,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed97c3579396f85419a1a268c54b9773, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjectPooling
-  Pool_Prefab: {fileID: 5238717034265097383, guid: 68925d585fec78941afcb0e6c0d87484, type: 3}
-  Pool_Count: 10
+  Pool_Prefab: {fileID: 3243937516737615563, guid: 3f97c378c34d4514db619b4bdfbd89fb, type: 3}
+  Pool_Count: 20
