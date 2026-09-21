@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public sealed class HowToPlayPopup : MonoBehaviour
@@ -27,9 +28,11 @@ public sealed class HowToPlayPopup : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape)) Close();
-        else if (Input.GetKeyDown(KeyCode.LeftArrow)) PreviousPage();
-        else if (Input.GetKeyDown(KeyCode.RightArrow)) NextPage();
+        var keyboard = Keyboard.current;
+        if (keyboard == null) return;
+        if (keyboard.escapeKey.wasPressedThisFrame) Close();
+        else if (keyboard.leftArrowKey.wasPressedThisFrame) PreviousPage();
+        else if (keyboard.rightArrowKey.wasPressedThisFrame) NextPage();
     }
 
     public void Open()

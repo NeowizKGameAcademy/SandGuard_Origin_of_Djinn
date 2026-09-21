@@ -33,6 +33,14 @@ namespace SandGuard.Cutscenes
                 enabled = false;
                 return;
             }
+
+            bool replayRequested = StoryProgress.ConsumeReplayRequest(sequence.storyId);
+            if (sequence.playOnceAutomatically && StoryProgress.IsSeen(sequence.storyId) && !replayRequested)
+            {
+                visibleGroup.alpha = 0f;
+                StartCoroutine(LoadNextScene());
+                return;
+            }
             if (nextButton) nextButton.onClick.AddListener(Next);
             if (skipButton) skipButton.onClick.AddListener(Skip);
             ShowCut(0);
@@ -76,6 +84,7 @@ namespace SandGuard.Cutscenes
             if (index + 1 >= sequence.cuts.Length)
             {
                 finished = true;
+                StoryProgress.MarkSeen(sequence.storyId);
                 yield return LoadNextScene();
                 yield break;
             }
@@ -87,6 +96,7 @@ namespace SandGuard.Cutscenes
         IEnumerator Finish()
         {
             yield return Fade(visibleGroup.alpha, 0f);
+            StoryProgress.MarkSeen(sequence.storyId);
             yield return LoadNextScene();
         }
 

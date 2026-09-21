@@ -64,25 +64,31 @@ namespace SandGuard.Cutscenes.Editor
             panel.preserveAspect = true;
             panel.raycastTarget = false;
 
-            var font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/9.Font/Pretendard-Bold SDF.asset");
-            if (!font) Debug.LogWarning("Prologue: Pretendard TMP 폰트를 찾지 못했습니다. 기본 TMP 폰트를 사용합니다.");
-            var title = Text("Cut Title", panel.transform, font, sequence.cuts[0].title, 36, new Color(1f, 0.82f, 0.48f));
+            var font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/9.Font/Cafe24Shiningstar-v2.0 SDF.asset");
+            var cutsceneMaterial = AssetDatabase.LoadAssetAtPath<Material>("Assets/9.Font/Cafe24Shiningstar-v2.0 Cutscene Outline.mat");
+            if (!font) Debug.LogWarning("Prologue: Cafe24 Shiningstar TMP 폰트를 찾지 못했습니다. SandGuard/UI/Apply Cafe24 Shiningstar Font를 먼저 실행하세요.");
+            var title = Text("Cut Title", panel.transform, font, sequence.cuts[0].title, 44, new Color(1f, 0.82f, 0.48f));
             Box(title.rectTransform, new Vector2(0, 253), new Vector2(540, 56));
             title.alignment = TextAlignmentOptions.Center;
-            var body = Text("Story Text", panel.transform, font, sequence.cuts[0].body, 27, new Color(0.96f, 0.89f, 0.74f));
+            var body = Text("Story Text", panel.transform, font, sequence.cuts[0].body, 31, new Color(0.96f, 0.89f, 0.74f));
             Box(body.rectTransform, new Vector2(0, 15), new Vector2(540, 428));
             body.alignment = TextAlignmentOptions.TopLeft;
             body.textWrappingMode = TextWrappingModes.Normal;
             body.enableAutoSizing = true;
-            body.fontSizeMin = 21;
-            body.fontSizeMax = 27;
-            body.lineSpacing = 7;
-            var progress = Text("Cut Number", panel.transform, font, "01 / 07", 22, new Color(0.47f, 0.75f, 0.97f));
+            body.fontSizeMin = 24;
+            body.fontSizeMax = 31;
+            body.lineSpacing = 6;
+            var progress = Text("Cut Number", panel.transform, font, "01 / 07", 26, new Color(0.47f, 0.75f, 0.97f));
             Box(progress.rectTransform, new Vector2(0, -254), new Vector2(140, 35));
             progress.alignment = TextAlignmentOptions.Center;
 
-            var next = Button("Next Button", visual, font, "다음  ▶", new Vector2(0.9f, 0.055f), new Vector2(170, 50));
-            var skip = Button("Skip Button", visual, font, "건너뛰기", new Vector2(0.93f, 0.95f), new Vector2(150, 48));
+            foreach (var text in new TMP_Text[] { title, body, progress })
+            {
+                text.fontStyle |= FontStyles.Bold;
+                if (cutsceneMaterial) text.fontSharedMaterial = cutsceneMaterial;
+            }
+            var next = Button("Next Button", visual, font, "다음  ▶", new Vector2(0.9f, 0.055f), new Vector2(170, 50), cutsceneMaterial);
+            var skip = Button("Skip Button", visual, font, "건너뛰기", new Vector2(0.93f, 0.95f), new Vector2(150, 48), cutsceneMaterial);
 
             var managerObject = new GameObject("CutSceneManager", typeof(CutSceneManager));
             var manager = managerObject.GetComponent<CutSceneManager>();
@@ -209,12 +215,14 @@ namespace SandGuard.Cutscenes.Editor
             text.font = font; text.text = content; text.fontSize = size; text.color = color;
             text.raycastTarget = false; return text;
         }
-        static Button Button(string name, RectTransform parent, TMP_FontAsset font, string caption, Vector2 anchor, Vector2 size)
+        static Button Button(string name, RectTransform parent, TMP_FontAsset font, string caption, Vector2 anchor, Vector2 size, Material material)
         {
             var rect = Rect(name, parent); Place(rect, anchor, size);
             var image = rect.gameObject.AddComponent<Image>(); image.color = new Color(.035f, .025f, .02f, .85f);
             var button = rect.gameObject.AddComponent<Button>();
-            var label = Text("Label", rect, font, caption, 25, new Color(1f, .82f, .48f));
+            var label = Text("Label", rect, font, caption, 28, new Color(1f, .82f, .48f));
+            label.fontStyle |= FontStyles.Bold;
+            if (material) label.fontSharedMaterial = material;
             Stretch(label.rectTransform); label.alignment = TextAlignmentOptions.Center;
             return button;
         }
