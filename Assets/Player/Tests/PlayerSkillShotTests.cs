@@ -204,7 +204,7 @@ namespace SandGuard.Player.Tests
             Assert.AreEqual(2, first.HitCount, "Beam + its own burst.");
             Assert.AreEqual(2, second.HitCount, "Beam + its own burst.");
             Assert.AreEqual(1, beside.HitCount, "Only the second target's burst reaches the bystander.");
-            Assert.AreEqual(attack.BurstDamage, 50f - beside.CurrentHealth, 0.001f);
+            Assert.AreEqual(attack.PiercedBurstDamage, 50f - beside.CurrentHealth, 0.001f);
         }
 
         [UnityTest] public IEnumerator PlainPierceBeamNeverBurstsEvenWithBurstUnlocked()

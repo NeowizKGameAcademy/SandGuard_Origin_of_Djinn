@@ -85,6 +85,8 @@ namespace SandGuard.Enemy
             if (!health.IsAlive || (brain && (!brain.enabled || !brain.AIEnabled)) || (motor && motor.IsDetached))
             { Cancel(); return; }
             if (State == Phase.Ready) return;
+            // 내구도가 다한 방패는 남은 시간과 상관없이 곧바로 걷는다. 껍데기만 떠 있으면 막히는지 아닌지 알 수 없다.
+            if (State == Phase.Active && shield.IsBroken) { BeginDismiss(); return; }
             Remaining = Mathf.Max(0f, Remaining - Time.deltaTime);
             if (Remaining > 0f) return;
             switch (State)
@@ -92,11 +94,16 @@ namespace SandGuard.Enemy
                 case Phase.Summoning:
                     shield.enabled = true; State = Phase.Active; Remaining = activeDuration; break;
                 case Phase.Active:
-                    shield.enabled = false; visual.Dismiss(); State = Phase.Dismissing; Remaining = visual.dismissTime; break;
+                    BeginDismiss(); break;
                 case Phase.Dismissing:
                     visual.gameObject.SetActive(false); State = Phase.Cooldown; Remaining = cooldown; break;
                 case Phase.Cooldown: State = Phase.Ready; break;
             }
+        }
+        void BeginDismiss()
+        {
+            shield.enabled = false; visual.Dismiss();
+            State = Phase.Dismissing; Remaining = visual.dismissTime;
         }
         public void Cancel()
         {

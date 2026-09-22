@@ -131,6 +131,7 @@ namespace SandGuard.Facility
                 var facility = instance.GetComponent<FacilityInstance>();
                 if (facility == null) facility = instance.AddComponent<FacilityInstance>();
                 facility.Initialize(id, definition, request.SlotId);
+                id = facility.EntityId; // 남의 체력 컴포넌트는 자기 ID를 지키므로 그쪽에 맞춘다.
                 if (!registry.TryOccupy(request.SlotId, definition.id, id))
                 {
                     Destroy(instance);
@@ -139,16 +140,22 @@ namespace SandGuard.Facility
                 facilities[id] = facility;
                 anchor.Occupant = facility;
                 // 파괴되면 슬롯을 비워 다시 지을 수 있게 한다.
-                if (facility.Health != null)
+                if (facility.Life != null)
                 {
                     string slotId = request.SlotId;
-                    facility.Health.Despawned += _ =>
+                    Guid facilityId = id;
+                    facility.Life.Despawned += _ =>
                     {
-                        registry.Release(slotId, id);
-                        facilities.Remove(id);
+                        registry.Release(slotId, facilityId);
+                        facilities.Remove(facilityId);
                         if (anchor != null && anchor.Occupant == facility) anchor.Occupant = null;
+                        // 남의 체력 컴포넌트는 자기 오브젝트만 끄고 받침 아래에 껍데기(사거리 원·판정 상자)를 남긴다.
+                        // 여기서 뿌리를 꺼 두면 시체 모양이 한 가지로 통일돼 RemoveBrokenFacilities가 다시 지을 때 치운다.
+                        if (facility != null && facility.gameObject.activeSelf) facility.gameObject.SetActive(false);
                     };
                 }
+                else Debug.LogError(definition.id + ": 체력 컴포넌트(IHealth+ILifeState)를 찾지 못해 파괴돼도 자리가 비지 않습니다. " +
+                    "SandGuard/Facility/Wire Catalog Towers For Combat 을 실행하세요.", instance);
                 if (reservation != null) reservation.TryCommit();
                 // "짠" 등장: 연막 → 드러남 + 펀치/플래시 + 완료 이펙트. 프리팹에 VfxPopIn이 없으면 붙이고 서비스의 완료 이펙트를 쓴다.
                 var popIn = instance.GetComponent<VfxPopIn>();
@@ -180,7 +187,8 @@ namespace SandGuard.Facility
             if (!TryGetFacility(facilityId, out var facility)) return Unavailable(ActionFailure.NotFound);
             var health = facility.Health;
             if (health == null) return Unavailable(ActionFailure.InvalidRequest);
-            if (!health.IsAlive) return Unavailable(ActionFailure.NotAlive);
+            if (facility.Life != null && facility.Life.State != LifeState.Alive) return Unavailable(ActionFailure.NotAlive);
+            if (facility.Repairable == null) return Unavailable(ActionFailure.Locked); // 수리를 지원하지 않는 시설
             if (IsPaused) return Unavailable(ActionFailure.Paused);
             if (Phase != GamePhase.Preparation && Phase != GamePhase.Combat) return Unavailable(ActionFailure.WrongPhase);
             float missing = health.MaxHealth - health.CurrentHealth;
@@ -198,7 +206,7 @@ namespace SandGuard.Facility
                 return ActionResult.Fail(ActionFailure.InsufficientMana);
             try
             {
-                float restored = facility.Health.Repair(quote.HealthToRestore);
+                float restored = facility.Repairable.Repair(quote.HealthToRestore);
                 if (restored <= 0f) return ActionResult.Fail(ActionFailure.NoChange);
                 if (reservation != null) reservation.TryCommit();
                 Repaired?.Invoke(facility, restored, quote.ManaAmount);

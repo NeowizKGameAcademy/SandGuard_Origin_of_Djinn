@@ -20,11 +20,14 @@ namespace DesertTower.LevelIntegration
         [SerializeField] string endingCutsceneScene = "EndingCutscene";
         [SerializeField] string retrySceneOverride;
         [SerializeField] bool previewOnly;
+        [SerializeField, Min(0f)] float overlayDelay = 1f;
 
         float previousTimeScale = 1f;
         CursorLockMode previousCursorLock;
         bool previousCursorVisible;
         bool showing;
+        bool resultPending;
+        float showAt;
         GameObject createdEventSystem;
 
         void Awake()
@@ -53,7 +56,27 @@ namespace DesertTower.LevelIntegration
 
         void Refresh()
         {
-            if (!director || showing || (director.State != RunState.Won && director.State != RunState.Lost)) return;
+            if (previewOnly || showing) return;
+            if (!director || (director.State != RunState.Won && director.State != RunState.Lost))
+            {
+                resultPending = false;
+                return;
+            }
+            if (resultPending) return;
+            resultPending = true;
+            showAt = Time.unscaledTime + Mathf.Max(0f, overlayDelay);
+        }
+
+        void Update()
+        {
+            if (!resultPending || Time.unscaledTime < showAt) return;
+            resultPending = false;
+            if (previewOnly || showing || !director || (director.State != RunState.Won && director.State != RunState.Lost)) return;
+            ShowResult();
+        }
+
+        void ShowResult()
+        {
             bool won = director.State == RunState.Won;
             if (won && PlayerPrefs.GetInt("SandGuard.Story.Seen.Ending", 0) != 1)
             {

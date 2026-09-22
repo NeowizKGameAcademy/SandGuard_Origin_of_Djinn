@@ -16,6 +16,8 @@ namespace SandGuard.Enemy
         [Min(0f), Tooltip("타워 정지 요청 시간. 실제 정지와 VFX는 타워 시스템에서 처리한다. 0이면 요청하지 않는다.")]
         public float towerDisableDuration = 5f;
         public LayerMask damageMask = ~0;
+        [Tooltip("이 종류의 타워에만 던진다(시설의 DefinitionId). 예: tower.cobra. 비우면 모든 적대 타워에 던진다")]
+        public string targetFacilityId = "";
         [Min(0), Tooltip("한 생애에 던질 수 있는 횟수. 0이면 제한 없이 쿨다운마다 다시 던진다")]
         public int maxUses = 1;
         public Vector3 handOffset = new Vector3(0f, -.05f, .05f);
@@ -72,7 +74,13 @@ namespace SandGuard.Enemy
             return true;
         }
         bool IsHostileTower(ICombatTarget candidate) =>
-            candidate != null && candidate.Kind == CombatTargetKind.Tower && candidate.IsTargetable && candidate.FactionId != health.FactionId;
+            candidate != null && candidate.Kind == CombatTargetKind.Tower && candidate.IsTargetable &&
+            candidate.FactionId != health.FactionId && IsWantedKind(candidate);
+
+        /// <summary>노리기로 한 종류의 타워인지. 종류를 밝히지 않는 타워는 지정이 있으면 건너뛴다.</summary>
+        bool IsWantedKind(ICombatTarget candidate) =>
+            string.IsNullOrEmpty(targetFacilityId) ||
+            (candidate is IFacilityKind facility && facility.DefinitionId == targetFacilityId);
         bool InRange(ICombatTarget candidate) => Vector3.Distance(health.HitPosition, candidate.HitPosition) <= range;
 
         /// <summary>사거리 안에서 가장 가까운 적대 타워. 한 번 쓰고 나면 불리지 않으므로 할당을 아끼지 않는다.</summary>

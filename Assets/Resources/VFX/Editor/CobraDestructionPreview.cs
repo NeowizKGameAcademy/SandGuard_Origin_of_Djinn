@@ -28,12 +28,13 @@ namespace DesertTower.VFX.Editor
                 var source = AssetDatabase.LoadAssetAtPath<GameObject>(CobraDestructionBuilder.ReferencePath);
                 var reference = (GameObject)PrefabUtility.InstantiatePrefab(source, scene);
                 foreach (var animator in reference.GetComponentsInChildren<Animator>()) animator.enabled = false;
-                var originalRenderers = reference.GetComponentsInChildren<Renderer>(true);
+                var body = ObeliskDestructionBuilder.FindHealth(reference);
+                var originalRenderers = body.GetComponentsInChildren<Renderer>(true);
                 var originalStates = new bool[originalRenderers.Length];
                 for (int i = 0; i < originalRenderers.Length; i++) originalStates[i] = originalRenderers[i].enabled;
-                var bounds = RequestedVfxBuilder.CobraBounds();
+                var bounds = BlueDestructionBursts.MeshBounds(body.gameObject);
                 var effect = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(CobraDestructionBuilder.PrefabPath), scene);
-                ctrl = effect.GetComponent<VfxCobraDestruction>(); ctrl.Restart(); ctrl.BindTarget(reference.transform);
+                ctrl = effect.GetComponent<VfxCobraDestruction>(); ctrl.Restart(); ctrl.BindTarget(body.transform);
                 if (ctrl.Pieces.Length < 4 || !ctrl.Proxy.activeSelf)
                     throw new Exception("Initial cobra proxy failed");
                 foreach (var renderer in effect.GetComponentsInChildren<Renderer>(true))
@@ -61,14 +62,14 @@ namespace DesertTower.VFX.Editor
                 var texture = new Texture2D(640, 480, TextureFormat.RGB24, false); owned.Add(texture);
                 var systems = effect.GetComponentsInChildren<ParticleSystem>(true);
                 foreach (var ps in systems) { ps.useAutoRandomSeed = false; ps.randomSeed = 125; ps.Simulate(0f, false, true, false); }
-                for (int frame = 0; frame < 60; frame++)
+                for (int frame = 0; frame < 100; frame++)
                 {
                     for (int i = 0; i < 2; i++)
                     {
                         ctrl.Tick(0.02f);
                         foreach (var ps in systems) ps.Simulate(0.02f, false, false, false);
                     }
-                    if (frame == 7 && (ctrl.Proxy.activeSelf || !ctrl.Pieces[0].gameObject.activeSelf))
+                    if (frame == 19 && (ctrl.Proxy.activeSelf || !ctrl.Pieces[0].gameObject.activeSelf))
                         throw new Exception("Burst transition failed");
                     camera.Render();
                     var active = RenderTexture.active;
@@ -85,7 +86,7 @@ namespace DesertTower.VFX.Editor
                 for (int i = 0; i < originalRenderers.Length; i++) if (originalRenderers[i].enabled != originalStates[i]) throw new Exception("Explicit reset failed");
                 ctrl.Restart();
                 if (!ctrl.Proxy.activeSelf || ctrl.Pieces[0].gameObject.activeSelf) throw new Exception("Replay reset failed");
-                File.WriteAllText(Path.Combine(folder, "validation.txt"), "PASS: Textured cobra mesh fragments, timed break, original visibility reset, settled debris, no automatic resurrection, supported materials, no UI. 60 Unity-rendered frames.");
+                File.WriteAllText(Path.Combine(folder, "validation.txt"), "PASS: Textured cobra mesh fragments, timed break, original visibility reset, settled debris, no automatic resurrection, supported materials, no UI. 100 Unity-rendered frames; blue chain detonations.");
             }
             finally
             {

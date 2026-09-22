@@ -49,15 +49,19 @@ namespace SandGuard.Player
         [Tooltip("빔이 꿰뚫은 적마다 재생 (VFX_ManaBolt_Impact)")] public GameObject beamHitPrefab;
         [Min(0.5f), Tooltip("관통 빔 사거리(m). 맵 크기(신전 외벽 76m, 스폰 90m)를 덮도록 100")] public float beamRange = 100f;
         [Min(0.01f), Tooltip("빔 판정 굵기(반지름)")] public float beamRadius = 0.2f;
-        [Header("스킬 — 모래 폭발 (SandBurst 스탯 = Q 해금. 시전은 PlayerSkillCaster, 폭발 관통탄도 이 수치를 쓴다)")]
+        [Header("스킬 — 모래 폭발 (SandBurst 스탯 = Q 해금. 시전은 PlayerSkillCaster)")]
         [Tooltip("VFX_Sand_Burst. 착탄점(바닥)에 놓는다")] public GameObject burstPrefab;
-        [Min(0.1f)] public float burstRadius = 3.75f;
+        [Min(0.1f)] public float burstRadius = 4.875f;
         [Min(0.1f), Tooltip("폭발 연출 프리팹이 만들어진 기준 반경(m). 실제 반경이 이보다 크거나 작으면 그 비율로 연출을 키우거나 줄여 판정과 맞춘다")] public float burstVfxRadius = 2.5f;
-        [Min(0f), Tooltip("폭발 피해 = 볼트 피해 × 이 값. 직접 맞은 적은 볼트 피해와 폭발 피해를 둘 다 받는다")] public float burstDamageRatio = 1f;
+        [Min(0f), Tooltip("폭발 피해 = 볼트 피해 × 이 값. 직접 맞은 적은 볼트 피해와 폭발 피해를 둘 다 받는다")] public float burstDamageRatio = 2f;
         [Min(0f), Tooltip("폭발마다 카메라 감쇠 흔들림 진폭(m)")] public float burstCameraKick = 0.08f;
         [Min(0.01f)] public float burstCameraKickDuration = 0.18f;
         [Min(0f), Tooltip("폭발 반경 안 적을 띄우는 수직 속도(m/s). 0이면 띄우지 않는다. 낙하·착지·복귀는 적의 EnemyFall이 맡는다")] public float burstLaunchUp = 5.5f;
-        [Min(0f), Tooltip("띄울 때 폭발 중심에서 바깥으로 날리는 수평 속도(m/s)")] public float burstLaunchOut = 5f;
+        [Min(0f), Tooltip("띄울 때 폭발 중심에서 바깥으로 날리는 수평 속도(m/s)")] public float burstLaunchOut = 10f;
+        [Header("스킬 — 폭발 관통탄 폭발")]
+        [Min(0.1f)] public float piercedBurstRadius = 3.75f;
+        [Min(0f)] public float piercedBurstDamageRatio = 1f;
+        [Min(0f)] public float piercedBurstLaunchOut = 5f;
         [Range(0f, 1f), Tooltip("관통탄이 꿰뚫은 자리에서 터지는 폭발의 띄우기·밀어내기 배율. 연출과 같이 절반(0.5). Q 폭발은 항상 1배")] public float piercedBurstLaunchScale = 0.5f;
         [Header("스킬 — 관통탄 충전 (PlayerPierceCharge가 charge 0~1로 TrySkillPierce를 부른다)")]
         [Min(1f), Tooltip("만충 시 빔 피해 배수")] public float chargedDamageMultiplier = 3.5f;
@@ -109,6 +113,8 @@ namespace SandGuard.Player
         public bool SandBurst => Flag(PlayerStat.SandBurst);
         public float BurstRadius => Stat(PlayerStat.BurstRadius, burstRadius);
         public float BurstDamage => Damage * Stat(PlayerStat.BurstDamageRatio, burstDamageRatio);
+        public float PiercedBurstRadius => Stat(PlayerStat.BurstRadius, piercedBurstRadius);
+        public float PiercedBurstDamage => Damage * Stat(PlayerStat.BurstDamageRatio, piercedBurstDamageRatio);
         public bool BurstPerPierce => Flag(PlayerStat.BurstPerPierce);
         public bool SandShackle => Flag(PlayerStat.SandShackle);
         public float ShackleRadius => Stat(PlayerStat.ShackleRadius, shackleRadius);
@@ -325,7 +331,7 @@ namespace SandGuard.Player
                 foreach (var point in enemyPoints)
                     PrefabPool.Release(PrefabPool.Spawn(beamHitPrefab, point, Quaternion.identity), skillVfxLifetime);
             BeamFired?.Invoke(LastBeam);
-            if (explodeOnPierce || BurstPerPierce) foreach (var point in enemyPoints) DetonateExplosion(point, 0.5f, piercedBurstLaunchScale);
+            if (explodeOnPierce || BurstPerPierce) foreach (var point in enemyPoints) DetonateExplosion(point, 0.5f, piercedBurstLaunchScale, pierced: true);
         }
 
         /// <summary>한 구간을 훑는다. 막히면 true와 막힌 점, 아니면 false와 구간 끝점을 돌려준다. 꿰뚫은 적은 seen·enemyPoints에 쌓인다.</summary>
@@ -369,11 +375,13 @@ namespace SandGuard.Player
         public void Detonate(Vector3 center)
             => DetonateExplosion(center, 1f);
 
-        void DetonateExplosion(Vector3 center, float visualScale, float launchScale = 1f)
+        void DetonateExplosion(Vector3 center, float visualScale, float launchScale = 1f, bool pierced = false)
         {
             if (this == null) return; // 볼트가 플레이어보다 오래 살 수 있다
             string faction = Faction;
-            float amount = BurstDamage, radius = BurstRadius;
+            float amount = pierced ? PiercedBurstDamage : BurstDamage;
+            float radius = pierced ? PiercedBurstRadius : BurstRadius;
+            float launchOut = pierced ? piercedBurstLaunchOut : burstLaunchOut;
             var seen = new HashSet<IDamageable>();
             var launched = new HashSet<IDisplaceable>();
             int launchCount = 0;
@@ -389,7 +397,7 @@ namespace SandGuard.Player
                     {
                         Vector3 outward = ((Component)displaceable).transform.position - center; outward.y = 0f;
                         outward = outward.sqrMagnitude > 0.0001f ? outward.normalized : Vector3.zero;
-                        if (displaceable.Launch((Vector3.up * burstLaunchUp + outward * burstLaunchOut) * launchScale)) launchCount++;
+                        if (displaceable.Launch((Vector3.up * burstLaunchUp + outward * launchOut) * launchScale)) launchCount++;
                     }
                 }
                 IDamageable receiver = target != null ? target.DamageReceiver : collider.GetComponentInParent<IDamageable>();

@@ -5,7 +5,10 @@ using UnityEngine;
 namespace Tower
 {
     [RequireComponent(typeof(TowerStatus))]
-    public class TowerHealth : MonoBehaviour, ICombatTarget, IDamageable, ILifeState, IHealth, IDamageEvents, IRepairable
+    // [통합 추가 2026-09-21, 2026-09-22 머지로 지워져 복구] IFacilityKind를 더했습니다. 기존 필드·메서드는 그대로입니다.
+    //   왜: 같은 오브젝트의 TowerHitBox가 이 값을 그대로 넘겨 씁니다. 없으면 TowerHitBox.cs가 컴파일되지 않고,
+    //       우두머리의 철거 폭탄처럼 "tower.cobra만 노린다"는 조건이 타워를 못 알아봅니다.
+    public class TowerHealth : MonoBehaviour, ICombatTarget, IFacilityKind, IDamageable, ILifeState, IHealth, IDamageEvents, IRepairable
     {
         [Header("Status")]
         [SerializeField] private TowerStatus status;
@@ -25,6 +28,10 @@ namespace Tower
         Guid ICombatTarget.EntityId => entityId;
         string ICombatTarget.FactionId => "Ally";
         CombatTargetKind ICombatTarget.Kind => CombatTargetKind.Tower;
+
+        // [통합 추가 2026-09-21, 2026-09-22 머지로 지워져 복구]
+        /// <summary>시설 카탈로그와 같은 규칙의 종류 ID다. 아래 사망 알림에 쓰는 값과 같다.</summary>
+        public string DefinitionId => status != null ? "tower." + status.towerType.ToString().ToLowerInvariant() : string.Empty;
 
         Vector3 ICombatTarget.HitPosition
         {

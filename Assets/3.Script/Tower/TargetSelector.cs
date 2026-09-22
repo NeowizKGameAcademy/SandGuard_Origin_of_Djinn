@@ -10,6 +10,7 @@ namespace Tower
 
         private ICombatTarget currentTarget;
         private float searchTimer;
+        private AnubisController minion;
 
         public ICombatTarget Target => isActiveAndEnabled && detector != null
             && detector.Contains(currentTarget) ? currentTarget : null;
@@ -67,7 +68,8 @@ namespace Tower
 
             foreach (var candidate in detector.Targets)
             {
-                if (!detector.IsValidTarget(candidate))
+                // if (!detector.IsValidTarget(candidate)) // 아누비스는 공격 불가능한 다른 층의 적을 선택하지 않는다.
+                if (!detector.IsValidTarget(candidate) || (minion != null && !minion.CanAttackHeight(candidate)))
                     continue;
 
                 // 기존 FindEnemy와 같이 대상 Transform까지의 거리로 선택한다.
@@ -88,6 +90,7 @@ namespace Tower
 
         private void ResolveDetector()
         {
+            if (minion == null) TryGetComponent(out minion);
             if (detector == null)
                 TryGetComponent(out detector);
 

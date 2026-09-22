@@ -25,6 +25,7 @@ namespace Tower
 
         public CoffinTowerConfig Config => status != null ? status.coffin : null;
         public bool IsInitialized => initialized && !dying;
+        public Animator Animator => animator;
 
         private void Awake()
         {

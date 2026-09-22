@@ -82,6 +82,78 @@ namespace SandGuard.Facility.Editor
         }
 
         /// <summary>
+        /// 카탈로그가 실제로 짓는 타워 프리팹에 정지 요청 수신기를 붙인다.
+        /// </summary>
+        /// <remarks>
+        /// 우두머리의 철거 폭탄은 <c>CombatEffectSignals</c>로 "이 타워를 N초 멈춰 달라"는 요청만 보내고,
+        /// 실제로 멈추는 일은 본체의 <c>TowerDisableReceiver</c>가 한다. 수신기가 없으면 요청이 그냥 사라진다.
+        /// 담당자 코드는 바꾸지 않고 컴포넌트만 더한다(패치 문서 참고).
+        /// 어느 오브젝트가 본체인지는 체력 컴포넌트(IHealth)가 붙은 곳으로 정한다. 타워 팀 프리팹은 루트가 아니라 자식이다.
+        /// </remarks>
+        [MenuItem("SandGuard/Facility/Wire Catalog Towers For Combat")]
+        public static void WireCatalogTowersForCombat()
+        {
+            var catalog = AssetDatabase.LoadAssetAtPath<FacilityCatalog>(CatalogPath);
+            if (catalog == null) { Debug.LogError("카탈로그가 없습니다: " + CatalogPath); return; }
+            var receiverType = System.Type.GetType("TowerDisableReceiver, Assembly-CSharp");
+            if (receiverType == null) { Debug.LogError("TowerDisableReceiver 타입을 찾지 못했습니다."); return; }
+            var disabledVfx = AssetDatabase.LoadAssetAtPath<GameObject>(DisabledLoopVfxPath);
+            int wired = 0, failed = 0;
+
+            foreach (var definition in catalog.facilities)
+            {
+                if (definition == null || definition.prefab == null)
+                { Debug.LogWarning((definition != null ? definition.id : "?") + ": 프리팹이 비어 있습니다."); failed++; continue; }
+                string path = AssetDatabase.GetAssetPath(definition.prefab);
+                bool ok = false;
+                Patch(path, root =>
+                {
+                    var health = root.GetComponentInChildren<IHealth>(true) as Component;
+                    if (health == null)
+                    {
+                        Debug.LogError(definition.id + ": 체력 컴포넌트(IHealth)가 없어 건설·파괴·수리가 동작하지 않습니다. " + path, definition.prefab);
+                        return;
+                    }
+                    // "짠" 등장 연출. 건설 서비스는 VfxPopIn이 없으면 붙여 주지만 연막(PoofPrefab)까지는 채우지 못한다.
+                    var popIn = root.GetComponent<VfxPopIn>(); if (popIn == null) popIn = root.AddComponent<VfxPopIn>();
+                    if (popIn.PoofPrefab == null) popIn.PoofPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(BuildPoofVfxPath);
+                    if (popIn.RevealPrefab == null) popIn.RevealPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(BuildCompleteVfxPath);
+                    popIn.PlayOnEnable = false; // 건설 서비스가 생성 직후에 직접 Play한다.
+
+                    var body = health.gameObject;
+                    EnsureHitVfx(body); // 프리팹이 바뀌며 피격 연출도 함께 빠졌다.
+                    var receiver = body.GetComponent(receiverType);
+                    if (receiver == null) receiver = body.AddComponent(receiverType);
+                    if (disabledVfx != null)
+                    {
+                        var serialized = new SerializedObject(receiver);
+                        var property = serialized.FindProperty("Disabled_Vfx");
+                        if (property != null && property.objectReferenceValue == null)
+                        { property.objectReferenceValue = disabledVfx; serialized.ApplyModifiedPropertiesWithoutUndo(); }
+                    }
+                    ok = true;
+                });
+                if (ok) wired++; else failed++;
+            }
+
+            // 받침의 "점유 시에만 켜는 오브젝트" 목록에서 끊긴 참조를 치운다.
+            // 담당자가 Tower Base.prefab에서 Range Circle을 없애 참조만 남았다(사거리 표시는 본체의 RangeVisualizer로 옮겨 갔다).
+            Patch(TowerBaseAnchorPath, root =>
+            {
+                var anchor = root.GetComponent<FacilityAnchor>();
+                if (anchor == null) return;
+                var kept = new List<GameObject>();
+                foreach (var value in anchor.onlyWhenOccupied) if (value != null) kept.Add(value);
+                if (kept.Count == anchor.onlyWhenOccupied.Length) return;
+                Debug.Log("TowerBaseAnchor: 끊긴 onlyWhenOccupied 참조 " + (anchor.onlyWhenOccupied.Length - kept.Count) + "개를 치웠습니다.");
+                anchor.onlyWhenOccupied = kept.ToArray();
+            });
+
+            AssetDatabase.SaveAssets();
+            Debug.Log("FACILITY_TOWERS_WIRED wired=" + wired + " failed=" + failed);
+        }
+
+        /// <summary>
         /// 본체: 체력(적의 공격 대상), 판정 상자, 정지 요청 수신. 코브라만 피격·파괴·정지 VFX(다른 타워용 VFX는 아직 없음).
         /// </summary>
         static void SetUpTeamTowerBody(GameObject root, Transform body)

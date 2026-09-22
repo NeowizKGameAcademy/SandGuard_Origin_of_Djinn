@@ -4,7 +4,11 @@ using UnityEngine;
 
 namespace Tower
 {
-    public class TowerHitBox : MonoBehaviour, ICombatTarget
+    // [통합 추가 2026-09-21] IFacilityKind를 더했습니다. 기존 필드·메서드는 그대로입니다.
+    //   왜: 적은 콜라이더에서 GetComponentInParent<ICombatTarget>()으로 대상을 찾는데, Hit Box 콜라이더가
+    //       먼저 잡히면 TowerHitBox가 돌아옵니다. 여기에 종류 ID가 없으면 우두머리의 철거 폭탄처럼
+    //       "tower.cobra만 노린다" 같은 조건이 본체를 못 알아보고 그냥 지나칩니다.
+    public class TowerHitBox : MonoBehaviour, ICombatTarget, IFacilityKind
     {
         [Header("Tower Body")]
         [SerializeField] private TowerHealth towerHealth;
@@ -24,6 +28,9 @@ namespace Tower
         Guid ICombatTarget.EntityId => Target != null ? Target.EntityId : unboundEntityId;
         string ICombatTarget.FactionId => Target != null ? Target.FactionId : "Ally";
         CombatTargetKind ICombatTarget.Kind => CombatTargetKind.Tower;
+
+        // [통합 추가 2026-09-21] 종류 ID는 본체가 정한다("tower.cobra" 등). 본체가 없으면 종류를 밝히지 않는다.
+        public string DefinitionId => towerHealth != null ? towerHealth.DefinitionId : string.Empty;
 
         Vector3 ICombatTarget.HitPosition => hitCollider != null ? hitCollider.bounds.center : transform.position;
 

@@ -49,7 +49,13 @@ namespace DesertTower.VFX.Editor
                 reaction.TintDeathWithRenderer = true;
                 reaction.FlashRenderers = null; // 자식 렌더러 자동 수집 (교체된 외형도 포함)
                 var restraint = root.GetComponent<EnemyRestraint>(); // 모래 족쇄 → 발목을 감는 모래
-                if (restraint != null) restraint.vfxPrefab = Load(SandRootVfxBuilder.Path);
+                if (restraint != null)
+                {
+                    restraint.vfxPrefab = Load(SandRootVfxBuilder.Path);
+                    // 둔화 연출은 아직 전용 프리팹이 없다. 눈으로 확인하려고 족쇄 연출을 임시로 꽂아 둔다.
+                    // 족쇄는 "완전히 묶임"으로 읽히고 파티클도 무거우니, 발밑 먼지만 남긴 경량 프리팹으로 교체할 것.
+                    restraint.slowVfxPrefab = Load(SandRootVfxBuilder.Path);
+                }
                 EnsureFootsteps(root);
                 PrefabUtility.SaveAsPrefabAsset(root, EnemyPrefabPath);
             }

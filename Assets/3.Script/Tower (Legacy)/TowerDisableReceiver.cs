@@ -45,11 +45,30 @@ public class TowerDisableReceiver : MonoBehaviour
         if (Stop_Behaviours == null || Stop_Behaviours.Length == 0)
         {
             var Found = new List<Behaviour>();
+
+            // 구형 타워(Tower.unity 시절)의 조준·발사 체인.
             Found.AddRange(GetComponentsInChildren<FindEnemy>(true));
             Found.AddRange(GetComponentsInChildren<RotateTower>(true));
             Found.AddRange(GetComponentsInChildren<FirePointAim>(true));
             Found.AddRange(GetComponentsInChildren<RangeController>(true));
+
+            // [통합 추가 2026-09-21] 현행 타워(Assets/2.Model/Prefabs/Tower_*.prefab)의 체인.
+            //   위의 네 컴포넌트는 현행 프리팹에 하나도 없어서, 그대로 두면 끌 대상이 0개라 타워가 계속 공격했다.
+            //   TowerAreaEffect는 추상 클래스라 코브라의 FireDamageArea와 오벨리스크의 SlowArea가 함께 잡힌다.
+            Found.AddRange(GetComponentsInChildren<Tower.TargetDetector>(true));
+            Found.AddRange(GetComponentsInChildren<Tower.TargetSelector>(true));
+            Found.AddRange(GetComponentsInChildren<Tower.TowerEmit>(true));
+            Found.AddRange(GetComponentsInChildren<Tower.TowerAreaEffect>(true));
+            Found.AddRange(GetComponentsInChildren<Tower.ManaRecovery>(true));
+            Found.AddRange(GetComponentsInChildren<Tower.SummonManager>(true));
+            Found.AddRange(GetComponentsInChildren<Tower.RotateToTarget>(true));
+            Found.AddRange(GetComponentsInChildren<Tower.AimToTarget>(true));
+            Found.AddRange(GetComponentsInChildren<Tower.FireActivate>(true));
+
             Stop_Behaviours = Found.ToArray();
+
+            if (Stop_Behaviours.Length == 0)
+                Debug.LogWarning(name + ": 정지시킬 타워 컴포넌트를 찾지 못했습니다. 폭탄을 맞아도 계속 공격합니다.", this);
         }
     }
 

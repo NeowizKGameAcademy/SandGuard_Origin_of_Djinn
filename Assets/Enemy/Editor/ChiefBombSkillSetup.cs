@@ -63,6 +63,7 @@ namespace SandGuard.Enemy.Editor
             EnsureAnimation();
             var skill = root.GetComponent<ChiefBombThrowSkill>() ?? root.AddComponent<ChiefBombThrowSkill>();
             skill.bombPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Enemy/Generated/Chief_Bomb.prefab").GetComponent<ChiefBombProp>();
+            skill.targetFacilityId = "tower.cobra"; // 철거 폭탄은 코브라 타워에만 던진다
         }
         static void EnsureAnimation()
         {

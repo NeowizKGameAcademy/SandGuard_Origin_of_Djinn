@@ -2288,13 +2288,16 @@ MonoBehaviour:
   beamRange: 100
   beamRadius: 0.2
   burstPrefab: {fileID: 5299723019764337286, guid: 889645eca7f0271498372df135f51d91, type: 3}
-  burstRadius: 3.75
+  burstRadius: 4.875
   burstVfxRadius: 2.5
-  burstDamageRatio: 1
+  burstDamageRatio: 2
   burstCameraKick: 0.08
   burstCameraKickDuration: 0.18
   burstLaunchUp: 5.5
-  burstLaunchOut: 5
+  burstLaunchOut: 10
+  piercedBurstRadius: 3.75
+  piercedBurstDamageRatio: 1
+  piercedBurstLaunchOut: 5
   chargedDamageMultiplier: 3.5
   chargedRadiusMultiplier: 5
   chargedRangeBonus: 8
@@ -2526,8 +2529,8 @@ MonoBehaviour:
   manaSource: {fileID: 2246301817342103262}
   unlocked: 0
   chargeTime: 0.8
-  minHeight: 4
-  maxHeight: 17
+  minHeight: 6.76
+  maxHeight: 28.73
   manaCost: 0
   onChargeStarted:
     m_PersistentCalls:

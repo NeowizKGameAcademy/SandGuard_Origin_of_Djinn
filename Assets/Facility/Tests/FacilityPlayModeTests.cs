@@ -19,6 +19,21 @@ namespace SandGuard.Facility.Tests
         GameObject Track(GameObject value) { objects.Add(value); return value; }
 
         [SetUp] public void Setup() { Time.timeScale = 1f; }
+
+        /// <summary>받침이 "시설이 있을 때만 켠다"고 지정한 오브젝트들이 기대한 상태인지 확인한다.</summary>
+        /// <remarks>
+        /// 예전에는 transform.Find("Range Circle")로 봤는데, 담당자가 Tower Base.prefab에서 그 자식을 없애
+        /// 테스트가 NRE로 죽었다. 이름이 아니라 FacilityAnchor가 실제로 들고 있는 참조로 본다.
+        /// 지금은 지정된 오브젝트가 없다(사거리 표시가 타워 본체의 RangeVisualizer로 옮겨 갔다). 그러면 확인할 것도 없다.
+        /// </remarks>
+        static void AssertOccupiedVisuals(FacilityAnchor anchor, bool expectedOn)
+        {
+            foreach (var value in anchor.onlyWhenOccupied)
+            {
+                Assert.NotNull(value, "받침의 onlyWhenOccupied 참조가 끊겼다.");
+                Assert.AreEqual(expectedOn, value.activeSelf, "점유 시에만 켜는 오브젝트의 상태가 다르다: " + value.name);
+            }
+        }
         [UnityTearDown] public IEnumerator Cleanup()
         {
             foreach (var value in objects) if (value != null) Object.Destroy(value);
@@ -51,6 +66,7 @@ namespace SandGuard.Facility.Tests
             var anchor = Object.Instantiate(anchorPrefab, slotObject.transform).GetComponent<FacilityAnchor>();
             anchor.transform.localScale = Vector3.one * (1.4f / 4f);
             var service = Track(Object.Instantiate(servicePrefab)).GetComponent<FacilityBuildService>();
+            service.requireSkillUnlock = false; // 스킬트리 해금은 이 테스트의 관심사가 아니다.
             var menu = Track(Object.Instantiate(menuPrefab)).GetComponent<FacilityBuildMenu>();
             var player = Track(new GameObject("Dummy Player")).transform;
             player.position = new Vector3(0, 0, 12f);
@@ -65,7 +81,8 @@ namespace SandGuard.Facility.Tests
             Assert.True(menu.IsOpen, "Within the interaction radius the menu must open.");
             Assert.AreEqual(anchor, menu.Current);
             Capture(anchor.transform.position, "menu-open");
-            var wrong = service.TryBuild(PlacementRequest.AtSlot("nope", "slot-test"));
+            // 카탈로그에 있지만 이 슬롯이 허용하지 않는 시설. (카탈로그에 없는 ID는 해금 검사에서 Locked로 먼저 걸린다.)
+            var wrong = service.TryBuild(PlacementRequest.AtSlot("obelisk", "slot-test"));
             Assert.AreEqual(PlacementFailure.FacilityNotAllowed, wrong.Placement.Failure, "Slots only accept listed facilities.");
             Assert.False(anchor.IsOccupied);
 
@@ -124,17 +141,21 @@ namespace SandGuard.Facility.Tests
             var anchor = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Facility/Generated/Towers/TowerBaseAnchor.prefab"), slotObject.transform).GetComponent<FacilityAnchor>();
             anchor.transform.localScale = Vector3.one * (1.4f / 4f);
             var service = Track(Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Facility/Generated/FacilityBuildService.prefab"))).GetComponent<FacilityBuildService>();
+            service.requireSkillUnlock = false; // 스킬트리 해금은 이 테스트의 관심사가 아니다.
             yield return null;
 
             var built = service.TryBuild(PlacementRequest.AtSlot("cobra", "slot-test"));
             Assert.True(built.Outcome.Succeeded, "Build failed: " + built.Placement.Failure);
-            var health = anchor.Occupant.GetComponent<FacilityHealth>();
-            Assert.NotNull(health, "Run SandGuard/Facility/Add Combat Health To Towers first.");
-            ICombatTarget target = health;
+            // 체력 컴포넌트는 구체 타입이 아니라 인터페이스로 본다. 시설 팀(FacilityHealth)과 타워 팀(TowerHealth)이
+            // 서로 다른 어셈블리에 있어, 카탈로그가 어느 쪽 프리팹을 가리켜도 통해야 한다.
+            var health = anchor.Occupant.Health;
+            Assert.NotNull(health, "Run SandGuard/Facility/Wire Catalog Towers For Combat first.");
+            ICombatTarget target = health as ICombatTarget;
+            Assert.NotNull(target, "The health component must also be the combat target.");
             Assert.AreEqual(CombatTargetKind.Tower, target.Kind);
             Assert.AreEqual("Ally", target.FactionId);
             Assert.AreEqual(built.Facility.Value.EntityId, target.EntityId, "Combat ID must match the facility ID.");
-            Assert.AreEqual(target.EntityId, target.DamageReceiver is FacilityHealth receiver ? receiver.EntityId : System.Guid.Empty);
+            Assert.AreSame(health, target.DamageReceiver, "The combat target takes damage on the health component.");
 
             // 적의 탐색과 같은 방식(트리거 제외 OverlapSphere → 부모의 ICombatTarget)으로 찾혀야 한다.
             yield return new WaitForSeconds(.5f);
@@ -144,18 +165,20 @@ namespace SandGuard.Facility.Tests
             Assert.True(found, "The tower needs a non-trigger collider that resolves to its ICombatTarget.");
 
             float max = health.MaxHealth;
-            Assert.AreEqual(DamageStatus.NonHostile, health.TakeDamage(new DamageInfo(10f, "Ally", System.Guid.NewGuid(), "test", Vector3.zero, Vector3.forward)).Status);
-            var hit = health.TakeDamage(new DamageInfo(40f, "Enemy", System.Guid.NewGuid(), "test", Vector3.zero, Vector3.forward));
+            var damageable = (IDamageable)health;
+            var body = ((Component)health).gameObject;
+            Assert.AreEqual(DamageStatus.NonHostile, damageable.TakeDamage(new DamageInfo(10f, "Ally", System.Guid.NewGuid(), "test", Vector3.zero, Vector3.forward)).Status);
+            var hit = damageable.TakeDamage(new DamageInfo(40f, "Enemy", System.Guid.NewGuid(), "test", Vector3.zero, Vector3.forward));
             Assert.True(hit.WasApplied);
             Assert.NotNull(GameObject.Find("VFX_Facility_Hit(Clone)"), "A hit on the tower plays the facility hit VFX.");
             Assert.AreEqual(max - 40f, health.CurrentHealth, .01f);
             Assert.AreEqual(max - 40f, anchor.Occupant.ViewData.CurrentHealth, .01f, "View data reads the live health.");
 
-            var kill = health.TakeDamage(new DamageInfo(max, "Enemy", System.Guid.NewGuid(), "test", Vector3.zero, Vector3.forward));
+            var kill = damageable.TakeDamage(new DamageInfo(max, "Enemy", System.Guid.NewGuid(), "test", Vector3.zero, Vector3.forward));
             Assert.True(kill.WasKilled);
             Assert.False(target.IsTargetable);
-            yield return new WaitForSeconds(health.removeDelay + .3f);
-            Assert.False(health.gameObject.activeSelf, "A broken tower body is switched off (the owner's base keeps reading it).");
+            yield return new WaitForSeconds(1.2f); // 제거 지연(양쪽 구현 모두 0.5초)보다 넉넉히 기다린다.
+            Assert.False(body.activeInHierarchy, "A broken tower body is switched off (the owner's base keeps reading it).");
             Assert.True(anchor != null && anchor.gameObject.activeInHierarchy, "Only the body breaks; the base (anchor) stays.");
             Assert.False(anchor.IsOccupied, "Destroying the tower frees the anchor.");
             Assert.True(service.Slots.TryGetSlot("slot-test", out var state) && !state.OccupantId.HasValue, "Destroying the tower frees the slot.");
@@ -183,7 +206,9 @@ namespace SandGuard.Facility.Tests
                 slot.allowedFacilityIds = new List<string> { "cobra", "obelisk" };
                 anchors[i] = Object.Instantiate(anchorPrefab, slotObject.transform).GetComponent<FacilityAnchor>();
             }
-            return Track(Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Facility/Generated/FacilityBuildService.prefab"))).GetComponent<FacilityBuildService>();
+            var service = Track(Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Facility/Generated/FacilityBuildService.prefab"))).GetComponent<FacilityBuildService>();
+            service.requireSkillUnlock = false; // 스킬트리 해금은 이 테스트들의 관심사가 아니다(씬에 SkillTreeSession이 없다).
+            return service;
         }
 
         [UnityTest] public IEnumerator BuildingATowerSpendsManaAndFailsCleanlyWithoutEnough()
@@ -193,14 +218,14 @@ namespace SandGuard.Facility.Tests
             Assert.AreEqual(100, wallet.CurrentMana);
             Assert.AreEqual(40, service.catalog.Find("cobra").manaCost, "Designed cobra cost.");
             Assert.AreEqual(55, service.catalog.Find("obelisk").manaCost, "Temporary obelisk cost.");
-            Assert.False(anchors[0].transform.Find("Range Circle").gameObject.activeSelf, "The range circle stays off on an empty base (ShowRange needs a body).");
+            AssertOccupiedVisuals(anchors[0], false); // 빈 받침
 
             var cobra = service.TryBuild(PlacementRequest.AtSlot("cobra", "slot-0"));
             Assert.True(cobra.Outcome.Succeeded, "Cobra build failed: " + cobra.Outcome.Failure);
             Assert.AreEqual(60, wallet.CurrentMana, "Building spends the cobra cost.");
             Assert.NotNull(anchors[0].transform.Find("cobra"), "The cobra body is spawned on the base.");
-            Assert.NotNull(anchors[0].transform.Find("cobra").GetComponent<FacilityHealth>(), "The body keeps its combat health.");
-            Assert.True(anchors[0].transform.Find("Range Circle").gameObject.activeSelf, "The range circle turns on with the body.");
+            Assert.NotNull(anchors[0].Occupant.Health, "The body keeps its combat health.");
+            AssertOccupiedVisuals(anchors[0], true); // 본체가 서면 켜진다
 
             Assert.True(service.TryBuild(PlacementRequest.AtSlot("obelisk", "slot-1")).Outcome.Succeeded);
             Assert.AreEqual(5, wallet.CurrentMana);
@@ -226,17 +251,23 @@ namespace SandGuard.Facility.Tests
             Assert.True(service.TryBuild(PlacementRequest.AtSlot("cobra", "slot-0")).Outcome.Succeeded);
             var facility = anchors[0].Occupant;
             var health = facility.Health;
+            Assert.NotNull(health, "Run SandGuard/Facility/Wire Catalog Towers For Combat first.");
+            Assert.NotNull(facility.Repairable, "A tower must be repairable.");
+            var damageable = (IDamageable)health;
+            // 최대 체력의 주인은 프리팹(타워 팀은 TowerStatus.maxHP)이므로 절대값을 박지 않고 비율로 본다.
+            float max = health.MaxHealth;
+            float half = max * .5f;
             Assert.AreEqual(ActionFailure.NoChange, service.GetRepairQuote(facility.EntityId).Availability.Failure, "A full-health tower needs no repair.");
 
             player.position = new Vector3(0f, 0f, 2.5f);
             yield return new WaitForSeconds(.2f);
             Assert.False(menu.IsOpen, "A healthy tower does not open a menu.");
 
-            health.TakeDamage(new DamageInfo(75f, "Enemy"));
+            damageable.TakeDamage(new DamageInfo(half, "Enemy"));
             var quote = service.GetRepairQuote(facility.EntityId);
             Assert.True(quote.Availability.Succeeded);
             Assert.AreEqual(10, quote.ManaAmount, "Cost = 40 × half health lost × 0.5.");
-            Assert.AreEqual(75f, quote.HealthToRestore, .01f);
+            Assert.AreEqual(half, quote.HealthToRestore, .01f);
             yield return new WaitForSeconds(.2f);
             Assert.True(menu.IsOpen, "A damaged tower opens the repair menu.");
             Assert.AreEqual(FacilityBuildMenu.MenuMode.Repair, menu.Mode);
@@ -251,7 +282,7 @@ namespace SandGuard.Facility.Tests
             yield return new WaitForSeconds(.2f);
             Assert.False(menu.IsOpen, "The menu closes once the tower is whole.");
 
-            health.TakeDamage(new DamageInfo(150f - 1f, "Enemy"));
+            damageable.TakeDamage(new DamageInfo(max - 1f, "Enemy"));
             wallet.TrySpend(wallet.CurrentMana - 3);
             Assert.AreEqual(ActionFailure.InsufficientMana, service.TryRepair(facility.EntityId).Failure);
             Assert.AreEqual(1f, health.CurrentHealth, .01f, "A failed repair changes nothing.");
@@ -265,12 +296,12 @@ namespace SandGuard.Facility.Tests
             Assert.True(service.TryBuild(PlacementRequest.AtSlot("cobra", "slot-0")).Outcome.Succeeded);
             var broken = anchors[0].Occupant;
             var brokenId = broken.EntityId;
-            broken.Health.TakeDamage(new DamageInfo(100000f, "Enemy"));
+            ((IDamageable)broken.Health).TakeDamage(new DamageInfo(broken.Health.MaxHealth * 10f, "Enemy"));
             Assert.AreEqual(ActionFailure.NotAlive, service.GetRepairQuote(brokenId).Availability.Failure, "A dying tower cannot be repaired.");
-            yield return new WaitForSeconds(broken.Health.removeDelay + .3f);
+            yield return new WaitForSeconds(1.2f); // 제거 지연(양쪽 구현 모두 0.5초)보다 넉넉히 기다린다.
             Assert.False(anchors[0].IsOccupied, "Breaking frees the base.");
             Assert.False(broken.gameObject.activeSelf, "The broken body is switched off, not destroyed (the base still reads it).");
-            Assert.False(anchors[0].transform.Find("Range Circle").gameObject.activeSelf, "The range circle turns off with the body.");
+            AssertOccupiedVisuals(anchors[0], false); // 본체가 부서지면 꺼진다
             Assert.AreEqual(ActionFailure.NotFound, service.GetRepairQuote(brokenId).Availability.Failure, "Broken towers are rebuilt, not repaired.");
 
             var rebuilt = service.TryBuild(PlacementRequest.AtSlot("obelisk", "slot-0"));
@@ -278,7 +309,81 @@ namespace SandGuard.Facility.Tests
             yield return null;
             Assert.True(broken == null, "Rebuilding removes the old broken body.");
             Assert.NotNull(anchors[0].transform.Find("obelisk"));
-            Assert.True(anchors[0].transform.Find("Range Circle").gameObject.activeSelf);
+            AssertOccupiedVisuals(anchors[0], true);
+        }
+
+        /// <summary>
+        /// 카탈로그가 실제로 짓는 프리팹 전부가 건설 시스템과 맞물리는지 본다.
+        /// </summary>
+        /// <remarks>
+        /// 다른 테스트는 특정 프리팹 경로를 직접 열기 때문에, 카탈로그를 다른 프리팹으로 갈아 끼우면
+        /// 테스트는 초록인데 인게임만 깨지는 일이 생긴다(2026-09-21에 실제로 그랬다).
+        /// 여기서는 카탈로그를 따라가며 체력·수리·정지 배선이 빠지지 않았는지 확인한다.
+        /// </remarks>
+        [UnityTest] public IEnumerator EveryCatalogTowerIsRepairableRebuildableAndStoppable()
+        {
+            var ground = Track(GameObject.CreatePrimitive(PrimitiveType.Cube));
+            ground.transform.position = new Vector3(0, -.5f, 0); ground.transform.localScale = new Vector3(400, 1, 60);
+            var anchorPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Facility/Generated/Towers/TowerBaseAnchor.prefab");
+            var servicePrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Facility/Generated/FacilityBuildService.prefab");
+            Assert.NotNull(anchorPrefab); Assert.NotNull(servicePrefab);
+            // 슬롯은 서비스가 깨어나기 전에 있어야 한다(BuildSlotRegistry가 Awake에서 레벨을 훑는다).
+            var catalog = servicePrefab.GetComponent<FacilityBuildService>().catalog;
+            Assert.NotNull(catalog, "서비스 프리팹에 카탈로그가 없다.");
+            Assert.Greater(catalog.facilities.Count, 0);
+            var receiverType = System.Type.GetType("TowerDisableReceiver, Assembly-CSharp");
+            Assert.NotNull(receiverType, "TowerDisableReceiver 타입을 찾지 못했다.");
+
+            var level = Track(new GameObject("Level")).AddComponent<LevelRoot>();
+            var anchors = new FacilityAnchor[catalog.facilities.Count];
+            for (int i = 0; i < anchors.Length; i++)
+            {
+                var slotObject = new GameObject("BuildSlot_" + i); slotObject.transform.SetParent(level.transform, false);
+                slotObject.transform.position = new Vector3(i * 20f, 0f, 0f);
+                var slot = slotObject.AddComponent<LevelBuildSlot>();
+                slot.id = "slot-" + i; slot.occupancySurfaceId = "test"; slot.footprint = new Vector2(4f, 4f);
+                slot.allowedFacilityIds = new List<string> { catalog.facilities[i].id };
+                anchors[i] = Object.Instantiate(anchorPrefab, slotObject.transform).GetComponent<FacilityAnchor>();
+            }
+            var service = Track(Object.Instantiate(servicePrefab)).GetComponent<FacilityBuildService>();
+            service.requireSkillUnlock = false; // 해금은 이 테스트의 관심사가 아니다.
+            yield return null;
+
+            for (int i = 0; i < anchors.Length; i++)
+            {
+                var definition = catalog.facilities[i];
+                Assert.NotNull(definition.prefab, "카탈로그에 프리팹이 없다: " + definition.id);
+                string where = definition.id + " (" + AssetDatabase.GetAssetPath(definition.prefab) + ")";
+
+                var built = service.TryBuild(PlacementRequest.AtSlot(definition.id, "slot-" + i));
+                Assert.True(built.Outcome.Succeeded, "건설 실패 " + where + ": " + built.Outcome.Failure + " / " + built.Placement.Failure);
+                var facility = anchors[i].Occupant;
+                Assert.NotNull(facility, "받침을 점유하지 못했다: " + where);
+
+                Assert.NotNull(facility.Health, "체력(IHealth)이 없다: " + where);
+                Assert.NotNull(facility.Life, "생명 상태(ILifeState)가 없다 → 부서져도 자리가 비지 않는다: " + where);
+                Assert.NotNull(facility.Repairable, "수리(IRepairable)가 없다 → 수리 UI가 뜨지 않는다: " + where);
+                Assert.AreEqual(facility.EntityId, (facility.Health as ICombatTarget).EntityId, "시설 ID와 전투 ID가 같아야 한다: " + where);
+
+                // 우두머리의 철거 폭탄은 정지를 "요청"만 한다. 본체에 수신기가 없으면 요청이 그냥 사라진다.
+                var body = ((Component)facility.Health).gameObject;
+                Assert.NotNull(body.GetComponent(receiverType), "정지 수신기가 없다 → 폭탄을 맞아도 계속 공격한다: " + where);
+
+                // 체력이 깎이면 수리 견적이 나오고, 수리하면 가득 찬다.
+                var damageable = (IDamageable)facility.Health;
+                float max = facility.Health.MaxHealth;
+                damageable.TakeDamage(new DamageInfo(max * .5f, "Enemy"));
+                Assert.True(service.GetRepairQuote(facility.EntityId).Availability.Succeeded, "수리 견적이 나오지 않는다: " + where);
+                Assert.True(service.TryRepair(facility.EntityId).Succeeded, "수리에 실패한다: " + where);
+                Assert.AreEqual(max, facility.Health.CurrentHealth, .01f, "수리가 체력을 가득 채우지 않는다: " + where);
+
+                // 부수면 자리가 비고, 같은 받침에 다시 지을 수 있다.
+                damageable.TakeDamage(new DamageInfo(max * 10f, "Enemy"));
+                yield return new WaitForSeconds(1.2f);
+                Assert.False(anchors[i].IsOccupied, "부서져도 받침이 비지 않는다: " + where);
+                var rebuilt = service.TryBuild(PlacementRequest.AtSlot(definition.id, "slot-" + i));
+                Assert.True(rebuilt.Outcome.Succeeded, "다시 지을 수 없다 " + where + ": " + rebuilt.Outcome.Failure + " / " + rebuilt.Placement.Failure);
+            }
         }
 
         void Capture(Vector3 focus, string name)

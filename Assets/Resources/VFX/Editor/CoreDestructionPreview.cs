@@ -28,12 +28,13 @@ namespace DesertTower.VFX.Editor
                 var source = AssetDatabase.LoadAssetAtPath<GameObject>(CoreDestructionBuilder.ReferencePath);
                 var reference = (GameObject)PrefabUtility.InstantiatePrefab(source, scene);
                 foreach (var animator in reference.GetComponentsInChildren<Animator>()) animator.enabled = false;
-                var crystal = reference.transform.Find("Core");
+                var originals = reference.GetComponentsInChildren<Renderer>(true);
+                var enabledStates = System.Array.ConvertAll(originals, r => r.enabled);
                 var circle = reference.transform.Find("Circle Effect");
-                var bounds = CoreDestructionBuilder.WorldBounds(reference.transform.Find("Core/Mesh").GetComponent<MeshFilter>());
+                var bounds = BlueDestructionBursts.MeshBounds(reference);
                 var effect = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(CoreDestructionBuilder.PrefabPath), scene);
                 ctrl = effect.GetComponent<VfxCoreDestruction>(); ctrl.Restart(); ctrl.BindTarget(reference.transform);
-                if (ctrl.Shards.Length != 8 || crystal.gameObject.activeSelf || !ctrl.Overload.gameObject.activeSelf)
+                if (ctrl.Shards.Length < 8 || System.Array.Exists(originals, r => r.enabled) || !ctrl.Overload.gameObject.activeSelf)
                     throw new Exception("Initial overload / source binding failed");
                 foreach (var renderer in effect.GetComponentsInChildren<Renderer>(true))
                     foreach (var mat in renderer.sharedMaterials)
@@ -41,7 +42,7 @@ namespace DesertTower.VFX.Editor
                 if (effect.GetComponentInChildren<Canvas>(true) != null) throw new Exception("Unexpected UI");
                 var camera = new GameObject("Core Preview Camera").AddComponent<Camera>();
                 SceneManager.MoveGameObjectToScene(camera.gameObject, scene); camera.scene = scene;
-                camera.orthographic = true; camera.orthographicSize = bounds.size.y * 1.9f;
+                camera.orthographic = true; camera.orthographicSize = Mathf.Max(bounds.size.y, bounds.size.x) * 0.85f;
                 camera.transform.position = bounds.center + new Vector3(8f, 6f, -10f);
                 camera.transform.LookAt(bounds.center * 0.6f);
                 camera.clearFlags = CameraClearFlags.SolidColor; camera.backgroundColor = new Color(0.035f, 0.04f, 0.055f);
@@ -60,14 +61,14 @@ namespace DesertTower.VFX.Editor
                 var texture = new Texture2D(640, 480, TextureFormat.RGB24, false); owned.Add(texture);
                 var systems = effect.GetComponentsInChildren<ParticleSystem>(true);
                 foreach (var ps in systems) { ps.useAutoRandomSeed = false; ps.randomSeed = 125; ps.Simulate(0f, false, true, false); }
-                for (int frame = 0; frame < 60; frame++)
+                for (int frame = 0; frame < 100; frame++)
                 {
                     for (int i = 0; i < 2; i++)
                     {
                         ctrl.Tick(0.02f);
                         foreach (var ps in systems) ps.Simulate(0.02f, false, false, false);
                     }
-                    if (frame == 7 && (ctrl.Overload.gameObject.activeSelf || circle.gameObject.activeSelf || !ctrl.Shards[0].gameObject.activeSelf))
+                    if (frame == 19 && (ctrl.Overload.gameObject.activeSelf || !ctrl.Shards[0].gameObject.activeSelf))
                         throw new Exception("Burst transition failed");
                     camera.Render();
                     var active = RenderTexture.active;
@@ -79,12 +80,12 @@ namespace DesertTower.VFX.Editor
                     if (Vector3.Distance(ctrl.Shards[i].localPosition, ctrl.Landings[i]) > 0.01f)
                         throw new Exception("Shard did not settle");
                 effect.SetActive(false);
-                if (crystal.gameObject.activeSelf || circle.gameObject.activeSelf) throw new Exception("Cleanup resurrected core");
+                if (System.Array.Exists(originals, r => r.enabled)) throw new Exception("Cleanup resurrected core");
                 ctrl.RestoreTarget();
-                if (!crystal.gameObject.activeSelf || !circle.gameObject.activeSelf) throw new Exception("Explicit reset failed");
+                for (int i = 0; i < originals.Length; i++) if (originals[i].enabled != enabledStates[i]) throw new Exception("Explicit reset failed");
                 ctrl.Restart();
                 if (!ctrl.Overload.gameObject.activeSelf || ctrl.Shards[0].gameObject.activeSelf) throw new Exception("Replay reset failed");
-                File.WriteAllText(Path.Combine(folder, "validation.txt"), "PASS: 8 source-mesh shards, overload, timed burst, source/light/circle hiding, settled debris, no automatic resurrection, explicit reset, supported materials, no UI. 60 Unity-rendered frames.");
+                File.WriteAllText(Path.Combine(folder, "validation.txt"), "PASS: Level New Core meshes, textured fragments, blue chain bursts, source/light/circle hiding, settled debris, no automatic resurrection, explicit reset, supported materials. 100 Unity-rendered frames.");
             }
             finally
             {

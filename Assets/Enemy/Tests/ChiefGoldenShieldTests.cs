@@ -79,7 +79,7 @@ namespace SandGuard.Enemy.Tests
             Assert.True(skill.IsSpent);
             Assert.False(skill.TryUse());
         }
-        [Test] public void ChiefPrefabShieldLastsTenMinutesAndBothSkillsAreUsedOnce()
+        [Test] public void ChiefPrefabShieldIsUsedOnceAndBombRepeatsOnCooldown()
         {
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Enemy/Generated/Enemy_Chief.prefab");
             var shieldRules = prefab.GetComponent<ChiefGoldenShieldSkill>();
@@ -87,7 +87,25 @@ namespace SandGuard.Enemy.Tests
             Assert.AreEqual(600f, shieldRules.activeDuration, "황금 방패는 10분 유지된다");
             Assert.AreEqual(1, shieldRules.maxUses, "황금 방패는 한 번만 쓴다");
             Assert.AreEqual(0.7f, shieldRules.healthThreshold, "황금 방패는 체력이 70% 이하일 때 쓴다");
-            Assert.AreEqual(1, bombRules.maxUses, "철거 폭탄은 한 번만 던진다");
+            Assert.AreEqual(0, bombRules.maxUses, "철거 폭탄은 횟수 제한 없이 쿨다운마다 던진다");
+            Assert.AreEqual(6f, bombRules.cooldown, "철거 폭탄 쿨다운은 6초다");
+            Assert.AreEqual(20f, bombRules.range, "철거 폭탄 사거리는 20m다");
+        }
+
+        [UnityTest] public IEnumerator BrokenShieldLetsDamageThroughAndIsDismissedAtOnce()
+        {
+            brain.AIEnabled = true;
+            skill.activeDuration = 600f; // 남은 시간이 아니라 내구도로 걷히는지 본다
+            Assert.True(skill.TryUse());
+            yield return Until(() => skill.shield.enabled, "Shield activates");
+            float hp = health.CurrentHealth, durability = skill.shield.maxHealth;
+            health.TakeDamage(Hit(Vector3.back, durability + 25f));
+            Assert.True(skill.shield.IsBroken, "내구도를 다 쓰면 방패가 깨진다");
+            Assert.AreEqual(hp - 25f, health.CurrentHealth, .01f, "흡수하고 남은 초과분은 본체에 들어간다");
+            yield return Until(() => skill.State == ChiefGoldenShieldSkill.Phase.Dismissing, "깨진 방패는 남은 시간과 상관없이 걷힌다");
+            Assert.False(skill.shield.enabled);
+            Assert.True(health.TakeDamage(Hit(Vector3.back)).WasApplied, "걷힌 뒤에는 정면 공격도 그대로 들어간다");
+            yield return Until(() => !skill.Visual.gameObject.activeSelf, "황금 방패 연출도 사라진다");
         }
 
         [UnityTest] public IEnumerator ShieldWaitsUntilSeventyPercentHealth()

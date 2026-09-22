@@ -209,7 +209,7 @@ namespace SandGuard.Player.Tests
             Assert.False(pierce.IsHolding); Assert.False(started);
             Assert.AreEqual(before - pierce.manaCost, mana.CurrentMana, "A tap costs the base mana only.");
             Assert.AreEqual(1, fired.Count); Assert.AreEqual(0f, fired[0]); Assert.AreEqual(0f, attack.LastBeamCharge);
-            Assert.AreEqual(2, health.HitCount); Assert.AreEqual(baseDamage + attack.BurstDamage, health.maxHealth - health.CurrentHealth, 0.0001f);
+            Assert.AreEqual(2, health.HitCount); Assert.AreEqual(baseDamage + attack.PiercedBurstDamage, health.maxHealth - health.CurrentHealth, 0.0001f);
             Assert.AreEqual(0, target.KnockCalls, "A tap does not push.");
             Assert.AreEqual(ActionFailure.Cooldown, pierce.Fire(0f).Failure);
             Assert.False(pierce.BeginHold(0), "Holding during the cooldown does nothing.");
@@ -228,8 +228,8 @@ namespace SandGuard.Player.Tests
             Assert.AreEqual(before - pierce.manaCost - pierce.fullChargeExtraMana, mana.CurrentMana, "Full charge costs the extra mana.");
             Assert.AreEqual(2, fired.Count); Assert.AreEqual(1f, fired[1], 0.0001f); Assert.AreEqual(1f, attack.LastBeamCharge, 0.0001f);
             Assert.AreEqual(4, health.HitCount);
-            Assert.AreEqual(baseDamage * attack.chargedDamageMultiplier + attack.BurstDamage,
-                health.maxHealth - health.CurrentHealth - baseDamage - attack.BurstDamage, 0.001f, "Charged beam plus explosion damage.");
+            Assert.AreEqual(baseDamage * attack.chargedDamageMultiplier + attack.PiercedBurstDamage,
+                health.maxHealth - health.CurrentHealth - baseDamage - attack.PiercedBurstDamage, 0.001f, "Charged beam plus explosion damage.");
             Assert.AreEqual(1, target.KnockCalls); Assert.Greater(target.Knock.z, 0f, "Pushed along the beam.");
             Assert.AreEqual(attack.chargedKnockback, target.Knock.magnitude, 0.01f);
             Assert.True(attack.LastBeam.Landed); Assert.Less(attack.LastBeam.End.z, 9f, "The charged beam still stops at the wall.");
