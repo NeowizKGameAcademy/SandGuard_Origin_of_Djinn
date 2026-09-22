@@ -2,7 +2,6 @@ using UnityEngine;
 
 namespace Tower
 {
-    [RequireComponent(typeof(TargetDetector))]
     public class TargetSelector : MonoBehaviour
     {
         [Header("Detection")]
@@ -20,12 +19,14 @@ namespace Tower
 
         private void Awake()
         {
-            if (detector == null)
-                TryGetComponent(out detector);
+            ResolveDetector();
         }
 
         private void OnEnable()
         {
+            // 풀에서 생성된 소환수는 Awake 시점에는 풀 오브젝트 아래에 있다가,
+            // 활성화 직전에 타워 아래로 옮겨진다. 이때 부모 탐지기를 다시 찾아야 한다.
+            ResolveDetector();
             searchTimer = 0f;
         }
 
@@ -83,6 +84,15 @@ namespace Tower
         public void ClearTarget()
         {
             currentTarget = null;
+        }
+
+        private void ResolveDetector()
+        {
+            if (detector == null)
+                TryGetComponent(out detector);
+
+            if (detector == null)
+                detector = GetComponentInParent<TargetDetector>();
         }
     }
 }

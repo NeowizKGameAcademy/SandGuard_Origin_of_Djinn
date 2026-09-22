@@ -86,7 +86,7 @@ GameObject:
   - component: {fileID: 8637944949371341966}
   - component: {fileID: 4065655396767491873}
   - component: {fileID: 6691405713668227518}
-  - component: {fileID: 6499044762943953552}
+  - component: {fileID: 8609524750636429982}
   m_Layer: 5
   m_Name: HP Bar
   m_TagString: Untagged
@@ -178,7 +178,7 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
---- !u!114 &6499044762943953552
+--- !u!114 &8609524750636429982
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -187,12 +187,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1646287318651942416}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ddf601715c0f2ea40a7c0ab5a9889051, type: 3}
+  m_Script: {fileID: 11500000, guid: 638f81327340d994ebc548e77ca83a64, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TowerHPBar
+  m_EditorClassIdentifier: Assembly-CSharp::Tower.UI.UniversalHealthBar
   slider: {fileID: 4065655396767491873}
-  canvasGroup: {fileID: 0}
-  offset: {x: 0, y: 5, z: 0}
+  canvasGroup: {fileID: 6691405713668227518}
+  offset: {x: 0, y: 2.5, z: 0}
 --- !u!1 &2891580347644764093
 GameObject:
   m_ObjectHideFlags: 0

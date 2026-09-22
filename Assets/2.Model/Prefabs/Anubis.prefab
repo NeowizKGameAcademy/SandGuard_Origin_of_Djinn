@@ -1297,6 +1297,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2267295326310566055}
+  - component: {fileID: 2541285142191611241}
+  - component: {fileID: 6459557555521060469}
+  - component: {fileID: 2875703218772990089}
+  - component: {fileID: 2060774610216936486}
+  - component: {fileID: 1415805167426140711}
+  - component: {fileID: 6122469159532982995}
+  - component: {fileID: 645449632941991204}
   m_Layer: 0
   m_Name: Anubis
   m_TagString: Untagged
@@ -1313,13 +1320,137 @@ Transform:
   m_GameObject: {fileID: 6432636508301414559}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 21.51, y: 0, z: 3.86}
-  m_LocalScale: {x: 6, y: 6, z: 6}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 7, y: 7, z: 7}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 8766981312907009199}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2541285142191611241
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6432636508301414559}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0409a90ee751b0d48b2f55100e27673f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Tower.TargetSelector
+  detector: {fileID: 0}
+  searchInterval: 0.2
+--- !u!114 &6459557555521060469
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6432636508301414559}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 635967c426afeab4f81ff86a2156642f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Tower.AnubisController
+  status: {fileID: 0}
+  selector: {fileID: 2541285142191611241}
+  skill: {fileID: 2060774610216936486}
+  health: {fileID: 2875703218772990089}
+  animator: {fileID: 0}
+  stopDistance: 1.5
+  deathDespawnDelay: 3
+--- !u!114 &2875703218772990089
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6432636508301414559}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81588d27d820eb04fa567b7ac8ab0ddd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Tower.AnubisHealth
+  controller: {fileID: 6459557555521060469}
+--- !u!114 &2060774610216936486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6432636508301414559}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 113bc68baebbff4489f4685ed9b8a9e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Tower.AnubisSkill
+  range: 15
+  angle: 90
+  horizontalPower: 6
+  verticalPower: 8
+  targetMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+--- !u!95 &1415805167426140711
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6432636508301414559}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: 4c1eade38b8451d428cbc66a91482efe, type: 3}
+  m_Controller: {fileID: 9100000, guid: 27ec29efb58401140aa43c045b8455ef, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &6122469159532982995
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6432636508301414559}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e7e31da162c4d9c9c3a8d07edc6236f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Tower.MinionWeaponLoadout
+  rightHandWeapon: {fileID: 7638786178267089539, guid: ae684e81d7d38fb42b4f37d4131adbdf, type: 3}
+  leftHandWeapon: {fileID: 0}
+--- !u!136 &645449632941991204
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6432636508301414559}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.2
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &6702035712890250399
 GameObject:
   m_ObjectHideFlags: 0
@@ -1423,7 +1554,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8766981312907009199}
-  - component: {fileID: 782535762524662404}
   m_Layer: 0
   m_Name: AnubisMinion
   m_TagString: Untagged
@@ -1440,7 +1570,7 @@ Transform:
   m_GameObject: {fileID: 6779340215268026996}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.0012181401, y: 0.03467238, z: -0.00074225664}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1448,28 +1578,6 @@ Transform:
   - {fileID: 8917809393557322819}
   m_Father: {fileID: 2267295326310566055}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &782535762524662404
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6779340215268026996}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 4c1eade38b8451d428cbc66a91482efe, type: 3}
-  m_Controller: {fileID: 9100000, guid: 27ec29efb58401140aa43c045b8455ef, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &7028080131394929752
 GameObject:
   m_ObjectHideFlags: 0
@@ -1689,7 +1797,7 @@ Transform:
   m_GameObject: {fileID: 7551881096231729226}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0, y: 0.5282249, z: 0.11762953}
+  m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

@@ -2,7 +2,6 @@ using UnityEngine;
 
 namespace Tower
 {
-    [DisallowMultipleComponent]
     public class SlowArea : TowerAreaEffect
     {
         protected override bool HasConfig => Status.obelisk != null;

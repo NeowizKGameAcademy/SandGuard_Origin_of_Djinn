@@ -80,8 +80,7 @@ GameObject:
   - component: {fileID: 613620459773671449}
   - component: {fileID: 3584302775588211290}
   - component: {fileID: 1888138731361792429}
-  - component: {fileID: 4563781009698595125}
-  - component: {fileID: 5037659689785326476}
+  - component: {fileID: 8625658474575844885}
   m_Layer: 0
   m_Name: Tower (Anubis)
   m_TagString: Untagged
@@ -105,7 +104,6 @@ Transform:
   - {fileID: 8268389459624855497}
   - {fileID: 6042461878137222701}
   - {fileID: 4964246725060955287}
-  - {fileID: 5533876512967110399}
   m_Father: {fileID: 8318035740673722136}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &613620459773671449
@@ -140,6 +138,13 @@ MonoBehaviour:
     RespawnCooldown: 5
   anubisConfig:
     SpawnPoint: {fileID: 4964246725060955287}
+    MaxHP: 1000
+    Attack: 30
+    AttackInterval: 1.5
+    MoveSpeed: 5
+    RotateSpeed: 5
+    RespawnCooldown: 15
+    KnockBackCooldown: 5
 --- !u!114 &3584302775588211290
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -173,7 +178,7 @@ MonoBehaviour:
   targetMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &4563781009698595125
+--- !u!114 &8625658474575844885
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -182,42 +187,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 870966564151246436}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eeb53d2018c5e254aaca319c0e369f6f, type: 3}
+  m_Script: {fileID: 11500000, guid: 13eed43c4f63e2247bf54f1ef6622edf, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: DesertTower.VFX.Runtime::DesertTower.VFX.VfxHitReaction
-  HitPrefab: {fileID: 209659319031985367, guid: aab47f54c43bc3446a202ec976839258, type: 3}
-  HitLifetime: 1.5
-  OrientToHit: 1
-  FlashRenderers: []
-  FlashColor: {r: 1, g: 1, b: 1, a: 1}
-  FlashIntensity: 2.5
-  FlashDuration: 0.1
-  FlinchTarget: {fileID: 0}
-  FlinchScale: 0.9
-  FlinchDuration: 0.12
-  ScreenPrefab: {fileID: 0}
-  ScreenLifetime: 1
-  CameraShake: 0
-  CameraShakeDuration: 0.2
-  DeathPrefab: {fileID: 0}
-  DeathLifetime: 4
-  FitDeathToBounds: 0
-  TintDeathWithRenderer: 1
-  AttractTarget: {fileID: 0}
---- !u!114 &5037659689785326476
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 870966564151246436}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b31776cfc2a65d46a263f98631912dd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TowerDisableReceiver
-  Stop_Behaviours: []
-  Disabled_Vfx: {fileID: 6861897454437874772, guid: ed8d6d82c79386742ab779596b17e594, type: 3}
+  m_EditorClassIdentifier: Assembly-CSharp::Tower.AnubisSummoner
+  prefab: {fileID: 6432636508301414559, guid: 415469ac9136590449c705fffef6578f, type: 3}
+  status: {fileID: 613620459773671449}
 --- !u!1 &1206884435648381358
 GameObject:
   m_ObjectHideFlags: 0
@@ -366,7 +340,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8318035740673722136}
-  - component: {fileID: 8768242737176143525}
   m_Layer: 0
   m_Name: Tower_Anubis
   m_TagString: Untagged
@@ -392,31 +365,6 @@ Transform:
   - {fileID: 7533722367434588746}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8768242737176143525
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2479293385062625072}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc33edca7f46a8444aabbc92f9ee5d01, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: DesertTower.VFX.Runtime::DesertTower.VFX.VfxPopIn
-  PoofPrefab: {fileID: 3837854254998827864, guid: d5c9e15cee4fa8540994a7e0b79d8d88, type: 3}
-  RevealPrefab: {fileID: 3512970272418113126, guid: 8a12a735b8f61c04d8d156ac30658d6e, type: 3}
-  RevealDelay: 0.2
-  PunchScale: 1.25
-  PunchDuration: 0.18
-  FlashColor: {r: 1, g: 0.95, b: 0.75, a: 1}
-  FlashDuration: 0.22
-  Shake: 0.08
-  ShakeDuration: 0.15
-  ReferenceSize: 2.2
-  FitEffectsToBounds: 1
-  EffectLifetime: 3
-  PlayOnEnable: 0
 --- !u!1 &5954387261548125415
 GameObject:
   m_ObjectHideFlags: 0
@@ -669,65 +617,3 @@ Transform:
   - {fileID: 9046746375185033831}
   m_Father: {fileID: 3769913684679723408}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &6033497800097736280
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 3769913684679723408}
-    m_Modifications:
-    - target: {fileID: 2267295326310566055, guid: 415469ac9136590449c705fffef6578f, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2267295326310566055, guid: 415469ac9136590449c705fffef6578f, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2267295326310566055, guid: 415469ac9136590449c705fffef6578f, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 2267295326310566055, guid: 415469ac9136590449c705fffef6578f, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2267295326310566055, guid: 415469ac9136590449c705fffef6578f, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2267295326310566055, guid: 415469ac9136590449c705fffef6578f, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2267295326310566055, guid: 415469ac9136590449c705fffef6578f, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2267295326310566055, guid: 415469ac9136590449c705fffef6578f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2267295326310566055, guid: 415469ac9136590449c705fffef6578f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2267295326310566055, guid: 415469ac9136590449c705fffef6578f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6432636508301414559, guid: 415469ac9136590449c705fffef6578f, type: 3}
-      propertyPath: m_Name
-      value: Anubis
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 415469ac9136590449c705fffef6578f, type: 3}
---- !u!4 &5533876512967110399 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2267295326310566055, guid: 415469ac9136590449c705fffef6578f, type: 3}
-  m_PrefabInstance: {fileID: 6033497800097736280}
-  m_PrefabAsset: {fileID: 0}
