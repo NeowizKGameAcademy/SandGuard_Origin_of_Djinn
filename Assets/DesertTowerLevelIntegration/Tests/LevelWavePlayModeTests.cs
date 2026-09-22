@@ -32,6 +32,12 @@ namespace DesertTower.LevelIntegration.Tests
             Time.timeScale = timeScale;
             yield return EditorSceneManager.LoadSceneInPlayMode(ScenePath, new LoadSceneParameters(LoadSceneMode.Single));
             yield return null;
+            var opening = UnityEngine.Object.FindFirstObjectByType<LevelOpeningCinematic>();
+            if (opening && opening.IsPlaying)
+            {
+                opening.Skip();
+                yield return UntilRealtime(() => !opening.IsPlaying, 5f, "맵 소개가 끝나지 않았다.");
+            }
         }
 
         static WaveDirector Director()

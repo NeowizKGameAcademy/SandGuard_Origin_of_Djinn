@@ -2298,6 +2298,7 @@ MonoBehaviour:
   piercedBurstRadius: 3.75
   piercedBurstDamageRatio: 1
   piercedBurstLaunchOut: 5
+  piercedBurstLaunchScale: 0.5
   chargedDamageMultiplier: 3.5
   chargedRadiusMultiplier: 5
   chargedRangeBonus: 8
@@ -2827,11 +2828,11 @@ MonoBehaviour:
   vortexPrefab: {fileID: 7703356908835638667, guid: 69f2fe8b8c8670c48b932b0978d69dab, type: 3}
   vortexVfxRadius: 1
   stormManaCost: 60
-  stormCooldown: 45
+  stormCooldown: 60
   stormRadius: 90
   stormExpandSpeed: 14
   stormRingThickness: 4
-  stormDamageRatio: 5
+  stormDamageRatio: 3
   stormKnockback: 8
   stormSlow: 0.5
   stormSlowDuration: 3
@@ -3098,7 +3099,7 @@ MonoBehaviour:
   manaSource: {fileID: 0}
   manaCost: 12
   window: 0
-  cooldown: 10
+  cooldown: 4
   obstacles:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -3836,6 +3837,20 @@ MonoBehaviour:
   Anchor: {fileID: 0}
   Attach: 0
   VolumeScale: 1
+--- !u!114 &7000000000000000003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5464598391117406770}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4275639b120f4bf38255bfe6014246a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxManaGain
+  Cue: {fileID: 11400000, guid: 4df34ef8548521a49b4e0a9fef2ab2a8, type: 2}
+  MinInterval: 0.8
 --- !u!1 &5699341838829093906
 GameObject:
   m_ObjectHideFlags: 0
@@ -5436,17 +5451,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc58ec520c3a19d4eaeb2e9ca4c1fa49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: DesertTower.VFX.Runtime::DesertTower.VFX.VfxRefractionBubble
---- !u!114 &7000000000000000003
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5464598391117406770}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4275639b120f4bf38255bfe6014246a6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxManaGain
-  Cue: {fileID: 11400000, guid: 4df34ef8548521a49b4e0a9fef2ab2a8, type: 2}
-  MinInterval: 0.8

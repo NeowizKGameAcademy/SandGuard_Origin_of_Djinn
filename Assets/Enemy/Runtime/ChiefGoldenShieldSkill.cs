@@ -13,20 +13,21 @@ namespace SandGuard.Enemy
         public Vector3 localPosition = new Vector3(0f, 1.15f, .65f);
         [Min(.01f)] public float summonDuration = .35f;
         [Min(.01f)] public float activeDuration = 600f;
-        [Min(0), Tooltip("한 생애에 쓸 수 있는 횟수. 0이면 제한 없이 쿨다운마다 다시 쓴다")]
-        public int maxUses = 1;
-        [Range(0f, 1f), Tooltip("남은 체력 비율이 이 값 이하가 되어야 시전한다. 0.7이면 체력이 70% 이하일 때. 1이면 조건 없음")]
-        public float healthThreshold = 0.7f;
+        [Tooltip("발동하는 남은 체력 비율. 앞에서부터 한 번씩만 쓴다. 0.7, 0.3이면 70% 이하에서 한 번 " +
+                 "꺼내고 그 방패가 걷힌 뒤 30% 이하에서 한 번 더 꺼낸다. 비우면 쓰지 않는다")]
+        public float[] healthThresholds = { 0.7f, 0.3f };
         [Min(0f)] public float cooldown = 8f;
         public enum Phase { Ready, Summoning, Active, Dismissing, Cooldown }
         public Phase State { get; private set; }
         public bool IsCasting => State == Phase.Summoning;
         public float Remaining { get; private set; }
         public int CastCount { get; private set; }
-        /// <summary>쓸 수 있는 횟수를 다 썼다. 소환을 시작한 순간 한 번으로 센다(도중에 끊겨도 돌려주지 않는다).</summary>
-        public bool IsSpent => maxUses > 0 && CastCount >= maxUses;
-        /// <summary>시전할 만큼 체력을 잃었다. 궁지에 몰렸을 때 꺼내는 방패라 처음부터 쓰지 않는다.</summary>
-        public bool IsHealthLowEnough => health && health.CurrentHealth <= health.MaxHealth * healthThreshold;
+        /// <summary>단계를 다 썼다. 소환을 시작한 순간 한 번으로 센다(도중에 끊겨도 돌려주지 않는다).</summary>
+        public bool IsSpent => healthThresholds == null || CastCount >= healthThresholds.Length;
+        /// <summary>이번 단계의 발동 체력. 단계를 다 썼으면 0이다.</summary>
+        public float NextThreshold => IsSpent ? 0f : Mathf.Clamp01(healthThresholds[CastCount]);
+        /// <summary>이번 단계만큼 체력을 잃었다. 궁지에 몰렸을 때 꺼내는 방패라 처음부터 쓰지 않는다.</summary>
+        public bool IsHealthLowEnough => health && !IsSpent && health.CurrentHealth <= health.MaxHealth * NextThreshold;
         public VfxGoldenShield Visual => visual;
         /// <summary>모델이 EnemyScaleBuilder로 커진 배율.</summary>
         public float BodyScale { get { var visuals = GetComponent<EnemyVisuals>(); return visuals ? visuals.BodyScale : 1f; } }

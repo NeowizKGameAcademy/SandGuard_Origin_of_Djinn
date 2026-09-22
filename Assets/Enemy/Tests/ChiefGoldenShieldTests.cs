@@ -31,7 +31,7 @@ namespace SandGuard.Enemy.Tests
             if (bombSkill) bombSkill.enabled = false; // 방패/근접 회귀 검증은 폭탄과 독립적으로 실행한다.
             skill = chief.GetComponent<ChiefGoldenShieldSkill>(); Assert.NotNull(skill);
             skill.summonDuration = .1f; skill.activeDuration = .5f; skill.cooldown = .2f;
-            skill.healthThreshold = 1f; // 방패 동작 자체는 시전 체력 조건과 떼어 검증한다. 조건은 전용 테스트가 본다.
+            skill.healthThresholds = new[] { 1f }; // 방패 동작 자체는 시전 체력 조건과 떼어 검증한다. 조건은 전용 테스트가 본다.
             health = chief.GetComponent<EnemyHealth>(); brain = chief.GetComponent<EnemyBrain>();
             brain.AIEnabled = false; // 준비 프레임에서 먼저 자동 발동하지 않도록 한다.
             targetObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -85,8 +85,8 @@ namespace SandGuard.Enemy.Tests
             var shieldRules = prefab.GetComponent<ChiefGoldenShieldSkill>();
             var bombRules = prefab.GetComponent<ChiefBombThrowSkill>();
             Assert.AreEqual(600f, shieldRules.activeDuration, "황금 방패는 10분 유지된다");
-            Assert.AreEqual(1, shieldRules.maxUses, "황금 방패는 한 번만 쓴다");
-            Assert.AreEqual(0.7f, shieldRules.healthThreshold, "황금 방패는 체력이 70% 이하일 때 쓴다");
+            Assert.AreEqual(new[] { 0.7f, 0.3f }, shieldRules.healthThresholds,
+                "황금 방패는 체력 70% 이하에서 한 번, 30% 이하에서 한 번 더 쓴다");
             Assert.AreEqual(0, bombRules.maxUses, "철거 폭탄은 횟수 제한 없이 쿨다운마다 던진다");
             Assert.AreEqual(6f, bombRules.cooldown, "철거 폭탄 쿨다운은 6초다");
             Assert.AreEqual(20f, bombRules.range, "철거 폭탄 사거리는 20m다");
@@ -110,7 +110,7 @@ namespace SandGuard.Enemy.Tests
 
         [UnityTest] public IEnumerator ShieldWaitsUntilSeventyPercentHealth()
         {
-            skill.healthThreshold = 0.7f;
+            skill.healthThresholds = new[] { 0.7f };
             brain.AIEnabled = true;
             float max = health.MaxHealth;
             Assert.False(skill.TryUse(), "체력이 가득하면 시전하지 않는다");
@@ -128,6 +128,34 @@ namespace SandGuard.Enemy.Tests
             brain.Think();
             Assert.AreEqual(ChiefGoldenShieldSkill.Phase.Summoning, skill.State, "체력이 70% 이하가 되면 다음 판단에서 방패를 꺼낸다");
             yield return null;
+        }
+
+        [UnityTest] public IEnumerator SecondShieldWaitsForThirtyPercentHealth()
+        {
+            skill.healthThresholds = new[] { 0.7f, 0.3f };
+            var melee = chief.GetComponent<EnemyMeleeAttack>();
+            melee.CombatEnabled = false; melee.Cancel(); // 휘두르는 중에는 시전하지 않으므로 근접을 재운다
+            brain.AIEnabled = true;
+            float max = health.MaxHealth;
+
+            health.TakeDamage(new DamageInfo(max * 0.35f, "World"));
+            yield return Until(() => skill.CastCount == 1, "70% 이하가 되면 첫 방패를 꺼낸다");
+            yield return Until(() => skill.shield.enabled, "첫 방패가 펴진다");
+
+            health.TakeDamage(Hit(Vector3.back, skill.shield.maxHealth + 1f));
+            Assert.True(skill.shield.IsBroken, "내구도를 다 쓰면 깨진다");
+            yield return Until(() => skill.State == ChiefGoldenShieldSkill.Phase.Ready, "쿨다운이 끝나면 다시 준비 상태다");
+            Assert.False(skill.IsSpent, "두 번째 단계가 남아 있다");
+
+            yield return new WaitForSeconds(0.5f);
+            Assert.AreEqual(1, skill.CastCount, "체력이 30%보다 높으면 두 번째 방패를 꺼내지 않는다");
+            Assert.False(skill.TryUse());
+
+            health.TakeDamage(new DamageInfo(health.CurrentHealth - max * 0.25f, "World"));
+            yield return Until(() => skill.CastCount == 2, "30% 이하가 되면 두 번째 방패를 꺼낸다");
+            yield return Until(() => skill.shield.enabled, "두 번째 방패도 펴진다");
+            Assert.True(skill.IsSpent, "두 단계를 다 쓰면 더 꺼내지 않는다");
+            Assert.False(skill.TryUse());
         }
 
         [UnityTest] public IEnumerator DeathAndReuseClearShieldAndResetCooldown()
@@ -153,7 +181,7 @@ namespace SandGuard.Enemy.Tests
         }
         [UnityTest] public IEnumerator LowHealthCastsWithoutTargetAndDisabledSkillCannotCast()
         {
-            skill.healthThreshold = 0.7f;
+            skill.healthThresholds = new[] { 0.7f };
             targetObject.SetActive(false);
             chief.GetComponent<EnemyTargetSelector>().ClearTarget();
             Physics.SyncTransforms();

@@ -37,6 +37,8 @@ namespace SandGuard.UI.HUD
 
         public Camera MapCamera => cam;
         public Texture MapTexture => texture;
+        public MinimapHUD View => hud != null ? hud.Minimap : null;
+        public bool PlacePreview(RectTransform marker, Vector3 world) => cam != null && Place(marker, world, true);
         MinimapHUD Map => hud.Minimap;
 
         void Awake() { if (hud == null) hud = GetComponent<GameHUDController>(); }

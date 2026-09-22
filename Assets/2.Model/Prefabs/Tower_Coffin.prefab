@@ -553,8 +553,8 @@ MonoBehaviour:
   coffinConfig:
     Num: 5
     Distance: 0.65
-    MaxHP: 200
-    Attack: 3
+    MaxHP: 300
+    Attack: 7
     AttackInterval: 1
     MoveSpeed: 5
     RotateSpeed: 5
@@ -568,6 +568,12 @@ MonoBehaviour:
     RotateSpeed: 5
     RespawnCooldown: 15
     KnockBackCooldown: 5
+    SplashRadius: 2.5
+    SplashRatio: 0.5
+    SplashAngle: 120
+    SplashMask:
+      serializedVersion: 2
+      m_Bits: 4294967295
 --- !u!114 &4694803086763727897
 MonoBehaviour:
   m_ObjectHideFlags: 0

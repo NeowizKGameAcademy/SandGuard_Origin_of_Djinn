@@ -147,7 +147,13 @@ MonoBehaviour:
     MoveSpeed: 5
     RotateSpeed: 5
     RespawnCooldown: 15
-    KnockBackCooldown: 5
+    KnockBackCooldown: 3
+    SplashRadius: 2.5
+    SplashRatio: 0.5
+    SplashAngle: 120
+    SplashMask:
+      serializedVersion: 2
+      m_Bits: 4294967295
 --- !u!114 &3584302775588211290
 MonoBehaviour:
   m_ObjectHideFlags: 0

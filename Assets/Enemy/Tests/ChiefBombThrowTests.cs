@@ -109,7 +109,7 @@ namespace SandGuard.Enemy.Tests
         [UnityTest] public IEnumerator BrainUsesShieldThenBombAndExplosionIgnoresFriendlies()
         {
             var shield = chief.GetComponent<ChiefGoldenShieldSkill>(); shield.summonDuration = .1f;
-            shield.healthThreshold = 1f; // 방패→폭탄 순서를 보는 테스트라 시전 체력 조건은 풀어 둔다
+            shield.healthThresholds = new[] { 1f }; // 방패→폭탄 순서를 보는 테스트라 시전 체력 조건은 풀어 둔다
             brain.AIEnabled = true; brain.Think();
             Assert.True(shield.IsCasting); Assert.False(skill.IsCasting);
             yield return Until(() => skill.IsCasting, "Brain chooses bomb after shield summon");

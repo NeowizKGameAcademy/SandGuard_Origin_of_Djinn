@@ -47,6 +47,12 @@ namespace SandGuard.UI.HUD
             }
             if (core == null) core = FindCore();
             if (wave == null) wave = FindWave();
+            if (wave is WaveDirector director)
+            {
+                var preview = GetComponent<WaveSpawnPreview>();
+                if (preview == null) preview = gameObject.AddComponent<WaveSpawnPreview>();
+                preview.Bind(director, GetComponent<MinimapController>());
+            }
             if (hud == null) return;
             hud.Minimap.SetVisible(true); // 지도는 같은 오브젝트의 MinimapController가 채운다
             if (player == null) return;
