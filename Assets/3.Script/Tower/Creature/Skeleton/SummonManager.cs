@@ -39,12 +39,21 @@ namespace Tower
 
         private void OnEnable()
         {
-            SummonAll();
+            StartCoroutine(SummonNextFrame());
         }
 
         private void OnDisable()
         {
+            StopAllCoroutines();
             DespawnAll();
+        }
+
+        private IEnumerator SummonNextFrame()
+        {
+            // Level 씬에서는 시설 프리팹이 런타임에 생성된다.
+            // 풀의 Awake가 끝난 뒤 소환하도록 한 프레임 기다린다.
+            yield return null;
+            SummonAll();
         }
 
         public void EnsureSlots()
@@ -129,7 +138,6 @@ namespace Tower
 
             obj.transform.SetParent(summonedRoot, false);
             obj.transform.position = GetSpawnPosition(index);
-            obj.SetActive(true);
 
             if (!obj.TryGetComponent(out SkeletonController creature))
             {
@@ -137,6 +145,8 @@ namespace Tower
                 return;
             }
 
+            creature.Initialize(this, index, obj.transform.position);
+            obj.SetActive(true);
             Register(index, creature);
         }
 
@@ -157,9 +167,22 @@ namespace Tower
 
         public void Respawn(int index)
         {
+            if (index < 0 || index >= summoned.Count || Config == null)
+                return;
+
             summoned[index] = null;
 
             StartCoroutine(RespawnCoroutine(index));
+        }
+
+        /// <summary>소환수가 사망했을 때 해당 슬롯을 비우고 설정된 시간 뒤 다시 소환한다.</summary>
+        public void NotifyDeath(int index, SkeletonController creature)
+        {
+            if (index < 0 || index >= summoned.Count || summoned[index] != creature)
+                return;
+
+            Unregister(index);
+            Respawn(index);
         }
 
         private IEnumerator RespawnCoroutine(int index)
