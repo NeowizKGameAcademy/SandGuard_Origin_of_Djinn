@@ -543,7 +543,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Tower.TowerStatus
   Tower: 2
   MaxHP: 200
-  DetectRange: 20
+  DetectRange: 2.4
   cobraConfig:
     TickDamage: 10
     TickInterval: 0.5
@@ -551,10 +551,10 @@ MonoBehaviour:
     SlowRatio: 0.3
     TickInterval: 1
   coffinConfig:
-    Num: 7
-    Distance: 0.3
-    MaxHP: 100
-    Attack: 10
+    Num: 5
+    Distance: 0.65
+    MaxHP: 200
+    Attack: 3
     AttackInterval: 1
     MoveSpeed: 5
     RotateSpeed: 5

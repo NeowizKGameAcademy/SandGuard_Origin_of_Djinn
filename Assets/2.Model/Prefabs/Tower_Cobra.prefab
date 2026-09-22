@@ -151,10 +151,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tower.TowerStatus
   Tower: 0
-  MaxHP: 200
+  MaxHP: 400
   DetectRange: 20
   cobraConfig:
-    TickDamage: 10
+    TickDamage: 5
     TickInterval: 0.5
   obeliskConfig:
     SlowRatio: 0.3
