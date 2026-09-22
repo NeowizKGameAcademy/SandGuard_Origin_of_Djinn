@@ -10,6 +10,7 @@ namespace SandGuard.UI.HUD
         [SerializeField] private Image icon;
         [SerializeField] private Image cooldownRing;
         [SerializeField] private TMP_Text cooldownText;
+        private void Awake() => CooldownTextStyle.Apply(cooldownText);
         public void SetTitle(string title) => titleText.text = title ?? string.Empty;
         public void SetIcon(Sprite value) { icon.sprite = value; icon.enabled = value != null; }
         public void SetCooldown(float remaining, float total)

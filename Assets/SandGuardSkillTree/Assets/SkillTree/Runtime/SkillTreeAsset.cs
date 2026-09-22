@@ -37,12 +37,13 @@ namespace SandGuard.Skills.Unity
             asset.Add("move.recall","흔적 귀환",SkillBranch.Movement,3,SkillKind.Active,"move.dash",EquipSlot.Shift,EquipSlot.Q,EquipSlot.E,EquipSlot.R);
             asset.Add("attack.pierce","관통탄",SkillBranch.Attack,1,SkillKind.Active,"",EquipSlot.Q,EquipSlot.E,EquipSlot.R);
             asset.Add("attack.burst","모래 폭발",SkillBranch.Attack,2,SkillKind.Active,"attack.pierce",EquipSlot.Q,EquipSlot.E,EquipSlot.R);
-            asset.Add("attack.vortex","모래 소용돌이",SkillBranch.Attack,3,SkillKind.Active,"attack.burst",EquipSlot.Q,EquipSlot.E,EquipSlot.R);
-            asset.Add("attack.storm","사막 폭풍",SkillBranch.Attack,3,SkillKind.Active,"attack.vortex",EquipSlot.Q,EquipSlot.E,EquipSlot.R);
-            asset.Add("tower.cobra","화염 코브라 해금",SkillBranch.Tower,1,SkillKind.Passive,"");
-            asset.Add("tower.obelisk","오벨리스크 해금",SkillBranch.Tower,2,SkillKind.Passive,"tower.cobra");
-            asset.Add("tower.skeleton","해골 소환진 해금",SkillBranch.Tower,2,SkillKind.Passive,"tower.cobra");
-            asset.Add("tower.anubis","아누비스 해금",SkillBranch.Tower,3,SkillKind.Passive,"tower.skeleton");
+            asset.Add("attack.vortex","모래 소용돌이",SkillBranch.Attack,3,SkillKind.Active,"attack.pierce",EquipSlot.Q,EquipSlot.E,EquipSlot.R);
+            asset.Add("attack.storm","사막 폭풍",SkillBranch.Attack,3,SkillKind.Active,"attack.burst",EquipSlot.Q,EquipSlot.E,EquipSlot.R);
+            asset.nodes[asset.nodes.Count-1].prerequisites.Add("attack.vortex");
+            asset.Add("tower.skeleton","해골 소환진 해금",SkillBranch.Tower,1,SkillKind.Passive,"");
+            asset.Add("tower.cobra","화염 코브라 해금",SkillBranch.Tower,2,SkillKind.Passive,"tower.skeleton");
+            asset.Add("tower.obelisk","오벨리스크 해금",SkillBranch.Tower,2,SkillKind.Passive,"tower.skeleton");
+            asset.Add("tower.anubis","아누비스 해금",SkillBranch.Tower,3,SkillKind.Passive,"tower.cobra");
             return asset;
         }
         void Add(string id,string label,SkillBranch branch,int cost,SkillKind kind,string previous,params EquipSlot[] slots)

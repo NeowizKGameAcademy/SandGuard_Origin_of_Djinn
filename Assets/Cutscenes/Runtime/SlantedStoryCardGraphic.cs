@@ -9,11 +9,18 @@ namespace SandGuard.Cutscenes
     {
         [SerializeField] Sprite sprite;
         [SerializeField, Range(-120f, 120f)] float slant = 42f;
+        [SerializeField] bool preserveAspectFill;
 
         public Sprite Sprite
         {
             get => sprite;
             set { sprite = value; SetVerticesDirty(); SetMaterialDirty(); }
+        }
+
+        public bool PreserveAspectFill
+        {
+            get => preserveAspectFill;
+            set { preserveAspectFill = value; SetVerticesDirty(); }
         }
 
         public override Texture mainTexture => sprite ? sprite.texture : Texture2D.whiteTexture;
@@ -23,6 +30,25 @@ namespace SandGuard.Cutscenes
             vh.Clear();
             Rect r = GetPixelAdjustedRect();
             Vector4 uv = sprite ? DataUtility.GetOuterUV(sprite) : new Vector4(0f, 0f, 1f, 1f);
+            if (sprite && preserveAspectFill)
+            {
+                float spriteAspect = sprite.rect.width / sprite.rect.height;
+                float targetAspect = r.width / r.height;
+                if (spriteAspect > targetAspect)
+                {
+                    float visible = targetAspect / spriteAspect;
+                    float center = (uv.x + uv.z) * .5f;
+                    float half = (uv.z - uv.x) * visible * .5f;
+                    uv.x = center - half; uv.z = center + half;
+                }
+                else
+                {
+                    float visible = spriteAspect / targetAspect;
+                    float center = (uv.y + uv.w) * .5f;
+                    float half = (uv.w - uv.y) * visible * .5f;
+                    uv.y = center - half; uv.w = center + half;
+                }
+            }
             float s = Mathf.Clamp(slant, -r.width * 0.3f, r.width * 0.3f);
 
             Add(vh, new Vector2(r.xMin + s, r.yMax), color, new Vector2(uv.x, uv.w));
