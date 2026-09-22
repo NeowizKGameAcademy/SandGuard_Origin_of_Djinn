@@ -14,7 +14,7 @@ namespace SandGuard.Facility.Editor
         const string CatalogPath = "Assets/Facility/Generated/FacilityCatalog.asset";
         const string IconFolder = "Assets/4.Sprite/UI/Facility/TowerIcons";
         const string LevelScenePath = "Assets/1.Scene/Level.unity";
-        static readonly string[] TowerIds = { "cobra", "obelisk", "skeleton", "anubis" };
+        static readonly string[] TowerIds = { "skeleton", "obelisk", "cobra", "anubis" };
 
         [MenuItem("SandGuard/Facility/Apply Tower Selection Icons")]
         public static void Build()
@@ -26,15 +26,15 @@ namespace SandGuard.Facility.Editor
             var existing = catalog.facilities.Where(x => x != null).ToDictionary(x => x.id, x => x);
             catalog.facilities = new List<FacilityDefinition>
             {
-                Definition(existing, "cobra", "코브라 타워", "tower.cobra", "Assets/2.Model/Prefabs/Tower_Cobra.prefab", "TowerIcon_1_Cobra.png", 40),
-                Definition(existing, "obelisk", "오벨리스크", "tower.obelisk", "Assets/2.Model/Prefabs/Tower_Obelisk.prefab", "TowerIcon_2_Obelisk.png", 55),
                 Definition(existing, "skeleton", "스켈레톤 관", "tower.skeleton", "Assets/2.Model/Prefabs/Tower_Coffin.prefab", "TowerIcon_3_Skeleton.png", 70),
+                Definition(existing, "obelisk", "오벨리스크", "tower.obelisk", "Assets/2.Model/Prefabs/Tower_Obelisk.prefab", "TowerIcon_2_Obelisk.png", 55),
+                Definition(existing, "cobra", "코브라 타워", "tower.cobra", "Assets/2.Model/Prefabs/Tower_Cobra.prefab", "TowerIcon_1_Cobra.png", 40),
                 Definition(existing, "anubis", "아누비스 석상", "tower.anubis", "Assets/2.Model/Prefabs/Tower Anubis.prefab", "TowerIcon_4_Anubis.png", 85)
             };
             EditorUtility.SetDirty(catalog);
             UpdateLevelSlots();
             AssetDatabase.SaveAssets();
-            Debug.Log("[Facility] Tower menu order/icons applied: 1 Cobra, 2 Obelisk, 3 Skeleton, 4 Anubis.");
+            Debug.Log("[Facility] Tower menu order/icons applied: 1 Skeleton, 2 Obelisk, 3 Cobra, 4 Anubis.");
         }
 
         static FacilityDefinition Definition(Dictionary<string, FacilityDefinition> existing, string id, string label,
