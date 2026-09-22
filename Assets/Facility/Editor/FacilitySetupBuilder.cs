@@ -399,10 +399,12 @@ namespace SandGuard.Facility.Editor
             var catalog = AssetDatabase.LoadAssetAtPath<FacilityCatalog>(CatalogPath);
             if (catalog == null) { catalog = ScriptableObject.CreateInstance<FacilityCatalog>(); AssetDatabase.CreateAsset(catalog, CatalogPath); }
             const string towerIconFolder = "Assets/4.Sprite/UI/Facility/TowerIcons";
-            Upsert(catalog, 0, CobraId, "코브라 타워", TowerBodyPath("Cobra"), 40, towerIconFolder + "/TowerIcon_1_Cobra.png");
+            Upsert(catalog, 0, SkeletonId, "스켈레톤 관", "Assets/2.Model/Prefabs/Tower_Coffin.prefab", 70, towerIconFolder + "/TowerIcon_3_Skeleton.png");
             Upsert(catalog, 1, ObeliskId, "오벨리스크", TowerBodyPath("Obelisk"), 55, towerIconFolder + "/TowerIcon_2_Obelisk.png");
-            Upsert(catalog, 2, SkeletonId, "스켈레톤 관", "Assets/2.Model/Prefabs/Tower_Coffin.prefab", 70, towerIconFolder + "/TowerIcon_3_Skeleton.png");
+            Upsert(catalog, 2, CobraId, "코브라 타워", TowerBodyPath("Cobra"), 40, towerIconFolder + "/TowerIcon_1_Cobra.png");
             Upsert(catalog, 3, AnubisId, "아누비스 석상", "Assets/2.Model/Prefabs/Tower Anubis.prefab", 85, towerIconFolder + "/TowerIcon_4_Anubis.png");
+            catalog.facilities = new[] { SkeletonId, ObeliskId, CobraId, AnubisId }
+                .Select(catalog.Find).Where(x => x != null).ToList();
             EditorUtility.SetDirty(catalog);
             AssetDatabase.SaveAssets();
             Debug.Log("FACILITY_TOWER_ASSETS_READY bodies=Cobra,Obelisk");
@@ -438,8 +440,8 @@ namespace SandGuard.Facility.Editor
                 if (automatic)
                 {
                     slot.allowedFacilityIds.Clear();
-                    slot.allowedFacilityIds.Add(CobraId); slot.allowedFacilityIds.Add(ObeliskId);
-                    slot.allowedFacilityIds.Add(SkeletonId); slot.allowedFacilityIds.Add(AnubisId);
+                    slot.allowedFacilityIds.Add(SkeletonId); slot.allowedFacilityIds.Add(ObeliskId);
+                    slot.allowedFacilityIds.Add(CobraId); slot.allowedFacilityIds.Add(AnubisId);
                 }
                 EditorUtility.SetDirty(slot);
                 foreach (var previous in slot.GetComponentsInChildren<FacilityAnchor>(true)) Object.DestroyImmediate(previous.gameObject);
