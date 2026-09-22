@@ -31,6 +31,12 @@ namespace DesertTower.LevelIntegration.Editor
             var root = PrefabUtility.LoadPrefabContents(path);
             try
             {
+                if (AssetDatabase.LoadAssetAtPath<SfxCue>(DestructionAudioSetup.CuePath))
+                {
+                    DestructionAudioSetup.Apply(root);
+                    PrefabUtility.SaveAsPrefabAsset(root, path);
+                    return;
+                }
                 var child = new GameObject("Sfx"); child.transform.SetParent(root.transform, false);
                 var timeline = child.AddComponent<SfxTimeline>();
                 if (charge != null) timeline.Entries.Add(new SfxTimeline.Entry { Delay = 0f,

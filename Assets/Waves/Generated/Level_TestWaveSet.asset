@@ -24,6 +24,14 @@ MonoBehaviour:
       count: 6
       delay: 0
       interval: 2
+    - spawnId: 8ca42bbaa0e6424086dec32cb6b1c6ff
+      targetId: 835bc8b2a0bc4807985b5eebbd309dd8
+      routeId:
+      element: {fileID: 0}
+      enemyKey: bandit.assassin
+      count: 2
+      delay: 0
+      interval: 1.5
     - spawnId: 50dd3b485a11450c937f9325ec9e1d77
       targetId: 835bc8b2a0bc4807985b5eebbd309dd8
       routeId:
@@ -32,22 +40,14 @@ MonoBehaviour:
       count: 6
       delay: 0
       interval: 2
-    - spawnId: 6ca1b69a93364dc0a8a5cfe841b4c3bb
+    - spawnId: 50dd3b485a11450c937f9325ec9e1d77
       targetId: 835bc8b2a0bc4807985b5eebbd309dd8
       routeId:
       element: {fileID: 0}
       enemyKey: bandit.assassin
-      count: 5
+      count: 2
       delay: 0
       interval: 1.5
-    - spawnId: 8ca42bbaa0e6424086dec32cb6b1c6ff
-      targetId: 835bc8b2a0bc4807985b5eebbd309dd8
-      routeId:
-      element: {fileID: 0}
-      enemyKey: bandit.chief
-      count: 1
-      delay: 5
-      interval: 2
   - label: "Wave 2 - 방패 진형"
     preparationSeconds: 20
     groups:

@@ -52,6 +52,7 @@ namespace DesertTower.VFX.Editor
                 }
                 ctrl.Pieces = pieces.ToArray(); ctrl.Starts = starts.ToArray(); ctrl.Landings = ends.ToArray(); ctrl.Rotations = rotations.ToArray();
                 BlueDestructionBursts.Add(root, bounds);
+                DestructionAudioSetup.Apply(root);
                 ctrl.Restart(); PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
                 Debug.Log("[VFX] Cobra destruction: " + pieces.Count + " textured source-mesh fragments.");
             }

@@ -112,6 +112,7 @@ namespace DesertTower.VFX.Editor
                         main.scalingMode = ParticleSystemScalingMode.Hierarchy;
                     }
                 }
+                DestructionAudioSetup.Apply(root);
                 ctrl.Restart();
                 PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
                 Debug.Log("[VFX] Obelisk: " + pieces.Count + " source-mesh fragments, 5 blue detonations.");

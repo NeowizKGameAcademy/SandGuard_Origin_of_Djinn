@@ -121,6 +121,7 @@ namespace SandGuard.Audio.Editor
             E("Facility_Summon_Pillar", PlaceholderKind.Sting, "빛기둥 소환 + 해골 달그락").At(3, 40),
             E("Facility_Hit", PlaceholderKind.Impact, "시설 피격 사암 타격").At(3, 40).Voices(4),
             E("Facility_Cobra_Destroy", PlaceholderKind.Impact, "코브라 파괴 붕괴 + 돌 파편").At(6, 70).Voices(2),
+            E("Facility_Destruction_Final", PlaceholderKind.Sting, "타워·코어 파괴 VFX 시작과 함께 최종 믹스 1회 재생").At(6, 70).Voices(8),
             E("Facility_Disabled_Loop", PlaceholderKind.Loop, "시설 정지 전기 지직 (5초)").At(3, 35).Voices(4),
             E("Wall_Hit", PlaceholderKind.Impact, "벽·타워·코어 표면 타격 (VFX_Wall_Hit)").At(3, 40).Voices(4),
             E("Wall_Destroy", PlaceholderKind.Impact, "벽 파괴 돌무더기 붕괴").At(6, 70).Voices(2),

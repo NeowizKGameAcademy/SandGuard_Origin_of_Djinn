@@ -61,6 +61,7 @@ namespace DesertTower.VFX.Editor
                 ctrl.MeshPaths = paths.ToArray(); ctrl.ProxyMeshes = proxies.ToArray();
                 ctrl.ReferenceMatrices = matrices.ToArray(); ctrl.ShardMeshIndices = groups.ToArray();
                 BlueDestructionBursts.Add(root, bounds);
+                DestructionAudioSetup.Apply(root);
                 ctrl.Restart();
                 PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
                 AssetDatabase.SaveAssets();

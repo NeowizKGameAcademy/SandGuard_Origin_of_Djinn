@@ -100,11 +100,14 @@ namespace SandGuard.Audio.Editor
             ("VFX_Torch", "Env_Torch_Loop", SfxEmitterTrigger.OnEnable, null, null),
         };
 
-        /// <summary>단계가 코드 상수인 연출 → 지연 목록. (VfxCoreDestruction: 충전 0.2초 → 폭발 → 파편 비행 0.9초 / VfxCobraDestruction: 0.08초 → 낙하 0.75~1.1초)</summary>
+        /// <summary>파괴 연출 시작에 최종 믹스를 한 번 재생한다.</summary>
         static readonly (string prefab, (float delay, string cue)[] entries)[] TimelineTable =
         {
-            ("VFX_Core_Destruction", new[] { (0f, "Core_Destroy_Charge"), (0.2f, "Core_Destroy"), (1.1f, "Core_Destroy_Debris") }),
-            ("VFX_Cobra_Destruction", new[] { (0.08f, "Facility_Cobra_Destroy"), (0.9f, "Facility_Cobra_Destroy_Debris") }),
+            ("VFX_Core_Destruction", new[] { (0f, "Facility_Destruction_Final") }),
+            ("VFX_Cobra_Destruction", new[] { (0f, "Facility_Destruction_Final") }),
+            ("VFX_Obelisk_Destruction", new[] { (0f, "Facility_Destruction_Final") }),
+            ("VFX_Anubis_Destruction", new[] { (0f, "Facility_Destruction_Final") }),
+            ("VFX_Coffin_Destruction", new[] { (0f, "Facility_Destruction_Final") }),
         };
 
         /// <summary>배치 진입점: 믹서 → 큐(카탈로그·Generated·AudioResource) → 배선 → 검증.</summary>
