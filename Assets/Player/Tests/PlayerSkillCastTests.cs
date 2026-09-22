@@ -258,17 +258,17 @@ namespace SandGuard.Player.Tests
             var storm = caster.LastStorm;
             Assert.Less(Vector3.Distance(Flat(storm.transform.position), Flat(player.transform.position)), 0.5f, "Without a core the ring starts at the caster.");
             Assert.Less(storm.transform.position.y, 0.1f, "On the ground.");
-            Assert.AreEqual(caster.StormDamage, storm.damage, 0.0001f); Assert.AreEqual(15f, storm.damage, 0.0001f); // 볼트 10 × 1.5
+            Assert.AreEqual(caster.StormDamage, storm.damage, 0.0001f); Assert.AreEqual(30f, storm.damage, 0.0001f); // 볼트 10 × 3
             Assert.AreEqual(caster.StormDuration, storm.duration, 0.0001f); Assert.AreEqual(19f / 8f, storm.duration, 0.0001f);
             Assert.AreEqual(caster.StormSlow, storm.slowFactor, 0.0001f);
             yield return new WaitForSeconds(0.9f); // 링 앞 ≈ 7.2 m: near(3.5 m)는 지났고 far(11.5 m)는 아직
             Assert.That(storm.Front, Is.InRange(6f, 8.5f));
-            Assert.AreEqual(1, nearTarget.HitCount); Assert.AreEqual(50f - 15f, nearTarget.CurrentHealth, 0.001f);
+            Assert.AreEqual(1, nearTarget.HitCount); Assert.AreEqual(50f - 30f, nearTarget.CurrentHealth, 0.001f);
             Assert.AreEqual(1, near.KnockCalls); Assert.Greater(near.Knock.z, 0f, "Pushed outward, away from the origin.");
             Assert.AreEqual(caster.stormKnockback, near.Knock.magnitude, 0.01f);
             Assert.AreEqual(caster.StormSlow, near.SlowFactor, 0.0001f, "Struck targets are slowed.");
             Assert.AreEqual(0, farTarget.HitCount); Assert.AreEqual(0, far.KnockCalls); Assert.AreEqual(0f, far.SlowFactor);
-            Assert.AreEqual(1, hits.Count); Assert.AreEqual("player.storm", hits[0].CauseId); Assert.AreEqual(15f, hits[0].AppliedDamage, 0.0001f);
+            Assert.AreEqual(1, hits.Count); Assert.AreEqual("player.storm", hits[0].CauseId); Assert.AreEqual(30f, hits[0].AppliedDamage, 0.0001f);
             yield return new WaitForSeconds(1.0f); // 링 앞 ≈ 15.2 m: far도 지나갔다
             Assert.AreEqual(1, farTarget.HitCount); Assert.AreEqual(1, far.KnockCalls);
             Assert.AreEqual(1, nearTarget.HitCount, "Each enemy is struck once, never again.");

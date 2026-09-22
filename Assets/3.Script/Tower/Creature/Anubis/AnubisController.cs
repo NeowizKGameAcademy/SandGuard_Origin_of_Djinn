@@ -19,6 +19,9 @@ namespace Tower
         private readonly MinionReturnToTower returnToTower = new MinionReturnToTower();
         private Vector3 groundedSpawnPoint;
         private bool hasSpawnPoint;
+        private static Collider[] splashBuffer = new Collider[32];
+        private readonly System.Collections.Generic.HashSet<System.Guid> splashed =
+            new System.Collections.Generic.HashSet<System.Guid>();
 
         public bool CanAttackHeight(ICombatTarget target) =>
             MinionAttackSequence.HeightReachable(transform, target, maxAttackHeight);
@@ -150,7 +153,66 @@ namespace Tower
             direction.y = 0f;
             target.DamageReceiver.TakeDamage(new DamageInfo(Config.attack, "Ally", null,
                 "tower.anubis", target.HitPosition, direction.normalized));
+            ApplySplash(target);
             if (attackSequence.IsSkill) skill?.Cast(transform.position, transform.forward, maxAttackHeight);
+        }
+
+        /// <summary>주 대상을 맞힌 지점 주위의 다른 적에게도 비율만큼 나눠 준다. 반경이 0이면 하지 않는다.</summary>
+        /// <remarks>일반 공격과 스킬 공격 모두 같은 규칙으로 번진다. 넉백은 스킬 쪽에서만 따로 한다.</remarks>
+        private void ApplySplash(ICombatTarget primary)
+        {
+            float amount = Config.attack * Config.splashRatio;
+
+            if (Config.splashRadius <= 0f || amount <= 0f)
+                return;
+
+            Vector3 center = primary.HitPosition;
+            splashed.Clear();
+            splashed.Add(primary.EntityId); // 주 대상은 이미 온전한 피해를 받았다.
+            // 값을 넣지 않은 기존 에셋은 마스크가 Nothing으로 읽혀 아무도 맞지 않는다. 그 경우는 전부로 본다.
+            int mask = Config.splashMask == 0 ? ~0 : Config.splashMask.value;
+            int count;
+
+            // 신전 지형 콜라이더가 버퍼를 채우면 옆에 있던 적이 조용히 빠진다. 꽉 차면 넓혀 다시 센다.
+            while (true)
+            {
+                count = Physics.OverlapSphereNonAlloc(center, Config.splashRadius, splashBuffer,
+                    mask, QueryTriggerInteraction.Ignore);
+
+                if (count < splashBuffer.Length)
+                    break;
+
+                System.Array.Resize(ref splashBuffer, splashBuffer.Length * 2);
+            }
+
+            for (int i = 0; i < count; i++)
+            {
+                // 한 대상의 몸과 방패가 따로 겹쳐도 한 번만 맞힌다. 높이 제한은 주 공격과 같은 규칙을 쓴다.
+                var other = splashBuffer[i].GetComponentInParent<ICombatTarget>();
+
+                if (!MinionAttackSequence.HeightReachable(transform, other, maxAttackHeight)
+                    || other.FactionId == "Ally" || !splashed.Add(other.EntityId)
+                    || other.DamageReceiver == null || !InSplashArc(other))
+                    continue;
+
+                Vector3 outward = other.HitPosition - center;
+                outward.y = 0f;
+                other.DamageReceiver.TakeDamage(new DamageInfo(amount, "Ally", null, "tower.anubis.splash",
+                    other.HitPosition, outward.sqrMagnitude > 0.001f ? outward.normalized : transform.forward));
+            }
+
+            System.Array.Clear(splashBuffer, 0, count);
+        }
+
+        /// <summary>바라보는 쪽 splashAngle도 안에 있다. 각도는 아누비스 위치에서 재므로 등 뒤는 번지지 않는다.</summary>
+        private bool InSplashArc(ICombatTarget other)
+        {
+            if (Config.splashAngle >= 360f)
+                return true;
+
+            Vector3 flat = other.HitPosition - transform.position;
+            flat.y = 0f;
+            return flat.sqrMagnitude < 0.001f || Vector3.Angle(transform.forward, flat) <= Config.splashAngle * 0.5f;
         }
 
         private void ReturnToSpawnPoint()

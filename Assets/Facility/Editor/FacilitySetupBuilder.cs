@@ -401,8 +401,8 @@ namespace SandGuard.Facility.Editor
             const string towerIconFolder = "Assets/4.Sprite/UI/Facility/TowerIcons";
             Upsert(catalog, 0, SkeletonId, "스켈레톤 관", "Assets/2.Model/Prefabs/Tower_Coffin.prefab", 70, towerIconFolder + "/TowerIcon_3_Skeleton.png");
             Upsert(catalog, 1, ObeliskId, "오벨리스크", TowerBodyPath("Obelisk"), 55, towerIconFolder + "/TowerIcon_2_Obelisk.png");
-            Upsert(catalog, 2, CobraId, "코브라 타워", TowerBodyPath("Cobra"), 40, towerIconFolder + "/TowerIcon_1_Cobra.png");
-            Upsert(catalog, 3, AnubisId, "아누비스 석상", "Assets/2.Model/Prefabs/Tower Anubis.prefab", 85, towerIconFolder + "/TowerIcon_4_Anubis.png");
+            Upsert(catalog, 2, CobraId, "코브라 타워", TowerBodyPath("Cobra"), 100, towerIconFolder + "/TowerIcon_1_Cobra.png");
+            Upsert(catalog, 3, AnubisId, "아누비스 석상", "Assets/2.Model/Prefabs/Tower_Anubis.prefab", 85, towerIconFolder + "/TowerIcon_4_Anubis.png");
             catalog.facilities = new[] { SkeletonId, ObeliskId, CobraId, AnubisId }
                 .Select(catalog.Find).Where(x => x != null).ToList();
             EditorUtility.SetDirty(catalog);

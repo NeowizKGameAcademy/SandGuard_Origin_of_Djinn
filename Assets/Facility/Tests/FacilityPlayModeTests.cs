@@ -193,6 +193,15 @@ namespace SandGuard.Facility.Tests
             var ground = Track(GameObject.CreatePrimitive(PrimitiveType.Cube));
             ground.transform.position = new Vector3(0, -.5f, 0); ground.transform.localScale = new Vector3(60, 1, 60);
             wallet = withWallet ? Track(new GameObject("Wallet")).AddComponent<SandGuard.Player.PlayerManaWallet>() : null;
+            if (wallet != null)
+            {
+                // 지갑 기본값 100은 코브라 한 채(100)로 바닥난다. 짓고 수리까지 볼 수 있게 200으로 올린다.
+                var walletFields = new UnityEditor.SerializedObject(wallet);
+                walletFields.FindProperty("maxMana").intValue = 200;
+                walletFields.FindProperty("startingMana").intValue = 200;
+                walletFields.ApplyModifiedPropertiesWithoutUndo();
+                wallet.ResetWallet();
+            }
             var level = Track(new GameObject("Level")).AddComponent<LevelRoot>();
             var anchorPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Facility/Generated/Towers/TowerBaseAnchor.prefab");
             Assert.NotNull(anchorPrefab, "Run SandGuard/Facility/Create Tower Build Assets (from Tower.unity) first.");
@@ -215,25 +224,25 @@ namespace SandGuard.Facility.Tests
         {
             var service = TowerLevel(3, true, out var anchors, out var wallet);
             yield return null;
-            Assert.AreEqual(100, wallet.CurrentMana);
-            Assert.AreEqual(40, service.catalog.Find("cobra").manaCost, "Designed cobra cost.");
+            Assert.AreEqual(200, wallet.CurrentMana);
+            Assert.AreEqual(100, service.catalog.Find("cobra").manaCost, "Designed cobra cost.");
             Assert.AreEqual(55, service.catalog.Find("obelisk").manaCost, "Temporary obelisk cost.");
             AssertOccupiedVisuals(anchors[0], false); // 빈 받침
 
             var cobra = service.TryBuild(PlacementRequest.AtSlot("cobra", "slot-0"));
             Assert.True(cobra.Outcome.Succeeded, "Cobra build failed: " + cobra.Outcome.Failure);
-            Assert.AreEqual(60, wallet.CurrentMana, "Building spends the cobra cost.");
+            Assert.AreEqual(100, wallet.CurrentMana, "Building spends the cobra cost.");
             Assert.NotNull(anchors[0].transform.Find("cobra"), "The cobra body is spawned on the base.");
             Assert.NotNull(anchors[0].Occupant.Health, "The body keeps its combat health.");
             AssertOccupiedVisuals(anchors[0], true); // 본체가 서면 켜진다
 
             Assert.True(service.TryBuild(PlacementRequest.AtSlot("obelisk", "slot-1")).Outcome.Succeeded);
-            Assert.AreEqual(5, wallet.CurrentMana);
+            Assert.AreEqual(45, wallet.CurrentMana);
 
             var broke = service.TryBuild(PlacementRequest.AtSlot("cobra", "slot-2"));
             Assert.False(broke.Outcome.Succeeded);
             Assert.AreEqual(ActionFailure.InsufficientMana, broke.Outcome.Failure);
-            Assert.AreEqual(5, wallet.CurrentMana, "A failed build leaves mana untouched.");
+            Assert.AreEqual(45, wallet.CurrentMana, "A failed build leaves mana untouched.");
             Assert.False(anchors[2].IsOccupied);
             Assert.True(anchors[2].GetComponentInChildren<FacilityInstance>(true) == null, "No body is left behind.");
             Assert.True(service.Slots.TryGetSlot("slot-2", out var state) && !state.OccupantId.HasValue, "The slot stays free.");
@@ -266,7 +275,7 @@ namespace SandGuard.Facility.Tests
             damageable.TakeDamage(new DamageInfo(half, "Enemy"));
             var quote = service.GetRepairQuote(facility.EntityId);
             Assert.True(quote.Availability.Succeeded);
-            Assert.AreEqual(10, quote.ManaAmount, "Cost = 40 × half health lost × 0.5.");
+            Assert.AreEqual(25, quote.ManaAmount, "Cost = 100 × half health lost × 0.5.");
             Assert.AreEqual(half, quote.HealthToRestore, .01f);
             yield return new WaitForSeconds(.2f);
             Assert.True(menu.IsOpen, "A damaged tower opens the repair menu.");
@@ -277,7 +286,7 @@ namespace SandGuard.Facility.Tests
             menu.Select(0);
             Assert.True(menu.LastRepairResult.Succeeded, "Repair failed: " + menu.LastRepairResult.Failure);
             Assert.AreEqual(health.MaxHealth, health.CurrentHealth, "Repair restores full health at once.");
-            Assert.AreEqual(manaBefore - 10, wallet.CurrentMana);
+            Assert.AreEqual(manaBefore - 25, wallet.CurrentMana);
             Assert.AreEqual(1, repaired);
             yield return new WaitForSeconds(.2f);
             Assert.False(menu.IsOpen, "The menu closes once the tower is whole.");

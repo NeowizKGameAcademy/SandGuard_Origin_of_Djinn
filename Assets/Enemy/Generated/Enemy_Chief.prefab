@@ -2364,21 +2364,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 658155196757490767, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+      propertyPath: m_Name
+      value: Enemy_Chief
+      objectReference: {fileID: 0}
     - target: {fileID: 754703791412322535, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
       propertyPath: displacementMultiplier
       value: 0.1
       objectReference: {fileID: 0}
-    - target: {fileID: 2233741487118629176, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
-      propertyPath: damage
-      value: 30
-      objectReference: {fileID: 0}
     - target: {fileID: 1342337955418082952, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
       propertyPath: maxHealth
-      value: 250
-      objectReference: {fileID: 0}
-    - target: {fileID: 658155196757490767, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
-      propertyPath: m_Name
-      value: Enemy_Chief
+      value: 1000
       objectReference: {fileID: 0}
     - target: {fileID: 1342337955418082952, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
       propertyPath: removeDelay
@@ -2430,7 +2426,11 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: 6d8ec07b3829dc34ca1bbcc7faa4c1f1, type: 2}
     - target: {fileID: 2233741487118629176, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
       propertyPath: range
-      value: 3
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2233741487118629176, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+      propertyPath: damage
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 2233741487118629176, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
       propertyPath: windup
@@ -2446,7 +2446,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3868443114016356889, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
       propertyPath: moveSpeed
-      value: 2.2
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4143298610426733003, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
       propertyPath: localScale.x
@@ -2572,8 +2572,9 @@ MonoBehaviour:
   localPosition: {x: 0, y: 1.15, z: 0.65}
   summonDuration: 0.35
   activeDuration: 600
-  maxUses: 1
-  healthThreshold: 0.7
+  healthThresholds:
+  - 0.7
+  - 0.3
   cooldown: 8
 --- !u!114 &6845969559114640935
 MonoBehaviour:

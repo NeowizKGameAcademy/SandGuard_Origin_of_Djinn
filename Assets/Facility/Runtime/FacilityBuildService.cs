@@ -50,7 +50,7 @@ namespace SandGuard.Facility
         [Tooltip("건설·수리 비용을 낼 마나 지갑(IManaWallet, 예: PlayerManaWallet). 비우면 씬에서 찾고, 없으면 비용 없이 진행한다")]
         public MonoBehaviour manaSource;
         [Min(0f), Tooltip("수리 비용 = 건설비 × 잃은 체력 비율 × 이 값 (올림)")]
-        public float repairCostRatio = .5f;
+        public float repairCostRatio = .75f;
         public event Action Changed;
         public event Action<FacilityAnchor, FacilityViewData> Built;
         /// <summary>수리에 성공했다. (시설, 회복량, 쓴 마나)</summary>

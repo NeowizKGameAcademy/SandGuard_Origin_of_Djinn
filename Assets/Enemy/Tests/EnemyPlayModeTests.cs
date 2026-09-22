@@ -196,7 +196,7 @@ namespace SandGuard.Enemy.Tests
             Assert.AreEqual(0, player.HitCount, "The player must not draw this enemy while the tower stands.");
         }
 
-        [UnityTest] public IEnumerator ChiefStopsAtRangeForAttackableTargets() => StopsAtRange("Enemy_Chief", 3f);
+        [UnityTest] public IEnumerator ChiefStopsAtRangeForAttackableTargets() => StopsAtRange("Enemy_Chief", 5f);
         [UnityTest] public IEnumerator HammerBruteStopsAtRangeForAttackableTargets() => StopsAtRange("Enemy_HammerBrute", 2.3f);
 
         IEnumerator StopsAtRange(string prefab, float expectedRange)
