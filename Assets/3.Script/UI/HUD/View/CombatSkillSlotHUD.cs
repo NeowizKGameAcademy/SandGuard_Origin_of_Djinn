@@ -11,6 +11,7 @@ namespace SandGuard.UI.HUD
         [SerializeField] private TMP_Text cooldownText;
         [SerializeField] private TMP_Text keyText;
         [SerializeField] private GameObject lockedOverlay;
+        private void Awake() => CooldownTextStyle.Apply(cooldownText);
         public void SetIcon(Sprite value) { icon.sprite = value; icon.enabled = value != null; }
         public void SetCooldown(float remaining, float total)
         {

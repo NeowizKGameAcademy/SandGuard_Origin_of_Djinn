@@ -16,6 +16,7 @@ namespace SandGuard.Cutscenes.Editor
         const string ScenePath = "Assets/1.Scene/PrologueCutscene.unity";
         const string SequencePath = Root + "/PrologueSequence.asset";
         const string Art = Root + "/Art/";
+        const string MusicPath = Root + "/Audio/1.forgotten history.mp3";
 
         [MenuItem("SandGuard/Cutscenes/Build Prologue Scene")]
         public static void Build()
@@ -30,6 +31,9 @@ namespace SandGuard.Cutscenes.Editor
             }
             sequence.nextScene = "MainScene";
             sequence.fadeDuration = 0.7f;
+            sequence.backgroundMusic = AssetDatabase.LoadAssetAtPath<AudioClip>(MusicPath);
+            sequence.musicVolume = 0.55f;
+            sequence.loopMusic = true;
             sequence.cuts = MakeCuts();
             EditorUtility.SetDirty(sequence);
 

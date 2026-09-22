@@ -22,5 +22,10 @@ namespace SandGuard.Cutscenes
         public bool playOnceAutomatically = true;
         public string nextScene = "MainScene";
         [Min(0f)] public float fadeDuration = 0.6f;
+
+        [Header("Background Music")]
+        public AudioClip backgroundMusic;
+        [Range(0f, 1f)] public float musicVolume = 0.55f;
+        public bool loopMusic = true;
     }
 }

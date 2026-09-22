@@ -19,6 +19,7 @@ namespace SandGuard.Cutscenes
         [SerializeField] CanvasGroup visibleGroup;
         [SerializeField] Button nextButton;
         [SerializeField] Button skipButton;
+        [SerializeField] AudioSource musicSource;
 
         int index;
         float elapsed;
@@ -44,6 +45,7 @@ namespace SandGuard.Cutscenes
             }
             if (nextButton) nextButton.onClick.AddListener(Next);
             if (skipButton) skipButton.onClick.AddListener(Skip);
+            PlayBackgroundMusic();
             ShowCut(0);
             StartCoroutine(Fade(0f, 1f));
         }
@@ -128,6 +130,7 @@ namespace SandGuard.Cutscenes
 
         IEnumerator LoadNextScene()
         {
+            yield return FadeOutMusic();
             string targetScene = replayPlayback ? "MainScene" : sequence.nextScene;
             if (replayPlayback) StoryProgress.RequestStoryMenuReturn();
             if (!Application.CanStreamedLevelBeLoaded(targetScene))
@@ -137,6 +140,31 @@ namespace SandGuard.Cutscenes
             }
             var operation = SceneManager.LoadSceneAsync(targetScene, LoadSceneMode.Single);
             while (operation != null && !operation.isDone) yield return null;
+        }
+
+        void PlayBackgroundMusic()
+        {
+            if (!sequence.backgroundMusic) return;
+            if (!musicSource) musicSource = gameObject.AddComponent<AudioSource>();
+            musicSource.playOnAwake = false;
+            musicSource.spatialBlend = 0f;
+            musicSource.loop = sequence.loopMusic;
+            musicSource.clip = sequence.backgroundMusic;
+            musicSource.volume = sequence.musicVolume;
+            musicSource.Play();
+        }
+
+        IEnumerator FadeOutMusic()
+        {
+            if (!musicSource || !musicSource.isPlaying) yield break;
+            float startVolume = musicSource.volume;
+            float duration = Mathf.Max(0.01f, sequence.fadeDuration);
+            for (float t = 0f; t < duration; t += Time.unscaledDeltaTime)
+            {
+                musicSource.volume = Mathf.Lerp(startVolume, 0f, t / duration);
+                yield return null;
+            }
+            musicSource.Stop();
         }
     }
 }

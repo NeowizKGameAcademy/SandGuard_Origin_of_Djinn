@@ -19,6 +19,7 @@ namespace SandGuard.Cutscenes.Editor
         const string ScenePath = "Assets/1.Scene/IntroCutscene.unity";
         const string SequencePath = Root + "/IntroSequence.asset";
         const string MainScenePath = "Assets/1.Scene/MainScene.unity";
+        const string MusicPath = Root + "/Audio/2.Crystal Desert.mp3";
 
         [MenuItem("SandGuard/Cutscenes/Build Intro Scene")]
         public static void Build()
@@ -36,6 +37,9 @@ namespace SandGuard.Cutscenes.Editor
             sequence.playOnceAutomatically = true;
             sequence.nextScene = "Level";
             sequence.fadeDuration = 0.7f;
+            sequence.backgroundMusic = AssetDatabase.LoadAssetAtPath<AudioClip>(MusicPath);
+            sequence.musicVolume = 0.55f;
+            sequence.loopMusic = true;
             sequence.cuts = MakeCuts();
             EditorUtility.SetDirty(sequence);
 
