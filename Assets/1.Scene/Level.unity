@@ -5580,6 +5580,17 @@ MonoBehaviour:
   - anubis
   footprint: {x: 4, y: 4}
   available: 1
+--- !u!114 &357762766 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8954611585454927082, guid: 18b568f2cd017d74ea7c430ce4dc5c73, type: 3}
+  m_PrefabInstance: {fileID: 1721396677}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1721396679}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32152fb76cd64cf46a5818682c969c4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesertTower.VFX.Runtime::DesertTower.VFX.VfxDestructionOnDeath
 --- !u!1001 &359434510
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -27205,7 +27216,19 @@ MonoBehaviour:
         m_CallState: 2
   onDefeated:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 357762766}
+        m_TargetAssemblyTypeName: DesertTower.VFX.VfxDestructionOnDeath, DesertTower.VFX.Runtime
+        m_MethodName: Fire
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1721396683
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -4,10 +4,12 @@ using UnityEngine;
 namespace SandGuard.Enemy
 {
     /// <summary>적 테스트 씬 전용 표적. 코어·벽·플레이어 대역으로 쓰며 실제 구현과는 독립이다.</summary>
-    public sealed class EnemyTestTarget : MonoBehaviour, ICombatTarget, IDamageable, ILifeState, IDamageEvents
+    public sealed class EnemyTestTarget : MonoBehaviour, ICombatTarget, IFacilityKind, IDamageable, ILifeState, IDamageEvents
     {
         public CombatTargetKind kind = CombatTargetKind.Player;
         public string factionId = "Ally";
+        [Tooltip("타워 대역으로 쓸 때의 시설 종류 ID. 예: tower.cobra")]
+        public string definitionId = "";
         [Min(1f)] public float maxHealth = 50f;
         [Tooltip("피격 기준점. 기본은 오브젝트 중심")]
         public Vector3 hitOffset;
@@ -20,6 +22,7 @@ namespace SandGuard.Enemy
         public Guid EntityId => entityId;
         public string FactionId => factionId;
         public CombatTargetKind Kind => kind;
+        public string DefinitionId => definitionId;
         public Vector3 HitPosition => transform.TransformPoint(hitOffset);
         public bool IsTargetable => State == LifeState.Alive;
         public IDamageable DamageReceiver => this;

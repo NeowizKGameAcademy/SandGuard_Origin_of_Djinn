@@ -7,7 +7,7 @@ namespace SandGuard.Enemy
     /// <summary>
     /// 적의 이동 상태이상: 속박(모래 족쇄), 둔화(사막 폭풍), 밀림(모래 소용돌이).
     /// 속박은 남은 시간 동안 모터를 제자리에 세우고 발밑에 속박 연출(VFX_Sand_Root)을 붙였다가 풀릴 때 거둔다. 공격과 회전은 그대로다.
-    /// 둔화는 가장 강한 것 하나만 적용되고, 밀림은 그 프레임 자기 걸음을 멈추고 옮겨진다.
+    /// 둔화는 가장 강한 것 하나만 적용되고, 걸리는 동안 발밑에 둔화 연출을 따로 붙인다. 밀림은 그 프레임 자기 걸음을 멈추고 옮겨진다.
     /// 넉백은 방향과 세기를 한 번 받아 두고 knockbackDamping으로 감속하며 스스로 민다. 죽거나 비활성화되면 전부 즉시 풀린다.
     /// </summary>
     [DefaultExecutionOrder(-90)] // 모터(-100) 다음, 두뇌(100) 전
@@ -17,6 +17,8 @@ namespace SandGuard.Enemy
         public EnemyHealth health;
         [Tooltip("발밑에 붙이는 속박 연출. VfxSandRoot가 있으면 Release로 풀고, 없으면 1초 뒤 지운다")]
         public GameObject vfxPrefab;
+        [Tooltip("둔화가 걸린 동안 발밑에 붙이는 연출. 비우면 둔화에는 연출이 없다. 거두는 방식은 속박 연출과 같다")]
+        public GameObject slowVfxPrefab;
         [Tooltip("연출을 붙일 발 기준점. 비우면 이 오브젝트")]
         public Transform feet;
         [Min(0f), Tooltip("외부 밀림 배율. 0이면 면역, 0.5면 절반, 1이면 그대로 받는다. Displace 이동량과 Knockback/Launch 입력 속도에 적용된다")]
@@ -26,10 +28,12 @@ namespace SandGuard.Enemy
         float endTime = -1f;
         float slowFactor, slowEndTime = -1f;
         Vector3 knock;
-        GameObject vfx;
+        GameObject vfx, slowVfx;
         public bool IsRestrained => endTime >= 0f && Time.time < endTime;
         public float RemainingSeconds => IsRestrained ? endTime - Time.time : 0f;
         public GameObject ActiveVfx => vfx;
+        /// <summary>둔화 연출 인스턴스. 둔화 중이 아니거나 prefab이 없으면 null이다.</summary>
+        public GameObject ActiveSlowVfx => slowVfx;
         public float SlowFactor => slowEndTime >= 0f && Time.time < slowEndTime ? slowFactor : 0f;
         /// <summary>지금 남은 넉백 속도(m/s). 밀리는 중이 아니면 0이다.</summary>
         public Vector3 KnockbackVelocity => knock;
@@ -52,11 +56,7 @@ namespace SandGuard.Enemy
             endTime = until;
             if (was) return;
             if (motor != null) motor.Restrained = true;
-            if (vfxPrefab != null)
-            {
-                Transform anchor = feet != null ? feet : transform;
-                vfx = PrefabPool.Spawn(vfxPrefab, anchor.position, Quaternion.identity, transform);
-            }
+            vfx = SpawnVfx(vfxPrefab);
             Changed?.Invoke(true);
         }
 
@@ -68,15 +68,25 @@ namespace SandGuard.Enemy
             if (endTime < 0f) return;
             endTime = -1f;
             if (motor != null) motor.Restrained = false;
-            if (vfx != null)
-            {
-                var root = vfx.GetComponent<VfxSandRoot>();
-                // 비활성화(적이 풀로 돌아가는 중)에는 사라지는 연출을 돌릴 수 없으므로 바로 거둔다.
-                if (root != null && !immediate) root.Release();
-                else PrefabPool.Release(vfx, immediate ? 0f : 1f);
-                vfx = null;
-            }
+            ReleaseVfx(ref vfx, immediate);
             Changed?.Invoke(false);
+        }
+
+        GameObject SpawnVfx(GameObject prefab)
+        {
+            if (prefab == null) return null;
+            Transform anchor = feet != null ? feet : transform;
+            return PrefabPool.Spawn(prefab, anchor.position, Quaternion.identity, transform);
+        }
+
+        void ReleaseVfx(ref GameObject instance, bool immediate)
+        {
+            if (instance == null) return;
+            var root = instance.GetComponent<VfxSandRoot>();
+            // 비활성화(적이 풀로 돌아가는 중)에는 사라지는 연출을 돌릴 수 없으므로 바로 거둔다.
+            if (root != null && !immediate) root.Release();
+            else PrefabPool.Release(instance, immediate ? 0f : 1f);
+            instance = null;
         }
 
         public void Slow(float factor, float duration)
@@ -90,6 +100,9 @@ namespace SandGuard.Enemy
             if (factor > current) { slowFactor = factor; slowEndTime = until; } // 더 강한 둔화가 덮어쓴다
             else slowEndTime = Mathf.Max(slowEndTime, until);                   // 같은 세기는 시간만 늘린다
             if (motor != null) motor.SpeedMultiplier = 1f - slowFactor;
+            // 장판은 짧은 둔화를 매 틱 다시 건다. 연출은 둔화가 처음 걸릴 때 한 번만 붙이고 풀릴 때 거둔다.
+            // 만료된 같은 프레임에 다시 걸리면 current는 0이지만 인스턴스는 살아 있으므로 그대로 쓴다.
+            if (current <= 0f && slowVfx == null) slowVfx = SpawnVfx(slowVfxPrefab);
         }
 
         public void Displace(Vector3 delta)
@@ -134,12 +147,15 @@ namespace SandGuard.Enemy
             knock = Vector3.MoveTowards(knock, Vector3.zero, knockbackDamping * dt);
         }
 
-        void ClearSlow()
+        void ClearSlow() => ClearSlow(false);
+
+        void ClearSlow(bool immediate)
         {
             slowEndTime = -1f; slowFactor = 0f;
             if (motor != null) motor.SpeedMultiplier = 1f;
+            ReleaseVfx(ref slowVfx, immediate);
         }
 
-        void OnDisable() { Release(true); ClearSlow(); knock = Vector3.zero; }
+        void OnDisable() { Release(true); ClearSlow(true); knock = Vector3.zero; }
     }
 }

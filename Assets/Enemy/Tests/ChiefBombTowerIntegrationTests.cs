@@ -17,7 +17,9 @@ namespace SandGuard.Enemy.Tests
     /// </summary>
     public sealed class ChiefBombTowerIntegrationTests
     {
-        const string CobraPrefab = "Assets/Facility/Generated/Towers/Tower_Cobra.prefab";
+        // 카탈로그(FacilityCatalog.asset)가 실제로 짓는 프리팹. 예전에는 시설 팀이 복사한 사본을 봤는데,
+        // 타워 팀 프리팹으로 카탈로그가 바뀐 뒤에도 사본에는 배선이 남아 있어 테스트만 초록이었다.
+        const string CobraPrefab = "Assets/2.Model/Prefabs/Tower_Cobra.prefab";
         GameObject ground, chief, tower;
 
         static Type TowerType(string name) => Type.GetType(name + ", Assembly-CSharp");
@@ -46,16 +48,21 @@ namespace SandGuard.Enemy.Tests
             nav.useGeometry = UnityEngine.AI.NavMeshCollectGeometry.PhysicsColliders; nav.BuildNavMesh();
 
             tower = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(CobraPrefab), new Vector3(0, 0, 6), Quaternion.identity);
-            var towerTarget = tower.GetComponent<ICombatTarget>();
+            // 본체는 체력 컴포넌트가 붙은 오브젝트다. 타워 팀 프리팹은 루트가 아니라 자식에 있다.
+            var towerBody = tower.GetComponentInChildren<IHealth>(true) as Component;
+            Assert.NotNull(towerBody, "코브라에 체력 컴포넌트가 있어야 한다");
+            var towerTarget = towerBody as ICombatTarget;
             Assert.NotNull(towerTarget, "코브라 본체가 전투 대상이어야 폭탄이 찾는다");
             Assert.AreEqual(CombatTargetKind.Tower, towerTarget.Kind);
             var receiverType = TowerType("TowerDisableReceiver");
             Assert.NotNull(receiverType, "TowerDisableReceiver 타입을 찾지 못했다");
-            var receiver = tower.GetComponent(receiverType);
-            Assert.NotNull(receiver, "코브라에 정지 수신기가 붙어 있어야 한다");
+            var receiver = towerBody.GetComponent(receiverType);
+            Assert.NotNull(receiver, "코브라 본체에 정지 수신기가 붙어 있어야 한다");
             var isDisabled = receiverType.GetProperty("IsDisabled");
-            var fire = (Behaviour)tower.GetComponentInChildren(TowerType("RangeController"), true);
-            var aim = (Behaviour)tower.GetComponentInChildren(TowerType("FindEnemy"), true);
+            var fire = (Behaviour)tower.GetComponentInChildren(TowerType("Tower.TowerEmit"), true);
+            var aim = (Behaviour)tower.GetComponentInChildren(TowerType("Tower.TargetDetector"), true);
+            Assert.NotNull(fire, "발사 컴포넌트(TowerEmit)를 찾지 못했다");
+            Assert.NotNull(aim, "탐지 컴포넌트(TargetDetector)를 찾지 못했다");
             bool Disabled() => (bool)isDisabled.GetValue(receiver);
 
             chief = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Enemy/Generated/Enemy_Chief.prefab"),
@@ -69,7 +76,8 @@ namespace SandGuard.Enemy.Tests
 
             brain.AIEnabled = true;
             yield return Until(() => bomb.ThrowCount == 1, 15f, "우두머리가 타워를 보고 폭탄을 던져야 한다");
-            Assert.AreSame(towerTarget, bomb.AimTarget, "폭탄은 코브라를 겨냥했다");
+            // 겨냥한 대상은 본체일 수도 히트박스일 수도 있다(어느 콜라이더가 먼저 잡히느냐에 달렸다). ID로 본다.
+            Assert.AreEqual(towerTarget.EntityId, bomb.AimTarget.EntityId, "폭탄은 코브라를 겨냥했다");
             brain.AIEnabled = false; // 던진 뒤에는 세워 둔다. 근접으로 타워를 부수면 정지·재개를 볼 수 없다
 
             yield return Until(Disabled, 6f, "폭탄이 터지면 코브라가 정지해야 한다");
@@ -80,7 +88,7 @@ namespace SandGuard.Enemy.Tests
 
             yield return Until(() => !Disabled(), 3f, "정지 시간이 끝나면 다시 동작해야 한다");
             Assert.True(fire.enabled && aim.enabled, "공격·조준이 다시 켜진다");
-            Assert.True(bomb.IsSpent, "철거 폭탄은 한 번만 쓴다");
+            Assert.False(bomb.IsSpent, "철거 폭탄은 횟수 제한 없이 쿨다운마다 쓴다");
         }
     }
 }

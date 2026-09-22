@@ -131,6 +131,9 @@ namespace SandGuard.Enemy
             TargetSelection selection = selector != null ? selector.SelectTarget() : default;
             if (selection.HasTarget) { Engage(selection.Target); return; }
             attack?.Cancel();
+            // 탐지 반경 밖이라 싸울 상대가 없어도, 폭탄 사거리 안의 타워에는 던진다. 대상은 스킬이 직접 찾는다.
+            // 시전 중에는 위의 IsCasting 검사가 걸음을 멈추므로 여기서 State를 바꾸지 않는다.
+            if (bombSkill != null && bombSkill.TryUse(null)) return;
             if (motor == null || (!IsSteered && objective == null)) { State = EnemyBrainState.Idle; motor?.Stop(); return; }
             // 조종 중에는 도착 판정·흡수를 진행기가 한다. 여기서는 지점까지 걷기만 한다.
             Vector3 goal = IsSteered ? SteerPoint : objective.position;

@@ -13,7 +13,7 @@ namespace SandGuard.Facility
     /// 받침 위 본체에 붙인다. 받침은 파괴되지 않고 남는다.
     /// </remarks>
     [DisallowMultipleComponent]
-    public sealed class FacilityHealth : MonoBehaviour, ICombatTarget, IDamageable, IHealth, ILifeState, IDamageEvents, IRepairable
+    public sealed class FacilityHealth : MonoBehaviour, ICombatTarget, IFacilityKind, IDamageable, IHealth, ILifeState, IDamageEvents, IRepairable
     {
         public enum RemovalMode { Destroy, Deactivate }
 
@@ -34,6 +34,7 @@ namespace SandGuard.Facility
         public Guid EntityId => entityId;
         public string FactionId => factionId;
         public CombatTargetKind Kind => kind;
+        public string DefinitionId => definitionId;
         /// <summary>몸통 충돌체의 중심. 없으면 오브젝트 위치.</summary>
         public Vector3 HitPosition
         {

@@ -154,6 +154,7 @@ GameObject:
   - component: {fileID: 2623054650605264555}
   - component: {fileID: 2971407348155670985}
   - component: {fileID: 5329342558828759534}
+  - component: {fileID: 920210001}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -323,6 +324,9 @@ MonoBehaviour:
   attackOrigin: {fileID: 2559420135679905138}
   range: 1.8
   damage: 10
+  towerDamageMultiplier: 1
+  playerDamageMultiplier: 1
+  minionDamageMultiplier: 1
   windup: 0.5
   interval: 1.2
   hitMask:
@@ -424,6 +428,7 @@ MonoBehaviour:
   motor: {fileID: 3868443114016356889}
   health: {fileID: 1342337955418082952}
   vfxPrefab: {fileID: 5435970345610246943, guid: 9e74390d50ceb894a97f2e7b541e860c, type: 3}
+  slowVfxPrefab: {fileID: 5435970345610246943, guid: 9e74390d50ceb894a97f2e7b541e860c, type: 3}
   feet: {fileID: 0}
   displacementMultiplier: 1
   knockbackDamping: 12
@@ -2758,3 +2763,19 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8696092391543637426, guid: 80a31130a5b5bb54cad019c320829af8, type: 3}
   m_PrefabInstance: {fileID: 1442456109877320782}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &920210001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 658155196757490767}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8e66e3db08543bc8a327380bbcd8bab, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: SandGuard.Audio.Runtime::SandGuard.Audio.SfxEnemyTaunt
+  Cue: {fileID: 11400000, guid: f7cc3084ef88480a93ce9bcad65af2ad, type: 2}
+  MinDelay: 0.8
+  MaxDelay: 2.5
+  LocomotionState: Locomotion

@@ -1113,6 +1113,7 @@ GameObject:
   - component: {fileID: 6504551097190884460}
   - component: {fileID: 128779544391285996}
   - component: {fileID: 1432617473755096953}
+  - component: {fileID: 8954611585454927082}
   m_Layer: 0
   m_Name: New Core
   m_TagString: Untagged
@@ -1199,6 +1200,21 @@ MonoBehaviour:
   player: {fileID: 0}
   ManaGain: 10
   GainTick: 1
+--- !u!114 &8954611585454927082
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7978969653705249912}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32152fb76cd64cf46a5818682c969c4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesertTower.VFX.Runtime::DesertTower.VFX.VfxDestructionOnDeath
+  Prefab: {fileID: 6434792460566524938, guid: 258cd48c721209e42b4dad755bf8de73, type: 3}
+  Lifetime: 4
+  Target: {fileID: 4771769703887535178}
 --- !u!1 &8057526697738579253
 GameObject:
   m_ObjectHideFlags: 0

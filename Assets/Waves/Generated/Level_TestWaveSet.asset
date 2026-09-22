@@ -40,6 +40,14 @@ MonoBehaviour:
       count: 5
       delay: 0
       interval: 1.5
+    - spawnId: 8ca42bbaa0e6424086dec32cb6b1c6ff
+      targetId: 835bc8b2a0bc4807985b5eebbd309dd8
+      routeId:
+      element: {fileID: 0}
+      enemyKey: bandit.chief
+      count: 1
+      delay: 5
+      interval: 2
   - label: "Wave 2 - 방패 진형"
     preparationSeconds: 20
     groups:

@@ -60,11 +60,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 5763767327075925952}
   m_SourcePrefab: {fileID: 100100000, guid: 2be48436742efe84f80c0aea2da12832, type: 3}
---- !u!1 &3006268387727962120 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2041211327101795439, guid: 2be48436742efe84f80c0aea2da12832, type: 3}
-  m_PrefabInstance: {fileID: 3885409972093520999}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &8737827364075354584 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5524017310559581631, guid: 2be48436742efe84f80c0aea2da12832, type: 3}
@@ -85,5 +80,4 @@ MonoBehaviour:
   slot: {fileID: 0}
   interactionRadius: 3.5
   menuHeight: 2.6
-  onlyWhenOccupied:
-  - {fileID: 3006268387727962120}
+  onlyWhenOccupied: []

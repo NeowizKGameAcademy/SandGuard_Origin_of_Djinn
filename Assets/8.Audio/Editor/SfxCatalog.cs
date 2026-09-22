@@ -83,6 +83,7 @@ namespace SandGuard.Audio.Editor
             E("Player_SandStorm_End", PlaceholderKind.Whoosh, "폭풍 잦아듦").At(5, 60),
 
             /* ---------------- 적 ---------------- */
+            E("Enemy_Voice_Taunt", PlaceholderKind.Voice, "Idle/walk 도발. SfxEnemyTaunt가 0.8~2.5초 간격으로 재생").At(2, 25).Vol(0.6f).Voices(4),
             E("Enemy_Spawn", PlaceholderKind.Impact, "출현: 모래 뚫고 '푸슉' + 북").At(4, 50).Voices(3),
             E("Enemy_Hit", PlaceholderKind.Impact, "적 피격: 가죽 타격 + 마력 지짐").At(2, 35).Voices(6),
             E("Enemy_Death", PlaceholderKind.Whoosh, "적 사망: 모래 흩어짐 + 흡수 상승음").At(3, 40),

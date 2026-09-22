@@ -18,6 +18,7 @@ namespace SandGuard.Audio.Editor
 
         public static readonly (string cue, string[] files)[] Map =
         {
+            ("Enemy_Voice_Taunt", new[] { "도발 3_auda", "도발 5_auda", "도발 6_auda", "도발 10_auda", "도발 10_auda_2", "도발 10_auda_3", "도발 11_auda", "도발 12_auda" }),
             ("UI_Click", new[] { "UI버튼 클릭음_auda" }),
             ("Player_HardLand", new[] { "강한착지음_auda" }),
             ("Env_DesertWind_Loop", new[] { "기본 사막환경 배경음_auda" }),

@@ -84,10 +84,13 @@ namespace SandGuard.Facility
                     if (Keyboard.current[(Key)((int)Key.Digit1 + i)].wasPressedThisFrame) { Select(i); break; }
         }
 
+        /// <summary>살아 있고, 수리를 지원하고, 체력이 깎인 시설만 수리 메뉴를 연다.</summary>
         static bool NeedsRepair(FacilityAnchor anchor)
         {
-            var health = anchor.Occupant != null ? anchor.Occupant.Health : null;
-            return health != null && health.IsAlive && health.CurrentHealth < health.MaxHealth - .01f;
+            var facility = anchor.Occupant;
+            if (facility == null || facility.Health == null || facility.Repairable == null) return false;
+            if (facility.Life != null && facility.Life.State != LifeState.Alive) return false;
+            return facility.Health.CurrentHealth < facility.Health.MaxHealth - .01f;
         }
 
         void Open(FacilityAnchor anchor)

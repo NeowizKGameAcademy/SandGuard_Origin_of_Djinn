@@ -2588,9 +2588,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: SandGuard.Enemy.Runtime::SandGuard.Enemy.ChiefBombThrowSkill
   bombPrefab: {fileID: 1156261780094768151, guid: aef2336eb1af848419e0c58f8626a8bc, type: 3}
-  range: 8
+  range: 20
   cooldown: 6
-  flightTime: 1
+  flightTime: 1.8
   fuseAfterLanding: 0.35
   damage: 50
   blastRadius: 2.5
@@ -2598,7 +2598,8 @@ MonoBehaviour:
   damageMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  maxUses: 1
+  targetFacilityId: tower.cobra
+  maxUses: 0
   handOffset: {x: 0, y: -0.05, z: 0.05}
 --- !u!114 &8657929669409854010
 MonoBehaviour:

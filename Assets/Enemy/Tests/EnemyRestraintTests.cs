@@ -77,10 +77,15 @@ namespace SandGuard.Enemy.Tests
             ISlowable slowable = restraint;
             slowable.Slow(0.6f, 0.6f);
             Assert.AreEqual(0.6f, restraint.SlowFactor, 0.0001f); Assert.AreEqual(motor.moveSpeed * 0.4f, motor.Agent.speed, 0.0001f);
+            GameObject slowVfx = restraint.ActiveSlowVfx;
+            if (restraint.slowVfxPrefab != null) Assert.NotNull(slowVfx, "The slow visual is attached while slowed.");
             slowable.Slow(0.3f, 5f);
             Assert.AreEqual(0.6f, restraint.SlowFactor, 0.0001f, "A weaker slow never replaces a stronger one.");
+            slowable.Slow(0.6f, 0.6f);
+            Assert.AreSame(slowVfx, restraint.ActiveSlowVfx, "Refreshing the slow keeps the visual it already has.");
             yield return new WaitForSeconds(0.8f);
             Assert.AreEqual(0f, restraint.SlowFactor, 0.0001f); Assert.AreEqual(motor.moveSpeed, motor.Agent.speed, 0.0001f, "The slow expires and speed returns.");
+            Assert.IsNull(restraint.ActiveSlowVfx, "The slow visual is taken back when the slow ends.");
 
             // 밀림: 자기 걸음을 멈추고 주어진 만큼 옮겨진다.
             Vector3 before = enemy.transform.position;

@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5822985260895817241}
+  - component: {fileID: 5045154236549241742}
   m_Layer: 0
   m_Name: Tower_Obelisk
   m_TagString: Untagged
@@ -34,6 +35,31 @@ Transform:
   - {fileID: 1677706625735958931}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5045154236549241742
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 723750724092311395}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc33edca7f46a8444aabbc92f9ee5d01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesertTower.VFX.Runtime::DesertTower.VFX.VfxPopIn
+  PoofPrefab: {fileID: 3837854254998827864, guid: d5c9e15cee4fa8540994a7e0b79d8d88, type: 3}
+  RevealPrefab: {fileID: 3512970272418113126, guid: 8a12a735b8f61c04d8d156ac30658d6e, type: 3}
+  RevealDelay: 0.2
+  PunchScale: 1.25
+  PunchDuration: 0.18
+  FlashColor: {r: 1, g: 0.95, b: 0.75, a: 1}
+  FlashDuration: 0.22
+  Shake: 0.08
+  ShakeDuration: 0.15
+  ReferenceSize: 2.2
+  FitEffectsToBounds: 1
+  EffectLifetime: 3
+  PlayOnEnable: 0
 --- !u!1 &779376680899890532
 GameObject:
   m_ObjectHideFlags: 0
@@ -249,6 +275,9 @@ GameObject:
   - component: {fileID: 7371817408673049065}
   - component: {fileID: 560239992748566058}
   - component: {fileID: 7868287532647626503}
+  - component: {fileID: 1053759271056503234}
+  - component: {fileID: 3399424387284826465}
+  - component: {fileID: 1942593342288566095}
   m_Layer: 0
   m_Name: Tower (Obelisk)
   m_TagString: Untagged
@@ -339,6 +368,66 @@ MonoBehaviour:
   targetMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &1053759271056503234
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1794438971953435628}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eeb53d2018c5e254aaca319c0e369f6f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesertTower.VFX.Runtime::DesertTower.VFX.VfxHitReaction
+  HitPrefab: {fileID: 209659319031985367, guid: aab47f54c43bc3446a202ec976839258, type: 3}
+  HitLifetime: 1.5
+  OrientToHit: 1
+  FlashRenderers: []
+  FlashColor: {r: 1, g: 1, b: 1, a: 1}
+  FlashIntensity: 2.5
+  FlashDuration: 0.1
+  FlinchTarget: {fileID: 0}
+  FlinchScale: 0.9
+  FlinchDuration: 0.12
+  ScreenPrefab: {fileID: 0}
+  ScreenLifetime: 1
+  CameraShake: 0
+  CameraShakeDuration: 0.2
+  DeathPrefab: {fileID: 0}
+  DeathLifetime: 4
+  FitDeathToBounds: 0
+  TintDeathWithRenderer: 1
+  AttractTarget: {fileID: 0}
+--- !u!114 &3399424387284826465
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1794438971953435628}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b31776cfc2a65d46a263f98631912dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TowerDisableReceiver
+  Stop_Behaviours: []
+  Disabled_Vfx: {fileID: 6861897454437874772, guid: ed8d6d82c79386742ab779596b17e594, type: 3}
+--- !u!114 &1942593342288566095
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1794438971953435628}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32152fb76cd64cf46a5818682c969c4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesertTower.VFX.Runtime::DesertTower.VFX.VfxDestructionOnDeath
+  Prefab: {fileID: 2407555408733882239, guid: febc627637c0bfc418522460ec1ecd47, type: 3}
+  Lifetime: 4
+  Target: {fileID: 9021732084228742961}
 --- !u!1 &4730199039180538590
 GameObject:
   m_ObjectHideFlags: 0

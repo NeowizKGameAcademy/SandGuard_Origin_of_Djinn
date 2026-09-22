@@ -248,6 +248,8 @@ namespace SandGuard.Audio.Editor
                 Listen(visuals?.onDied, OneShot(holder, "Enemy_Voice_Death_Light"));
                 HitReaction(root, "Enemy_Hit", "Enemy_Death");
                 Footsteps(root, "Enemy_Footstep_Light", null, false);
+                var taunt = root.GetComponent<SfxEnemyTaunt>() ?? root.AddComponent<SfxEnemyTaunt>();
+                if (taunt.Cue == null) taunt.Cue = SfxCueBuilder.Load("Enemy_Voice_Taunt");
                 PrefabUtility.SaveAsPrefabAsset(root, EnemyPrefabPath);
             }
             finally { PrefabUtility.UnloadPrefabContents(root); }

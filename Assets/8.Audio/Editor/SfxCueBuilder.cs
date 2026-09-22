@@ -116,6 +116,11 @@ namespace SandGuard.Audio.Editor
             cue.volume = entry.Volume; cue.maxVoices = entry.MaxVoices; cue.chance = entry.Chance;
             if (entry.Kind == PlaceholderKind.Drone || entry.Kind == PlaceholderKind.Sting) { cue.pitchJitter = 0f; cue.volumeJitterDb = 0f; }
             if (entry.Kind == PlaceholderKind.Voice) cue.pitchJitter = 0.06f;
+            if (name == "Enemy_Voice_Taunt")
+            {
+                cue.minInterval = 0.35f; cue.loopFade = 0.1f;
+                cue.pitchJitter = 0.04f; cue.rolloff = AudioRolloffMode.Linear;
+            }
         }
 
         /// <summary>분류 이름과 같은 믹서 그룹, 없으면 SFX, 그것도 없으면 null.</summary>
