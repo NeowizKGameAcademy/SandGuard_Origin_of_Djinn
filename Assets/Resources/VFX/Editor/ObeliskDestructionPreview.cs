@@ -19,13 +19,18 @@ namespace DesertTower.VFX.Editor
         [MenuItem("DesertTower/VFX/Preview Obelisk Destruction")]
         public static void Render()
         {
-            string folder = "Docs/vfx-preview/ObeliskDestruction"; Directory.CreateDirectory(folder);
+            Render(ObeliskDestructionBuilder.ReferencePath, ObeliskDestructionBuilder.PrefabPath, "Docs/vfx-preview/ObeliskDestruction");
+        }
+
+        public static void Render(string referencePath, string effectPath, string folder, Vector3? cameraOffset = null)
+        {
+            Directory.CreateDirectory(folder);
             var scene = EditorSceneManager.NewPreviewScene();
             var owned = new System.Collections.Generic.List<Object>();
             VfxObeliskDestruction ctrl = null;
             try
             {
-                var source = AssetDatabase.LoadAssetAtPath<GameObject>(ObeliskDestructionBuilder.ReferencePath);
+                var source = AssetDatabase.LoadAssetAtPath<GameObject>(referencePath);
                 var reference = (GameObject)PrefabUtility.InstantiatePrefab(source, scene);
                 foreach (var animator in reference.GetComponentsInChildren<Animator>()) animator.enabled = false;
                 var body = ObeliskDestructionBuilder.FindHealth(reference);
@@ -40,10 +45,10 @@ namespace DesertTower.VFX.Editor
                         var b = CoreDestructionBuilder.WorldBounds(filter);
                         if (!hasBounds) { bounds = b; hasBounds = true; } else bounds.Encapsulate(b);
                     }
-                var effect = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(ObeliskDestructionBuilder.PrefabPath), scene);
+                var effect = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(effectPath), scene);
                 ctrl = effect.GetComponent<VfxObeliskDestruction>(); ctrl.Restart(); ctrl.BindTarget(body.transform);
                 if (ctrl.Pieces.Length < 4 || !ctrl.Proxy.activeSelf)
-                    throw new Exception("Initial obelisk proxy failed");
+                    throw new Exception("Initial tower proxy failed");
                 foreach (var renderer in effect.GetComponentsInChildren<Renderer>(true))
                     foreach (var mat in renderer.sharedMaterials)
                         if (mat == null || !mat.shader.isSupported) throw new Exception("Invalid destruction material");
@@ -51,7 +56,7 @@ namespace DesertTower.VFX.Editor
                 var camera = new GameObject("Obelisk Preview Camera").AddComponent<Camera>();
                 SceneManager.MoveGameObjectToScene(camera.gameObject, scene); camera.scene = scene;
                 camera.orthographic = true; camera.orthographicSize = Mathf.Max(3.5f, bounds.size.y * 0.85f);
-                camera.transform.position = bounds.center + new Vector3(8f, 6f, -10f);
+                camera.transform.position = bounds.center + (cameraOffset ?? new Vector3(8f, 6f, -10f));
                 camera.transform.LookAt(bounds.center * 0.6f);
                 camera.clearFlags = CameraClearFlags.SolidColor; camera.backgroundColor = new Color(0.035f, 0.04f, 0.055f);
                 camera.allowHDR = true; camera.gameObject.AddComponent<UniversalAdditionalCameraData>().renderPostProcessing = true;
@@ -93,7 +98,7 @@ namespace DesertTower.VFX.Editor
                 for (int i = 0; i < originalRenderers.Length; i++) if (originalRenderers[i].enabled != originalStates[i]) throw new Exception("Explicit reset failed");
                 ctrl.Restart();
                 if (!ctrl.Proxy.activeSelf || ctrl.Pieces[0].gameObject.activeSelf) throw new Exception("Replay reset failed");
-                File.WriteAllText(Path.Combine(folder, "validation.txt"), "PASS: Textured obelisk mesh fragments, timed break, original visibility reset, settled debris, no automatic resurrection, supported materials, no UI. 100 Unity-rendered frames.");
+                File.WriteAllText(Path.Combine(folder, "validation.txt"), "PASS: " + referencePath + "; textured mesh fragments, timed break, original visibility reset, settled debris, no automatic resurrection, supported materials, no UI. 100 Unity-rendered frames.");
             }
             finally
             {

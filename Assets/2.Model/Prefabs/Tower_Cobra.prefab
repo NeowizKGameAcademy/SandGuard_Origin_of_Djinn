@@ -170,6 +170,13 @@ MonoBehaviour:
     RespawnCooldown: 5
   anubisConfig:
     SpawnPoint: {fileID: 0}
+    MaxHP: 1000
+    Attack: 30
+    AttackInterval: 1.5
+    MoveSpeed: 5
+    RotateSpeed: 5
+    RespawnCooldown: 15
+    KnockBackCooldown: 5
 --- !u!114 &5554542459475700025
 MonoBehaviour:
   m_ObjectHideFlags: 0

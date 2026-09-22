@@ -1321,7 +1321,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 7, y: 7, z: 7}
+  m_LocalScale: {x: 3.5, y: 3.5, z: 3.5}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 8766981312907009199}
@@ -1360,6 +1360,14 @@ MonoBehaviour:
   animator: {fileID: 0}
   stopDistance: 1.5
   deathDespawnDelay: 3
+  maxAttackHeight: 1.5
+  attackImpactTime: 0.45
+  skillImpactTime: 0.45
+  returnSettings:
+    radius: 0
+    fallHeight: 2
+    stuckTimeout: 2
+    maxWalkTime: 10
 --- !u!114 &2875703218772990089
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1387,8 +1395,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Tower.AnubisSkill
   range: 15
   angle: 90
-  horizontalPower: 6
-  verticalPower: 8
+  horizontalPower: 10
+  verticalPower: 5.5
   targetMask:
     serializedVersion: 2
     m_Bits: 4294967295

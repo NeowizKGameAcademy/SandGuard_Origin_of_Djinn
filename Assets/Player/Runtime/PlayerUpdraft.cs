@@ -23,8 +23,8 @@ namespace SandGuard.Player
         [Header("충전")]
         [Min(0.05f), Tooltip("충전이 가득 차는 시간")] public float chargeTime = 0.8f;
         [Header("도약")]
-        [Min(0.1f), Tooltip("충전 0일 때 높이")] public float minHeight = 4f;
-        [Min(0.1f), Tooltip("충전 1일 때 높이")] public float maxHeight = 17f;
+        [Min(0.1f), Tooltip("충전 0일 때 높이")] public float minHeight = 6.76f;
+        [Min(0.1f), Tooltip("충전 1일 때 높이")] public float maxHeight = 28.73f;
         [Min(0), Tooltip("발사 시 마나 비용. 부족하면 충전이 취소된다")] public int manaCost = 0;
         /// <summary>충전 중인지. 애니메이터 Charging.</summary>
         public bool IsCharging { get; private set; }

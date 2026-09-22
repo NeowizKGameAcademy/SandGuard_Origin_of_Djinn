@@ -18,6 +18,7 @@ namespace Tower
 
         private ICombatTarget currentTarget;
         private float searchTimer;
+        private SkeletonMovement movement;
 
         public ICombatTarget Target
         {
@@ -64,18 +65,40 @@ namespace Tower
 
             ICombatTarget best = null;
             float closestDistance = float.PositiveInfinity;
+            // 예약되지 않은 적이 하나도 없을 때 쓰는 차선책. 보스만 남으면 한 마리도 달려들지 않던 문제를 막는다.
+            ICombatTarget claimedFallback = null;
+            float closestClaimed = float.PositiveInfinity;
 
             foreach (ICombatTarget candidate in detector.Targets)
             {
-                if (!IsTargetValid(candidate) || IsClaimedByAnother(candidate))
+                // if (!IsTargetValid(candidate) || IsClaimedByAnother(candidate)) // 기존: 예약된 적은 후보에서 아예 빠졌다.
+                if (!IsTargetValid(candidate))
                     continue;
 
                 float distance = (candidate.HitPosition - transform.position).sqrMagnitude;
+                if (IsClaimedByAnother(candidate))
+                {
+                    if (distance < closestClaimed)
+                    {
+                        closestClaimed = distance;
+                        claimedFallback = candidate;
+                    }
+
+                    continue;
+                }
+
                 if (distance >= closestDistance)
                     continue;
 
                 closestDistance = distance;
                 best = candidate;
+            }
+
+            bool shared = false;
+            if (best == null)
+            {
+                best = claimedFallback;
+                shared = true;
             }
 
             if (best == currentTarget)
@@ -86,12 +109,15 @@ namespace Tower
                 return;
 
             currentTarget = best;
-            claims[best.EntityId] = this;
+            // 차선책으로 붙을 때는 먼저 예약한 스켈레톤의 소유권을 빼앗지 않는다. 빼앗으면 서로 재탐색만 반복한다.
+            if (!shared)
+                claims[best.EntityId] = this;
         }
 
         private bool IsTargetValid(ICombatTarget candidate)
         {
             return candidate != null
+                && (movement == null || movement.CanAttackHeight(candidate))
                 && detector != null
                 && detector.Contains(candidate)
                 && detector.IsValidTarget(candidate);
@@ -121,6 +147,7 @@ namespace Tower
 
         private void ResolveDetector()
         {
+            if (movement == null) TryGetComponent(out movement);
             if (detector == null)
                 detector = GetComponentInParent<TargetDetector>();
         }

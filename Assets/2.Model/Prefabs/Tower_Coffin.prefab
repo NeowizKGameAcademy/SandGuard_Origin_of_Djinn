@@ -503,6 +503,7 @@ GameObject:
   - component: {fileID: 4983853849688871388}
   - component: {fileID: 3404138898985423753}
   - component: {fileID: 3753059109499168149}
+  - component: {fileID: 3230009587577359992}
   m_Layer: 0
   m_Name: Tower (Coffin)
   m_TagString: Untagged
@@ -560,6 +561,13 @@ MonoBehaviour:
     RespawnCooldown: 5
   anubisConfig:
     SpawnPoint: {fileID: 0}
+    MaxHP: 1000
+    Attack: 30
+    AttackInterval: 1.5
+    MoveSpeed: 5
+    RotateSpeed: 5
+    RespawnCooldown: 15
+    KnockBackCooldown: 5
 --- !u!114 &4694803086763727897
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -654,6 +662,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TowerDisableReceiver
   Stop_Behaviours: []
   Disabled_Vfx: {fileID: 6861897454437874772, guid: ed8d6d82c79386742ab779596b17e594, type: 3}
+--- !u!114 &3230009587577359992
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7654825979927693885}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32152fb76cd64cf46a5818682c969c4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesertTower.VFX.Runtime::DesertTower.VFX.VfxDestructionOnDeath
+  Prefab: {fileID: 3120593846667061604, guid: 699a952dadc9bf94ba0e723cd1f3ffd0, type: 3}
+  Lifetime: 4
+  Target: {fileID: 2412935827806608620}
 --- !u!1 &9094358653251219660
 GameObject:
   m_ObjectHideFlags: 0

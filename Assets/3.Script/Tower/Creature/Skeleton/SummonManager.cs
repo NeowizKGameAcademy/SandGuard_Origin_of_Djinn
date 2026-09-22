@@ -137,7 +137,9 @@ namespace Tower
                 return;
 
             obj.transform.SetParent(summonedRoot, false);
-            obj.transform.position = GetSpawnPosition(index);
+            // 기존: 소환점의 Y를 그대로 사용해 타워 위 높이에서 떠 있었다.
+            // obj.transform.position = GetSpawnPosition(index);
+            obj.transform.position = MinionGrounding.Project(obj.transform, GetSpawnPosition(index));
 
             if (!obj.TryGetComponent(out SkeletonController creature))
             {
