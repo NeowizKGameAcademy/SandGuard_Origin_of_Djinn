@@ -13,11 +13,14 @@ namespace DesertTower.LevelIntegration
         [SerializeField] Button mainButton;
 
         bool ownsPause;
+        WaveDirector director;
 
         void Awake()
         {
             popupRoot.SetActive(false);
         }
+
+        void Start() => director = FindFirstObjectByType<WaveDirector>();
 
         void Update()
         {
@@ -29,6 +32,7 @@ namespace DesertTower.LevelIntegration
         public void Open()
         {
             if (ownsPause || Time.timeScale <= 0f || GameManager.Instance.IsTransitioning) return;
+            if (director && (director.State == RunState.Lost || director.State == RunState.Won)) return;
             ownsPause = true;
             popupRoot.SetActive(true);
             GameManager.Instance.RequestPause(this);

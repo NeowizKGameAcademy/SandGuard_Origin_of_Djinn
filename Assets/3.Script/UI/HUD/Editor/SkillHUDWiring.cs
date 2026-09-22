@@ -48,7 +48,7 @@ namespace SandGuard.UI.HUD.Editor
             {
                 DrawDefaultInspector();var link=(SkillTreeHUDLink)target;
                 EditorGUILayout.HelpBox("구매·장착 상태와 HUD를 연결합니다. PlayerSkillTreeExecutor가 실제 사용을 처리합니다. 데모 실행기이면 장착 아이콘에 미연결 상태를 표시합니다.",MessageType.Info);
-                if(Application.isPlaying)for(int i=0;i<5;i++)EditorGUILayout.LabelField(((SandGuard.Skills.EquipSlot)i).ToString(),link.SlotStatus[i]??"세션 대기");
+                if(Application.isPlaying)foreach(var slot in SandGuard.Skills.EquipSlotInfo.Order)EditorGUILayout.LabelField(SandGuard.Skills.EquipSlotInfo.Key(slot),link.SlotStatus[(int)slot]??"세션 대기");
             }
         }
     }

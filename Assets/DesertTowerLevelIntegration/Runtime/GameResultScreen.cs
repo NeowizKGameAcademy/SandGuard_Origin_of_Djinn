@@ -29,6 +29,8 @@ namespace DesertTower.LevelIntegration
         bool resultPending;
         float showAt;
         GameObject createdEventSystem;
+        CoreDefeatCamera defeatCamera;
+        public bool IsShowing => showing;
 
         void Awake()
         {
@@ -60,16 +62,24 @@ namespace DesertTower.LevelIntegration
             if (!director || (director.State != RunState.Won && director.State != RunState.Lost))
             {
                 resultPending = false;
+                if (defeatCamera) defeatCamera.ResetView();
                 return;
             }
             if (resultPending) return;
             resultPending = true;
             showAt = Time.unscaledTime + Mathf.Max(0f, overlayDelay);
+            if (director.State == RunState.Lost && director.coreReceiver is CoreReceiver core)
+            {
+                defeatCamera = GetComponent<CoreDefeatCamera>();
+                if (!defeatCamera) defeatCamera = gameObject.AddComponent<CoreDefeatCamera>();
+                defeatCamera.Begin(core);
+            }
         }
 
         void Update()
         {
             if (!resultPending || Time.unscaledTime < showAt) return;
+            if (defeatCamera && defeatCamera.IsActive && !defeatCamera.IsFinished) return;
             resultPending = false;
             if (previewOnly || showing || !director || (director.State != RunState.Won && director.State != RunState.Lost)) return;
             ShowResult();
@@ -150,6 +160,7 @@ namespace DesertTower.LevelIntegration
 
         void RestoreState()
         {
+            if (defeatCamera) defeatCamera.ResetView();
             if (!showing) return;
             Time.timeScale = previousTimeScale;
             Cursor.lockState = previousCursorLock;

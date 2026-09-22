@@ -26,13 +26,16 @@ namespace SandGuard.Player
         public bool JumpHeld => AcceptsInput && (jump?.IsPressed() ?? false);
         /// <summary>왼쪽 Ctrl을 누르고 있는지. Ctrl + Space가 차지 점프(상승 기류)다.</summary>
         public bool ChargeModifierHeld => AcceptsInput && Keyboard.current != null && Keyboard.current.leftCtrlKey.isPressed;
-        /// <summary>공격 스킬 키(0 = Q, 1 = E, 2 = R)를 계속 누르고 있는지. 입력이 막히면 false.</summary>
+        /// <summary>스킬 키 개수(Q, E, R, F). 스킬트리의 장착 칸과 순서가 같다.</summary>
+        public const int SkillKeyCount = 4;
+        /// <summary>공격 스킬 키(0 = Q, 1 = E, 2 = R, 3 = F)를 계속 누르고 있는지. 입력이 막히면 false.</summary>
         public bool SkillHeld(int slot) => AcceptsInput && map != null && (map.FindAction("Skill" + (slot + 1))?.IsPressed() ?? false);
         public event Action PrimaryActionPressed;
+        /// <summary>마우스 우클릭(Spell 액션). 지금은 흔적 귀환(move.recall)이 쓴다.</summary>
         public event Action SpellPressed;
         public event Action JumpPressed;
         public event Action DashPressed;
-        /// <summary>공격 스킬 키. 0 = Q(Skill1), 1 = E(Skill2), 2 = R(Skill3). 입력 에셋에 해당 액션이 없으면 오지 않는다.</summary>
+        /// <summary>공격 스킬 키. 0 = Q(Skill1), 1 = E(Skill2), 2 = R(Skill3), 3 = F(Skill4). 입력 에셋에 해당 액션이 없으면 오지 않는다.</summary>
         public event Action<int> SkillPressed;
         /// <summary>공격 스킬 키를 뗀 순간. 충전형 스킬(관통탄)이 발사 시점으로 쓴다. 입력이 막힌 채로 떼면 오지 않으니 충전 쪽은 <see cref="SkillHeld"/>도 같이 봐야 한다.</summary>
         public event Action<int> SkillReleased;
@@ -76,7 +79,7 @@ namespace SandGuard.Player
             if (jump.WasPressedThisFrame()) JumpPressed?.Invoke();
             if (Pressed("Spell")) SpellPressed?.Invoke();
             if (Pressed("Dash")) DashPressed?.Invoke();
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < SkillKeyCount; i++)
             {
                 if (Pressed("Skill" + (i + 1))) SkillPressed?.Invoke(i);
                 if (Released("Skill" + (i + 1))) SkillReleased?.Invoke(i);

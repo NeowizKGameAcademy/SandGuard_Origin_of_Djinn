@@ -54,22 +54,26 @@ static class SkillTests
         Throws(()=>new SkillCatalog(new[]{D("a",prereq:new[]{"missing"})}),"dangling prerequisite rejected");
         Throws(()=>new SkillCatalog(new[]{D("a",prereq:new[]{"b"}),D("b",prereq:new[]{"a"})}),"cycle rejected");
         Throws(()=>new SkillCatalog(new[]{D("a",slots:new[]{(EquipSlot)99})}),"invalid slot definition rejected");
+        var withF=new SkillService(new SkillCatalog(new[]{D("f.skill",2,slots:new[]{EquipSlot.Q,EquipSlot.E,EquipSlot.R,EquipSlot.F})}),10);
+        withF.Learn("f.skill");
+        Check(withF.Equip(EquipSlot.F,"f.skill").Success && withF.Equipped(EquipSlot.F)=="f.skill","attack skills can occupy the F slot");
         var multi=new SkillService(catalog,50);multi.Learn("a");Check(multi.Learn("c").Failure==SkillFailure.Prerequisite,"all prerequisites required");
         multi.Learn("b");Check(multi.Learn("c").Success,"all prerequisites satisfied");
         var movement=new SkillService(new SkillCatalog(new[]{
             new SkillDefinition("move.dash","대시","",1,SkillKind.Active,SkillBranch.Movement,Array.Empty<string>(),new[]{EquipSlot.Shift}),
             new SkillDefinition("move.jump","더블 점프","",1,SkillKind.Active,SkillBranch.Movement,Array.Empty<string>(),new[]{EquipSlot.Space}),
             new SkillDefinition("move.updraft","차지 점프","",2,SkillKind.Passive,SkillBranch.Movement,new[]{"move.jump"},Array.Empty<EquipSlot>()),
-            new SkillDefinition("move.recall","흔적 귀환","",3,SkillKind.Active,SkillBranch.Movement,new[]{"move.dash"},new[]{EquipSlot.Shift,EquipSlot.Q,EquipSlot.E,EquipSlot.R})}),10);
+            new SkillDefinition("move.recall","흔적 귀환","",3,SkillKind.Active,SkillBranch.Movement,new[]{"move.dash"},new[]{EquipSlot.Mouse2})}),10);
         Check(movement.Learn("move.dash").Success && movement.Equipped(EquipSlot.Shift)=="move.dash","dash auto equips on purchase");
         Check(movement.Learn("move.jump").Success && movement.Equipped(EquipSlot.Space)=="move.jump","double jump auto equips on purchase");
         Check(movement.Learn("move.updraft").Success && movement.IsLearned("move.updraft"),"charge jump unlocks without a slot");
-        Check(movement.Learn("move.recall").Success && movement.Equipped(EquipSlot.Q)=="move.recall","recall auto equips to a free key");
+        Check(movement.Learn("move.recall").Success && movement.Equipped(EquipSlot.Mouse2)=="move.recall","recall auto equips to the right mouse button");
+        Check(movement.Equipped(EquipSlot.Q)==null && movement.Equipped(EquipSlot.E)==null && movement.Equipped(EquipSlot.R)==null && movement.Equipped(EquipSlot.F)==null,"recall never takes a combat key");
         Check(movement.Restore(new SkillSnapshot(3,new[]{"move.dash","move.jump","move.updraft","move.recall"},
-            new Dictionary<EquipSlot,string>{{EquipSlot.Shift,"move.recall"}})).Success
+            new Dictionary<EquipSlot,string>())).Success
             && movement.Equipped(EquipSlot.Shift)=="move.dash"
             && movement.Equipped(EquipSlot.Space)=="move.jump"
-            && movement.Equipped(EquipSlot.Q)=="move.recall","legacy movement loadout migrates to automatic keys");
+            && movement.Equipped(EquipSlot.Mouse2)=="move.recall","legacy movement loadout migrates to automatic keys");
         Check(movement.Respec().Success && movement.Equipped(EquipSlot.Shift)==null && !movement.IsLearned("move.updraft"),"respec removes automatic movement unlocks");
         Console.WriteLine("TOTAL: "+passed+" passed");
     }

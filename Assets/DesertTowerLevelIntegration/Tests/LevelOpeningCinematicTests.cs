@@ -162,7 +162,7 @@ namespace DesertTower.LevelIntegration.Tests
 
         // ScreenCapture has no game-view repaint in batch mode. Render the live camera and
         // temporarily put overlay canvases in that camera so the saved image includes the UI.
-        static void Capture(Camera camera, string path)
+        internal static void Capture(Camera camera, string path)
         {
             if (SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Null) return;
             var canvases = new List<(Canvas canvas, Camera camera, float distance)>();

@@ -65,20 +65,22 @@ namespace SandGuard.Skills.Unity
             view.buyButton=Button(detail,t,"Buy","구매",30,458,440,54,out view.buyLabel);
             Label(win,t.font,"LoadoutHeading","장착 편집",25,35,670,170,36);
             view.statusLabel=Label(win,t.font,"Status","",19,210,671,1225,35);
-            view.slotButtons=new Button[5];view.removeButtons=new Button[5];view.slotLabels=new Text[5];view.slotIcons=new Image[5];
-            string[] keys={"Q","E","R","Shift","Space"};
-            for(int i=0;i<5;i++)
+            var slots=EquipSlotInfo.Order;int count=slots.Length;
+            view.slotButtons=new Button[count];view.removeButtons=new Button[count];view.slotLabels=new Text[count];view.slotIcons=new Image[count];
+            // 한 줄에 일곱 칸(Q E R F Shift Space 우클릭)이 들어가도록 너비 190 / 간격 201로 줄였다.
+            for(int i=0;i<count;i++)
             {
-                float x=35+i*282;view.slotButtons[i]=Button(win,t,"Slot "+keys[i],"",x,715,264,92,out _);
+                string key=EquipSlotInfo.Key(slots[i]);
+                float x=35+i*201;view.slotButtons[i]=Button(win,t,"Slot "+slots[i],"",x,715,190,92,out _);
                 var parent=view.slotButtons[i].transform;
-                Label(parent,t.font,"Empty Marker","⊕",38,17,34,45,45,TextAnchor.MiddleCenter).color=t.muted;
-                Label(parent,t.font,"Key",keys[i],19,8,5,80,27);
-                view.slotIcons[i]=Pic(parent,"Icon",null,t.gold,15,35,44,44);view.slotIcons[i].preserveAspect=true;
-                view.slotLabels[i]=Label(parent,t.font,"Skill","비어 있음",20,68,35,170,42);
-                view.removeButtons[i]=Button(win,t,"Remove "+keys[i],"X",x+218,720,36,28,out var removeLabel);
-                removeLabel.fontSize=18;removeLabel.fontStyle=FontStyle.Bold;removeLabel.color=t.gold;
+                Label(parent,t.font,"Empty Marker","⊕",34,15,36,42,42,TextAnchor.MiddleCenter).color=t.muted;
+                Label(parent,t.font,"Key",key,17,8,5,110,25);
+                view.slotIcons[i]=Pic(parent,"Icon",null,t.gold,13,36,40,40);view.slotIcons[i].preserveAspect=true;
+                view.slotLabels[i]=Label(parent,t.font,"Skill","비어 있음",17,58,36,108,42);
+                view.removeButtons[i]=Button(win,t,"Remove "+slots[i],"X",x+148,720,32,26,out var removeLabel);
+                removeLabel.fontSize=16;removeLabel.fontStyle=FontStyle.Bold;removeLabel.color=t.gold;
             }
-            Label(win,t.font,"Footer","F / Esc 닫기    ·    이동은 구매 시 자동 장착    ·    공격은 슬롯 클릭으로 장착",17,120,811,1240,27,TextAnchor.MiddleCenter);
+            Label(win,t.font,"Footer","Tab / Esc 닫기    ·    이동은 구매 시 자동 장착(Shift·Space·우클릭)    ·    공격은 Q/E/R/F 슬롯 클릭으로 장착",17,120,811,1240,27,TextAnchor.MiddleCenter);
             RectTransform hint;
             if(SkillLampSkin.Prompt)
             {
@@ -87,7 +89,7 @@ namespace SandGuard.Skills.Unity
             }
             else hint=Panel(canvasObject.transform,t,"Interaction Prompt",0,0,360,58);
             hint.anchorMin=hint.anchorMax=hint.pivot=new Vector2(.5f,.5f);hint.anchoredPosition=new Vector2(0,-220);
-            view.prompt=hint.gameObject;view.promptLabel=Label(hint,t.font,"Text","F   스킬 제단",25,10,4,340,50,TextAnchor.MiddleCenter);
+            view.prompt=hint.gameObject;view.promptLabel=Label(hint,t.font,"Text","Tab   스킬 제단",25,10,4,340,50,TextAnchor.MiddleCenter);
             hint.gameObject.SetActive(false);
         }
         public static void Line(Transform parent,Vector2 start,Vector2 end,Color color)

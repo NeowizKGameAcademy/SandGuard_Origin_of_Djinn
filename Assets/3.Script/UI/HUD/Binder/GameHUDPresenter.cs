@@ -8,7 +8,7 @@ namespace SandGuard.UI.HUD
     /// <summary>
     /// 씬의 게임 상태를 GameHUD 뷰에 옮긴다. 시작할 때 소스를 한 번 찾고(비어 있는 칸만), 매 프레임 값이 바뀐 칸만 다시 그린다.
     /// 플레이어: 체력·마나·레벨·경험치, Q/E/R 스킬(해금·쿨타임), 대시 쿨타임·공중 점프. 코어 안정도, 웨이브 번호, 보스(EnemyBossInfo).
-    /// 찾지 못한 칸(플레이어 단독 씬의 코어·웨이브 등)은 숨긴다. 미니맵 내용은 MinimapController가 채운다. F(타워 계열) 슬롯은 잠김.
+    /// 찾지 못한 칸(플레이어 단독 씬의 코어·웨이브 등)은 숨긴다. 미니맵 내용은 MinimapController가 채운다. F·우클릭 슬롯은 SkillTreeHUDLink가 채우고, 없으면 잠긴다.
     /// 플레이어를 찾으면 같은 오브젝트의 HUDDebugController 더미 값을 끈다. 못 찾으면(HUD.unity) 더미가 그대로 보인다.
     /// </summary>
     [DefaultExecutionOrder(-100)]
@@ -59,8 +59,10 @@ namespace SandGuard.UI.HUD
             hud.CoreStatus.SetVisible(core != null);
             hud.Wave.gameObject.SetActive(wave != null);
             hud.BossStatus.HideBoss();
+            // 스킬트리가 붙기 전(또는 세션이 없는 씬)에는 F 슬롯과 우클릭 슬롯을 잠근 채로 둔다.
             hud.CombatSkills.F.SetLocked(true);
             hud.CombatSkills.F.SetCooldown(0f, 1f);
+            if (hud.MovementSkills.Recall != null) hud.MovementSkills.Recall.SetUnavailable();
             Refresh();
         }
 

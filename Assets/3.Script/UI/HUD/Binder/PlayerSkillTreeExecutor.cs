@@ -17,6 +17,8 @@ namespace SandGuard.UI.HUD
         SkillService service;
         public string LastResult { get; private set; }
         static readonly string[] AttackIds={"attack.burst","attack.vortex","attack.storm"};
+        /// <summary>스킬 키 순서(Skill1~Skill4 = Q E R F)를 장착 칸으로 옮긴다.</summary>
+        static readonly EquipSlot[] KeySlots={EquipSlot.Q,EquipSlot.E,EquipSlot.R,EquipSlot.F};
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         static void Register(){SceneManager.sceneLoaded-=SceneLoaded;SceneManager.sceneLoaded+=SceneLoaded;}
@@ -43,10 +45,10 @@ namespace SandGuard.UI.HUD
             pierce.Allowed=()=>Allowed("attack.pierce");
             // Install gates before any gameplay input. Missing/disabled service fails closed.
             if(motor){motor.SkillTreeDashAllowed=()=>Allowed("move.dash");motor.SkillTreeAirJumpAllowed=()=>Allowed("move.jump");motor.SkillTreeDashInput=()=>{TryExecute("move.dash",out var reason);LastResult=reason;};}
-            if(caster){caster.SkillTreeAllowed=i=>i>=0 && i<3 && Allowed(AttackIds[i]);caster.SkillTreeInput=i=>{if(i>=0 && i<3)Use((EquipSlot)i);};}
+            if(caster){caster.SkillTreeAllowed=i=>i>=0 && i<3 && Allowed(AttackIds[i]);caster.SkillTreeInput=Use;}
             if(attack)attack.SkillTreePierceAllowed=()=>Allowed("attack.pierce");
         }
-        void OnEnable(){if(input)input.SkillReleased+=OnSkillReleased;}
+        void OnEnable(){if(input){input.SkillReleased+=OnSkillReleased;input.SpellPressed+=OnRecallPressed;}}
         void Start()=>Connect();
         void OnSkillReleased(int slot)
         {
@@ -91,13 +93,21 @@ namespace SandGuard.UI.HUD
         }
         bool Allowed(string id)=>SkillLoadoutAccess.CanUse(service,id,this && isActiveAndEnabled && session && session.isActiveAndEnabled);
         bool Ready=>isActiveAndEnabled && input && input.isActiveAndEnabled && input.AcceptsInput && Time.timeScale>0 && !SkillTreeWindow.AnyOpen && (!health || health.CurrentHealth>0);
-        void Use(EquipSlot slot)
+        /// <summary>스킬 키를 눌렀다. key는 KeySlots의 번호(0 = Q … 3 = F).</summary>
+        void Use(int key)
+        {
+            if(!Ready || service==null || key<0 || key>=KeySlots.Length)return;
+            string id=SkillLoadoutAccess.AtSlot(service,KeySlots[key],Ready);if(id==null)return;
+            // 관통탄은 누르고 있는 동안 충전하고 떼는 순간(OnSkillReleased) 쏜다. 나머지는 누르는 순간 실행.
+            if(id=="attack.pierce"){LastResult=pierce.BeginHold(key)?"관통탄 충전":"재사용 대기";return;}
+            TryExecute(id,out var reason);LastResult=reason;
+        }
+        /// <summary>마우스 우클릭 — 흔적 귀환 전용 칸(EquipSlot.Mouse2).</summary>
+        void OnRecallPressed()
         {
             if(!Ready || service==null)return;
-            string id=SkillLoadoutAccess.AtSlot(service,slot,Ready);if(id==null)return;
-            // 관통탄은 누르고 있는 동안 충전하고 떼는 순간(OnSkillReleased) 쏜다. 나머지는 누르는 순간 실행.
-            if(id=="attack.pierce"){LastResult=pierce.BeginHold((int)slot)?"관통탄 충전":"재사용 대기";return;}
-            TryExecute(id,out var reason);LastResult=reason;
+            if(SkillLoadoutAccess.AtSlot(service,EquipSlot.Mouse2,Ready)==null)return;
+            TryExecute("move.recall",out var reason);LastResult=reason;
         }
         public bool TryExecute(string id,out string reason)
         {
@@ -119,7 +129,7 @@ namespace SandGuard.UI.HUD
         {
             bool wasMarked=recall.IsMarked;
             var result=recall.TryUse();
-            if(result.Succeeded){reason=wasMarked?"흔적으로 귀환":recall.HasWindow?"흔적 생성 — "+recall.window+"초 안에 같은 키로 귀환":"흔적 생성 — 같은 키로 귀환";return true;}
+            if(result.Succeeded){reason=wasMarked?"흔적으로 귀환":recall.HasWindow?"흔적 생성 — "+recall.window+"초 안에 우클릭으로 귀환":"흔적 생성 — 다시 우클릭하면 귀환";return true;}
             switch(result.Failure)
             {
                 case ActionFailure.InvalidPlacement:reason=wasMarked?"귀환 위치가 막혀 있습니다.":"지상에서 흔적을 남기세요.";break;
@@ -146,7 +156,7 @@ namespace SandGuard.UI.HUD
             if(id=="move.recall"){state=new SkillHUDState(Ready && (recall.IsMarked || recall.CanMark),recall.CooldownRemaining,recall.TotalCooldown);return true;}
             return false;
         }
-        void OnDisable(){if(input)input.SkillReleased-=OnSkillReleased;if(pierce)pierce.Cancel();if(recall)recall.ClearMark();if(updraft){updraft.unlocked=false;updraft.Cancel();updraft.RefreshDeferral();}}
+        void OnDisable(){if(input){input.SkillReleased-=OnSkillReleased;input.SpellPressed-=OnRecallPressed;}if(pierce)pierce.Cancel();if(recall)recall.ClearMark();if(updraft){updraft.unlocked=false;updraft.Cancel();updraft.RefreshDeferral();}}
         void OnDestroy(){if(service!=null)service.Changed-=Sync;if(recall)recall.ClearMark();/* Gates intentionally remain fail-closed until a replacement bridge installs them. */}
     }
 }
