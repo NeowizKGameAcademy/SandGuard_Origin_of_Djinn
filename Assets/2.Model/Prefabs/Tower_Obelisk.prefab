@@ -317,7 +317,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Tower.TowerStatus
   Tower: 1
   MaxHP: 200
-  DetectRange: 20
+  DetectRange: 50
   cobraConfig:
     TickDamage: 10
     TickInterval: 0.5
@@ -342,6 +342,12 @@ MonoBehaviour:
     RotateSpeed: 5
     RespawnCooldown: 15
     KnockBackCooldown: 5
+    SplashRadius: 2.5
+    SplashRatio: 0.5
+    SplashAngle: 120
+    SplashMask:
+      serializedVersion: 2
+      m_Bits: 4294967295
 --- !u!114 &560239992748566058
 MonoBehaviour:
   m_ObjectHideFlags: 0
