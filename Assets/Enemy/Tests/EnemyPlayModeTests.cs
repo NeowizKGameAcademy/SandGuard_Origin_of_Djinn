@@ -144,6 +144,38 @@ namespace SandGuard.Enemy.Tests
             Assert.AreSame(dummy, enemy.GetComponent<EnemyBrain>().CurrentTarget);
         }
 
+        /// <summary>
+        /// 타워는 전투 대상이 아닌 받침 위에 올라서 있고, 두 상자의 옆면이 같은 자리(실제 프리팹은 둘 다 4×4)다.
+        /// 받침을 "가리는 벽"으로 치면 같은 공격이 물리 엔진의 결과 순서에 따라 됐다 안 됐다 한다.
+        /// </summary>
+        [UnityTest] public IEnumerator AttacksTowerStandingOnANonTargetPedestal()
+        {
+            Bake(new Vector3(16, 1, 30));
+            var enemy = Enemy(Vector3.zero);
+            enemy.GetComponent<EnemyBrain>().AIEnabled = false;
+            var attack = enemy.GetComponent<EnemyMeleeAttack>();
+
+            var pedestal = Track(new GameObject("Tower base"));
+            pedestal.transform.SetParent(level.transform, false);
+            pedestal.transform.position = new Vector3(0, 0, 3f);
+            var baseBox = pedestal.AddComponent<BoxCollider>();
+            // 받침이 본체보다 조금 넓은 경우까지 포함한다. 같은 크기일 때는 순서 운에 맡겨진다.
+            baseBox.size = new Vector3(4.4f, 2.2f, 4.4f); baseBox.center = new Vector3(0, 1.1f, 0);
+
+            var hitBox = new GameObject("Hit Box");
+            hitBox.transform.SetParent(pedestal.transform, false);
+            var box = hitBox.AddComponent<BoxCollider>();
+            box.size = new Vector3(4f, 1.2f, 4f); box.center = new Vector3(0, .6f, 0);
+            var tower = hitBox.AddComponent<EnemyTestTarget>();
+            tower.kind = CombatTargetKind.Tower; tower.maxHealth = 1000f;
+            Physics.SyncTransforms();
+
+            Assert.True(attack.IsInRange(tower), "타워가 올라선 받침이 그 타워를 가리면 안 된다.");
+            int hits = tower.HitCount;
+            Assert.True(attack.TryAttack(tower));
+            yield return Until(() => tower.HitCount > hits, 3f, "받침 위의 타워도 맞아야 한다.");
+        }
+
         [UnityTest] public IEnumerator RanksPlayerThenMinionThenTowerThenCore()
         {
             Bake(new Vector3(20, 1, 30));

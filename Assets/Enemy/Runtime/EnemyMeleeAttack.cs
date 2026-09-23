@@ -120,6 +120,10 @@ namespace SandGuard.Enemy
             for (int i = 0; i < count; i++)
             {
                 if (hits[i].collider.transform.IsChildOf(transform)) continue;
+                // 대상을 품고 있는 콜라이더(타워가 올라선 받침 등)는 대상을 가리는 벽이 아니다.
+                // 받침과 타워 히트박스는 옆면이 정확히 겹쳐 레이 거리가 같으므로, 걸러 내지 않으면
+                // 물리 엔진이 돌려주는 순서에 따라 같은 공격이 됐다 안 됐다 한다.
+                if (collider.transform.IsChildOf(hits[i].collider.transform)) continue;
                 if (hits[i].distance < nearest) { nearest = hits[i].distance; blocker = hits[i].collider; }
             }
             if (blocker == null) return true;
