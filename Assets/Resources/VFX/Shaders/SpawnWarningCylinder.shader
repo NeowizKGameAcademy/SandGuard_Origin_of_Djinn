@@ -40,9 +40,10 @@ Shader "SandGuard/VFX/SpawnWarningCylinder"
                 float u = frac(input.uv.x * 12.0);
                 float v = frac(input.uv.y * _Rows + _Scroll);
                 // A low centre and raised wings form a downward V, repeated around the wall.
-                float line = 0.25 + abs(u - 0.5) * 1.25;
-                float aa = max(fwidth(v - line), 0.008);
-                float chevron = 1.0 - smoothstep(0.038, 0.038 + aa, abs(v - line));
+                float chevronY = 0.25 + abs(u - 0.5) * 1.25;
+                // Differentiate continuous UVs so repeating rows do not create bright seam lines.
+                float aa = max(fwidth(input.uv.y * _Rows) + fwidth(input.uv.x * 12.0) * 1.25, 0.008);
+                float chevron = 1.0 - smoothstep(0.038, 0.038 + aa, abs(v - chevronY));
                 chevron *= smoothstep(0.07, 0.12, u) * (1.0 - smoothstep(0.88, 0.93, u));
                 chevron *= front;
                 float ends = smoothstep(0.01, 0.12, input.uv.y) * (1.0 - smoothstep(0.85, 0.99, input.uv.y));

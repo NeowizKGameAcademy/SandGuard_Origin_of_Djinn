@@ -8,7 +8,7 @@ namespace DesertTower.VFX.Editor
 {
     public static class SpawnWarningPreview
     {
-        [MenuItem("DesertTower/VFX/Preview Spawn Warning Cylinder")]
+        [MenuItem("DesertTower/Preview Spawn Warning Cylinder", false, -1000)]
         public static void Render()
         {
             var shader = Resources.Load<Shader>("VFX/Shaders/SpawnWarningCylinder");
@@ -23,7 +23,7 @@ namespace DesertTower.VFX.Editor
             {
                 var root = new GameObject("Upcoming Spawn");
                 SceneManager.MoveGameObjectToScene(root, scene);
-                root.transform.position = Vector3.up * .06f;
+                root.transform.position = Vector3.up * .36f;
                 var warning = root.AddComponent<VfxSpawnWarning>();
                 warning.Initialize(10f, 60f);
                 var ground = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -33,6 +33,12 @@ namespace DesertTower.VFX.Editor
                 floorMaterial = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
                 floorMaterial.SetColor("_BaseColor", new Color(.085f, .095f, .12f));
                 ground.GetComponent<Renderer>().sharedMaterial = floorMaterial;
+                var deck = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                SceneManager.MoveGameObjectToScene(deck, scene);
+                deck.name = "12.5m Deck Reference";
+                deck.transform.position = Vector3.up * .15f;
+                deck.transform.localScale = new Vector3(12.5f, .3f, 12.5f);
+                deck.GetComponent<Renderer>().sharedMaterial = floorMaterial;
                 var camera = new GameObject("Spawn Warning Preview Camera").AddComponent<Camera>();
                 SceneManager.MoveGameObjectToScene(camera.gameObject, scene);
                 camera.scene = scene;
@@ -57,6 +63,15 @@ namespace DesertTower.VFX.Editor
                     File.WriteAllBytes(Path.Combine(folder, $"frame-{i:00}.png"), frame.EncodeToPNG());
                 }
                 if (ShaderUtil.ShaderHasError(shader)) throw new System.Exception("Spawn warning shader variant failed");
+                camera.orthographic = false;
+                camera.fieldOfView = 50f;
+                camera.transform.position = new Vector3(80f, 38f, -110f);
+                camera.transform.LookAt(new Vector3(0f, 25f, 0f));
+                camera.Render();
+                var lastActive = RenderTexture.active;
+                try { RenderTexture.active = rt; frame.ReadPixels(new Rect(0, 0, 640, 640), 0, 0); frame.Apply(); }
+                finally { RenderTexture.active = lastActive; }
+                File.WriteAllBytes(Path.Combine(folder, "distance-136m.png"), frame.EncodeToPNG());
                 File.WriteAllText(Path.Combine(folder, "validation.txt"), "PASS: shader compiled, open cylinder rendered, 60 frames of downward chevrons.");
             }
             finally
