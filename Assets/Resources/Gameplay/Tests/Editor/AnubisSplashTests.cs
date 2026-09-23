@@ -191,6 +191,38 @@ public sealed class AnubisSplashTests
         return value;
     }
 
+    [Test]
+    public void DefaultBalanceTakesFullDamageAndDoesNotHealFromKills()
+    {
+        var health = AddHealth();
+        ((IDamageable)health).TakeDamage(new DamageInfo(100f, "Enemy"));
+        Assert.That(((IHealth)health).CurrentHealth, Is.EqualTo(3900f));
+        var primary = Enemy("primary", Vector3.forward); primary.Health = 1f;
+        var nearby = Enemy("nearby", Vector3.forward * 2f); nearby.Health = 1f;
+        Strike(primary);
+        var shockTarget = Enemy("shock target", Vector3.right); shockTarget.Health = 1f;
+        Shockwave(shockTarget);
+        Assert.That(((IHealth)health).CurrentHealth, Is.EqualTo(3900f));
+    }
+
+    [Test]
+    public void ProductionPrefabHasFullSplashRatioAndDedicatedShockwaveVfx()
+    {
+        var tower = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/2.Model/Prefabs/Tower_Anubis.prefab");
+        var status = new UnityEditor.SerializedObject(tower.GetComponentInChildren(Runtime("TowerStatus"), true));
+        Assert.That(status.FindProperty("anubisConfig.Attack").floatValue, Is.EqualTo(50f));
+        Assert.That(status.FindProperty("anubisConfig.SplashRatio").floatValue, Is.EqualTo(1f));
+        Assert.That(status.FindProperty("anubisConfig.DamageReduction").floatValue, Is.Zero);
+        Assert.That(status.FindProperty("anubisConfig.HealPerKill").floatValue, Is.Zero);
+        var unit = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/2.Model/Prefabs/Anubis.prefab");
+        var skill = new UnityEditor.SerializedObject(unit.GetComponent(Runtime("AnubisSkill")));
+        Assert.That(skill.FindProperty("damage").floatValue, Is.EqualTo(50f));
+        Assert.That(skill.FindProperty("verticalPower").floatValue, Is.GreaterThan(0f));
+        var vfx = (GameObject)skill.FindProperty("shockwaveVfx").objectReferenceValue;
+        Assert.That(vfx, Is.Not.Null);
+        Assert.That(vfx.GetComponentsInChildren<ParticleSystem>().Length, Is.GreaterThanOrEqualTo(4));
+    }
+
     private void Shockwave(AnubisSplashTarget primary)
     {
         var skill = anubis.GetComponent(Runtime("AnubisSkill")) ?? anubis.gameObject.AddComponent(Runtime("AnubisSkill"));
@@ -203,7 +235,7 @@ public sealed class AnubisSplashTests
     }
 
     [Test]
-    public void ShockwaveReplacesNormalHitAndHitsAllDirectionsOnceWithoutLaunching()
+    public void ShockwaveReplacesNormalHitAndLaunchesAllDirectionsOnce()
     {
         var primary = Enemy("primary", Vector3.forward);
         var behind = Enemy("behind", -Vector3.forward * 5f);
@@ -212,12 +244,12 @@ public sealed class AnubisSplashTests
         var upstairs = Enemy("upstairs", Vector3.up * 3f);
         var outside = Enemy("outside", Vector3.forward * 12f);
         Shockwave(primary);
-        Assert.That(primary.Taken, Is.EqualTo(150f));
+        Assert.That(primary.Taken, Is.EqualTo(50f));
         Assert.That(primary.Hits, Is.EqualTo(1));
-        Assert.That(behind.Taken, Is.EqualTo(150f));
+        Assert.That(behind.Taken, Is.EqualTo(50f));
         Assert.That(behind.Hits, Is.EqualTo(1));
-        Assert.That(behind.Knockbacks, Is.EqualTo(1));
-        Assert.That(behind.Launches, Is.Zero);
+        Assert.That(behind.Knockbacks, Is.Zero);
+        Assert.That(behind.Launches, Is.EqualTo(1));
         Assert.That(ally.Hits + upstairs.Hits + outside.Hits, Is.Zero);
     }
 
@@ -228,12 +260,14 @@ public sealed class AnubisSplashTests
         var nearby = Enemy("nearby", -Vector3.forward * 3f);
         Shockwave(primary);
         Assert.That(primary.Hits, Is.Zero);
-        Assert.That(nearby.Taken, Is.EqualTo(150f));
+        Assert.That(nearby.Taken, Is.EqualTo(50f));
     }
 
     [Test]
     public void HundredKillsDoNotTruncateShockwaveOrExceedHealingBudget()
     {
+        SetPrivate(config, "DamageReduction", 0.4f);
+        SetPrivate(config, "HealPerKill", 40f);
         var health = AddHealth();
         var receiver = (IDamageable)health;
         receiver.TakeDamage(new DamageInfo(1000f, "Enemy"));
@@ -242,7 +276,7 @@ public sealed class AnubisSplashTests
         for (int i = 0; i < 100; i++)
         {
             var enemy = Enemy("enemy " + i, Quaternion.Euler(0f, i * 3.6f, 0f) * Vector3.forward * 4f);
-            enemy.Health = 100f;
+            enemy.Health = 25f;
             targets.Add(enemy);
         }
         Shockwave(targets[0]);
@@ -262,6 +296,8 @@ public sealed class AnubisSplashTests
     [Test]
     public void NormalAndSplashKillsHealButCannotOverhealOrRevive()
     {
+        SetPrivate(config, "DamageReduction", 0.4f);
+        SetPrivate(config, "HealPerKill", 40f);
         var health = AddHealth();
         ((IDamageable)health).TakeDamage(new DamageInfo(100f, "Enemy"));
         var primary = Enemy("primary", Vector3.forward); primary.Health = 1f;

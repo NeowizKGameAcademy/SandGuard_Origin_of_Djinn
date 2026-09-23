@@ -96,7 +96,10 @@ namespace SandGuard.Enemy
         {
             buffer ??= new Collider[maxColliders];
             Vector3 origin = Origin;
-            int count = Physics.OverlapSphereNonAlloc(origin, range, buffer, hitMask, QueryTriggerInteraction.Ignore);
+            int count;
+            // 무리가 뭉치면 반경 안 충돌체가 버퍼를 넘어 대상이 잘려 나가므로, 꽉 차면 늘려 다시 조회한다.
+            while ((count = Physics.OverlapSphereNonAlloc(origin, range, buffer, hitMask, QueryTriggerInteraction.Ignore)) >= buffer.Length)
+                System.Array.Resize(ref buffer, buffer.Length * 2);
             Collider best = null;
             float bestDistance = float.MaxValue;
             for (int i = 0; i < count; i++)
@@ -114,7 +117,9 @@ namespace SandGuard.Enemy
             Vector3 delta = collider.ClosestPoint(origin) - origin;
             if (delta.sqrMagnitude < 0.0001f) return true;
             hits ??= new RaycastHit[maxColliders];
-            int count = Physics.RaycastNonAlloc(origin, delta.normalized, hits, delta.magnitude, hitMask, QueryTriggerInteraction.Ignore);
+            int count;
+            while ((count = Physics.RaycastNonAlloc(origin, delta.normalized, hits, delta.magnitude, hitMask, QueryTriggerInteraction.Ignore)) >= hits.Length)
+                System.Array.Resize(ref hits, hits.Length * 2);
             Collider blocker = null;
             float nearest = float.MaxValue;
             for (int i = 0; i < count; i++)
@@ -124,6 +129,9 @@ namespace SandGuard.Enemy
                 // 받침과 타워 히트박스는 옆면이 정확히 겹쳐 레이 거리가 같으므로, 걸러 내지 않으면
                 // 물리 엔진이 돌려주는 순서에 따라 같은 공격이 됐다 안 됐다 한다.
                 if (collider.transform.IsChildOf(hits[i].collider.transform)) continue;
+                // 같은 편 적의 몸은 벽이 아니다. 뭉친 무리에서 앞줄 말고는 전부 막히는 것을 막는다.
+                var other = hits[i].collider.GetComponentInParent<ICombatTarget>();
+                if (other != null && other.FactionId == self.FactionId) continue;
                 if (hits[i].distance < nearest) { nearest = hits[i].distance; blocker = hits[i].collider; }
             }
             if (blocker == null) return true;
