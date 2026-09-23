@@ -30,13 +30,13 @@ namespace SandGuard.UI.HUD
         [Tooltip("선택: ISkillHUDStateSource를 구현한 실제 스킬 실행 상태 공급자")]
         public MonoBehaviour stateSource;
         public bool autoFindSession=true;
-        public bool hideInteractionSlot=true;
         public bool OwnsSlots=>isActiveAndEnabled && acquired;
-        public string[] SlotStatus { get; }=new string[5];
+        /// <summary>EquipSlot 값으로 인덱싱한다(표시 순서는 EquipSlotInfo.Order).</summary>
+        public string[] SlotStatus { get; }=new string[EquipSlotInfo.Order.Length];
         SkillService observed;
         PlayerMotor motor;PlayerSkillCaster caster;
         GameObject boundPlayer;
-        bool acquired,oldFActive,debugEnabled;
+        bool acquired,debugEnabled;
         HUDDebugController debug;
         float nextScan;
         bool warned;
@@ -65,9 +65,10 @@ namespace SandGuard.UI.HUD
             RenderCombat(hud.CombatSkills?hud.CombatSkills.Q:null,EquipSlot.Q);
             RenderCombat(hud.CombatSkills?hud.CombatSkills.E:null,EquipSlot.E);
             RenderCombat(hud.CombatSkills?hud.CombatSkills.R:null,EquipSlot.R);
+            RenderCombat(hud.CombatSkills?hud.CombatSkills.F:null,EquipSlot.F);
             RenderMovement(hud.MovementSkills?hud.MovementSkills.Dash:null,EquipSlot.Shift);
             RenderMovement(hud.MovementSkills?hud.MovementSkills.DoubleJump:null,EquipSlot.Space);
-            
+            RenderMovement(hud.MovementSkills?hud.MovementSkills.Recall:null,EquipSlot.Mouse2);
         }
         void Resolve()
         {
@@ -96,8 +97,8 @@ namespace SandGuard.UI.HUD
         {
             acquired=true;debug=GetComponent<HUDDebugController>();
             if(debug){debugEnabled=debug.enabled;debug.enabled=false;}
-            if(hud.CombatSkills && hud.CombatSkills.F)
-            {oldFActive=hud.CombatSkills.F.gameObject.activeSelf;if(hideInteractionSlot)hud.CombatSkills.F.gameObject.SetActive(false);}
+            // F는 이제 네 번째 공격 슬롯이다(예전에는 상호작용 자리라 숨겼다).
+            if(hud.CombatSkills && hud.CombatSkills.F)hud.CombatSkills.F.gameObject.SetActive(true);
         }
         string Id(EquipSlot slot)
         {var id=observed?.Equipped(slot);return id!=null && observed.IsLearned(id)?id:null;}
@@ -119,7 +120,7 @@ namespace SandGuard.UI.HUD
         {
             if(!view)return;var id=Id(slot);var state=State(id,slot);
             // Update icons each frame too: theme assets can change without a purchase event.
-            view.SetIcon(id!=null && theme?theme.Icon(id):null);view.SetKey(slot.ToString());
+            view.SetIcon(id!=null && theme?theme.Icon(id):null);view.SetKey(EquipSlotInfo.Key(slot));
             view.SetLocked(id==null);
             view.SetCooldown(id==null?0:state.remaining,state.total);
             if(id!=null && !state.available && state.remaining<=0)view.SetUnavailable(session && session.DemoMode?"미연결":"불가");
@@ -129,18 +130,16 @@ namespace SandGuard.UI.HUD
         {
             if(!view)return;var id=Id(slot);var state=State(id,slot);var definition=observed?.Catalog.Find(id);
             view.SetIcon(id!=null && theme?theme.Icon(id):null);
-            view.SetTitle(slot+" · "+(definition?.Name??"미장착")+(id!=null && session && session.DemoMode?" (미연결)":""));
+            // 위쪽 판자는 80px밖에 안 돼 키까지 넣으면 번진다. 이름만 판자에, 키는 고리 아래에.
+            view.SetTitle((definition?.Name??"미장착")+(id!=null && session && session.DemoMode?" (미연결)":""));
+            view.SetKey(EquipSlotInfo.Key(slot));
             if(id==null || !state.available && state.remaining<=0)view.SetUnavailable();else view.SetCooldown(state.remaining,state.total);
             SlotStatus[(int)slot]=id==null?"미장착":state.remaining>0?"재사용 대기":state.available?"사용 가능":"실행 연결 / 사용 조건 확인 필요";
         }
         void OnDisable()
         {
             observed=null;
-            if(acquired)
-            {
-                if(debug)debug.enabled=debugEnabled;
-                if(hud && hud.CombatSkills && hud.CombatSkills.F && hideInteractionSlot)hud.CombatSkills.F.gameObject.SetActive(oldFActive);
-            }
+            if(acquired && debug)debug.enabled=debugEnabled;
             acquired=false;
         }
     }

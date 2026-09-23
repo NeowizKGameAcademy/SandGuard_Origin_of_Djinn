@@ -34,6 +34,7 @@ namespace SandGuard.UI.HUD.Editor
         {
             if (AssetDatabase.LoadAssetAtPath<Sprite>(HUDSkillIconGenerator.Burst) == null) HUDSkillIconGenerator.Generate();
             ApplyKoreanFont();
+            HUDSkillSlotExpansion.Apply(); // 우클릭(흔적 귀환) 칸이 없으면 만든다
             WireGameHUDPrefab();
             HUDLayoutSync.SyncFromHUDScene(); // HUD.unity에서 맞춘 배치를 GameHUD 프리팹에 옮긴다
             BuildCanvasPrefab();
@@ -90,9 +91,10 @@ namespace SandGuard.UI.HUD.Editor
                 SetIcon(controller.CombatSkills.Q, HUDSkillIconGenerator.Burst);
                 SetIcon(controller.CombatSkills.E, HUDSkillIconGenerator.Vortex);
                 SetIcon(controller.CombatSkills.R, HUDSkillIconGenerator.Storm);
-                SetIcon(controller.CombatSkills.F, HUDSkillIconGenerator.Tower);
+                SetIcon(controller.CombatSkills.F, null); // 네 번째 공격 칸: 장착한 스킬 아이콘이 런타임에 들어간다
                 SetIcon(controller.MovementSkills.Dash, HUDSkillIconGenerator.Dash);
                 SetIcon(controller.MovementSkills.DoubleJump, HUDSkillIconGenerator.Jump);
+                SetIcon(controller.MovementSkills.Recall, HUDSkillSlotExpansion.RecallIcon);
                 // 미니맵: 카메라·마커는 런타임에 MinimapController가 만든다. 마커 스프라이트만 여기서 건다.
                 var minimap = root.GetComponent<MinimapController>();
                 if (minimap == null) minimap = root.AddComponent<MinimapController>();
@@ -163,9 +165,10 @@ namespace SandGuard.UI.HUD.Editor
 
         static void SetIcon(Component slot, string spritePath)
         {
+            if (slot == null) return; // 예전 HUD 프리팹에는 없는 칸(우클릭 등)
             var image = new SerializedObject(slot).FindProperty("icon").objectReferenceValue as Image;
             if (image == null) return;
-            image.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(spritePath);
+            image.sprite = spritePath == null ? null : AssetDatabase.LoadAssetAtPath<Sprite>(spritePath);
             image.enabled = image.sprite != null;
             image.preserveAspect = true;
             EditorUtility.SetDirty(image);

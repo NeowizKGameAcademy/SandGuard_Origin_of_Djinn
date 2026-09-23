@@ -250,6 +250,7 @@ MonoBehaviour:
   coreStatus: {fileID: 898662446}
   bossStatus: {fileID: 844694901}
   wave: {fileID: 1721258589}
+  waveAlert: {fileID: 0}
   combatSkills: {fileID: 660870475}
   movementSkills: {fileID: 1931802151}
   minimap: {fileID: 1647202242}
@@ -1393,7 +1394,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6856458834221510169, guid: 7c726fb30235d7b4ab12bb11b6e0b45c, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 245
+      value: 360
       objectReference: {fileID: 0}
     - target: {fileID: 6856458834221510169, guid: 7c726fb30235d7b4ab12bb11b6e0b45c, type: 3}
       propertyPath: m_SizeDelta.y

@@ -48,7 +48,7 @@ MonoBehaviour:
     cost: 3
     prerequisites:
     - move.dash
-    allowedSlots: 03000000000000000100000002000000
+    allowedSlots: 06000000
   - id: attack.pierce
     displayName: "\uAD00\uD1B5\uD0C4"
     description: 
@@ -56,7 +56,7 @@ MonoBehaviour:
     kind: 0
     cost: 1
     prerequisites: []
-    allowedSlots: 000000000100000002000000
+    allowedSlots: 00000000010000000200000005000000
   - id: attack.burst
     displayName: "\uBAA8\uB798 \uD3ED\uBC1C"
     description: 
@@ -65,7 +65,7 @@ MonoBehaviour:
     cost: 2
     prerequisites:
     - attack.pierce
-    allowedSlots: 000000000100000002000000
+    allowedSlots: 00000000010000000200000005000000
   - id: attack.vortex
     displayName: "\uBAA8\uB798 \uC18C\uC6A9\uB3CC\uC774"
     description: 
@@ -74,7 +74,7 @@ MonoBehaviour:
     cost: 3
     prerequisites:
     - attack.pierce
-    allowedSlots: 000000000100000002000000
+    allowedSlots: 00000000010000000200000005000000
   - id: attack.storm
     displayName: "\uC0AC\uB9C9 \uD3ED\uD48D"
     description: 
@@ -84,7 +84,7 @@ MonoBehaviour:
     prerequisites:
     - attack.burst
     - attack.vortex
-    allowedSlots: 000000000100000002000000
+    allowedSlots: 00000000010000000200000005000000
   - id: tower.skeleton
     displayName: "\uD574\uACE8 \uC18C\uD658\uC9C4 \uD574\uAE08"
     description: 

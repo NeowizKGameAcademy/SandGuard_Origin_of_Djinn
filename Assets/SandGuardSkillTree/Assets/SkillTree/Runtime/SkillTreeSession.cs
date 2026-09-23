@@ -50,12 +50,15 @@ namespace SandGuard.Skills.Unity
         public void Equip(EquipSlot slot,string id){if(!Ready())return;Service.EditingAllowed=editingAllowed;Report(Service.Equip(slot,id));}
         public void GrantPoints(int amount){if(Ready())Report(Service.Grant(amount));}
         public void ResetRun(){if(Ready() && Service.Reset(startingPoints).Success){demo?.Reset();LastMessage="새 테스트 시작";}}
-        // Connect existing input actions to these methods; F remains interaction.
+        // Connect existing input actions to these methods; the skill tree window itself opens with Tab.
         public void UseQ()=>Use(EquipSlot.Q);
         public void UseE()=>Use(EquipSlot.E);
         public void UseR()=>Use(EquipSlot.R);
+        public void UseF()=>Use(EquipSlot.F);
         public void UseShift()=>Use(EquipSlot.Shift);
         public void UseSpace()=>Use(EquipSlot.Space);
+        /// <summary>마우스 우클릭 칸(흔적 귀환).</summary>
+        public void UseRightClick()=>Use(EquipSlot.Mouse2);
         public void Use(EquipSlot slot)
         {
             if(!Ready())return;

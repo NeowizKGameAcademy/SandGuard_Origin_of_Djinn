@@ -217,6 +217,14 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
+    - m_Name: Skill4
+      m_Type: 1
+      m_ExpectedControlType: 
+      m_Id: 6a2f1c04-5f7b-4b18-9c3d-2e0a7d51b4c8
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
     m_Bindings:
     - m_Name: 
       m_Id: 978bfe49-cc26-4a3d-ab7b-7d7a29327403
@@ -633,6 +641,14 @@ MonoBehaviour:
       m_Processors: 
       m_Groups: 
       m_Action: Skill3
+      m_Flags: 0
+    - m_Name: 
+      m_Id: 9d83c6b2-7a41-4f5e-8b06-1c4d93ae27f1
+      m_Path: <Keyboard>/f
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Skill4
       m_Flags: 0
   - m_Name: UI
     m_Id: 272f6d14-89ba-496f-b7ff-215263d3219f

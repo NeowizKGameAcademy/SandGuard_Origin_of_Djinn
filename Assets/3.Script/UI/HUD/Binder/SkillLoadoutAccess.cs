@@ -9,7 +9,7 @@ namespace SandGuard.UI.HUD
             if(!connected || service==null || id==null || !service.IsLearned(id))return false;
             // Motor and Updraft consume their normal movement inputs, not a loadout action.
             if(id=="move.dash" || id=="move.jump" || id=="move.updraft")return true;
-            for(int i=0;i<5;i++)if(service.Equipped((EquipSlot)i)==id)return true;
+            foreach(var slot in EquipSlotInfo.Order)if(service.Equipped(slot)==id)return true;
             return false;
         }
         public static string AtSlot(SkillService service,EquipSlot slot,bool connected)

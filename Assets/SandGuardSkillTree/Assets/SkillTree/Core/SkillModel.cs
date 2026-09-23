@@ -6,7 +6,19 @@ namespace SandGuard.Skills
 {
     public enum SkillKind { Active, Passive }
     public enum SkillBranch { Movement, Attack, Tower }
-    public enum EquipSlot { Q, E, R, Shift, Space }
+    /// <summary>장착 칸. 새 칸은 예전 저장값을 지키기 위해 뒤에 붙인다(표시 순서는 <see cref="EquipSlotInfo.Order"/>).</summary>
+    public enum EquipSlot { Q, E, R, Shift, Space, F, Mouse2 }
+    /// <summary>장착 칸의 표시 순서와 키 이름. Shift·Space·우클릭은 구매 즉시 자동으로 채워지는 고정 칸이다.</summary>
+    public static class EquipSlotInfo
+    {
+        /// <summary>UI와 순회에 쓰는 표시 순서. 모든 EquipSlot이 정확히 한 번씩 들어 있다.</summary>
+        public static readonly EquipSlot[] Order =
+            { EquipSlot.Q, EquipSlot.E, EquipSlot.R, EquipSlot.F, EquipSlot.Shift, EquipSlot.Space, EquipSlot.Mouse2 };
+        /// <summary>플레이어에게 보여 줄 키 이름.</summary>
+        public static string Key(EquipSlot slot) => slot == EquipSlot.Mouse2 ? "우클릭" : slot.ToString();
+        /// <summary>이동 스킬이 자동으로 차지하는 칸인가(플레이어가 바꿀 수 없다).</summary>
+        public static bool IsFixed(EquipSlot slot) => slot == EquipSlot.Shift || slot == EquipSlot.Space || slot == EquipSlot.Mouse2;
+    }
     public enum SkillFailure { None, NotFound, AlreadyLearned, Prerequisite, Points, Locked, IncompatibleSlot, DuplicateSlot, EditingBlocked, Busy, Invalid }
     public readonly struct SkillResult
     {
@@ -115,18 +127,11 @@ namespace SandGuard.Skills
         {
             var d=Catalog.Find(id);
             if(d==null || d.Branch!=SkillBranch.Movement || d.Kind!=SkillKind.Active)return;
-            // Movement has dedicated keys. Recall takes the first free combat key so buying it
-            // is immediately useful without stealing an already equipped attack.
+            // Movement has dedicated keys, so buying one is immediately useful and never
+            // steals a combat slot. Recall owns the right mouse button.
             if(id=="move.dash" && d.Slots.Contains(EquipSlot.Shift)){loadout[EquipSlot.Shift]=id;return;}
             if(id=="move.jump" && d.Slots.Contains(EquipSlot.Space)){loadout[EquipSlot.Space]=id;return;}
-            if(id=="move.recall")
-            {
-                foreach(var slot in new[]{EquipSlot.Q,EquipSlot.E,EquipSlot.R})
-                    if(d.Slots.Contains(slot) && !loadout.ContainsKey(slot)){loadout[slot]=id;return;}
-                // Keep the newly purchased skill usable even when every combat slot is full.
-                foreach(var slot in new[]{EquipSlot.Q,EquipSlot.E,EquipSlot.R})
-                    if(d.Slots.Contains(slot)){loadout[slot]=id;return;}
-            }
+            if(id=="move.recall" && d.Slots.Contains(EquipSlot.Mouse2)){loadout[EquipSlot.Mouse2]=id;return;}
         }
         public SkillResult Equip(EquipSlot slot,string id)
         {

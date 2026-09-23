@@ -163,6 +163,7 @@ namespace SandGuard.Player.Editor
                 AddButton(map, "Skill1", "<Keyboard>/q"); // 모래 폭발
                 AddButton(map, "Skill2", "<Keyboard>/e"); // 모래 소용돌이
                 AddButton(map, "Skill3", "<Keyboard>/r"); // 사막 폭풍
+                AddButton(map, "Skill4", "<Keyboard>/f"); // 자유 슬롯 (스킬트리에서 장착)
                 var dash = map.FindAction("Dash", true);
                 bool hasGamepad = false;
                 foreach (var binding in dash.bindings) if (binding.path == "<Gamepad>/leftStickPress") hasGamepad = true;
