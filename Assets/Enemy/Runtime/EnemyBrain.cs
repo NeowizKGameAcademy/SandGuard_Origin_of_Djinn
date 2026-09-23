@@ -23,6 +23,10 @@ namespace SandGuard.Enemy
         [Tooltip("진격 목표(코어). 비우면 씬의 EnemyObjective를 쓴다")]
         public Transform objective;
         [Min(0.05f)] public float thinkInterval = 0.2f;
+        [Min(0.05f), Tooltip("상대 없이 진격 중이고 카메라에서 farThinkDistance보다 멀면 이 간격으로 판단한다. 화면에서 먼 적의 탐색·경로 계산을 줄인다")]
+        public float farThinkInterval = 0.5f;
+        [Min(0f), Tooltip("0이면 거리와 무관하게 항상 thinkInterval을 쓴다")]
+        public float farThinkDistance = 30f;
         [Min(0.1f), Tooltip("목표에 이 거리 안으로 오면 도착으로 본다")]
         public float objectiveArrivalDistance = 2.5f;
         [Min(0f)] public float turnSpeed = 540f;
@@ -110,9 +114,18 @@ namespace SandGuard.Enemy
                 if (State != EnemyBrainState.Idle) { motor?.Stop(); attack?.Cancel(); selector?.ClearTarget(); State = EnemyBrainState.Idle; }
                 return;
             }
-            if (Time.time >= nextThink) { nextThink = Time.time + thinkInterval; Think(); }
+            if (Time.time >= nextThink) { nextThink = Time.time + CurrentThinkInterval(); Think(); }
             if (State == EnemyBrainState.Engaging && motor != null && !motor.HasDestination && CurrentTarget != null)
                 motor.Face(CurrentTarget.HitPosition, turnSpeed);
+        }
+
+        /// <summary>싸우는 중이거나 카메라 가까이 있으면 thinkInterval, 상대 없이 멀리서 걷는 중이면 farThinkInterval.</summary>
+        float CurrentThinkInterval()
+        {
+            if (State != EnemyBrainState.Advancing || farThinkDistance <= 0f || farThinkInterval <= thinkInterval) return thinkInterval;
+            var view = Camera.main;
+            if (view == null) return thinkInterval;
+            return (view.transform.position - transform.position).sqrMagnitude > farThinkDistance * farThinkDistance ? farThinkInterval : thinkInterval;
         }
 
         /// <summary>대상과 목적지를 다시 판단한다. thinkInterval마다 자동으로 불린다.</summary>

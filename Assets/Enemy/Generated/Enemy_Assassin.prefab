@@ -2158,29 +2158,13 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1342337955418082952, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
-      propertyPath: maxHealth
-      value: 50
-      objectReference: {fileID: 0}
-    - target: {fileID: 2233741487118629176, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
-      propertyPath: minionDamageMultiplier
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 2233741487118629176, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
-      propertyPath: playerDamageMultiplier
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 8614648122362487322, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
-      propertyPath: m_Speed
-      value: 5.25
-      objectReference: {fileID: 0}
-    - target: {fileID: 3868443114016356889, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
-      propertyPath: moveSpeed
-      value: 5.25
-      objectReference: {fileID: 0}
     - target: {fileID: 658155196757490767, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
       propertyPath: m_Name
       value: Enemy_Assassin
+      objectReference: {fileID: 0}
+    - target: {fileID: 1342337955418082952, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+      propertyPath: maxHealth
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 1342337955418082952, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
       propertyPath: removeDelay
@@ -2234,9 +2218,21 @@ PrefabInstance:
       propertyPath: windup
       value: 0.3
       objectReference: {fileID: 0}
+    - target: {fileID: 2233741487118629176, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+      propertyPath: minionDamageMultiplier
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2233741487118629176, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+      propertyPath: playerDamageMultiplier
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 3525879857054782480, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
       propertyPath: experience
       value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 3868443114016356889, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+      propertyPath: moveSpeed
+      value: 5.25
       objectReference: {fileID: 0}
     - target: {fileID: 4143298610426733003, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
       propertyPath: localScale.x
@@ -2261,6 +2257,10 @@ PrefabInstance:
     - target: {fileID: 5329342558828759534, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
       propertyPath: Stride
       value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 8614648122362487322, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+      propertyPath: m_Speed
+      value: 5.25
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:

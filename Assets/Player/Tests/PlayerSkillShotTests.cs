@@ -111,7 +111,7 @@ namespace SandGuard.Player.Tests
             Assert.AreEqual(0, stats.Count, "Detaching leaves no modifier behind.");
         }
 
-        [UnityTest] public IEnumerator PierceBeamHitsEveryEnemyInLineAndStopsAtTheFirstWall()
+        [UnityTest] public IEnumerator PierceBeamPassesThroughWallsAndHitsEveryEnemyInLine()
         {
             var first = Slab(5f); var second = Slab(8f);
             Cube(new Vector3(0, 1.5f, 11f), new Vector3(3, 3, 1)); // 피해를 받지 않는 벽
@@ -127,11 +127,11 @@ namespace SandGuard.Player.Tests
             Assert.AreEqual(0, Bolts, "The beam replaces the bolt; nothing is spawned as a projectile.");
             Assert.AreEqual(1, beams);
             Assert.AreEqual(2, first.HitCount); Assert.AreEqual(1, second.HitCount, "The beam pierces the first target and hits the second.");
-            Assert.AreEqual(0, behind.HitCount, "The beam stops at the wall and never reaches the target behind it.");
-            Assert.AreEqual(3, hits.Count); Assert.AreEqual("player.pierce", hits[2].CauseId); Assert.AreEqual(attack.Damage, hits[2].AppliedDamage, 0.0001f);
+            Assert.AreEqual(1, behind.HitCount, "The beam passes through the wall and hits the target behind it.");
+            Assert.AreEqual(4, hits.Count); Assert.AreEqual("player.pierce", hits[3].CauseId); Assert.AreEqual(attack.Damage, hits[3].AppliedDamage, 0.0001f);
             var beam = attack.LastBeam;
-            Assert.AreEqual(2, beam.EnemiesHit); Assert.True(beam.Landed);
-            Assert.That(beam.Length, Is.InRange(8.5f, 11f), "The beam ends on the wall face (z≈10.5), not at full range.");
+            Assert.AreEqual(3, beam.EnemiesHit); Assert.True(beam.Landed);
+            Assert.AreEqual(attack.BeamRange, beam.Length, 0.001f, "The beam visual extends to full range through the wall.");
             Assert.Greater(Vector3.Dot(beam.Direction, Vector3.forward), 0.95f);
         }
 

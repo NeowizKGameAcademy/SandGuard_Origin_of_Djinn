@@ -125,6 +125,9 @@ namespace SandGuard.Enemy.Editor
                     throw new InvalidOperationException(spec.Name + ": height " + bounds.size.y.ToString("F3") + " does not match target " + spec.Height);
                 foreach (var (asset, bone, scale) in spec.Gear) Equip(animator, asset, bone, scale, bounds, report, spec.Name);
                 EnemyEquipmentFitBuilder.Configure(animator, spec.Name);
+                // 측정·장비 맞춤은 화면 밖에서도 자세가 갱신돼야 해서 위에서 AlwaysAnimate로 둔다. 저장본은 웨이브에 100마리 넘게 뜨므로 화면 밖 뼈 갱신을 끈다.
+                // 스킨의 updateWhenOffscreen은 켜 둔다. 끄면 bounds가 임포트 값으로 고정돼 피격 VFX 크기·키 측정이 달라진다.
+                animator.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
                 PrefabUtility.SaveAsPrefabAsset(root, VisualPath(spec.Name));
                 float death = Clip(clips["Death"]).length, attack = Clip(clips["Attack"]).length / spec.AttackSpeed;
                 report.Add(spec.Name + ": height=" + bounds.size.y.ToString("F2") + "m (target " + spec.Height + ") stride=" + stride.ToString("F2")

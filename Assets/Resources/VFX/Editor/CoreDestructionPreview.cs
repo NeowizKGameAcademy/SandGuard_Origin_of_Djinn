@@ -19,7 +19,7 @@ namespace DesertTower.VFX.Editor
         [MenuItem("DesertTower/VFX/Preview Core Destruction")]
         public static void Render()
         {
-            string folder = "Docs/vfx-preview/CoreDestruction"; Directory.CreateDirectory(folder);
+            string folder = "Docs/vfx-preview/CoreFirework"; Directory.CreateDirectory(folder);
             var scene = EditorSceneManager.NewPreviewScene();
             var owned = new System.Collections.Generic.List<Object>();
             VfxCoreDestruction ctrl = null;
@@ -34,7 +34,7 @@ namespace DesertTower.VFX.Editor
                 var bounds = BlueDestructionBursts.MeshBounds(reference);
                 var effect = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(CoreDestructionBuilder.PrefabPath), scene);
                 ctrl = effect.GetComponent<VfxCoreDestruction>(); ctrl.Restart(); ctrl.BindTarget(reference.transform);
-                if (ctrl.Shards.Length < 8 || System.Array.Exists(originals, r => r.enabled) || !ctrl.Overload.gameObject.activeSelf)
+                if (ctrl.Shards.Length < 16 || System.Array.Exists(originals, r => r.enabled) || !ctrl.Overload.gameObject.activeSelf)
                     throw new Exception("Initial overload / source binding failed");
                 foreach (var renderer in effect.GetComponentsInChildren<Renderer>(true))
                     foreach (var mat in renderer.sharedMaterials)
@@ -42,7 +42,7 @@ namespace DesertTower.VFX.Editor
                 if (effect.GetComponentInChildren<Canvas>(true) != null) throw new Exception("Unexpected UI");
                 var camera = new GameObject("Core Preview Camera").AddComponent<Camera>();
                 SceneManager.MoveGameObjectToScene(camera.gameObject, scene); camera.scene = scene;
-                camera.orthographic = true; camera.orthographicSize = Mathf.Max(bounds.size.y, bounds.size.x) * 0.85f;
+                camera.orthographic = true; camera.orthographicSize = Mathf.Max(bounds.size.y, bounds.size.x) * 1.2f;
                 camera.transform.position = bounds.center + new Vector3(8f, 6f, -10f);
                 camera.transform.LookAt(bounds.center * 0.6f);
                 camera.clearFlags = CameraClearFlags.SolidColor; camera.backgroundColor = new Color(0.035f, 0.04f, 0.055f);
@@ -68,8 +68,29 @@ namespace DesertTower.VFX.Editor
                         ctrl.Tick(0.02f);
                         foreach (var ps in systems) ps.Simulate(0.02f, false, false, false);
                     }
-                    if (frame == 19 && (ctrl.Overload.gameObject.activeSelf || !ctrl.Shards[0].gameObject.activeSelf))
+                    if (frame == 19 && (ctrl.ProxyMeshes[0].gameObject.activeSelf || !ctrl.Shards[0].gameObject.activeSelf))
                         throw new Exception("Burst transition failed");
+                    if (frame == 22)
+                    {
+                        float spread = 0f;
+                        for (int i = 0; i < ctrl.Shards.Length; i++)
+                        {
+                            var offset = ctrl.Shards[i].localPosition - ctrl.Starts[i];
+                            offset.y = 0f;
+                            spread += offset.magnitude;
+                        }
+                        if (spread / ctrl.Shards.Length < 2f)
+                            throw new Exception("Crystal burst must spread immediately after the flash");
+                    }
+                    if (frame == 40)
+                    {
+                        for (int i = 0; i < ctrl.ProxyMeshes.Length; i++)
+                            if (ctrl.ProxyMeshes[i].gameObject.activeInHierarchy != (ctrl.MeshPaths[i] != "Core Crystal/Mesh"))
+                                throw new Exception("Only the crystal should shatter; surrounding meshes must remain intact");
+                        for (int i = 0; i < ctrl.Shards.Length; i++)
+                            if (ctrl.Shards[i].gameObject.activeInHierarchy != (ctrl.MeshPaths[ctrl.ShardMeshIndices[i]] == "Core Crystal/Mesh"))
+                                throw new Exception("Unexpected non-crystal fragment");
+                    }
                     camera.Render();
                     var active = RenderTexture.active;
                     try { RenderTexture.active = rt; texture.ReadPixels(new Rect(0, 0, 640, 480), 0, 0); texture.Apply(); }
@@ -85,7 +106,7 @@ namespace DesertTower.VFX.Editor
                 for (int i = 0; i < originals.Length; i++) if (originals[i].enabled != enabledStates[i]) throw new Exception("Explicit reset failed");
                 ctrl.Restart();
                 if (!ctrl.Overload.gameObject.activeSelf || ctrl.Shards[0].gameObject.activeSelf) throw new Exception("Replay reset failed");
-                File.WriteAllText(Path.Combine(folder, "validation.txt"), "PASS: Level New Core meshes, textured fragments, blue chain bursts, source/light/circle hiding, settled debris, no automatic resurrection, explicit reset, supported materials. 100 Unity-rendered frames.");
+                File.WriteAllText(Path.Combine(folder, "validation.txt"), "PASS: 24 crystal fragments, immediate radial burst, intact falling rings, blue chain bursts, source/light/circle hiding, settled debris, no automatic resurrection, explicit reset, supported materials. 100 Unity-rendered frames.");
             }
             finally
             {

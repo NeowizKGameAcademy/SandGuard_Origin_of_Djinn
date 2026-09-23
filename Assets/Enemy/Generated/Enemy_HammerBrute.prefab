@@ -1940,13 +1940,13 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 754703791412322535, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
-      propertyPath: displacementMultiplier
-      value: 0.7
-      objectReference: {fileID: 0}
     - target: {fileID: 658155196757490767, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
       propertyPath: m_Name
       value: Enemy_HammerBrute
+      objectReference: {fileID: 0}
+    - target: {fileID: 754703791412322535, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
+      propertyPath: displacementMultiplier
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 1342337955418082952, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
       propertyPath: maxHealth

@@ -104,7 +104,13 @@ namespace DesertTower.LevelIntegration
             return text.ToString();
         }
 
-        sealed class Schedule { public SpawnGroup group; public int emitted; public float next; }
+        sealed class Schedule
+        {
+            public SpawnGroup group; public int emitted; public float next;
+            // 스폰·목표 마커는 그룹당 한 번만 찾는다. 찾기는 LevelRoot 전체(비활성 포함)를 훑는데, 적 풀이 그 아래에 있어
+            // 쉬는 적이 많을수록 느려진다. 풀이 가득 차 스폰이 미뤄지면 그룹마다 매 프레임 불리므로 웨이브 5에서 3ms를 먹었다.
+            public SpawnBinding binding; public bool resolved;
+        }
         sealed class Walker
         {
             public ActorBridge actor;
@@ -117,6 +123,8 @@ namespace DesertTower.LevelIntegration
         readonly List<Schedule> schedules = new List<Schedule>();
         readonly List<Walker> actors = new List<Walker>();
         readonly List<string> nextRoutes = new List<string>();
+        readonly Dictionary<GameObject, int> prewarmDemand = new Dictionary<GameObject, int>();
+        int prewarmWave = -1;
         System.Random random;
         float elapsed;
         ILevelCoreReceiver Core => coreReceiver as ILevelCoreReceiver;
@@ -186,7 +194,7 @@ namespace DesertTower.LevelIntegration
             if (errors.Count > 0) { Fail(string.Join("\n", errors)); return; }
             if (Core.IsDefeated) { Fail("코어를 초기화하거나 씬을 다시 시작하세요."); return; }
             Cleanup(); random = new System.Random(randomSeed);
-            TotalSpawned = Killed = Absorbed = 0; RunElapsedSeconds = 0; WaveIndex = -1; LastError = null;
+            TotalSpawned = Killed = Absorbed = 0; RunElapsedSeconds = 0; WaveIndex = -1; prewarmWave = -1; LastError = null;
             NextWave();
         }
         /// <summary>남은 준비 시간을 건너뛰고 바로 전투로 들어간다. 시작 전이면 시작부터 한다.
@@ -227,7 +235,7 @@ namespace DesertTower.LevelIntegration
             foreach (var schedule in schedules)
                 while (budget > 0 && schedule.emitted < schedule.group.count && elapsed >= schedule.next)
                 {
-                    SpawnOutcome outcome = Spawn(schedule.group);
+                    SpawnOutcome outcome = Spawn(schedule);
                     if (outcome == SpawnOutcome.Failed) return;
                     // 풀이 가득 찼다. 예정 시각을 그대로 두어 다음 프레임에 이어서 낸다.
                     if (outcome == SpawnOutcome.Deferred) break;
@@ -258,18 +266,48 @@ namespace DesertTower.LevelIntegration
             if (!actorFactory || !catalog) return;
             var wave = WaveAt(WaveIndex);
             if (wave == null) return;
+            if (prewarmWave != WaveIndex) { prewarmWave = WaveIndex; EstimateDemand(wave); }
+            foreach (var pair in prewarmDemand)
+                if (actorFactory.PrewarmStep(pair.Key, pair.Value)) return;
+        }
+
+        /// <summary>
+        /// 웨이브가 프리팹별로 동시에 쓸 개체 수를 어림한다. 동시 활성 상한을 웨이브 구성 비율로 나누고 여유 25%를 더한다.
+        /// 모자라면 풀이 전투 중에 새로 만들 뿐이라 정확할 필요는 없다. 웨이브 5(301마리)처럼 상한에 붙는 웨이브에서 첫 스폰의 생성 비용을 준비 시간으로 옮기는 게 목적이다.
+        /// </summary>
+        void EstimateDemand(Wave wave)
+        {
+            prewarmDemand.Clear();
+            int total = 0;
             foreach (var group in wave.groups)
             {
                 if (group == null) continue;
                 var entry = catalog.Find(group.ResolvedKey);
                 if (entry == null || !entry.prefab) continue;
-                if (actorFactory.PrewarmStep(entry.prefab)) return;
+                prewarmDemand.TryGetValue(entry.prefab, out int already);
+                prewarmDemand[entry.prefab] = already + Mathf.Max(0, group.count);
+                total += Mathf.Max(0, group.count);
+            }
+            if (total == 0) return;
+            float cap = Mathf.Min(total, Mathf.Max(1, actorFactory.maxActive));
+            var prefabs = new List<GameObject>(prewarmDemand.Keys);
+            foreach (var prefab in prefabs)
+            {
+                int count = prewarmDemand[prefab];
+                prewarmDemand[prefab] = Mathf.Min(count, Mathf.CeilToInt(cap * count / total * 1.25f));
             }
         }
 
-        SpawnOutcome Spawn(SpawnGroup group)
+        SpawnOutcome Spawn(Schedule schedule)
         {
-            if (!graph.level.TryResolveSpawnGroup(group, out var binding, out var error)) { Fail(error); return SpawnOutcome.Failed; }
+            var group = schedule.group;
+            string error = null;
+            if (!schedule.resolved || !schedule.binding.Spawn || !schedule.binding.Target)
+            {
+                if (!graph.level.TryResolveSpawnGroup(group, out schedule.binding, out error)) { Fail(error); return SpawnOutcome.Failed; }
+                schedule.resolved = true;
+            }
+            var binding = schedule.binding;
             var entry = catalog.Find(group.ResolvedKey);
             if (entry == null || !entry.prefab) { Fail("적 프리팹이 사라졌습니다."); return SpawnOutcome.Failed; }
             // Exact marker position avoids NavMesh sampling onto an adjacent floor.

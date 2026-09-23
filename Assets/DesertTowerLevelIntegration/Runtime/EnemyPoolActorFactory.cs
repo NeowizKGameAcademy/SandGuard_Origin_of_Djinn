@@ -33,12 +33,19 @@ namespace DesertTower.LevelIntegration
             return pool.Rent(prefab, position, rotation, Mathf.Max(1, maxActive));
         }
 
-        public bool PrewarmStep(GameObject prefab)
+        public bool PrewarmStep(GameObject prefab) => PrewarmStep(prefab, 0);
+
+        /// <summary>
+        /// 프리팹을 하나 미리 만든다. 목표는 prewarmPerPrefab과 demand 중 큰 값이다. 더 만들 게 남았으면 true.
+        /// demand는 다음 웨이브가 이 프리팹을 동시에 쓸 추정치다(감독이 계산한다). prewarmPerPrefab이 0이면 미리 만들지 않는다.
+        /// </summary>
+        public bool PrewarmStep(GameObject prefab, int demand)
         {
             if (pool == null || prefab == null || prewarmPerPrefab <= 0) return false;
-            if (pool.OwnedCount(prefab) >= prewarmPerPrefab) return false;
+            int target = Mathf.Max(prewarmPerPrefab, demand);
+            if (pool.OwnedCount(prefab) >= target) return false;
             pool.PrewarmOne(prefab);
-            return pool.OwnedCount(prefab) < prewarmPerPrefab;
+            return pool.OwnedCount(prefab) < target;
         }
 
         public void Despawn(GameObject instance)

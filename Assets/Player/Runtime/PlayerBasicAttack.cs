@@ -274,7 +274,7 @@ namespace SandGuard.Player
         }
 
         /// <summary>
-        /// 관통탄: 몸통→총구, 총구→사거리 순으로 훑어 적대 대상은 전부 꿰뚫고(피해 각각) 그 외 콜라이더(벽·아군 시설)에서 멈춘다.
+        /// 관통탄: 몸통→총구, 총구→사거리 순으로 훑어 적대 대상은 전부 꿰뚫고(피해 각각) 지형·벽·아군 시설은 통과한다.
         /// 죽은 개체와 트리거는 통과한다. 폭발 관통탄이면 꿰뚫은 적마다 모래 폭발이 터진다.
         /// </summary>
         void FireBeam(Vector3 muzzle, Vector3 direction, Vector3 origin, float charge = 0f, bool explodeOnPierce = false)
@@ -288,15 +288,13 @@ namespace SandGuard.Player
             var enemyPoints = new List<Vector3>();
             var pushed = new List<IDisplaceable>();
             Vector3 end = muzzle + direction * range;
-            bool landed = false;
-            // 몸통에서 총구까지 먼저: 총구가 벽 너머로 들어갔으면 빔은 거기서 끝난다.
+            // 몸통에서 총구까지도 훑어 가까운 적을 빠뜨리지 않는다.
             Vector3 toMuzzle = muzzle - origin;
-            bool blockedBeforeMuzzle = toMuzzle.sqrMagnitude > 0.0001f
-                && Trace(origin, toMuzzle.normalized, toMuzzle.magnitude, radius, faction, amount, seen, enemyPoints, pushed, out end);
-            if (blockedBeforeMuzzle) landed = true;
-            else landed = Trace(muzzle, direction, range, radius, faction, amount, seen, enemyPoints, pushed, out end);
-            if (enemyPoints.Count > 0) landed = true;
-            Vector3 visualStart = blockedBeforeMuzzle ? end : muzzle;
+            if (toMuzzle.sqrMagnitude > 0.0001f)
+                Trace(origin, toMuzzle.normalized, toMuzzle.magnitude, radius, faction, amount, seen, enemyPoints, pushed);
+            Trace(muzzle, direction, range, radius, faction, amount, seen, enemyPoints, pushed);
+            bool landed = enemyPoints.Count > 0;
+            Vector3 visualStart = muzzle;
             LastBeam = new PlayerBeamShot(visualStart, direction, end, enemyPoints.Count, landed);
             LastBeamCharge = charge;
             if (knock > 0f) { Vector3 push = direction; push.y = 0f; push = push.sqrMagnitude > 0.0001f ? push.normalized * knock : Vector3.zero; foreach (var target in pushed) target.Knockback(push); }
@@ -334,8 +332,8 @@ namespace SandGuard.Player
             if (explodeOnPierce || BurstPerPierce) foreach (var point in enemyPoints) DetonateExplosion(point, 0.5f, piercedBurstLaunchScale, pierced: true);
         }
 
-        /// <summary>한 구간을 훑는다. 막히면 true와 막힌 점, 아니면 false와 구간 끝점을 돌려준다. 꿰뚫은 적은 seen·enemyPoints에 쌓인다.</summary>
-        bool Trace(Vector3 from, Vector3 direction, float distance, float radius, string faction, float amount, HashSet<IDamageable> seen, List<Vector3> enemyPoints, List<IDisplaceable> pushed, out Vector3 end)
+        /// <summary>지형과 아군을 통과하며 한 구간을 훑는다. 꿰뚫은 적은 seen·enemyPoints에 쌓인다.</summary>
+        void Trace(Vector3 from, Vector3 direction, float distance, float radius, string faction, float amount, HashSet<IDamageable> seen, List<Vector3> enemyPoints, List<IDisplaceable> pushed)
         {
             var hits = Physics.SphereCastAll(from, radius, direction, distance, skillMask, QueryTriggerInteraction.Ignore);
             Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
@@ -348,10 +346,10 @@ namespace SandGuard.Player
                 if (target != null)
                 {
                     if (!target.IsTargetable) continue; // 죽은 개체는 통과
-                    if (target.FactionId == faction) { end = point; return true; } // 아군 벽·시설은 막는다
+                    if (target.FactionId == faction) continue; // 아군 벽·시설은 피해 없이 통과
                     receiver = target.DamageReceiver;
                 }
-                if (receiver == null) { end = point; return true; } // 지형·벽
+                if (receiver == null) continue; // 지형·벽 통과
                 if (!seen.Add(receiver)) continue; // 콜라이더가 여럿인 적은 한 번만
                 var displaceable = hit.collider.GetComponentInParent<IDisplaceable>();
                 if (displaceable != null && !pushed.Contains(displaceable)) pushed.Add(displaceable);
@@ -361,8 +359,6 @@ namespace SandGuard.Player
                     OnProjectileHit(new PlayerHitInfo(target, receiver, result.AppliedDamage, result.WasKilled, point, direction, "player.pierce"));
                 enemyPoints.Add(point);
             }
-            end = from + direction * distance;
-            return false;
         }
 
         /// <summary>실제 피해를 준 명중을 기록한다(마나 순환·Hit 이벤트). 지역 스킬(폭풍)도 여기로 보고한다.</summary>

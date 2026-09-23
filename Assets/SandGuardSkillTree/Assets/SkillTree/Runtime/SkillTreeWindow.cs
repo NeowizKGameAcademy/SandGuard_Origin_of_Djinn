@@ -38,7 +38,7 @@ namespace SandGuard.Skills.Unity
         readonly Dictionary<Behaviour,bool> suspended=new Dictionary<Behaviour,bool>();
         SkillAltarAnchor current;
         SkillBranch branch;
-        string selected, feedback="이동 스킬은 구매 즉시 사용할 수 있습니다. 공격 스킬은 Q/E/R/F 슬롯에 장착하세요.";
+        string selected, feedback="구매 시 자동 장착: Q 관통탄 · E 폭발 · R 모래 소용돌이 · F 사막폭풍 · 우클릭 흔적귀환";
         bool dirty=true, previousVisible, bound;
         CursorLockMode previousLock;
         GameObject createdEventSystem;
@@ -171,7 +171,7 @@ namespace SandGuard.Skills.Unity
             session.Service.EditingAllowed=session.editingAllowed;
             var r=session.Service.Learn(selected);
             var skill=session.Service.Catalog.Find(selected);
-            feedback=r.Success?(skill.Branch==SkillBranch.Movement?"구매 완료 — 이동 스킬이 즉시 활성화되었습니다.":"구매 완료 — 사용할 슬롯을 선택하세요."):Reason(r.Failure);dirty=true;
+            feedback=r.Success?(skill.Kind==SkillKind.Passive?"구매 완료 — 즉시 활성화되었습니다.":"구매 완료 — 스킬이 자동 장착되었습니다."):Reason(r.Failure);dirty=true;
             (r.Success?onLearned:onFailed).Invoke();
         }
         void Equip(EquipSlot slot)
@@ -230,6 +230,7 @@ namespace SandGuard.Skills.Unity
                 if(SkillLampSkin.Available)slotButtons[i].image.color=compatible?theme.cyan:Color.white;
                 else slotButtons[i].image.color=compatible?theme.cyan:theme.gold;
                 var emptyMarker=slotButtons[i].transform.Find("Empty Marker");if(emptyMarker)emptyMarker.gameObject.SetActive(id==null);
+                removeButtons[i].gameObject.SetActive(!fixedMovement);
                 removeButtons[i].interactable=!fixedMovement && id!=null && lastEditing;
             }
             statusLabel.text=feedback;

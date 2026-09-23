@@ -119,19 +119,27 @@ namespace SandGuard.Skills
             int cost=Catalog.Find(id).Cost;
             if(RefundPoints>int.MaxValue-cost)return Fail(SkillFailure.Invalid);
             changing=true;bool ok;
-            try{ok=wallet.TryChange(-cost,()=>{learned.Add(id);RefundPoints+=cost;AutoEquipMovement(id);});}finally{changing=false;}
+            try{ok=wallet.TryChange(-cost,()=>{learned.Add(id);RefundPoints+=cost;AutoEquip(id);});}finally{changing=false;}
             if(!ok)return Fail(SkillFailure.Points);
             Notify();return r;
         }
-        void AutoEquipMovement(string id)
+        void AutoEquip(string id)
         {
             var d=Catalog.Find(id);
-            if(d==null || d.Branch!=SkillBranch.Movement || d.Kind!=SkillKind.Active)return;
-            // Movement has dedicated keys, so buying one is immediately useful and never
-            // steals a combat slot. Recall owns the right mouse button.
-            if(id=="move.dash" && d.Slots.Contains(EquipSlot.Shift)){loadout[EquipSlot.Shift]=id;return;}
-            if(id=="move.jump" && d.Slots.Contains(EquipSlot.Space)){loadout[EquipSlot.Space]=id;return;}
-            if(id=="move.recall" && d.Slots.Contains(EquipSlot.Mouse2)){loadout[EquipSlot.Mouse2]=id;return;}
+            if(d==null || d.Kind!=SkillKind.Active)return;
+            EquipSlot slot;
+            switch(id)
+            {
+                case "attack.pierce":slot=EquipSlot.Q;break;
+                case "attack.burst":slot=EquipSlot.E;break;
+                case "attack.vortex":slot=EquipSlot.R;break;
+                case "attack.storm":slot=EquipSlot.F;break;
+                case "move.dash":slot=EquipSlot.Shift;break;
+                case "move.jump":slot=EquipSlot.Space;break;
+                case "move.recall":slot=EquipSlot.Mouse2;break;
+                default:return;
+            }
+            if(d.Slots.Contains(slot))loadout[slot]=id;
         }
         public SkillResult Equip(EquipSlot slot,string id)
         {
@@ -181,9 +189,9 @@ namespace SandGuard.Skills
                 learned.Clear();foreach(var id in set)learned.Add(id);RefundPoints=0;
                 loadout.Clear();foreach(var p in state.Loadout)loadout.Add(p.Key,p.Value);
                 // Older saves can contain purchased movement skills without their automatic slot.
-                if(set.Contains("move.dash"))AutoEquipMovement("move.dash");
-                if(set.Contains("move.jump"))AutoEquipMovement("move.jump");
-                if(set.Contains("move.recall") && !loadout.ContainsValue("move.recall"))AutoEquipMovement("move.recall");}
+                if(set.Contains("move.dash"))AutoEquip("move.dash");
+                if(set.Contains("move.jump"))AutoEquip("move.jump");
+                if(set.Contains("move.recall") && !loadout.ContainsValue("move.recall"))AutoEquip("move.recall");}
             finally{changing=false;}
             Notify();return Fail(SkillFailure.None);
         }

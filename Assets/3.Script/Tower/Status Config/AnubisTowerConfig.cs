@@ -12,7 +12,7 @@ namespace Tower
         [SerializeField] private Transform SpawnPoint;
 
         [Header("Creature Status")]
-        [SerializeField] private float MaxHP = 1000f;
+        [SerializeField] private float MaxHP = 1500f;
         [SerializeField] private float Attack = 30f;
         [SerializeField] private float AttackInterval = 1.5f;
         [SerializeField] private float MoveSpeed = 5f;
@@ -24,7 +24,7 @@ namespace Tower
         [Min(0f)] [SerializeField] [Tooltip("주 대상을 맞힌 지점 기준 반경. 0이면 스플래시가 없다")]
         private float SplashRadius = 2.5f;
         [Range(0f, 1f)] [SerializeField] [Tooltip("주 대상 피해 대비 주변 피해 비율")]
-        private float SplashRatio = 0.5f;
+        private float SplashRatio = 1f;
         [Range(0f, 360f)] [SerializeField] [Tooltip("전방 몇 도까지 번지는지. 120이면 바라보는 쪽 120도. 360이면 전방향")]
         private float SplashAngle = 120f;
         [SerializeField] [Tooltip("스플래시 판정에 쓰는 레이어")]

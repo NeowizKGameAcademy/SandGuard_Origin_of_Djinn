@@ -8,7 +8,7 @@ namespace Tower
     public class ObeliskTowerConfig
     {
         [Header("Slow")]
-        [SerializeField] private float SlowRatio = 0.3f;
+        [SerializeField] private float SlowRatio = 0.7f;
         [Min(0.01f)] [SerializeField] private float TickInterval = 1f;
 
         //Properties

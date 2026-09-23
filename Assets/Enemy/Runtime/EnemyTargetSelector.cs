@@ -29,12 +29,18 @@ namespace SandGuard.Enemy
         [Min(1)] public int corePriority = 4;
         public LayerMask targetMask = ~0;
         [Min(4)] public int maxColliders = 32;
+        [Min(0f), Tooltip("대상까지의 접근 경로 계산 결과를 이 시간(초) 동안 다시 쓴다. 0이면 판단마다 새로 계산한다. 웨이브에 적이 100마리 넘게 몰리면 경로 계산이 프레임을 먹는다")]
+        public float approachReuseSeconds = 0.6f;
+        [Min(0f), Tooltip("대상 충돌체의 가장 가까운 점이 이만큼 움직이면(움직이는 플레이어 등) 재사용하지 않고 다시 계산한다")]
+        public float approachReuseDistance = 0.75f;
 
         struct Entry { public ICombatTarget Target; public Collider Collider; public int Priority; public Vector3 Approach; }
+        struct CachedApproach { public float Time; public Vector3 Origin, Closest, Approach; public bool Reachable; }
 
         readonly PriorityTargetPolicy policy = new PriorityTargetPolicy();
         readonly List<TargetCandidate> candidates = new List<TargetCandidate>();
         readonly Dictionary<Guid, Entry> entries = new Dictionary<Guid, Entry>();
+        readonly Dictionary<Collider, CachedApproach> approachCache = new Dictionary<Collider, CachedApproach>();
         Entry current;
         Collider[] buffer;
         NavMeshPath path;
@@ -47,6 +53,9 @@ namespace SandGuard.Enemy
         /// null이면 제한이 없다. 길을 막은 차단 시설(우선순위 0)은 경로 위에 있으므로 묻지 않는다.
         /// </summary>
         public Func<Vector3, bool> ApproachFilter { get; set; }
+
+        // 풀로 돌아갔다 다른 자리에서 되살아나므로 이전 삶의 경로 계산을 버린다.
+        void OnDisable() => approachCache.Clear();
 
         public TargetSelection SelectTarget()
         {
@@ -154,6 +163,26 @@ namespace SandGuard.Enemy
             var target = collider.GetComponentInParent<ICombatTarget>();
             if (attack != null ? attack.IsInRange(target) : EnemyMotor.Planar(origin, closest) <= range) return true;
             if (motor == null || !motor.IsOnNavMesh) return false;
+            if (approachReuseSeconds > 0f && approachCache.TryGetValue(collider, out CachedApproach cached)
+                && Time.time - cached.Time <= approachReuseSeconds
+                && (cached.Closest - closest).sqrMagnitude <= approachReuseDistance * approachReuseDistance
+                && (cached.Origin - origin).sqrMagnitude <= 9f) // 밀려나거나 떨어져 멀리 옮겨졌으면 다시 본다
+            {
+                approach = cached.Reachable ? cached.Approach : origin;
+                return cached.Reachable;
+            }
+            bool reachable = CalculateApproach(collider, origin, closest, range, out approach);
+            if (approachReuseSeconds > 0f)
+            {
+                if (approachCache.Count >= 16) approachCache.Clear(); // 사라진 대상의 항목이 쌓이지 않게 가끔 비운다
+                approachCache[collider] = new CachedApproach { Time = Time.time, Origin = origin, Closest = closest, Approach = approach, Reachable = reachable };
+            }
+            return reachable;
+        }
+
+        bool CalculateApproach(Collider collider, Vector3 origin, Vector3 closest, float range, out Vector3 approach)
+        {
+            approach = origin;
             if (!NavMesh.SamplePosition(closest, out NavMeshHit hit, range + 1f, motor.Agent.areaMask)) return false;
             path ??= new NavMeshPath();
             if (!NavMesh.CalculatePath(origin, hit.position, motor.Agent.areaMask, path) || path.corners.Length == 0) return false;

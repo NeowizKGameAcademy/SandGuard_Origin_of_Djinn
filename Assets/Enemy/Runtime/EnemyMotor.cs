@@ -14,6 +14,8 @@ namespace SandGuard.Enemy
         public float arrivalDistance = 0.5f;
         [Min(0.1f), Tooltip("목적지를 NavMesh 위로 옮길 때 허용하는 거리")]
         public float sampleRadius = 3f;
+        [Min(0f), Tooltip("새 목적지가 기존 목적지에서 (남은 거리 × 이 비율)보다 덜 움직였으면 경로를 다시 계산하지 않는다. 최소 0.5m. 멀리서 움직이는 대상을 쫓을 때 매 판단마다 경로를 새로 짜지 않게 한다")]
+        public float repathDistanceRatio = 0.15f;
         NavMeshAgent agent;
         NavMeshPath scratch;
         Vector3 destination;
@@ -143,7 +145,8 @@ namespace SandGuard.Enemy
         {
             if (!IsFinite(target) || !IsOnNavMesh) return false;
             if (!NavMesh.SamplePosition(target, out NavMeshHit hit, sampleRadius, agent.areaMask)) return false;
-            if (HasDestination && PathState != MovementPathState.Invalid && Planar(hit.position, destination) <= 0.5f)
+            float keep = Mathf.Max(0.5f, repathDistanceRatio * Planar(transform.position, hit.position));
+            if (HasDestination && PathState != MovementPathState.Invalid && Planar(hit.position, destination) <= keep)
             { Refresh(); return true; }
             scratch ??= new NavMeshPath();
             if (!agent.CalculatePath(hit.position, scratch) || scratch.status == NavMeshPathStatus.PathInvalid || scratch.corners.Length == 0) return false;

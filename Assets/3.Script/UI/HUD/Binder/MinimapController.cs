@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using SandGuard.Enemy;
 using SandGuard.Player;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
 namespace SandGuard.UI.HUD
@@ -22,6 +23,8 @@ namespace SandGuard.UI.HUD
         public Color groundColor = new Color(.16f, .12f, .09f, 1f);
         [Tooltip("지도에 그릴 레이어. 기본은 UI 제외 전부")] public LayerMask cullingMask = ~(1 << 5);
         [Tooltip("적 목록을 다시 찾는 간격(초)")] public float enemyScanInterval = .25f;
+        [Tooltip("지도 배경을 다시 그리는 간격(실시간 초). 카메라가 고정이고 움직이는 것은 마커로 그리므로 매 프레임 그릴 필요가 없다. 0이면 매 프레임 그린다")]
+        public float redrawInterval = 3f;
 
         [Header("마커")]
         public Sprite playerMarker; public Sprite enemyMarker; public Sprite coreMarker; public Sprite bossMarker;
@@ -33,11 +36,16 @@ namespace SandGuard.UI.HUD
         RectTransform playerDot, coreDot, bossDot;
         readonly List<RectTransform> enemyDots = new List<RectTransform>();
         readonly List<EnemyHealth> enemies = new List<EnemyHealth>();
-        float nextScan;
+        float nextScan, nextRedraw;
+        bool drawing;
+        readonly List<Renderer> hidden = new List<Renderer>();
+        readonly List<Renderer> scratch = new List<Renderer>();
 
         public Camera MapCamera => cam;
         public Texture MapTexture => texture;
         public MinimapHUD View => hud != null ? hud.Minimap : null;
+        /// <summary>다음 프레임에 지도 배경을 다시 그린다. 시설이 생기거나 부서지는 등 지형이 바뀌었을 때 부른다.</summary>
+        public void RequestRedraw() => nextRedraw = 0f;
         public bool PlacePreview(RectTransform marker, Vector3 world) => cam != null && Place(marker, world, true);
         MinimapHUD Map => hud.Minimap;
 
@@ -69,6 +77,10 @@ namespace SandGuard.UI.HUD
             var data = cam.GetUniversalAdditionalCameraData();
             data.renderShadows = false; data.renderPostProcessing = false;
             data.requiresColorOption = CameraOverrideOption.Off; data.requiresDepthOption = CameraOverrideOption.Off;
+            // 평소에는 꺼 두고 redrawInterval마다 한 프레임만 켠다. 전장 전체를 그리는 데 2~3ms가 들어 웨이브 중 매 프레임 그리면 아깝다.
+            cam.enabled = redrawInterval <= 0f;
+            RenderPipelineManager.beginCameraRendering += HideMovingBodies;
+            RenderPipelineManager.endCameraRendering += RestoreMovingBodies;
             go.transform.rotation = Quaternion.Euler(90f, 0f, 0f); // 위에서 아래로, 화면 위 = 세계 +Z
             PositionFixedCamera();
         }
@@ -86,6 +98,41 @@ namespace SandGuard.UI.HUD
         {
             if (player == null) return;
             UpdateMarkers();
+            ScheduleRedraw();
+        }
+
+        // 켠 프레임의 렌더가 끝났으면 다음 LateUpdate에서 끈다. RenderTexture는 마지막 그림을 유지한다.
+        void ScheduleRedraw()
+        {
+            if (cam == null) return;
+            if (redrawInterval <= 0f) { cam.enabled = true; return; }
+            if (drawing) { cam.enabled = false; drawing = false; }
+            if (Time.unscaledTime < nextRedraw) return;
+            nextRedraw = Time.unscaledTime + redrawInterval;
+            cam.enabled = true; drawing = true;
+        }
+
+        // 배경을 가끔만 그리므로 적·플레이어 몸이 찍히면 멈춘 채 남는다. 이 카메라가 그리는 동안에만 숨긴다(마커가 대신 보여 준다).
+        void HideMovingBodies(ScriptableRenderContext context, Camera camera)
+        {
+            if (camera != cam || redrawInterval <= 0f) return;
+            hidden.Clear();
+            foreach (var enemy in FindObjectsByType<EnemyHealth>(FindObjectsSortMode.None)) Hide(enemy.transform);
+            if (player != null) Hide(player);
+        }
+
+        void Hide(Transform root)
+        {
+            root.GetComponentsInChildren(scratch);
+            foreach (var renderer in scratch)
+                if (!renderer.forceRenderingOff) { renderer.forceRenderingOff = true; hidden.Add(renderer); }
+        }
+
+        void RestoreMovingBodies(ScriptableRenderContext context, Camera camera)
+        {
+            if (camera != cam) return;
+            foreach (var renderer in hidden) if (renderer != null) renderer.forceRenderingOff = false;
+            hidden.Clear();
         }
 
         void PositionFixedCamera()
@@ -149,6 +196,9 @@ namespace SandGuard.UI.HUD
 
         void OnDestroy()
         {
+            RenderPipelineManager.beginCameraRendering -= HideMovingBodies;
+            RenderPipelineManager.endCameraRendering -= RestoreMovingBodies;
+            foreach (var renderer in hidden) if (renderer != null) renderer.forceRenderingOff = false;
             if (cam != null) Destroy(cam.gameObject);
             if (texture != null) { texture.Release(); Destroy(texture); }
         }

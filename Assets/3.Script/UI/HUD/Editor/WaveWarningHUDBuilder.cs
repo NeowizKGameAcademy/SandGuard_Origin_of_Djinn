@@ -43,12 +43,13 @@ namespace SandGuard.UI.HUD.Editor
 
                 var panel = Rect("RemainingEnemyPanel", root.transform, new Vector2(0, -58), new Vector2(258, 58));
                 SpriteImage("FrameSprite", panel, EnemyFrameSpritePath, Vector2.zero, new Vector2(258, 58));
-                Text("RemainingLabel_TMP", panel, "남은 적", 17, Ivory, new Vector2(-16, 0), new Vector2(82, 30));
-                var value = Text("RemainingValue_TMP", panel, "23", 25, Gold, new Vector2(72, 0), new Vector2(55, 34));
+                var label = Text("RemainingLabel_TMP", panel, "남은 적", 17, Ivory, new Vector2(-25, 0), new Vector2(105, 30));
+                var value = Text("RemainingValue_TMP", panel, "23", 25, Gold, new Vector2(72, 0), new Vector2(80, 34));
 
                 var wave = root.GetComponent<WaveHUD>();
                 Set(wave, "remainingEnemyPanel", panel.gameObject);
                 Set(wave, "remainingEnemyText", value);
+                Set(wave, "remainingEnemyLabel", label);
                 panel.gameObject.SetActive(false);
                 PrefabUtility.SaveAsPrefabAsset(root, WavePrefabPath);
             }
