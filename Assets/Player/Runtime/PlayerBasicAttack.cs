@@ -60,7 +60,7 @@ namespace SandGuard.Player
         [Min(0f), Tooltip("띄울 때 폭발 중심에서 바깥으로 날리는 수평 속도(m/s)")] public float burstLaunchOut = 10f;
         [Header("스킬 — 폭발 관통탄 폭발")]
         [Min(0.1f)] public float piercedBurstRadius = 3.75f;
-        [Min(0f), Tooltip("폭발 관통탄이 꿰뚫은 자리에서 터지는 폭발의 고정 피해. 볼트 피해·폭발 배율 스탯과 무관")] public float piercedBurstDamage = 1f;
+        [Min(0f), Tooltip("폭발 관통탄이 꿰뚫은 자리에서 터지는 폭발의 고정 피해. 볼트 피해·폭발 배율 스탯과 무관. 0이면 피해 없이 띄우기·밀어내기만 한다")] public float piercedBurstDamage = 0f;
         [Min(0f)] public float piercedBurstLaunchOut = 5f;
         [Range(0f, 1f), Tooltip("관통탄이 꿰뚫은 자리에서 터지는 폭발의 띄우기·밀어내기 배율. 연출과 같이 절반(0.5). Q 폭발은 항상 1배")] public float piercedBurstLaunchScale = 0.5f;
         [Header("스킬 — 관통탄 충전 (PlayerPierceCharge가 charge 0~1로 TrySkillPierce를 부른다)")]
@@ -396,6 +396,7 @@ namespace SandGuard.Player
                         if (displaceable.Launch((Vector3.up * burstLaunchUp + outward * launchOut) * launchScale)) launchCount++;
                     }
                 }
+                if (amount <= 0f) continue; // 피해 0이면 맞은 반응(피격 이벤트)도 보내지 않는다
                 IDamageable receiver = target != null ? target.DamageReceiver : collider.GetComponentInParent<IDamageable>();
                 if (receiver == null || !seen.Add(receiver)) continue;
                 Vector3 point = PlayerSandZone.ClosestPointSafe(collider, center);

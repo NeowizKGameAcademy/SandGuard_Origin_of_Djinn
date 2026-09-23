@@ -197,7 +197,7 @@ namespace SandGuard.Player.Tests
             var pierce = player.AddComponent<PlayerPierceCharge>();
             yield return null;
             var target = Dummy(new Vector3(0f, 1f, 5f)); var health = target.gameObject.AddComponent<PlayerTestTarget>();
-            health.maxHealth = 1000f;
+            float startHealth = health.CurrentHealth; // 시작 체력은 Awake에서 정해지므로 maxHealth를 나중에 바꿔도 그대로다
             var wall = Cube(new Vector3(0f, 1.5f, 9f), new Vector3(3f, 3f, 1f));
             float baseDamage = attack.Damage;
             var fired = new List<float>(); pierce.Fired += fired.Add;
@@ -209,7 +209,8 @@ namespace SandGuard.Player.Tests
             Assert.False(pierce.IsHolding); Assert.False(started);
             Assert.AreEqual(before - pierce.manaCost, mana.CurrentMana, "A tap costs the base mana only.");
             Assert.AreEqual(1, fired.Count); Assert.AreEqual(0f, fired[0]); Assert.AreEqual(0f, attack.LastBeamCharge);
-            Assert.AreEqual(2, health.HitCount); Assert.AreEqual(baseDamage + attack.PiercedBurstDamage, health.maxHealth - health.CurrentHealth, 0.0001f);
+            int burstHit = attack.PiercedBurstDamage > 0f ? 1 : 0; // 피해 0인 폭발은 맞은 횟수에 들어가지 않는다
+            Assert.AreEqual(1 + burstHit, health.HitCount); Assert.AreEqual(baseDamage + attack.PiercedBurstDamage, startHealth - health.CurrentHealth, 0.0001f);
             Assert.AreEqual(0, target.KnockCalls, "A tap does not push.");
             Assert.AreEqual(ActionFailure.Cooldown, pierce.Fire(0f).Failure);
             Assert.False(pierce.BeginHold(0), "Holding during the cooldown does nothing.");
@@ -227,12 +228,12 @@ namespace SandGuard.Player.Tests
             Assert.False(cancelled);
             Assert.AreEqual(before - pierce.manaCost - pierce.fullChargeExtraMana, mana.CurrentMana, "Full charge costs the extra mana.");
             Assert.AreEqual(2, fired.Count); Assert.AreEqual(1f, fired[1], 0.0001f); Assert.AreEqual(1f, attack.LastBeamCharge, 0.0001f);
-            Assert.AreEqual(4, health.HitCount);
+            Assert.AreEqual(2 + 2 * burstHit, health.HitCount);
             Assert.AreEqual(baseDamage * attack.chargedDamageMultiplier + attack.PiercedBurstDamage,
-                health.maxHealth - health.CurrentHealth - baseDamage - attack.PiercedBurstDamage, 0.001f, "Charged beam plus explosion damage.");
+                startHealth - health.CurrentHealth - baseDamage - attack.PiercedBurstDamage, 0.001f, "Charged beam plus explosion damage.");
             Assert.AreEqual(1, target.KnockCalls); Assert.Greater(target.Knock.z, 0f, "Pushed along the beam.");
             Assert.AreEqual(attack.chargedKnockback, target.Knock.magnitude, 0.01f);
-            Assert.True(attack.LastBeam.Landed); Assert.Less(attack.LastBeam.End.z, 9f, "The charged beam still stops at the wall.");
+            Assert.True(attack.LastBeam.Landed); Assert.Greater(attack.LastBeam.End.z, 9f, "The charged beam passes through the wall like every pierce beam.");
             if (attack.pierceOrigin != null)
                 Assert.Less(Vector3.Distance(attack.LastBeam.Origin, attack.pierceOrigin.position), 0.05f, "The two-handed beam leaves from the centre-front anchor, not the right palm.");
             // 취소: 충전 중 못 쓰는 상태가 되면(여기서는 컴포넌트 비활성) 마나 없이 취소된다.

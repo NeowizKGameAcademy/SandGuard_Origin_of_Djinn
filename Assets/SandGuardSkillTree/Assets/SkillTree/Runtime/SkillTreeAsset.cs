@@ -35,10 +35,10 @@ namespace SandGuard.Skills.Unity
             asset.Add("move.jump","더블 점프",SkillBranch.Movement,1,SkillKind.Active,"",EquipSlot.Space);
             asset.Add("move.updraft","차지 점프",SkillBranch.Movement,2,SkillKind.Passive,"move.jump");
             asset.Add("move.recall","흔적 귀환",SkillBranch.Movement,3,SkillKind.Active,"move.dash",EquipSlot.Mouse2);
-            asset.Add("attack.pierce","관통탄",SkillBranch.Attack,1,SkillKind.Active,"",EquipSlot.Q,EquipSlot.E,EquipSlot.R,EquipSlot.F);
-            asset.Add("attack.burst","모래 폭발",SkillBranch.Attack,2,SkillKind.Active,"attack.pierce",EquipSlot.Q,EquipSlot.E,EquipSlot.R,EquipSlot.F);
-            asset.Add("attack.vortex","모래 소용돌이",SkillBranch.Attack,3,SkillKind.Active,"attack.pierce",EquipSlot.Q,EquipSlot.E,EquipSlot.R,EquipSlot.F);
-            asset.Add("attack.storm","사막 폭풍",SkillBranch.Attack,3,SkillKind.Active,"attack.burst",EquipSlot.Q,EquipSlot.E,EquipSlot.R,EquipSlot.F);
+            asset.Add("attack.burst","모래 폭발",SkillBranch.Attack,1,SkillKind.Active,"",EquipSlot.Q,EquipSlot.E,EquipSlot.R,EquipSlot.F);
+            asset.Add("attack.pierce","관통탄",SkillBranch.Attack,2,SkillKind.Active,"attack.burst",EquipSlot.Q,EquipSlot.E,EquipSlot.R,EquipSlot.F);
+            asset.Add("attack.vortex","모래 소용돌이",SkillBranch.Attack,3,SkillKind.Active,"attack.burst",EquipSlot.Q,EquipSlot.E,EquipSlot.R,EquipSlot.F);
+            asset.Add("attack.storm","사막 폭풍",SkillBranch.Attack,3,SkillKind.Active,"attack.pierce",EquipSlot.Q,EquipSlot.E,EquipSlot.R,EquipSlot.F);
             asset.nodes[asset.nodes.Count-1].prerequisites.Add("attack.vortex");
             asset.Add("tower.skeleton","해골 소환진 해금",SkillBranch.Tower,1,SkillKind.Passive,"");
             asset.Add("tower.cobra","화염 코브라 해금",SkillBranch.Tower,2,SkillKind.Passive,"tower.skeleton");

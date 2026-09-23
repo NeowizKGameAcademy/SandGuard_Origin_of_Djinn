@@ -19,9 +19,18 @@ namespace DesertTower.VFX.Editor
         static Color Blue => SkillVfxBuilder.Blue;
         static Color BlueDark => SkillVfxBuilder.BlueDark;
         public const string SummonPillarPath = PrefabDir + "/VFX_Summon_Pillar.prefab";
+        // 관통탄 빔 교체본: Assets/VFX_Beam의 Beam Effect(늘린 구체 심지 + 노이즈 층 3 + 시작점 구, BeamScaleWiggle이 흔든다)를 VfxBeam으로 감싼다.
+        public const string BeamEffectSourcePath = "Assets/VFX_Beam/Prefab/Beam Effect.prefab";
+        public const string PierceBeamNoisePath = PrefabDir + "/VFX_Pierce_Beam_Noise.prefab";
+        const float BeamEffectLength = 200f; // 원본의 늘린 구체는 z 0~200
+        // 원본 굵기(단위)가 이만큼일 때 VfxBeam 지름 1에 대응한다. 심지 1~3, 노이즈 7~30이라 크게 잡을수록 가늘어진다.
+        const float BeamEffectReferenceDiameter = 12f;
 
         [MenuItem("DesertTower/VFX/Build Pierce Beam")]
         public static void BuildPierceBeamFromMenu() => EditorGUIUtility.PingObject(BuildPierceBeam());
+
+        [MenuItem("DesertTower/VFX/Build Pierce Beam (VFX_Beam)")]
+        public static void BuildPierceBeamNoiseFromMenu() => EditorGUIUtility.PingObject(BuildPierceBeamNoise());
 
         [MenuItem("DesertTower/VFX/Build Summon Pillar")]
         public static void BuildSummonPillarFromMenu() => EditorGUIUtility.PingObject(BuildSummonPillar());
@@ -47,6 +56,38 @@ namespace DesertTower.VFX.Editor
             BuildChargeRings(Child(root, "Rings"), s);
 
             return SavePrefab(root, PierceBeamPath);
+        }
+
+        /// <summary>
+        /// Beam Effect 원본을 풀어 복사한 뒤 VfxBeam 아래에 넣는다. 원본은 길이 200·굵기 수십 단위로 만들어져 있어
+        /// Normalize 자식이 (1/기준지름, 1/기준지름, 1/200)으로 줄여 VfxBeam의 단위 빔(지름 1, z 0~1)에 맞춘다.
+        /// 시작점 구는 길이 방향으로 늘어나면 안 되므로 VfxBeam.Cap으로 빼내 굵기만 따라가게 한다. 원본을 고치면 이 메뉴를 다시 실행한다.
+        /// </summary>
+        public static GameObject BuildPierceBeamNoise()
+        {
+            var source = AssetDatabase.LoadAssetAtPath<GameObject>(BeamEffectSourcePath);
+            if (source == null) throw new System.InvalidOperationException("Missing " + BeamEffectSourcePath);
+            var root = new GameObject("VFX_Pierce_Beam_Noise");
+            AddHub(root);
+
+            var body = Child(root, "Beam");
+            var normalize = Child(body, "Normalize");
+            normalize.transform.localScale = new Vector3(1f / BeamEffectReferenceDiameter, 1f / BeamEffectReferenceDiameter, 1f / BeamEffectLength);
+            var effect = (GameObject)PrefabUtility.InstantiatePrefab(source);
+            PrefabUtility.UnpackPrefabInstance(effect, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
+            effect.transform.SetParent(normalize.transform, false);
+
+            var cap = Child(root, "StartPoint");
+            var start = effect.transform.Find("Start Point");
+            if (start != null) start.SetParent(cap.transform, false);
+
+            var beam = body.AddComponent<VfxBeam>();
+            beam.Target = null; // 원본 셰이더 그래프가 색을 정한다. VfxBeam은 길이·굵기·등장/퇴장만 맡는다
+            beam.Length = 6f; beam.Radius = 0.14f; beam.Duration = 1f;
+            beam.Width = new AnimationCurve(
+                new Keyframe(0f, 0.3f, 0f, 12f), new Keyframe(0.04f, 1f, 0f, 0f), new Keyframe(0.88f, 0.9f, 0f, 0f), new Keyframe(1f, 0f, -8f, 0f));
+            beam.Cap = cap.transform; beam.CapScale = 1f / BeamEffectReferenceDiameter;
+            return SavePrefab(root, PierceBeamNoisePath);
         }
 
         public static GameObject BuildSummonPillar()

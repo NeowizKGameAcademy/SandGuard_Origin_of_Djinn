@@ -130,8 +130,8 @@ namespace SandGuard.Skills
             EquipSlot slot;
             switch(id)
             {
-                case "attack.pierce":slot=EquipSlot.Q;break;
-                case "attack.burst":slot=EquipSlot.E;break;
+                case "attack.burst":slot=EquipSlot.Q;break;
+                case "attack.pierce":slot=EquipSlot.E;break;
                 case "attack.vortex":slot=EquipSlot.R;break;
                 case "attack.storm":slot=EquipSlot.F;break;
                 case "move.dash":slot=EquipSlot.Shift;break;

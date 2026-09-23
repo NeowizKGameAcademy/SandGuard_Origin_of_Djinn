@@ -18,10 +18,10 @@ namespace SandGuard.Skills.Editor
             var data = AssetDatabase.LoadAssetAtPath<SkillTreeAsset>(DataPath);
             if (!data) throw new InvalidOperationException("SkillTreeData asset is missing.");
 
-            Set(data, "attack.pierce", 1);
-            Set(data, "attack.burst", 2, "attack.pierce");
-            Set(data, "attack.vortex", 3, "attack.pierce");
-            Set(data, "attack.storm", 3, "attack.burst", "attack.vortex");
+            Set(data, "attack.burst", 1);
+            Set(data, "attack.pierce", 2, "attack.burst");
+            Set(data, "attack.vortex", 3, "attack.burst");
+            Set(data, "attack.storm", 3, "attack.pierce", "attack.vortex");
 
             Set(data, "tower.skeleton", 1);
             Set(data, "tower.cobra", 2, "tower.skeleton");
@@ -31,7 +31,7 @@ namespace SandGuard.Skills.Editor
             Reorder(data, new[]
             {
                 "move.dash", "move.jump", "move.updraft", "move.recall",
-                "attack.pierce", "attack.burst", "attack.vortex", "attack.storm",
+                "attack.burst", "attack.pierce", "attack.vortex", "attack.storm",
                 "tower.skeleton", "tower.cobra", "tower.obelisk", "tower.anubis"
             });
 
@@ -66,10 +66,10 @@ namespace SandGuard.Skills.Editor
 
         static void ValidateData(SkillTreeAsset data)
         {
-            Expect(data, "attack.pierce", 1);
-            Expect(data, "attack.burst", 2, "attack.pierce");
-            Expect(data, "attack.vortex", 3, "attack.pierce");
-            Expect(data, "attack.storm", 3, "attack.burst", "attack.vortex");
+            Expect(data, "attack.burst", 1);
+            Expect(data, "attack.pierce", 2, "attack.burst");
+            Expect(data, "attack.vortex", 3, "attack.burst");
+            Expect(data, "attack.storm", 3, "attack.pierce", "attack.vortex");
             Expect(data, "tower.skeleton", 1);
             Expect(data, "tower.cobra", 2, "tower.skeleton");
             Expect(data, "tower.obelisk", 2, "tower.skeleton");

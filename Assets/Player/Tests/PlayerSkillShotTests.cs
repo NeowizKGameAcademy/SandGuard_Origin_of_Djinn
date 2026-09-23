@@ -195,6 +195,7 @@ namespace SandGuard.Player.Tests
             var first = Slab(5f); var second = Slab(10f); // 폭발 반경 3.75m가 서로 닿지 않게 5m 간격
             var beside = Cube(new Vector3(2.0f, 1f, 10f), Vector3.one).AddComponent<PlayerTestTarget>(); // 두 번째 표적 옆, 첫 표적에서는 5m 이상
             var bursts = new List<Vector3>(); attack.Burst += bursts.Add;
+            attack.piercedBurstDamage = 1f; // 폭발이 어디까지 닿는지 보려고 피해를 준다(게임 기본값은 0)
             effects.Apply(new ExplosivePierceEffect());
             Assert.True(attack.PierceBeam); Assert.True(attack.BurstPerPierce);
             Assert.False(attack.SandBurst, "Explosive pierce does not unlock the Q cast by itself.");
@@ -205,6 +206,20 @@ namespace SandGuard.Player.Tests
             Assert.AreEqual(2, second.HitCount, "Beam + its own burst.");
             Assert.AreEqual(1, beside.HitCount, "Only the second target's burst reaches the bystander.");
             Assert.AreEqual(attack.PiercedBurstDamage, 50f - beside.CurrentHealth, 0.001f);
+        }
+
+        [UnityTest] public IEnumerator ExplosivePierceBurstDealsNoDamageByDefault()
+        {
+            Assert.AreEqual(0f, attack.piercedBurstDamage, "The player prefab sets the explosive-pierce burst damage to 0.");
+            var first = Slab(5f);
+            var beside = Cube(new Vector3(2.0f, 1f, 5f), Vector3.one).AddComponent<PlayerTestTarget>();
+            var bursts = new List<Vector3>(); attack.Burst += bursts.Add;
+            effects.Apply(new ExplosivePierceEffect());
+            yield return ShootOnce();
+            Assert.AreEqual(1, bursts.Count, "The burst still goes off.");
+            Assert.AreEqual(1, first.HitCount, "Only the beam hits; the burst adds no hit.");
+            Assert.AreEqual(0, beside.HitCount, "A zero-damage burst sends no hit to bystanders.");
+            Assert.AreEqual(50f, beside.CurrentHealth, 0.001f);
         }
 
         [UnityTest] public IEnumerator PlainPierceBeamNeverBurstsEvenWithBurstUnlocked()
@@ -225,6 +240,7 @@ namespace SandGuard.Player.Tests
             var beside = Cube(new Vector3(2f, 1f, 4f), Vector3.one).AddComponent<PlayerTestTarget>();
             beside.maxHealth = 1000f;
             var bursts = new List<Vector3>(); attack.Burst += bursts.Add;
+            attack.piercedBurstDamage = 1f; // 폭발이 옆 적까지 닿는지 보려고 피해를 준다(게임 기본값은 0)
             attack.SkillTreePierceAllowed = () => true;
             Assert.False(attack.BurstPerPierce);
             Assert.False(attack.SandBurst);
