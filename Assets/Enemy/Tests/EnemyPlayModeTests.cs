@@ -80,8 +80,8 @@ namespace SandGuard.Enemy.Tests
         [UnityTest] public IEnumerator AssassinDealsDoubleDamageOnlyToPlayersAndMinions()
             => CheckMeleeDamage("Enemy_Assassin", new[] { 10f, 20f, 20f, 10f, 10f });
 
-        [UnityTest] public IEnumerator ChiefDealsThirtyMeleeDamageToEveryTargetKind()
-            => CheckMeleeDamage("Enemy_Chief", new[] { 30f, 30f, 30f, 30f, 30f });
+        [UnityTest] public IEnumerator ChiefDealsHundredMeleeDamageToEveryTargetKind()
+            => CheckMeleeDamage("Enemy_Chief", new[] { 100f, 100f, 100f, 100f, 100f });
 
         IEnumerator CheckMeleeDamage(string prefab, float[] expected)
         {

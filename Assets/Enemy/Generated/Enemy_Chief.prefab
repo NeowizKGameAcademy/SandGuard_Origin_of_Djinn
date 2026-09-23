@@ -2430,7 +2430,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2233741487118629176, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
       propertyPath: damage
-      value: 30
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 2233741487118629176, guid: 79798986b5919d24ba1ea39dcb84f2be, type: 3}
       propertyPath: windup
@@ -2554,7 +2554,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: SandGuard.Enemy.Runtime::SandGuard.Enemy.EnemyShield
   frontHalfAngle: 60
   frontMultiplier: 0
-  maxHealth: 100
+  maxHealth: 300
   shieldVisual: {fileID: 0}
   debrisLifetime: 6
   guardVfx: {fileID: 0}
