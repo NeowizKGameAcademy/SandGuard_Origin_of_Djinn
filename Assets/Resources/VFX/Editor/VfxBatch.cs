@@ -27,6 +27,7 @@ namespace DesertTower.VFX.Editor
             LoopVfxBuilder.BuildTorch();
             LoopVfxBuilder.BuildFloatingDust();
             BeamVfxBuilder.BuildPierceBeam();
+            BeamVfxBuilder.BuildPierceBeamNoise();
             BeamVfxBuilder.BuildSummonPillar();
             CombatVfxBuilder.BuildAll();
             UpdraftVfxBuilder.Build();

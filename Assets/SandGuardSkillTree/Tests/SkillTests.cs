@@ -60,7 +60,7 @@ static class SkillTests
         var multi=new SkillService(catalog,50);multi.Learn("a");Check(multi.Learn("c").Failure==SkillFailure.Prerequisite,"all prerequisites required");
         multi.Learn("b");Check(multi.Learn("c").Success,"all prerequisites satisfied");
         var combatSlots=new[]{EquipSlot.Q,EquipSlot.E,EquipSlot.R,EquipSlot.F};
-        var combatIds=new[]{"attack.pierce","attack.burst","attack.vortex","attack.storm"};
+        var combatIds=new[]{"attack.burst","attack.pierce","attack.vortex","attack.storm"};
         var combat=new SkillService(new SkillCatalog(combatIds.Select(id=>
             new SkillDefinition(id,id,"",1,SkillKind.Active,SkillBranch.Attack,Array.Empty<string>(),combatSlots))),10);
         int combatEvents=0;bool autoEquippedAtNotification=true;
@@ -69,9 +69,9 @@ static class SkillTests
             Check(combat.Learn(combatIds[i]).Success && combat.Equipped(combatSlots[i])==combatIds[i],combatIds[i]+" auto equips to its default key regardless of purchase order");
         Check(combatEvents==4 && autoEquippedAtNotification,"purchase observers see auto equipment in the same notification");
         combat.Equip(EquipSlot.Q,null);combat.Equip(EquipSlot.E,null);
-        Check(combat.Equip(EquipSlot.E,"attack.pierce").Success,"auto equipped combat skills remain reassignable");
+        Check(combat.Equip(EquipSlot.E,"attack.burst").Success,"auto equipped combat skills remain reassignable");
         var combatSnapshot=combat.Snapshot();combat.Reset(10);combat.Restore(combatSnapshot);
-        Check(combat.Equipped(EquipSlot.E)=="attack.pierce" && combat.Equipped(EquipSlot.Q)==null,"restore preserves customized combat slots");
+        Check(combat.Equipped(EquipSlot.E)=="attack.burst" && combat.Equipped(EquipSlot.Q)==null,"restore preserves customized combat slots");
         var movement=new SkillService(new SkillCatalog(new[]{
             new SkillDefinition("move.dash","대시","",1,SkillKind.Active,SkillBranch.Movement,Array.Empty<string>(),new[]{EquipSlot.Shift}),
             new SkillDefinition("move.jump","더블 점프","",1,SkillKind.Active,SkillBranch.Movement,Array.Empty<string>(),new[]{EquipSlot.Space}),

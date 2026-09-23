@@ -26,6 +26,10 @@ namespace DesertTower.VFX
         public float StripesPerUnit = 1f;
         [Tooltip("Stripe scroll speed in texture repeats per second. Negative = toward the origin.")]
         public float ScrollSpeed = 3f;
+        [Tooltip("Optional end-cap (e.g. a muzzle sphere), a sibling of this object. Scaled uniformly with the beam width, never with its length.")]
+        public Transform Cap;
+        [Tooltip("Cap scale per unit of beam diameter.")]
+        public float CapScale = 1f;
 
         static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
         static readonly int BaseMapStId = Shader.PropertyToID("_BaseMap_ST");
@@ -63,6 +67,7 @@ namespace DesertTower.VFX
             float u = Duration > 0f ? Mathf.Clamp01(_t / Duration) : 0f;
             float w = Duration > 0f ? Width.Evaluate(u) : 1f;
             transform.localScale = new Vector3(Radius * 2f * w, Radius * 2f * w, Length);
+            if (Cap != null) Cap.localScale = Vector3.one * (Radius * 2f * w * CapScale);
 
             if (Target == null) return;
             _block ??= new MaterialPropertyBlock();

@@ -30,7 +30,13 @@ namespace SandGuard.UI.HUD
 
         [Header("타워 마커")]
         public Sprite cobraMarker, obeliskMarker, coffinMarker, anubisMarker;
-        public Vector2 towerMarkerSize = new Vector2(18f, 18f);
+        public Vector2 towerMarkerSize = new Vector2(20f, 20f);
+        public Sprite towerBackground;
+        [Min(0f)] public float towerBackgroundPadding = 4f;
+        public Color cobraBackgroundColor = new Color(.12f, .62f, .28f, 1f);
+        public Color obeliskBackgroundColor = new Color(.12f, .42f, .88f, 1f);
+        public Color coffinBackgroundColor = new Color(.62f, .25f, .82f, 1f);
+        public Color anubisBackgroundColor = new Color(.06f, .66f, .70f, 1f);
         [Min(.05f)] public float towerScanInterval = .25f;
 
         [Header("마커")]
@@ -45,6 +51,7 @@ namespace SandGuard.UI.HUD
         readonly List<EnemyHealth> enemies = new List<EnemyHealth>();
         readonly List<TowerHealth> towers = new List<TowerHealth>();
         readonly List<Image> towerDots = new List<Image>();
+        readonly List<Image> towerIcons = new List<Image>();
         float nextTowerScan;
         float nextScan, nextRedraw;
         bool drawing;
@@ -218,9 +225,16 @@ namespace SandGuard.UI.HUD
 
             while (towerDots.Count < towers.Count)
             {
-                var dot = Map.AddMarker("Tower", null, Color.white, towerMarkerSize);
+                var dot = Map.AddMarker("Tower", towerBackground, Color.white,
+                    towerMarkerSize + Vector2.one * towerBackgroundPadding);
                 dot.SetAsFirstSibling(); // 주요 마커를 가리지 않는다.
+                var outline = dot.gameObject.AddComponent<Outline>();
+                outline.effectColor = new Color(.04f, .05f, .08f, 1f);
+                outline.effectDistance = new Vector2(1.5f, -1.5f);
+                var icon = Map.AddMarker("Icon", null, Color.white, towerMarkerSize);
+                icon.SetParent(dot, false);
                 towerDots.Add(dot.GetComponent<Image>());
+                towerIcons.Add(icon.GetComponent<Image>());
             }
 
             for (int i = 0; i < towerDots.Count; i++)
@@ -231,9 +245,12 @@ namespace SandGuard.UI.HUD
                 if (show)
                 {
                     var status = tower.GetComponent<TowerStatus>();
-                    image.sprite = status != null ? TowerSprite(status.towerType) : null;
-                    image.rectTransform.sizeDelta = towerMarkerSize;
-                    show = image.sprite != null && Place(image.rectTransform, tower.transform.position, false);
+                    var icon = towerIcons[i];
+                    icon.sprite = status != null ? TowerSprite(status.towerType) : null;
+                    icon.rectTransform.sizeDelta = towerMarkerSize;
+                    image.color = status != null ? TowerBackgroundColor(status.towerType) : Color.white;
+                    image.rectTransform.sizeDelta = towerMarkerSize + Vector2.one * towerBackgroundPadding;
+                    show = icon.sprite != null && Place(image.rectTransform, tower.transform.position, false);
                 }
                 image.gameObject.SetActive(show);
             }
@@ -248,6 +265,18 @@ namespace SandGuard.UI.HUD
                 case TowerType.Coffin: return coffinMarker;
                 case TowerType.Anubis: return anubisMarker;
                 default: return null;
+            }
+        }
+
+        Color TowerBackgroundColor(TowerType type)
+        {
+            switch (type)
+            {
+                case TowerType.Cobra: return cobraBackgroundColor;
+                case TowerType.Obelisk: return obeliskBackgroundColor;
+                case TowerType.Coffin: return coffinBackgroundColor;
+                case TowerType.Anubis: return anubisBackgroundColor;
+                default: return Color.white;
             }
         }
 

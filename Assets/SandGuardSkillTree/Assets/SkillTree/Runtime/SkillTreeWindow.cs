@@ -38,7 +38,7 @@ namespace SandGuard.Skills.Unity
         readonly Dictionary<Behaviour,bool> suspended=new Dictionary<Behaviour,bool>();
         SkillAltarAnchor current;
         SkillBranch branch;
-        string selected, feedback="구매 시 자동 장착: Q 관통탄 · E 폭발 · R 모래 소용돌이 · F 사막폭풍 · 우클릭 흔적귀환";
+        string selected, feedback="구매 시 자동 장착: Q 모래 폭발 · E 관통탄 · R 모래 소용돌이 · F 사막폭풍 · 우클릭 흔적귀환";
         bool dirty=true, previousVisible, bound;
         CursorLockMode previousLock;
         GameObject createdEventSystem;

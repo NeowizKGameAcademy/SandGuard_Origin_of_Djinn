@@ -29,7 +29,7 @@ namespace SandGuard.Facility.Editor
                 Definition(existing, "skeleton", "스켈레톤 관", "tower.skeleton", "Assets/2.Model/Prefabs/Tower_Coffin.prefab", "TowerIcon_3_Skeleton.png", 70),
                 Definition(existing, "obelisk", "오벨리스크", "tower.obelisk", "Assets/2.Model/Prefabs/Tower_Obelisk.prefab", "TowerIcon_2_Obelisk.png", 55),
                 Definition(existing, "cobra", "코브라 타워", "tower.cobra", "Assets/2.Model/Prefabs/Tower_Cobra.prefab", "TowerIcon_1_Cobra.png", 100),
-                Definition(existing, "anubis", "아누비스 석상", "tower.anubis", "Assets/2.Model/Prefabs/Tower_Anubis.prefab", "TowerIcon_4_Anubis.png", 85)
+                Definition(existing, "anubis", "아누비스 석상", "tower.anubis", "Assets/2.Model/Prefabs/Tower_Anubis.prefab", "TowerIcon_4_Anubis.png", 120)
             };
             EditorUtility.SetDirty(catalog);
             UpdateLevelSlots();

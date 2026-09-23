@@ -101,7 +101,7 @@ namespace DesertTower.VFX.Editor
                 var attack = root.GetComponent<PlayerBasicAttack>(); // 공격 마법 스킬: 관통 빔, 꿰뚫은 적 스파크, 모래 폭발
                 if (attack != null)
                 {
-                    attack.beamPrefab = Load(BeamVfxBuilder.PierceBeamPath);
+                    attack.beamPrefab = Load(BeamVfxBuilder.PierceBeamNoisePath);
                     attack.beamHitPrefab = Load(ImpactVfxBuilder.PierceHitPath);
                     attack.burstPrefab = Load(ImpactVfxBuilder.SandBurstPath);
                 }
