@@ -107,7 +107,8 @@
 | 스킬트리 열림·닫힘 | `SkillTreeWindow.onOpened/onClosed` | 케니 generic light (열림 ×1.15, 닫힘 ×0.9) |
 | 스킬 구매 / 장착·해제 / 거부 | `SkillTreeWindow.onLearned/onEquipped/onFailed` (새 이벤트) | 종 3종 ×1.2 / 금속 딸깍 2종 / 마나부족 거절음 |
 | 건설 메뉴 열림·닫힘 / 건설 거부 | Level 루트 `Sfx Hooks`의 `SfxBuildMenuWatcher`가 `FacilityBuildMenu.IsOpen`·`LastResult`를 지켜본다. 건설 쪽은 담당자가 통합 중이라 그 스크립트·프리팹은 고치지 않는다 | 위와 같음 |
-| 타워 수리 성공 | 같은 `SfxBuildMenuWatcher`가 수리 모드에서 1을 누른 프레임에 `LastRepairResult`가 성공이면 받침대 위치에서 3D로 `Facility_Repair`를 낸다. 연결: 메뉴 `SandGuard > Audio > Wire Tower Repair Sound` | `타워수리_쇠깡깡.wav` (Docs/Audio/쇠깡깡소리 1.wav, 원본이 클리핑돼 볼륨 0.6) |
+| 타워 수리 성공 | 같은 `SfxBuildMenuWatcher`가 수리 모드에서 1을 누른 프레임에 `LastRepairResult`가 성공이면 받침대 위치에서 3D로 `Facility_Repair`를 낸다. 연결: 메뉴 `SandGuard > Audio > Wire Tower Repair And Demolish Sound` | `타워수리_쇠깡깡.wav` (Docs/Audio/쇠깡깡소리 1.wav, 원본이 클리핑돼 볼륨 0.6) |
+| 타워 철거 성공 | 같은 `SfxBuildMenuWatcher`가 건설 서비스의 `Demolished` 이벤트를 받아 받침대 위치에서 3D로 `Facility_Demolish`를 낸다. 연결: 메뉴 `SandGuard > Audio > Wire Tower Repair And Demolish Sound` | `타워철거_쇠깡깡.wav` (Docs/Audio/쇠깡깡소리 12.wav, 볼륨 0.7) |
 | 스킬 시전 거부(쿨다운·마나) | `PlayerSkillCaster.onCastFailed` (새 이벤트) | 거절음, 0.3초 최소 간격 |
 | 쿨다운 완료 | `SfxCooldownReady` (Q/E/R·관통탄·흔적 귀환, 1.5초 미만 쿨다운과 대시는 제외) | 유리 울림 2종 ×1.5 |
 | 체력 낮음 | `SfxLowHealthLoop` (20% 아래에서 켜고 25% 위에서 끔, 사망 시 끔) | `Repaired/Heartbeat_Loop.wav` (케니 soft impact로 만든 80BPM 박동) |

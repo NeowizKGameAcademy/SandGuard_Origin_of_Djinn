@@ -12,7 +12,8 @@ namespace SandGuard.Facility
     /// 기존 계약(IFacilityBuilder, BuildSlotRegistry, PlacementPhaseRule, SlotPlacementRule)을 그대로 쓴다. 자유 배치는 아직 없다.
     /// 마나는 예약 → 모든 변경 완료 → 차감 순서로 쓴다. 실패하면 예약만 풀고 마나를 바꾸지 않는다. 지갑이 없는 씬(테스트·데모)은 무료다.
     /// 수리는 살아 있는 시설만 한 번에 최대 체력까지. 비용 = 건설비 × 잃은 체력 비율 × repairCostRatio(올림).
-    /// 파괴된 시설은 자리를 비우고, 같은 받침에 다시 지을 수 있다. 강화·철거는 아직 없다(Locked).
+    /// 파괴된 시설은 자리를 비우고, 같은 받침에 다시 지을 수 있다. 철거는 살아 있는 시설만, 건설비 × demolishRefundRatio(내림)를 돌려준다.
+    /// 강화는 아직 없다(Locked).
     /// </remarks>
     [DefaultExecutionOrder(-50)]
     public sealed class FacilityBuildService : MonoBehaviour, IFacilityBuilder, IFacilityMaintenance, IGameStateReader
@@ -51,10 +52,14 @@ namespace SandGuard.Facility
         public MonoBehaviour manaSource;
         [Min(0f), Tooltip("수리 비용 = 건설비 × 잃은 체력 비율 × 이 값 (올림)")]
         public float repairCostRatio = .75f;
+        [Range(0f, 1f), Tooltip("철거 환급액 = 건설비 × 이 값 (내림)")]
+        public float demolishRefundRatio = .5f;
         public event Action Changed;
         public event Action<FacilityAnchor, FacilityViewData> Built;
         /// <summary>수리에 성공했다. (시설, 회복량, 쓴 마나)</summary>
         public event Action<FacilityInstance, float, int> Repaired;
+        /// <summary>철거에 성공했다. (받침대, 시설 정의 ID, 돌려받은 마나)</summary>
+        public event Action<FacilityAnchor, string, int> Demolished;
         IGameStateReader Source => gameStateSource as IGameStateReader;
         IManaWallet Wallet => manaSource as IManaWallet;
         public GamePhase Phase => Source != null ? Source.Phase : phase;
@@ -225,11 +230,41 @@ namespace SandGuard.Facility
 
         static MaintenanceQuote Unavailable(ActionFailure failure) => new MaintenanceQuote(ActionResult.Fail(failure), 0);
 
-        // 강화·철거는 아직 기획 확정 전이라 막아 둔다.
-        public MaintenanceQuote GetDemolitionQuote(Guid facilityId) => Unavailable(ActionFailure.Locked);
+        // ---- 철거 ----
+
+        public MaintenanceQuote GetDemolitionQuote(Guid facilityId)
+        {
+            if (!TryGetFacility(facilityId, out var facility)) return Unavailable(ActionFailure.NotFound);
+            if (facility.Life != null && facility.Life.State != LifeState.Alive) return Unavailable(ActionFailure.NotAlive);
+            if (IsPaused) return Unavailable(ActionFailure.Paused);
+            if (Phase != GamePhase.Preparation && Phase != GamePhase.Combat) return Unavailable(ActionFailure.WrongPhase);
+            var definition = catalog != null ? catalog.Find(facility.definitionId) : null;
+            int buildCost = definition != null ? definition.manaCost : 0;
+            return new MaintenanceQuote(ActionResult.Success(), Mathf.Max(0, Mathf.FloorToInt(buildCost * demolishRefundRatio + .0001f)));
+        }
+
+        public ActionResult TryDemolish(Guid facilityId)
+        {
+            MaintenanceQuote quote = GetDemolitionQuote(facilityId);
+            if (!quote.Availability.Succeeded) return quote.Availability;
+            TryGetFacility(facilityId, out var facility);
+            string slotId = facility.slotId;
+            string definitionId = facility.definitionId;
+            TryGetAnchor(slotId, out FacilityAnchor anchor);
+            // 자리·등록을 먼저 비운다. 본체를 지우면 체력 컴포넌트가 Despawned를 보내지만 이미 비어 있어 아무 일도 없다.
+            registry.Release(slotId, facilityId);
+            facilities.Remove(facilityId);
+            if (anchor != null && anchor.Occupant == facility) anchor.Occupant = null;
+            facility.gameObject.SetActive(false);
+            Destroy(facility.gameObject);
+            if (quote.ManaAmount > 0 && Wallet != null) Wallet.Gain(quote.ManaAmount);
+            Demolished?.Invoke(anchor, definitionId, quote.ManaAmount);
+            return ActionResult.Success();
+        }
+
+        // 강화는 아직 기획 확정 전이라 막아 둔다.
         public FacilityUpgradeQuote GetUpgradeQuote(Guid facilityId) => new FacilityUpgradeQuote(ActionResult.Fail(ActionFailure.Locked), 0, 0, 0);
         public ActionResult TryUpgrade(Guid facilityId) => ActionResult.Fail(ActionFailure.Locked);
-        public ActionResult TryDemolish(Guid facilityId) => ActionResult.Fail(ActionFailure.Locked);
 
         static ActionFailure Map(PlacementFailure failure)
         {
