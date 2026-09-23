@@ -132,9 +132,34 @@ namespace SandGuard.Audio.Editor
             if (w.OpenCue == null) { w.OpenCue = SfxCueBuilder.Load("UI_Menu_Open"); changed = true; }
             if (w.CloseCue == null) { w.CloseCue = SfxCueBuilder.Load("UI_Menu_Close"); changed = true; }
             if (w.FailCue == null) { w.FailCue = SfxCueBuilder.Load("UI_Fail"); changed = true; }
+            if (w.RepairCue == null) { w.RepairCue = EnsureRepairCue(); changed |= w.RepairCue != null; }
             if (changed) { EditorSceneManager.MarkSceneDirty(scene); EditorSceneManager.SaveScene(scene); }
             Debug.Log($"[Audio] Level 건설 메뉴 감시 {(changed ? "연결" : "변경 없음")}");
         }
+
+        const string RepairCueName = "Facility_Repair";
+        const string RepairClip = "타워수리_쇠깡깡"; // Docs/Audio/쇠깡깡소리 1.wav (2026-09-23 분리본)
+
+        /// <summary>타워 수리 성공 소리. 건설 완료 큐의 믹서·3D 설정을 이어받는다. 이미 있으면 그대로 둔다(디자이너가 고친 값 보존).</summary>
+        static SfxCue EnsureRepairCue()
+        {
+            var cue = SfxCueBuilder.Load(RepairCueName);
+            if (cue != null) return cue;
+            var template = SfxCueBuilder.Load("Facility_Build_Complete");
+            var clip = AssetDatabase.LoadAssetAtPath<AudioClip>($"{AudioResourceMap.Dir}/{RepairClip}.wav");
+            if (template == null || clip == null) { Debug.LogWarning($"[Audio] 수리 큐를 못 만든다: 템플릿 {template != null}, 클립 {clip != null}"); return null; }
+            cue = Object.Instantiate(template);
+            cue.clips = new[] { clip };
+            cue.volume = 0.6f;         // 원본 녹음이 0dBFS에서 잘려 있어 조금 낮춘다
+            cue.pitchJitter = 0.04f;   // 연타해도 같은 소리로 안 들리게
+            cue.minInterval = 0.1f;
+            AssetDatabase.CreateAsset(cue, SfxCueBuilder.PathOf(RepairCueName));
+            return cue;
+        }
+
+        /// <summary>수리 소리만 연결한다 (배치: -executeMethod SandGuard.Audio.Editor.AudioHookWiring.WireRepair).</summary>
+        [MenuItem("SandGuard/Audio/Wire Tower Repair Sound")]
+        public static void WireRepair() { WireBuildMenu(); AssetDatabase.SaveAssets(); Debug.Log($"AUDIO_REPAIR_WIRED cue={SfxCueBuilder.Load(RepairCueName) != null}"); }
 
         static void WirePlayer()
         {

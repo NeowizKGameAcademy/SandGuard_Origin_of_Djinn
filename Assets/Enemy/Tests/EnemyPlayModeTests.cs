@@ -228,6 +228,25 @@ namespace SandGuard.Enemy.Tests
             Assert.AreEqual(0, player.HitCount, "The player must not draw this enemy while the tower stands.");
         }
 
+        [UnityTest] public IEnumerator AssassinWalksPastTowersButAttacksPlayers()
+        {
+            Bake(new Vector3(16, 1, 30));
+            Core(new Vector3(0, 1, 18));
+            var tower = Target("Tower", CombatTargetKind.Tower, new Vector3(2f, 1, 5), Vector3.one, 1000f);
+            yield return new WaitForSeconds(.7f);
+            var enemy = Enemy(Vector3.zero, "Enemy_Assassin");
+            var brain = enemy.GetComponent<EnemyBrain>();
+            brain.despawnOnArrival = false;
+            Assert.False(enemy.GetComponent<EnemyTargetSelector>().attackTowers, "Enemy_Assassin must ignore towers.");
+            float until = Time.time + 2.5f; // 타워 옆을 지나 코어 쪽으로 간다
+            while (Time.time < until) { Assert.AreNotSame(tower, brain.CurrentTarget, "Assassin must not target a tower."); yield return null; }
+            Assert.AreEqual(0, tower.HitCount, "Assassin must not hit a tower.");
+            Assert.Greater(enemy.transform.position.z, 6f, "Assassin must keep heading for the core instead of stopping at the tower.");
+            var player = Target("Player", CombatTargetKind.Player, enemy.transform.position + new Vector3(3f, 1, 0f), Vector3.one, 1000f);
+            yield return Until(() => player.HitCount > 0, 10f, "Assassin must still attack a player in range.");
+            Assert.AreEqual(0, tower.HitCount);
+        }
+
         [UnityTest] public IEnumerator ChiefStopsAtRangeForAttackableTargets() => StopsAtRange("Enemy_Chief", 5f);
         [UnityTest] public IEnumerator HammerBruteStopsAtRangeForAttackableTargets() => StopsAtRange("Enemy_HammerBrute", 2.3f);
 

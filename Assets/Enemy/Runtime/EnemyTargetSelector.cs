@@ -23,6 +23,8 @@ namespace SandGuard.Enemy
         public float blockerSearchRadius = 2f;
         [Tooltip("코어가 공격 가능하면 사거리 안에서 공격한다. 도착 즉시 흡수 방식이면 끈다")]
         public bool attackCore = true;
+        [Tooltip("끄면 타워를 대상으로 고르지 않는다(암살자). 길을 막은 타워는 끼어 멈추지 않도록 그대로 차단 시설로 다룬다")]
+        public bool attackTowers = true;
         [Header("어그로 순위 (작을수록 먼저, 1 이상)"), Min(1)] public int playerPriority = 1;
         [Min(1)] public int minionPriority = 2;
         [Min(1), Tooltip("길을 막은 타워는 이 값과 무관하게 0순위(차단 시설)로 다룬다")] public int towerPriority = 3;
@@ -114,7 +116,7 @@ namespace SandGuard.Enemy
             {
                 case CombatTargetKind.Player: return Mathf.Max(1, playerPriority);
                 case CombatTargetKind.Minion: return Mathf.Max(1, minionPriority);
-                case CombatTargetKind.Tower: return blockers ? 0 : Mathf.Max(1, towerPriority);
+                case CombatTargetKind.Tower: return blockers ? 0 : attackTowers ? Mathf.Max(1, towerPriority) : -1;
                 case CombatTargetKind.Wall: return blockers ? 0 : -1;
                 case CombatTargetKind.Core: return attackCore ? Mathf.Max(1, corePriority) : -1;
                 default: return -1;

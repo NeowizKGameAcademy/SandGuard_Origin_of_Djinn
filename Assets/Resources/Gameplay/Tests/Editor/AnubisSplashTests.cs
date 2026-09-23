@@ -210,7 +210,7 @@ public sealed class AnubisSplashTests
     {
         var tower = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/2.Model/Prefabs/Tower_Anubis.prefab");
         var status = new UnityEditor.SerializedObject(tower.GetComponentInChildren(Runtime("TowerStatus"), true));
-        Assert.That(status.FindProperty("anubisConfig.Attack").floatValue, Is.EqualTo(50f));
+        Assert.That(status.FindProperty("anubisConfig.Attack").floatValue, Is.EqualTo(25f));
         Assert.That(status.FindProperty("anubisConfig.SplashRatio").floatValue, Is.EqualTo(1f));
         Assert.That(status.FindProperty("anubisConfig.DamageReduction").floatValue, Is.Zero);
         Assert.That(status.FindProperty("anubisConfig.HealPerKill").floatValue, Is.Zero);
