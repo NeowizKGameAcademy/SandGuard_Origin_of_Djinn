@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: DesertTower.Levels.Runtime::DesertTower.Levels.WaveSet
   waves:
   - label: "Wave 1 - 정찰대"
-    preparationSeconds: 20
+    preparationSeconds: 60
     groups:
     - spawnId: 8ca42bbaa0e6424086dec32cb6b1c6ff
       targetId: 835bc8b2a0bc4807985b5eebbd309dd8
@@ -49,7 +49,7 @@ MonoBehaviour:
       delay: 0
       interval: 1.5
   - label: "Wave 2 - 방패 진형"
-    preparationSeconds: 20
+    preparationSeconds: 30
     groups:
     - spawnId: 6ca1b69a93364dc0a8a5cfe841b4c3bb
       targetId: 835bc8b2a0bc4807985b5eebbd309dd8
@@ -116,7 +116,7 @@ MonoBehaviour:
       delay: 0
       interval: 1.5
   - label: "Wave 3 - 기습 부대"
-    preparationSeconds: 20
+    preparationSeconds: 30
     groups:
     - spawnId: 8ca42bbaa0e6424086dec32cb6b1c6ff
       targetId: 835bc8b2a0bc4807985b5eebbd309dd8
@@ -215,7 +215,7 @@ MonoBehaviour:
       delay: 0
       interval: 1.5
   - label: "Wave 4 - 총공세"
-    preparationSeconds: 20
+    preparationSeconds: 30
     groups:
     - spawnId: 8ca42bbaa0e6424086dec32cb6b1c6ff
       targetId: 835bc8b2a0bc4807985b5eebbd309dd8
@@ -346,7 +346,7 @@ MonoBehaviour:
       delay: 0
       interval: 1.5
   - label: "Wave 5 - 자히르의 습격"
-    preparationSeconds: 20
+    preparationSeconds: 30
     groups:
     - spawnId: 8ca42bbaa0e6424086dec32cb6b1c6ff
       targetId: 835bc8b2a0bc4807985b5eebbd309dd8

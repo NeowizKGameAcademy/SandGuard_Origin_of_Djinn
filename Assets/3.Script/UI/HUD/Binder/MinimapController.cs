@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using SandGuard.Enemy;
 using SandGuard.Player;
+using Tower;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
@@ -9,7 +11,7 @@ namespace SandGuard.UI.HUD
 {
     /// <summary>
     /// 미니맵. 코어를 중심으로 고정된 북쪽 고정(위 = +Z) 직교 카메라가 전체 전장을 그리고, 그 위에 마커를 얹는다.
-    /// 마커: 플레이어(화살표, 바라보는 방향으로 회전), 적, 코어, 보스.
+    /// 마커: 플레이어(화살표, 바라보는 방향으로 회전), 적, 코어, 보스, 종류별 타워.
     /// 플레이어(PlayerHealth)가 없는 씬(HUD.unity)에서는 아무것도 하지 않아 빈 판이 그대로 보인다.
     /// </summary>
     [DefaultExecutionOrder(-90)]
@@ -26,6 +28,11 @@ namespace SandGuard.UI.HUD
         [Tooltip("지도 배경을 다시 그리는 간격(실시간 초). 카메라가 고정이고 움직이는 것은 마커로 그리므로 매 프레임 그릴 필요가 없다. 0이면 매 프레임 그린다")]
         public float redrawInterval = 3f;
 
+        [Header("타워 마커")]
+        public Sprite cobraMarker, obeliskMarker, coffinMarker, anubisMarker;
+        public Vector2 towerMarkerSize = new Vector2(18f, 18f);
+        [Min(.05f)] public float towerScanInterval = .25f;
+
         [Header("마커")]
         public Sprite playerMarker; public Sprite enemyMarker; public Sprite coreMarker; public Sprite bossMarker;
         public Vector2 playerMarkerSize = new Vector2(20, 20), enemyMarkerSize = new Vector2(8, 8), coreMarkerSize = new Vector2(14, 14), bossMarkerSize = new Vector2(18, 18);
@@ -36,6 +43,9 @@ namespace SandGuard.UI.HUD
         RectTransform playerDot, coreDot, bossDot;
         readonly List<RectTransform> enemyDots = new List<RectTransform>();
         readonly List<EnemyHealth> enemies = new List<EnemyHealth>();
+        readonly List<TowerHealth> towers = new List<TowerHealth>();
+        readonly List<Image> towerDots = new List<Image>();
+        float nextTowerScan;
         float nextScan, nextRedraw;
         bool drawing;
         readonly List<Renderer> hidden = new List<Renderer>();
@@ -98,6 +108,7 @@ namespace SandGuard.UI.HUD
         {
             if (player == null) return;
             UpdateMarkers();
+            UpdateTowerMarkers();
             ScheduleRedraw();
         }
 
@@ -191,6 +202,52 @@ namespace SandGuard.UI.HUD
             {
                 bool show = i < enemies.Count && enemies[i] != null && enemies[i].IsAlive && Place(enemyDots[i], enemies[i].transform.position, false);
                 enemyDots[i].gameObject.SetActive(show);
+            }
+        }
+
+        void UpdateTowerMarkers()
+        {
+            // 비일시정지 시간으로 스캔하여 건설 중에도 새 타워가 표시된다.
+            if (Time.unscaledTime >= nextTowerScan)
+            {
+                nextTowerScan = Time.unscaledTime + Mathf.Max(.05f, towerScanInterval);
+                towers.Clear();
+                foreach (var tower in FindObjectsByType<TowerHealth>(FindObjectsSortMode.None))
+                    if (tower.isActiveAndEnabled && tower.CurrentHealth > 0f) towers.Add(tower);
+            }
+
+            while (towerDots.Count < towers.Count)
+            {
+                var dot = Map.AddMarker("Tower", null, Color.white, towerMarkerSize);
+                dot.SetAsFirstSibling(); // 주요 마커를 가리지 않는다.
+                towerDots.Add(dot.GetComponent<Image>());
+            }
+
+            for (int i = 0; i < towerDots.Count; i++)
+            {
+                var image = towerDots[i];
+                var tower = i < towers.Count ? towers[i] : null;
+                bool show = tower != null && tower.isActiveAndEnabled && tower.CurrentHealth > 0f;
+                if (show)
+                {
+                    var status = tower.GetComponent<TowerStatus>();
+                    image.sprite = status != null ? TowerSprite(status.towerType) : null;
+                    image.rectTransform.sizeDelta = towerMarkerSize;
+                    show = image.sprite != null && Place(image.rectTransform, tower.transform.position, false);
+                }
+                image.gameObject.SetActive(show);
+            }
+        }
+
+        Sprite TowerSprite(TowerType type)
+        {
+            switch (type)
+            {
+                case TowerType.Cobra: return cobraMarker;
+                case TowerType.Obelisk: return obeliskMarker;
+                case TowerType.Coffin: return coffinMarker;
+                case TowerType.Anubis: return anubisMarker;
+                default: return null;
             }
         }
 

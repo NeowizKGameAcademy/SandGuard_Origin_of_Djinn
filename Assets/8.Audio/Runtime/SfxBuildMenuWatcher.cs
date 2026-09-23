@@ -8,30 +8,37 @@ namespace SandGuard.Audio
     /// 건설 메뉴(FacilityBuildMenu) 소리를 메뉴 코드를 고치지 않고 낸다. 담당자가 건설 쪽을 통합 중이라 그 파일은 건드리지 않는다.
     ///   열림·닫힘: 공개 속성 IsOpen의 변화
     ///   수리 성공: 수리 모드에서 1을 눌러 LastRepairResult가 성공이면 그 받침대 위치에서 RepairCue(3D)
-    ///   거부: 번호 키(PlayerInputReader.SlotSelected)가 눌린 프레임 끝에, 메뉴가 열린 채이고 그 시도의 결과(LastResult / LastRepairResult)가 실패면
+    ///   철거 성공: 건설 서비스의 Demolished 이벤트가 오면 그 받침대 위치에서 DemolishCue(3D). 성공하면 메뉴가 닫혀 아래 결과 확인으로는 못 잡는다.
+    ///   거부: 번호 키(PlayerInputReader.SlotSelected)가 눌린 프레임 끝에, 메뉴가 열린 채이고 그 시도의 결과(LastResult / LastRepairResult / LastDemolishResult)가 실패면
     /// 메뉴와 입력기는 씬에서 찾는다(1초마다 다시 시도). 씬 루트에 하나 두면 된다.
     /// </summary>
     public sealed class SfxBuildMenuWatcher : MonoBehaviour
     {
-        public SfxCue OpenCue, CloseCue, FailCue, RepairCue;
+        public SfxCue OpenCue, CloseCue, FailCue, RepairCue, DemolishCue;
 
         public int Opens { get; private set; }
         public int Closes { get; private set; }
         public int Fails { get; private set; }
         public int Repairs { get; private set; }
+        public int Demolishes { get; private set; }
 
-        FacilityBuildMenu menu; PlayerInputReader input;
+        FacilityBuildMenu menu; PlayerInputReader input; FacilityBuildService service;
         bool wasOpen; float retryAt;
         int pressedIndex = -1; bool openAtPress;
 
-        void OnDisable() { if (input != null) input.SlotSelected -= OnSlot; input = null; }
+        void OnDisable()
+        {
+            if (input != null) input.SlotSelected -= OnSlot; input = null;
+            if (service != null) service.Demolished -= OnDemolished; service = null;
+        }
 
         void Update()
         {
-            if ((menu == null || input == null) && Time.unscaledTime >= retryAt)
+            if ((menu == null || input == null || service == null) && Time.unscaledTime >= retryAt)
             {
                 retryAt = Time.unscaledTime + 1f;
                 if (menu == null) menu = FindFirstObjectByType<FacilityBuildMenu>();
+                if (service == null && menu != null && menu.service != null) { service = menu.service; service.Demolished += OnDemolished; }
                 if (input == null) { input = FindFirstObjectByType<PlayerInputReader>(); if (input != null) input.SlotSelected += OnSlot; }
             }
             if (menu == null) return;
@@ -52,9 +59,13 @@ namespace SandGuard.Audio
             bool failed;
             if (menu.Mode == FacilityBuildMenu.MenuMode.Repair)
             {
-                if (index != 0) return;
-                failed = !menu.LastRepairResult.Succeeded;
-                if (!failed && menu.Current != null) { Repairs++; if (RepairCue != null && Application.isPlaying) SfxPlayer.Play(RepairCue, menu.Current.transform.position); }
+                if (index == 1) failed = !menu.LastDemolishResult.Succeeded; // 성공이면 메뉴가 닫혀 여기까지 오지 않는다
+                else if (index != 0) return;
+                else
+                {
+                    failed = !menu.LastRepairResult.Succeeded;
+                    if (!failed && menu.Current != null) { Repairs++; if (RepairCue != null && Application.isPlaying) SfxPlayer.Play(RepairCue, menu.Current.transform.position); }
+                }
             }
             else
             {
@@ -63,6 +74,12 @@ namespace SandGuard.Audio
                 failed = !menu.LastResult.Outcome.Succeeded;
             }
             if (failed) { Fails++; Play(FailCue); }
+        }
+
+        void OnDemolished(FacilityAnchor anchor, string facilityId, int refund)
+        {
+            Demolishes++;
+            if (DemolishCue != null && anchor != null && Application.isPlaying) SfxPlayer.Play(DemolishCue, anchor.transform.position);
         }
 
         static void Play(SfxCue cue)

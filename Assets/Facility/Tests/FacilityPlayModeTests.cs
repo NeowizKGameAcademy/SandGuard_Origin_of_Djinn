@@ -248,7 +248,7 @@ namespace SandGuard.Facility.Tests
             Assert.True(service.Slots.TryGetSlot("slot-2", out var state) && !state.OccupantId.HasValue, "The slot stays free.");
         }
 
-        [UnityTest] public IEnumerator RepairingADamagedTowerCostsManaAndTheMenuSwitchesToRepair()
+        [UnityTest] public IEnumerator RepairingADamagedTowerCostsManaAndDemolishingRefundsHalf()
         {
             var service = TowerLevel(1, true, out var anchors, out var wallet);
             var menu = Track(Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Facility/Generated/FacilityBuildMenu.prefab"))).GetComponent<FacilityBuildMenu>();
@@ -270,32 +270,52 @@ namespace SandGuard.Facility.Tests
 
             player.position = new Vector3(0f, 0f, 2.5f);
             yield return new WaitForSeconds(.2f);
-            Assert.False(menu.IsOpen, "A healthy tower does not open a menu.");
+            Assert.True(menu.IsOpen, "A standing tower opens the repair/demolish menu even at full health.");
+            Assert.AreEqual(FacilityBuildMenu.MenuMode.Repair, menu.Mode);
 
             damageable.TakeDamage(new DamageInfo(half, "Enemy"));
             var quote = service.GetRepairQuote(facility.EntityId);
             Assert.True(quote.Availability.Succeeded);
-            Assert.AreEqual(25, quote.ManaAmount, "Cost = 100 × half health lost × 0.5.");
+            int repairCost = Mathf.CeilToInt(service.catalog.Find("cobra").manaCost * .5f * service.repairCostRatio - .0001f);
+            Assert.AreEqual(repairCost, quote.ManaAmount, "Cost = build cost × half health lost × repairCostRatio.");
             Assert.AreEqual(half, quote.HealthToRestore, .01f);
             yield return new WaitForSeconds(.2f);
-            Assert.True(menu.IsOpen, "A damaged tower opens the repair menu.");
-            Assert.AreEqual(FacilityBuildMenu.MenuMode.Repair, menu.Mode);
+            Assert.True(menu.IsOpen, "A damaged tower keeps the repair menu open.");
 
             int manaBefore = wallet.CurrentMana;
             int repaired = 0; service.Repaired += (f, amount, cost) => repaired++;
             menu.Select(0);
             Assert.True(menu.LastRepairResult.Succeeded, "Repair failed: " + menu.LastRepairResult.Failure);
             Assert.AreEqual(health.MaxHealth, health.CurrentHealth, "Repair restores full health at once.");
-            Assert.AreEqual(manaBefore - 25, wallet.CurrentMana);
+            Assert.AreEqual(manaBefore - repairCost, wallet.CurrentMana);
             Assert.AreEqual(1, repaired);
             yield return new WaitForSeconds(.2f);
-            Assert.False(menu.IsOpen, "The menu closes once the tower is whole.");
+            Assert.True(menu.IsOpen, "The menu stays open for demolishing once the tower is whole.");
 
             damageable.TakeDamage(new DamageInfo(max - 1f, "Enemy"));
             wallet.TrySpend(wallet.CurrentMana - 3);
             Assert.AreEqual(ActionFailure.InsufficientMana, service.TryRepair(facility.EntityId).Failure);
             Assert.AreEqual(1f, health.CurrentHealth, .01f, "A failed repair changes nothing.");
             Assert.AreEqual(3, wallet.CurrentMana);
+
+            // 철거: 건설비의 절반(내림)을 돌려주고 받침을 비운다. 메뉴는 건설 모드로 다시 열린다.
+            int refund = service.catalog.Find("cobra").manaCost / 2;
+            Assert.AreEqual(refund, service.GetDemolitionQuote(facility.EntityId).ManaAmount);
+            string demolishedId = null; int refunded = -1;
+            service.Demolished += (a, id, mana) => { demolishedId = id; refunded = mana; };
+            var facilityObject = facility.gameObject;
+            yield return new WaitForSeconds(.2f);
+            menu.Select(1);
+            Assert.True(menu.LastDemolishResult.Succeeded, "Demolish failed: " + menu.LastDemolishResult.Failure);
+            Assert.AreEqual(3 + refund, wallet.CurrentMana, "Demolishing refunds half the build cost.");
+            Assert.AreEqual("cobra", demolishedId); Assert.AreEqual(refund, refunded);
+            Assert.False(anchors[0].IsOccupied, "Demolishing frees the base.");
+            Assert.True(service.Slots.TryGetSlot("slot-0", out var freed) && !freed.OccupantId.HasValue, "Demolishing frees the slot.");
+            Assert.AreEqual(ActionFailure.NotFound, service.TryDemolish(facility.EntityId).Failure, "A demolished tower cannot be demolished twice.");
+            yield return new WaitForSeconds(.2f);
+            Assert.True(facilityObject == null, "The demolished body is destroyed.");
+            Assert.True(menu.IsOpen); Assert.AreEqual(FacilityBuildMenu.MenuMode.Build, menu.Mode, "The empty base offers building again.");
+            AssertOccupiedVisuals(anchors[0], false);
         }
 
         [UnityTest] public IEnumerator ABrokenTowerFreesItsBaseAndRebuildingReplacesTheBrokenBody()

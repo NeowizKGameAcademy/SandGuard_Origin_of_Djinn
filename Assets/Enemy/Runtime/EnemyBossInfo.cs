@@ -9,10 +9,15 @@ namespace SandGuard.Enemy
     /// 풀에서 재사용되면 OnEnable에서 다시 등록된다.
     /// </summary>
     [RequireComponent(typeof(EnemyHealth))]
-    public sealed class EnemyBossInfo : MonoBehaviour
+    public sealed class EnemyBossInfo : MonoBehaviour, IDamageModifier
     {
         public string displayName = "BOSS";
         public Sprite icon;
+        [Range(0f, 1f), Tooltip("받는 피해 감소율. 0.4이면 피해의 60%만 받는다.")]
+        public float damageReduction = 0.4f;
+
+        public float ModifyIncoming(DamageInfo damage, float amount)
+            => amount * (1f - Mathf.Clamp01(damageReduction));
 
         static readonly List<EnemyBossInfo> active = new List<EnemyBossInfo>();
         /// <summary>지금 살아 있는 보스들. 먼저 등장한 순서.</summary>

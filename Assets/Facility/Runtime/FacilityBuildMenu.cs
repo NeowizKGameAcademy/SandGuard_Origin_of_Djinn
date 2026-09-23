@@ -8,7 +8,7 @@ namespace SandGuard.Facility
 {
     /// <summary>
     /// 받침대 근처에서 뜨는 시설 메뉴. 빈 받침대면 건설(번호 키 Slot1~9 = 카탈로그 순서, 마나 비용 표시),
-    /// 체력이 깎인 시설이면 수리(번호 키 1, 비용 표시)를 한다.
+    /// 시설이 서 있으면 수리(번호 키 1, 비용 표시)와 철거(번호 키 2, 환급액 표시)를 고른다.
     /// </summary>
     /// <remarks>UI는 Docs/ui/facillity-implementation-ui.png에서 잘라 낸 스프라이트로 코드에서 만든다. 캔버스는 이 오브젝트 아래에 생성된다.</remarks>
     public sealed class FacilityBuildMenu : MonoBehaviour
@@ -24,13 +24,14 @@ namespace SandGuard.Facility
         public Vector2 tileSize = new Vector2(104f, 104f);
         public float tileSpacing = 14f;
         public string title = "건설  —  번호 키";
-        public string repairTitle = "수리  —  1";
+        public string repairTitle = "수리 1  ·  철거 2";
         public FacilityAnchor Current { get; private set; }
         public bool IsOpen => Current != null;
         public MenuMode Mode { get; private set; }
         public BuildResult LastResult { get; private set; }
         public ActionResult LastRepairResult { get; private set; }
-        Text repairCostText;
+        public ActionResult LastDemolishResult { get; private set; }
+        Text repairCostText, demolishRefundText;
         int shownRepairCost = -1;
         PlayerInputReader input;
         Canvas canvas;
@@ -70,7 +71,7 @@ namespace SandGuard.Facility
             foreach (var anchor in anchors)
             {
                 if (anchor == null || string.IsNullOrEmpty(anchor.SlotId)) continue;
-                if (anchor.IsOccupied && !NeedsRepair(anchor)) continue;
+                if (anchor.IsOccupied && !IsAlive(anchor)) continue;
                 Vector3 delta = anchor.transform.position - player.position; delta.y = 0f;
                 float distance = delta.magnitude;
                 if (distance <= anchor.interactionRadius && distance < best) { best = distance; nearest = anchor; }
@@ -84,13 +85,11 @@ namespace SandGuard.Facility
                     if (Keyboard.current[(Key)((int)Key.Digit1 + i)].wasPressedThisFrame) { Select(i); break; }
         }
 
-        /// <summary>살아 있고, 수리를 지원하고, 체력이 깎인 시설만 수리 메뉴를 연다.</summary>
-        static bool NeedsRepair(FacilityAnchor anchor)
+        /// <summary>살아 있는 시설이면 수리·철거 메뉴를 연다. 수리가 필요 없으면 수리 칸이 비용 대신 사유를 보여 준다.</summary>
+        static bool IsAlive(FacilityAnchor anchor)
         {
             var facility = anchor.Occupant;
-            if (facility == null || facility.Health == null || facility.Repairable == null) return false;
-            if (facility.Life != null && facility.Life.State != LifeState.Alive) return false;
-            return facility.Health.CurrentHealth < facility.Health.MaxHealth - .01f;
+            return facility != null && (facility.Life == null || facility.Life.State == LifeState.Alive);
         }
 
         void Open(FacilityAnchor anchor)
@@ -109,16 +108,25 @@ namespace SandGuard.Facility
             if (panel != null) panel.gameObject.SetActive(false);
         }
 
-        /// <summary>건설 모드: 카탈로그 순서(0부터)의 시설을 현재 받침대에 짓는다. 수리 모드: 0번이면 수리한다. 번호 키와 테스트가 부른다.</summary>
+        /// <summary>건설 모드: 카탈로그 순서(0부터)의 시설을 현재 받침대에 짓는다. 수리 모드: 0번은 수리, 1번은 철거. 번호 키와 테스트가 부른다.</summary>
         public void Select(int index)
         {
             if (Current == null || service == null) return;
             if (Mode == MenuMode.Repair)
             {
-                if (index != 0 || Current.Occupant == null) return;
-                LastRepairResult = service.TryRepair(Current.Occupant.EntityId);
-                if (!LastRepairResult.Succeeded) Debug.Log("수리 실패: " + LastRepairResult.Failure);
-                return; // 다 고쳐지면 다음 Update에서 메뉴가 닫힌다.
+                if (Current.Occupant == null) return;
+                if (index == 0)
+                {
+                    LastRepairResult = service.TryRepair(Current.Occupant.EntityId);
+                    if (!LastRepairResult.Succeeded) Debug.Log("수리 실패: " + LastRepairResult.Failure);
+                }
+                else if (index == 1)
+                {
+                    LastDemolishResult = service.TryDemolish(Current.Occupant.EntityId);
+                    if (LastDemolishResult.Succeeded) Close(); // 빈 받침대가 되므로 다음 Update에서 건설 메뉴로 다시 열린다.
+                    else Debug.Log("철거 실패: " + LastDemolishResult.Failure);
+                }
+                return;
             }
             if (service.catalog == null) return;
             if (index < 0 || index >= service.catalog.facilities.Count) return;
@@ -166,10 +174,15 @@ namespace SandGuard.Facility
         {
             if (Mode != MenuMode.Repair || repairCostText == null || Current == null || Current.Occupant == null) return;
             var quote = service.GetRepairQuote(Current.Occupant.EntityId);
-            int cost = quote.Availability.Succeeded ? quote.ManaAmount : 0;
+            int cost = quote.Availability.Succeeded ? quote.ManaAmount : -2; // -2 = 수리 불필요·불가
             if (cost == shownRepairCost) return;
             shownRepairCost = cost;
-            repairCostText.text = "마나 " + cost;
+            repairCostText.text = cost >= 0 ? "마나 " + cost : quote.Availability.Failure == ActionFailure.NoChange ? "체력 가득" : "수리 불가";
+            if (demolishRefundText != null)
+            {
+                var refund = service.GetDemolitionQuote(Current.Occupant.EntityId);
+                demolishRefundText.text = refund.Availability.Succeeded ? "마나 +" + refund.ManaAmount : "";
+            }
         }
 
         void RebuildTiles()
@@ -177,23 +190,13 @@ namespace SandGuard.Facility
             foreach (var tile in tiles) Destroy(tile);
             tiles.Clear();
             shownUnlocks.Clear();
-            repairCostText = null; shownRepairCost = -1;
+            repairCostText = demolishRefundText = null; shownRepairCost = -1;
             if (Mode == MenuMode.Repair)
             {
-                panel.sizeDelta = new Vector2(tileSize.x + 80f, tileSize.y + 80f);
-                var repair = new GameObject("Tile Repair", typeof(RectTransform)).GetComponent<RectTransform>();
-                repair.SetParent(panel, false);
-                repair.anchorMin = repair.anchorMax = new Vector2(.5f, 0f); repair.pivot = new Vector2(.5f, 0f);
-                repair.sizeDelta = tileSize; repair.anchoredPosition = new Vector2(0f, 40f);
-                Image(repair, "Disc", discSprite, Vector2.zero, tileSize, new Color(1f, 1f, 1f, .92f));
-                if (numberSprites.Length > 0 && numberSprites[0] != null)
-                    Image(repair, "Number", numberSprites[0], new Vector2(-tileSize.x * .38f, tileSize.y * .38f), new Vector2(40f, 40f), Color.white);
-                var repairLabel = Label(repair, "수리", 22, FontStyle.Bold);
-                repairLabel.rectTransform.sizeDelta = new Vector2(tileSize.x, 30f);
-                repairCostText = Label(repair, "", 16, FontStyle.Normal);
-                repairCostText.rectTransform.anchoredPosition = new Vector2(0f, -22f);
-                repairCostText.rectTransform.sizeDelta = new Vector2(tileSize.x + 40f, 26f);
-                tiles.Add(repair.gameObject);
+                float pairWidth = tileSize.x * 2f + tileSpacing;
+                panel.sizeDelta = new Vector2(pairWidth + 80f, tileSize.y + 80f);
+                repairCostText = ActionTile(0, "수리", -pairWidth / 2f + tileSize.x / 2f);
+                demolishRefundText = ActionTile(1, "철거", pairWidth / 2f - tileSize.x / 2f);
                 RefreshRepairCost();
                 return;
             }
@@ -222,6 +225,25 @@ namespace SandGuard.Facility
                 detailLabel.rectTransform.sizeDelta = new Vector2(tileSize.x, 20f);
                 tiles.Add(tile.gameObject);
             }
+        }
+
+        /// <summary>수리·철거 칸 하나를 만들고 아래 줄(비용·환급액) 글자를 돌려준다.</summary>
+        Text ActionTile(int index, string name, float x)
+        {
+            var tile = new GameObject("Tile " + name, typeof(RectTransform)).GetComponent<RectTransform>();
+            tile.SetParent(panel, false);
+            tile.anchorMin = tile.anchorMax = new Vector2(.5f, 0f); tile.pivot = new Vector2(.5f, 0f);
+            tile.sizeDelta = tileSize; tile.anchoredPosition = new Vector2(x, 40f);
+            Image(tile, "Disc", discSprite, Vector2.zero, tileSize, new Color(1f, 1f, 1f, .92f));
+            if (index < numberSprites.Length && numberSprites[index] != null)
+                Image(tile, "Number", numberSprites[index], new Vector2(-tileSize.x * .38f, tileSize.y * .38f), new Vector2(40f, 40f), Color.white);
+            var label = Label(tile, name, 22, FontStyle.Bold);
+            label.rectTransform.sizeDelta = new Vector2(tileSize.x, 30f);
+            var detail = Label(tile, "", 16, FontStyle.Normal);
+            detail.rectTransform.anchoredPosition = new Vector2(0f, -22f);
+            detail.rectTransform.sizeDelta = new Vector2(tileSize.x + 40f, 26f);
+            tiles.Add(tile.gameObject);
+            return detail;
         }
 
         static Image Image(RectTransform parent, string name, Sprite sprite, Vector2 position, Vector2 size, Color color)
