@@ -33,10 +33,10 @@ namespace SandGuard.UI.HUD
         public Vector2 towerMarkerSize = new Vector2(20f, 20f);
         public Sprite towerBackground;
         [Min(0f)] public float towerBackgroundPadding = 4f;
-        public Color cobraBackgroundColor = new Color(.12f, .62f, .28f, 1f);
+        public Color cobraBackgroundColor = new Color(.85f, .18f, .18f, 1f);
         public Color obeliskBackgroundColor = new Color(.12f, .42f, .88f, 1f);
-        public Color coffinBackgroundColor = new Color(.62f, .25f, .82f, 1f);
-        public Color anubisBackgroundColor = new Color(.06f, .66f, .70f, 1f);
+        public Color coffinBackgroundColor = new Color(.12f, .62f, .28f, 1f);
+        public Color anubisBackgroundColor = new Color(.62f, .25f, .82f, 1f);
         [Min(.05f)] public float towerScanInterval = .25f;
 
         [Header("마커")]

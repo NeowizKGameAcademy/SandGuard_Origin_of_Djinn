@@ -68,7 +68,7 @@ namespace SandGuard.Player
         [Min(1f), Tooltip("만충 시 빔 굵기(판정·연출) 배수")] public float chargedRadiusMultiplier = 5f;
         [Min(0f), Tooltip("만충 시 사거리에 더하는 거리(m)")] public float chargedRangeBonus = 8f;
         [Min(0f), Tooltip("만충 시 꿰뚫은 적을 진행 방향으로 미는 속도(m/s). 충전량에 비례")] public float chargedKnockback = 6f;
-        [Min(0.01f), Tooltip("VFX_Pierce_Beam의 기본 반경. 충전 배수를 곱해 연출 굵기로 쓴다")] public float beamVfxRadius = 0.14f;
+        [Min(0.01f), Tooltip("VFX_Pierce_Beam의 기본 반경. 충전 배수를 곱해 연출 굵기로 쓴다")] public float beamVfxRadius = 0.28f;
         [Min(0f), Tooltip("VFX_Pierce_Beam의 기본 밝기(HDR). 만충이면 1.25배. 대낮 신전에서 블룸으로 하얗게 날아가지 않는 값")] public float beamVfxIntensity = 1.1f;
         [Range(0f, 1f), Tooltip("이 충전량 이상이면 빔을 따라 달리는 링(자식 Rings)을 켠다")] public float beamRingsFromCharge = 0.5f;
         [Tooltip("관통탄의 시작점(몸 가운데 앞, 두 팔을 뻗은 자리). 비우면 총구(FirePoint)에서 나간다. 충전 연출도 여기에 붙는다")] public Transform pierceOrigin;
