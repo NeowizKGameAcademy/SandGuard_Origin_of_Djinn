@@ -266,6 +266,7 @@ MonoBehaviour:
   waveValueText: {fileID: 8648556969148432184}
   remainingEnemyPanel: {fileID: 7846970555754409133}
   remainingEnemyText: {fileID: 4137801062758309193}
+  remainingEnemyLabel: {fileID: 392514474723533888}
 --- !u!1 &6756009786869575695
 GameObject:
   m_ObjectHideFlags: 0
@@ -511,8 +512,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -16, y: 0}
-  m_SizeDelta: {x: 82, y: 30}
+  m_AnchoredPosition: {x: -25, y: 0}
+  m_SizeDelta: {x: 105, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1969662971900030351
 CanvasRenderer:
@@ -686,7 +687,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 72, y: 0}
-  m_SizeDelta: {x: 55, y: 34}
+  m_SizeDelta: {x: 80, y: 34}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &9019552192096367043
 CanvasRenderer:

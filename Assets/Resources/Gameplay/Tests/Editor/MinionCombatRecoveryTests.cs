@@ -103,6 +103,31 @@ public sealed class MinionCombatRecoveryTests
         Assert.False(Active(sequence), "Recovery must finish without queuing another attack.");
     }
 
+    [TestCase("Attack", "Mutant Swiping")]
+    [TestCase("UseSkill", "Standing Melee Attack Backhand")]
+    public void AnubisAttackRecoveryFitsNewAttackInterval(string trigger, string stateName)
+    {
+        var unit = UnityEngine.Object.Instantiate(
+            AssetDatabase.LoadAssetAtPath<GameObject>("Assets/2.Model/Prefabs/Anubis.prefab"), Origin, Quaternion.identity);
+        objects.Add(unit);
+        var animator = unit.GetComponent<Animator>();
+        animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+        animator.Rebind(); animator.Update(0f);
+        var sequence = Activator.CreateInstance(Runtime("MinionAttackSequence"));
+        Call(sequence, "Begin", null, stateName, 0.45f, trigger == "UseSkill");
+        animator.SetTrigger(trigger);
+        float elapsed = 0f;
+        int impacts = 0;
+        while (Active(sequence) && elapsed < 3f)
+        {
+            const float dt = 1f / 120f;
+            animator.Update(dt); elapsed += dt;
+            if ((bool)Call(sequence, "Tick", animator, dt)) impacts++;
+        }
+        Assert.That(impacts, Is.EqualTo(1));
+        Assert.That(elapsed, Is.LessThanOrEqualTo(1.2f), "Animation recovery must not delay the next attack.");
+    }
+
     [Test]
     public void InterruptedAttackNeverDealsDelayedDamage()
     {

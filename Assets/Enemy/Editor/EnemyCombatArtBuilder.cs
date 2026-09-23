@@ -46,6 +46,7 @@ namespace SandGuard.Enemy.Editor
             new Spec { Name = "ShieldGuard", BodyFolder = "bandit-shielder", Height = 1.84f, MoveSpeed = 2f, Windup = .5f,
                 Gear = new[] { ("ShortSword", HumanBodyBones.RightHand, .72f), ("TowerShield", HumanBodyBones.LeftHand, 1f) } },
             new Spec { Name = "HammerBrute", BodyFolder = "bandit-hammerer", Height = 1.94f, MoveTimeScale = 1f, AttackRange = 2.3f, AttackSpeed = 2.836364f, Windup = .93f, Interval = 1.9f,
+                Priorities = (3, 1, 2, 4),
                 Gear = new[] { ("Warhammer", HumanBodyBones.RightHand, 1f) } },
             new Spec { Name = "Chief", BodyFolder = "bandit-leader", Height = 2.04f, MoveSpeed = 2.2f, AttackRange = 3f, Windup = .6f, Interval = 1.6f,
                 Gear = new[] { ("ChiefScimitar", HumanBodyBones.RightHand, 1f), ("ChiefCape", HumanBodyBones.Chest, 2.04f / 1.8f) } },
@@ -125,6 +126,9 @@ namespace SandGuard.Enemy.Editor
                     throw new InvalidOperationException(spec.Name + ": height " + bounds.size.y.ToString("F3") + " does not match target " + spec.Height);
                 foreach (var (asset, bone, scale) in spec.Gear) Equip(animator, asset, bone, scale, bounds, report, spec.Name);
                 EnemyEquipmentFitBuilder.Configure(animator, spec.Name);
+                // 측정·장비 맞춤은 화면 밖에서도 자세가 갱신돼야 해서 위에서 AlwaysAnimate로 둔다. 저장본은 웨이브에 100마리 넘게 뜨므로 화면 밖 뼈 갱신을 끈다.
+                // 스킨의 updateWhenOffscreen은 켜 둔다. 끄면 bounds가 임포트 값으로 고정돼 피격 VFX 크기·키 측정이 달라진다.
+                animator.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
                 PrefabUtility.SaveAsPrefabAsset(root, VisualPath(spec.Name));
                 float death = Clip(clips["Death"]).length, attack = Clip(clips["Attack"]).length / spec.AttackSpeed;
                 report.Add(spec.Name + ": height=" + bounds.size.y.ToString("F2") + "m (target " + spec.Height + ") stride=" + stride.ToString("F2")

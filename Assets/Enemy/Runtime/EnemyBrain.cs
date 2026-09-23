@@ -23,6 +23,10 @@ namespace SandGuard.Enemy
         [Tooltip("진격 목표(코어). 비우면 씬의 EnemyObjective를 쓴다")]
         public Transform objective;
         [Min(0.05f)] public float thinkInterval = 0.2f;
+        [Min(0.05f), Tooltip("상대 없이 진격 중이고 카메라에서 farThinkDistance보다 멀면 이 간격으로 판단한다. 화면에서 먼 적의 탐색·경로 계산을 줄인다")]
+        public float farThinkInterval = 0.5f;
+        [Min(0f), Tooltip("0이면 거리와 무관하게 항상 thinkInterval을 쓴다")]
+        public float farThinkDistance = 30f;
         [Min(0.1f), Tooltip("목표에 이 거리 안으로 오면 도착으로 본다")]
         public float objectiveArrivalDistance = 2.5f;
         [Min(0f)] public float turnSpeed = 540f;
@@ -37,6 +41,23 @@ namespace SandGuard.Enemy
         /// <summary>코어 도착 처리기. 연결하면 도착 시 흡수·공격 지시를 따른다.</summary>
         public ICoreInteraction CoreInteraction { get; set; }
         public EnemyBrainState State { get; private set; }
+        float stunnedUntil;
+        public bool IsStunned => Time.time < stunnedUntil;
+        public float StunRemaining => Mathf.Max(0f, stunnedUntil - Time.time);
+
+        /// <summary>공격 준비와 이동을 중단한다. 우두머리의 기절은 최대 0.5초다.</summary>
+        public void Stun(float duration)
+        {
+            if (!isActiveAndEnabled || duration <= 0f || float.IsNaN(duration) || float.IsInfinity(duration)
+                || State == EnemyBrainState.Dead || (health != null && !health.IsAlive)) return;
+            if (shieldSkill != null || bombSkill != null) duration = Mathf.Min(duration, 0.5f);
+            stunnedUntil = Mathf.Max(stunnedUntil, Time.time + duration);
+            motor?.Stop();
+            attack?.Cancel();
+            if (shieldSkill != null && shieldSkill.IsCasting) shieldSkill.Cancel();
+            bombSkill?.Cancel();
+            nextThink = 0f;
+        }
         public ICombatTarget CurrentTarget => selector != null && selector.CurrentSelection.HasTarget ? selector.CurrentSelection.Target : null;
         public event Action<EnemyBrain> ReachedObjective;
         float nextThink;
@@ -56,6 +77,7 @@ namespace SandGuard.Enemy
         }
         void OnDisable()
         {
+            stunnedUntil = 0f;
             if (health != null) health.StateChanged -= OnLifeStateChanged;
             if (selector != null && selector.ApproachFilter == leashFilter) selector.ApproachFilter = null;
         }
@@ -105,20 +127,31 @@ namespace SandGuard.Enemy
         void Update()
         {
             if (State == EnemyBrainState.Dead) return;
+            if (IsStunned) { motor?.Stop(); return; }
             if (!AIEnabled)
             {
                 if (State != EnemyBrainState.Idle) { motor?.Stop(); attack?.Cancel(); selector?.ClearTarget(); State = EnemyBrainState.Idle; }
                 return;
             }
-            if (Time.time >= nextThink) { nextThink = Time.time + thinkInterval; Think(); }
+            if (Time.time >= nextThink) { nextThink = Time.time + CurrentThinkInterval(); Think(); }
             if (State == EnemyBrainState.Engaging && motor != null && !motor.HasDestination && CurrentTarget != null)
                 motor.Face(CurrentTarget.HitPosition, turnSpeed);
+        }
+
+        /// <summary>싸우는 중이거나 카메라 가까이 있으면 thinkInterval, 상대 없이 멀리서 걷는 중이면 farThinkInterval.</summary>
+        float CurrentThinkInterval()
+        {
+            if (State != EnemyBrainState.Advancing || farThinkDistance <= 0f || farThinkInterval <= thinkInterval) return thinkInterval;
+            var view = Camera.main;
+            if (view == null) return thinkInterval;
+            return (view.transform.position - transform.position).sqrMagnitude > farThinkDistance * farThinkDistance ? farThinkInterval : thinkInterval;
         }
 
         /// <summary>대상과 목적지를 다시 판단한다. thinkInterval마다 자동으로 불린다.</summary>
         public void Think()
         {
             if (State == EnemyBrainState.Dead) return;
+            if (IsStunned) { motor?.Stop(); attack?.Cancel(); return; }
             if (shieldSkill != null && shieldSkill.isActiveAndEnabled && shieldSkill.IsCasting)
             { motor?.Stop(); return; }
             if (bombSkill != null && bombSkill.isActiveAndEnabled && bombSkill.IsCasting)
@@ -184,6 +217,7 @@ namespace SandGuard.Enemy
         /// <summary>풀 재사용: 사망 상태를 풀고 처음부터 판단한다.</summary>
         public void ResetForReuse()
         {
+            stunnedUntil = 0f;
             State = EnemyBrainState.Idle; nextThink = 0f; AIEnabled = true;
             shieldSkill?.ResetForReuse();
             bombSkill?.ResetForReuse();

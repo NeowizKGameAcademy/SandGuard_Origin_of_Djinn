@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using DesertTower.LevelIntegration;
 using DesertTower.Levels;
+using DesertTower.VFX;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,14 +12,15 @@ namespace SandGuard.UI.HUD
     public sealed class WaveSpawnPreview : MonoBehaviour
     {
         public Color warningColor = new Color(1f, .48f, .08f);
-        [Min(.1f)] public float ringRadius = 2.5f;
-        [Min(.1f)] public float beaconHeight = 7f;
+        [Min(.1f), Tooltip("Minimum radius; expands to enclose the spawn deck.")] public float ringRadius = 10f;
+        [Min(.1f)] public float beaconHeight = 60f;
         const float FadeSeconds = .4f;
         sealed class Marker
         {
             public Transform spawn;
             public GameObject root;
-            public LineRenderer ring, beam;
+            public LineRenderer ring;
+            public VfxSpawnWarning cylinder;
             public CanvasGroup label, map;
             public RectTransform mapRect;
         }
@@ -62,9 +64,7 @@ namespace SandGuard.UI.HUD
                 var color = warningColor; color.a = opacity * (.65f + .35f * pulse);
                 marker.ring.startColor = marker.ring.endColor = color;
                 marker.ring.transform.localScale = Vector3.one * (1f + .08f * pulse);
-                marker.beam.startColor = color;
-                var tip = color; tip.a *= .15f;
-                marker.beam.endColor = tip;
+                marker.cylinder.SetAppearance(warningColor, opacity, pulseTime, pulse);
                 marker.label.alpha = opacity;
                 marker.label.gameObject.SetActive(camera != null);
                 if (camera != null) marker.label.transform.rotation = camera.transform.rotation;
@@ -87,29 +87,32 @@ namespace SandGuard.UI.HUD
             if (level == null || level.waves == null || shownWave < 0 || shownWave >= level.waves.waves.Count) return;
             var wave = level.waves.waves[shownWave];
             if (wave == null) return;
+            var decks = FindObjectsByType<MeshCollider>(FindObjectsSortMode.None);
             foreach (var group in wave.groups)
             {
                 if (group == null || group.count <= 0 || !level.TryResolveSpawnGroup(group, out var binding, out _) || !entrances.Add(binding.Spawn)) continue;
                 var marker = new Marker { spawn = binding.Spawn.transform, root = new GameObject("UpcomingSpawn") };
+                float radius = DeckRadius(marker.spawn, decks);
+                float height = Mathf.Max(beaconHeight, radius * 5f);
                 // UI layer keeps world warnings out of the minimap camera.
                 marker.root.layer = 5;
-                marker.ring = Line(marker.root.transform, "Ring", .13f);
+                marker.ring = Line(marker.root.transform, "Ring", .3f);
                 marker.ring.loop = true;
                 marker.ring.positionCount = 64;
                 for (int i = 0; i < 64; i++)
                 {
                     float angle = i * Mathf.PI * 2f / 64;
-                    marker.ring.SetPosition(i, new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * ringRadius);
+                    marker.ring.SetPosition(i, new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * radius);
                 }
-                marker.beam = Line(marker.root.transform, "Beacon", .45f);
-                marker.beam.endWidth = .12f;
-                marker.beam.positionCount = 2;
-                marker.beam.SetPosition(0, Vector3.zero);
-                marker.beam.SetPosition(1, Vector3.up * beaconHeight);
+                var cylinder = new GameObject("Downward Chevron Cylinder");
+                cylinder.layer = 5;
+                cylinder.transform.SetParent(marker.root.transform, false);
+                marker.cylinder = cylinder.AddComponent<VfxSpawnWarning>();
+                marker.cylinder.Initialize(radius, height);
                 var label = new GameObject("Label", typeof(RectTransform), typeof(Canvas), typeof(CanvasGroup));
                 label.layer = 5;
                 label.transform.SetParent(marker.root.transform, false);
-                label.transform.localPosition = Vector3.up * (beaconHeight + .5f);
+                label.transform.localPosition = Vector3.up * 8f;
                 label.transform.localScale = Vector3.one * .015f;
                 label.GetComponent<Canvas>().renderMode = RenderMode.WorldSpace;
                 ((RectTransform)label.transform).sizeDelta = new Vector2(240, 48);
@@ -118,6 +121,30 @@ namespace SandGuard.UI.HUD
                 AddText(label.transform, "적 출현 예정", 28);
                 markers.Add(marker);
             }
+        }
+
+        float DeckRadius(Transform spawn, MeshCollider[] decks)
+        {
+            float radius = ringRadius;
+            float closestHeight = float.PositiveInfinity;
+            Vector3 position = spawn.position;
+            foreach (var deck in decks)
+            {
+                if (!deck.enabled || deck.gameObject.scene != spawn.gameObject.scene || !deck.sharedMesh) continue;
+                if (!deck.name.EndsWith("_deck", System.StringComparison.OrdinalIgnoreCase)
+                    && !deck.sharedMesh.name.EndsWith("_deck", System.StringComparison.OrdinalIgnoreCase)) continue;
+                var bounds = deck.bounds;
+                if (position.x < bounds.min.x - 2f || position.x > bounds.max.x + 2f
+                    || position.z < bounds.min.z - 2f || position.z > bounds.max.z + 2f) continue;
+                float vertical = Mathf.Abs(position.y - bounds.max.y);
+                if (vertical > 6f || vertical >= closestHeight) continue;
+                closestHeight = vertical;
+                // Include the farthest deck corner even when the entrance is off-centre.
+                float x = Mathf.Abs(position.x - bounds.center.x) + bounds.extents.x;
+                float z = Mathf.Abs(position.z - bounds.center.z) + bounds.extents.z;
+                radius = Mathf.Max(ringRadius, Mathf.Sqrt(x * x + z * z) + 1f);
+            }
+            return radius;
         }
 
         LineRenderer Line(Transform parent, string name, float width)

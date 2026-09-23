@@ -22,6 +22,8 @@ namespace DesertTower.VFX
         public int[] ShardMeshIndices;
         Vector3[] poseStarts, poseScales;
         Quaternion[] poseRotations;
+        Vector3[] intactStarts, intactScales, intactLandings;
+        Quaternion[] intactRotations, intactLandingRotations;
         Renderer[] modelRenderers;
         bool[] rendererStates;
         Light[] modelLights;
@@ -40,6 +42,16 @@ namespace DesertTower.VFX
         {
             age = 0f;
             poseStarts = null; poseRotations = null; poseScales = null;
+            if (WholeModel && ProxyMeshes != null)
+            {
+                for (int i = 0; i < ProxyMeshes.Length; i++)
+                {
+                    ProxyMeshes[i].localPosition = ReferenceMatrices[i].GetColumn(3);
+                    ProxyMeshes[i].localRotation = ReferenceMatrices[i].rotation;
+                    ProxyMeshes[i].localScale = ReferenceMatrices[i].lossyScale;
+                }
+                CaptureIntactParts();
+            }
             block ??= new MaterialPropertyBlock();
             if (Overload != null && overloadScale == Vector3.zero) overloadScale = Overload.localScale;
             Tick(0f);
@@ -62,6 +74,7 @@ namespace DesertTower.VFX
                     ProxyMeshes[i].localRotation = current.rotation;
                     ProxyMeshes[i].localScale = current.lossyScale;
                 }
+                CaptureIntactParts();
                 poseStarts = new Vector3[Shards.Length]; poseRotations = new Quaternion[Shards.Length];
                 poseScales = new Vector3[Shards.Length];
                 for (int i = 0; i < Shards.Length; i++)
@@ -108,7 +121,7 @@ namespace DesertTower.VFX
             bool charging = age < BurstTime;
             if (Overload != null)
             {
-                Overload.gameObject.SetActive(charging);
+                Overload.gameObject.SetActive(charging || WholeModel);
                 if (charging)
                 {
                     float t = Mathf.Clamp01(age / BurstTime);
@@ -116,6 +129,7 @@ namespace DesertTower.VFX
                     Colorize(OverloadRenderer, Color.Lerp(new Color(0.1f, 0.85f, 0.8f), Color.white * 3f, t * t));
                 }
             }
+            if (WholeModel && intactStarts != null) TickIntactParts(charging);
             if (!charging && sourceCircle != null) sourceCircle.SetActive(false);
             if (Cracks != null) foreach (var line in Cracks)
             {
@@ -126,13 +140,25 @@ namespace DesertTower.VFX
             if (Shards == null) return;
             for (int i = 0; i < Shards.Length; i++)
             {
-                var shard = Shards[i]; shard.gameObject.SetActive(!charging);
+                var shard = Shards[i];
+                bool crystal = !WholeModel || IsCrystal(ShardMeshIndices[i]);
+                shard.gameObject.SetActive(!charging && crystal);
                 if (charging) continue;
                 float t = Mathf.Clamp01((age - BurstTime) / (FlightTime + (WholeModel ? i % 4 : i) * 0.035f));
                 shard.localPosition = Vector3.Lerp(poseStarts != null ? poseStarts[i] : Starts[i], Landings[i], t) + Vector3.up * (4f * t * (1f - t) * Lift);
                 shard.localRotation = Quaternion.Slerp(poseRotations != null ? poseRotations[i] : Quaternion.identity, LandingRotations[i], t);
                 if (WholeModel)
                 {
+                    // Fast radial impulse first, then gravity pulls the fragments down.
+                    float flight = Mathf.Clamp01((age - BurstTime) / (1.05f + i % 4 * 0.055f));
+                    float spread = 1f - Mathf.Pow(1f - flight, 3f);
+                    var start = poseStarts != null ? poseStarts[i] : Starts[i];
+                    var position = Vector3.Lerp(start, Landings[i], spread);
+                    position.y = Mathf.Lerp(start.y, Landings[i].y, flight * flight)
+                        + 4f * flight * (1f - flight) * Lift * (1.4f + i % 5 * 0.45f);
+                    shard.localPosition = position;
+                    shard.localRotation = Quaternion.Slerp(poseRotations != null ? poseRotations[i] : Quaternion.identity,
+                        LandingRotations[i], spread) * Quaternion.AngleAxis(360f * flight, new Vector3(1f, i % 3 + 1f, 0.5f).normalized);
                     shard.localScale = (poseScales != null ? poseScales[i] : Vector3.one)
                         * (1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(2.8f, 3.8f, age)));
                     continue;
@@ -140,6 +166,57 @@ namespace DesertTower.VFX
                 float fade = Mathf.InverseLerp(0.45f, 1.8f, age);
                 Colorize(shard.GetComponent<Renderer>(), Color.Lerp(new Color(0.1f, 1f, 0.9f) * 2f,
                     new Color(0.045f, 0.19f, 0.20f), fade));
+            }
+        }
+
+        bool IsCrystal(int index) => MeshPaths[index] == "Core Crystal/Mesh";
+
+        void CaptureIntactParts()
+        {
+            int count = ProxyMeshes.Length;
+            intactStarts = new Vector3[count]; intactScales = new Vector3[count];
+            intactLandings = new Vector3[count]; intactRotations = new Quaternion[count];
+            intactLandingRotations = new Quaternion[count];
+            for (int i = 0; i < count; i++)
+            {
+                var part = ProxyMeshes[i];
+                intactStarts[i] = part.localPosition; intactScales[i] = part.localScale;
+                intactRotations[i] = part.localRotation;
+                var bounds = part.GetComponent<MeshFilter>().sharedMesh.bounds;
+                bool ring = MeshPaths[i].StartsWith("Ring ");
+                var size = bounds.size;
+                var normal = size.x < size.y && size.x < size.z ? Vector3.right
+                    : size.z < size.y ? Vector3.forward : Vector3.up;
+                var rotation = ring
+                    ? Quaternion.FromToRotation(part.localRotation * normal, Vector3.up) * part.localRotation
+                    : part.localRotation;
+                intactLandingRotations[i] = rotation;
+                float bottom = float.PositiveInfinity;
+                for (int corner = 0; corner < 8; corner++)
+                {
+                    var point = new Vector3((corner & 1) == 0 ? bounds.min.x : bounds.max.x,
+                        (corner & 2) == 0 ? bounds.min.y : bounds.max.y,
+                        (corner & 4) == 0 ? bounds.min.z : bounds.max.z);
+                    bottom = Mathf.Min(bottom, (rotation * Vector3.Scale(point, part.localScale)).y);
+                }
+                intactLandings[i] = new Vector3(part.localPosition.x + Mathf.Cos(i * 2.4f) * 0.35f,
+                    -bottom + 0.04f + (ring ? (i % 3) * 0.08f : 0f),
+                    part.localPosition.z + Mathf.Sin(i * 2.4f) * 0.35f);
+            }
+        }
+
+        void TickIntactParts(bool charging)
+        {
+            for (int i = 0; i < ProxyMeshes.Length; i++)
+            {
+                var part = ProxyMeshes[i];
+                part.gameObject.SetActive(charging || !IsCrystal(i));
+                float t = charging ? 0f : Mathf.Clamp01((age - BurstTime) / (FlightTime + i * 0.035f));
+                // Accelerate downwards, then settle flat without an explosive outward launch.
+                part.localPosition = Vector3.Lerp(intactStarts[i], intactLandings[i], t * t);
+                part.localRotation = Quaternion.Slerp(intactRotations[i], intactLandingRotations[i], t * t);
+                part.localScale = intactScales[i] * (1f - Mathf.SmoothStep(0f, 1f,
+                    Mathf.InverseLerp(2.8f, 3.8f, age)));
             }
         }
 

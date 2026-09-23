@@ -85,7 +85,7 @@ namespace DesertTower.VFX.Editor
 
         public static void Fracture(GameObject root, MeshFilter source, MeshRenderer renderer, int number,
             List<Transform> pieces, List<Vector3> starts, List<Vector3> ends, List<Quaternion> rotations,
-            string assetPrefix = "CobraDestruction", int heightBands = 2)
+            string assetPrefix = "CobraDestruction", int heightBands = 2, bool splitDepth = false)
         {
             string folder = RootDir + "/Meshes";
             if (!AssetDatabase.IsValidFolder(folder)) AssetDatabase.CreateFolder(RootDir, "Meshes");
@@ -100,7 +100,7 @@ namespace DesertTower.VFX.Editor
                 using (var indices = new NativeArray<int>(data[0].GetSubMesh(sub).indexCount, Allocator.Temp))
                 {
                     data[0].GetIndices(indices, sub);
-                    int groupCount = heightBands * 2;
+                    int groupCount = heightBands * (splitDepth ? 4 : 2);
                     var groups = new List<Vector3>[groupCount]; var coords = new List<Vector2>[groupCount];
                     for (int g = 0; g < groupCount; g++) { groups[g] = new List<Vector3>(); coords[g] = new List<Vector2>(); }
                     for (int i = 0; i < indices.Length; i += 3)
@@ -111,7 +111,8 @@ namespace DesertTower.VFX.Editor
                             for (int j = 0; j < 3; j++) polygon.Add(new CutVertex {
                                 Position = source.transform.TransformPoint(vertices[indices[i + j]]), UV = uv[indices[i + j]] });
                             polygon = Clip(polygon, 0, b.center.x, (g & 1) != 0);
-                            int band = g / 2;
+                            if (splitDepth) polygon = Clip(polygon, 2, b.center.z, (g & 2) != 0);
+                            int band = g / (splitDepth ? 4 : 2);
                             if (band > 0) polygon = Clip(polygon, 1, b.min.y + b.size.y * band / heightBands, true);
                             if (band + 1 < heightBands) polygon = Clip(polygon, 1, b.min.y + b.size.y * (band + 1) / heightBands, false);
                             for (int j = 1; j + 1 < polygon.Count; j++)

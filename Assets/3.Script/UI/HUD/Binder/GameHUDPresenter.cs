@@ -151,6 +151,13 @@ namespace SandGuard.UI.HUD
             int number = reader.WaveNumber;
             if (number >= 0 && number != waveNumber) hud.Wave.SetWave(waveNumber = number);
             int remaining = reader.AliveEnemyCount + reader.PendingEnemyCount;
+            if (wave is WaveDirector preparingDirector && preparingDirector.State == RunState.Preparing)
+            {
+                hud.Wave.SetPreparationTime(reader.PreparationSecondsRemaining);
+                remainingEnemies = -1; // Restore the enemy count even when it matches the previous wave.
+                lastWaveState = RunState.Preparing;
+                return;
+            }
             if (remaining != remainingEnemies) hud.Wave.SetRemainingEnemies(remainingEnemies = remaining);
 
             if (wave is WaveDirector director)

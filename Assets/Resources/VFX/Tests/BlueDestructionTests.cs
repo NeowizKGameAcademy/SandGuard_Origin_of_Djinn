@@ -62,6 +62,11 @@ namespace DesertTower.VFX.Tests
             var ctrl = effect.GetComponent<VfxCoreDestruction>();
             Assert.That(ctrl.WholeModel, Is.True);
             Assert.That(ctrl.MeshPaths.Length, Is.EqualTo(7), "Crystal, three floating pieces, three rings.");
+            Assert.That(ctrl.Shards.Length, Is.GreaterThanOrEqualTo(16), "The firework burst needs small crystal fragments.");
+            foreach (int meshIndex in ctrl.ShardMeshIndices)
+                Assert.That(ctrl.MeshPaths[meshIndex], Is.EqualTo("Core Crystal/Mesh"));
+            var sparks = effect.transform.Find("Crystal Firework Sparks").GetComponent<ParticleSystem>();
+            Assert.That(sparks.main.startDelay.constant, Is.EqualTo(ctrl.BurstTime).Within(0.001f));
             Assert.That(Bursts(effect), Is.EqualTo(5));
             for (int i = 0; i < ctrl.MeshPaths.Length; i++)
             {
@@ -74,12 +79,32 @@ namespace DesertTower.VFX.Tests
             foreach (var renderer in source.GetComponentsInChildren<Renderer>(true)) Assert.That(renderer.enabled, Is.False);
             foreach (var light in source.GetComponentsInChildren<Light>(true)) Assert.That(light.enabled, Is.False);
             yield return new WaitForSeconds(0.8f);
-            Assert.That(ctrl.Overload.gameObject.activeSelf, Is.False);
+            Assert.That(ctrl.ProxyMeshes[0].gameObject.activeSelf, Is.False, "Only the crystal proxy disappears.");
             Assert.That(ctrl.Shards[0].gameObject.activeSelf, Is.True);
+            ctrl.Tick(1f);
+            for (int i = 0; i < ctrl.Shards.Length; i++)
+                Assert.That(ctrl.Shards[i].gameObject.activeSelf,
+                    Is.EqualTo(ctrl.MeshPaths[ctrl.ShardMeshIndices[i]] == "Core Crystal/Mesh"));
+            for (int i = 1; i < ctrl.ProxyMeshes.Length; i++)
+            {
+                var part = ctrl.ProxyMeshes[i];
+                Assert.That(part.gameObject.activeSelf, Is.True, "Surrounding pieces stay intact.");
+                Assert.That(part.GetComponent<Renderer>().bounds.min.y,
+                    Is.InRange(source.transform.position.y, source.transform.position.y + 0.3f),
+                    "Intact debris settles on the core's ground plane.");
+            }
             PrefabPool.Release(effect);
             foreach (var renderer in source.GetComponentsInChildren<Renderer>(true)) Assert.That(renderer.enabled, Is.False);
             ctrl.RestoreTarget();
             Assert.That(source.transform.Find("Core Crystal/Mesh").GetComponent<Renderer>().enabled, Is.True);
+            ctrl.Restart();
+            ctrl.BindTarget(source.transform);
+            for (int i = 0; i < ctrl.ProxyMeshes.Length; i++)
+            {
+                Assert.That(ctrl.ProxyMeshes[i].gameObject.activeSelf, Is.True);
+                Assert.That(Vector3.Distance(ctrl.ProxyMeshes[i].position,
+                    source.transform.Find(ctrl.MeshPaths[i]).position), Is.LessThan(0.001f));
+            }
         }
     }
 }

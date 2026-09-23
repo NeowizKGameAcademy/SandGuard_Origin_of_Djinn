@@ -38,7 +38,15 @@ namespace SandGuard.Enemy
         /// <summary>외형이 지정한 공격 기준점. 없으면 null이다.</summary>
         public Transform AttackOrigin { get; private set; }
 
-        void Awake() => RebuildVisual();
+        bool builtAtRuntime; // 직렬화하지 않으므로 복제본은 물려받지 않는다
+
+        void Awake() => EnsureVisual();
+
+        /// <summary>플레이 중 아직 외형을 만들지 않았으면 만든다. 풀이 비활성 예비 개체에 미리 불러 첫 스폰의 생성 비용을 준비 시간으로 옮긴다.</summary>
+        public void EnsureVisual()
+        {
+            if (!builtAtRuntime) RebuildVisual();
+        }
         void OnEnable() { if (health != null) health.Died += OnDied; }
         void OnDisable() { if (health != null) health.Died -= OnDied; }
 
@@ -55,6 +63,7 @@ namespace SandGuard.Enemy
                 else try { DestroyImmediate(child); } catch (System.InvalidOperationException) { /* 변형에서 지울 수 없는 상속 자식은 꺼 둔다. */ }
             }
             animator = null; weaponPivot = null; AttackOrigin = null; visualInstance = null;
+            builtAtRuntime = Application.isPlaying;
             if (visualPrefab == null) return;
             visualInstance = Instantiate(visualPrefab, visualRoot);
             visualInstance.name = "Visual (Replaceable)";

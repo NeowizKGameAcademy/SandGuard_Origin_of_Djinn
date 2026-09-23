@@ -70,6 +70,8 @@ namespace SandGuard.Enemy.Tests
             var asset = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
             Assert.NotNull(asset, "Run SandGuard/Enemy/Connect Combat Art first: " + prefabPath);
             var enemy = Track(UnityEngine.Object.Instantiate(asset, Vector3.zero, Quaternion.identity));
+            // 게임용 외형은 화면 밖이면 뼈 갱신을 끈다(CullUpdateTransforms). 이 검사는 카메라 없이 자세를 재므로 항상 갱신시킨다.
+            foreach (var bodyAnimator in enemy.GetComponentsInChildren<Animator>(true)) bodyAnimator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
             var brain = enemy.GetComponent<EnemyBrain>(); brain.AIEnabled = false;
             var motor = enemy.GetComponent<EnemyMotor>();
             var visuals = enemy.GetComponent<EnemyVisuals>();

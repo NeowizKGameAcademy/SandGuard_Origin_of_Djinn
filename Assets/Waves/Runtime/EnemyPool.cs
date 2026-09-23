@@ -30,6 +30,8 @@ namespace SandGuard.Waves
             if (!idle.TryGetValue(prefab, out var stack)) idle[prefab] = stack = new Stack<GameObject>();
             var instance = Instantiate(prefab, reserveRoot);
             instance.SetActive(false); sourceOf[instance] = prefab; stack.Push(instance); CreatedCount++;
+            // 비활성 부모 아래라 Awake가 첫 스폰까지 미뤄진다. 외형 생성은 무거우니 지금(준비 시간) 끝내 둔다.
+            instance.GetComponent<EnemyVisuals>()?.EnsureVisual();
         }
 
         public int AvailableCount(GameObject prefab)
