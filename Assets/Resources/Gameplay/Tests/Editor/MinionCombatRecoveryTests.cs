@@ -125,7 +125,8 @@ public sealed class MinionCombatRecoveryTests
             if ((bool)Call(sequence, "Tick", animator, dt)) impacts++;
         }
         Assert.That(impacts, Is.EqualTo(1));
-        Assert.That(elapsed, Is.LessThanOrEqualTo(1.2f), "Animation recovery must not delay the next attack.");
+        Assert.False(Active(sequence), "Recovery must finish before the next attack.");
+        Assert.That(elapsed, Is.InRange(2f, 3f), "The slower swing must still fit the three-second attack interval.");
     }
 
     [Test]

@@ -141,15 +141,15 @@ MonoBehaviour:
     RespawnCooldown: 5
   anubisConfig:
     SpawnPoint: {fileID: 4964246725060955287}
-    MaxHP: 4000
-    Attack: 100
-    AttackInterval: 1.2
+    MaxHP: 2000
+    Attack: 25
+    AttackInterval: 3
     MoveSpeed: 5
     RotateSpeed: 5
     RespawnCooldown: 10
     KnockBackCooldown: 5
-    DamageReduction: 0.4
-    HealPerKill: 40
+    DamageReduction: 0
+    HealPerKill: 0
     MaxKillHealingPerSecond: 200
     SplashRadius: 7
     SplashRatio: 1

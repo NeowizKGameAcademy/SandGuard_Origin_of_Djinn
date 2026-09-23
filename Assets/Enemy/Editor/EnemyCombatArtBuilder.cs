@@ -372,13 +372,13 @@ namespace SandGuard.Enemy.Editor
                 visuals.visualPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(visualPath);
                 visuals.localPosition = Vector3.zero; visuals.localEulerAngles = Vector3.zero; visuals.localScale = Vector3.one;
                 var attack = root.GetComponent<EnemyMeleeAttack>(); attack.windup = spec.Windup; attack.interval = spec.Interval;
-                if (spec.Name == "Assassin") { attack.playerDamageMultiplier = 2f; attack.minionDamageMultiplier = 2f; }
+                if (spec.Name == "Assassin") { attack.playerDamageMultiplier = 2f; attack.minionDamageMultiplier = 2f; root.GetComponent<EnemyTargetSelector>().attackTowers = false; } // 타워는 무시하고 플레이어·하수인만 노린다
                 if (spec.Name == "HammerBrute") { attack.damage = 20f; attack.towerDamageMultiplier = 2f; }
                 var health = root.GetComponent<EnemyHealth>();
                 if (spec.Name == "Assassin") health.maxHealth = 50f;
                 if (spec.Name == "HammerBrute") health.maxHealth = 80f;
                 if (spec.Name == "ShieldGuard") health.maxHealth = 90f;
-                if (spec.Name == "Chief") { health.maxHealth = 250f; attack.damage = 30f; }
+                if (spec.Name == "Chief") { health.maxHealth = 250f; attack.damage = 100f; }
                 // 캐릭터별 지정 사거리를 적용하고, 미지정 시 기본 프리팹(Swordsman)을 따른다.
                 attack.range = spec.AttackRange ?? AssetDatabase.LoadAssetAtPath<GameObject>(BasePrefab).GetComponent<EnemyMeleeAttack>().range;
                 if (spec.Priorities is (int player, int minion, int tower, int core))

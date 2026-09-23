@@ -13,16 +13,16 @@ namespace Tower
 
         [Header("Creature Status")]
         [SerializeField] private float MaxHP = 4000f;
-        [SerializeField] private float Attack = 100f;
-        [SerializeField] private float AttackInterval = 1.2f;
+        [SerializeField] private float Attack = 50f;
+        [SerializeField] private float AttackInterval = 3f;
         [SerializeField] private float MoveSpeed = 5f;
         [SerializeField] private float RotateSpeed = 5f;
         [SerializeField] private float RespawnCooldown = 10f;
         [SerializeField] private float KnockBackCooldown = 5f;
 
         [Header("Survival")]
-        [Range(0f, 1f)] [SerializeField] private float DamageReduction = 0.4f;
-        [Min(0f)] [SerializeField] private float HealPerKill = 40f;
+        [Range(0f, 1f)] [SerializeField] private float DamageReduction = 0f;
+        [Min(0f)] [SerializeField] private float HealPerKill = 0f;
         [Min(0f)] [SerializeField] private float MaxKillHealingPerSecond = 200f;
 
         [Header("Splash Damage")]

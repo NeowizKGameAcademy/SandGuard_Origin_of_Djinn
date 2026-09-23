@@ -152,7 +152,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Tower.TowerStatus
   Tower: 0
   MaxHP: 400
-  DetectRange: 20
+  DetectRange: 35
   cobraConfig:
     TickDamage: 5
     TickInterval: 0.5
@@ -177,6 +177,15 @@ MonoBehaviour:
     RotateSpeed: 5
     RespawnCooldown: 15
     KnockBackCooldown: 5
+    DamageReduction: 0
+    HealPerKill: 0
+    MaxKillHealingPerSecond: 200
+    SplashRadius: 7
+    SplashRatio: 1
+    SplashAngle: 180
+    SplashMask:
+      serializedVersion: 2
+      m_Bits: 4294967295
 --- !u!114 &5554542459475700025
 MonoBehaviour:
   m_ObjectHideFlags: 0

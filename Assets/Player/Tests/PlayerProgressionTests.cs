@@ -50,7 +50,7 @@ namespace SandGuard.Player.Tests
             progression.Changed += () => changed++;
 
             Assert.AreEqual(1, progression.Level);
-            Assert.AreEqual(10, progression.MaxLevel);
+            Assert.AreEqual(100, progression.MaxLevel);
             Assert.AreEqual(2, progression.SkillPoints, "Starting points");
             Assert.AreEqual(50, progression.ExperienceToNextLevel);
 
@@ -66,7 +66,7 @@ namespace SandGuard.Player.Tests
             CollectionAssert.AreEqual(new[] { 2, 3, 4 }, levels);
             Assert.AreEqual(1, unityEvents, "The VFX hook fires once per gain even when several levels pass.");
             Assert.AreEqual(2, changed);
-            Assert.AreEqual(2 + 2 + 2 + 2, progression.SkillPoints);
+            Assert.AreEqual(2 + 1 + 1 + 1, progression.SkillPoints);
 
             Assert.AreEqual(130f, health.MaxHealth, 1e-4f, "+10 max HP per level");
             Assert.AreEqual(100f, health.CurrentHealth, 1e-4f, "Heal ratio 0 leaves current HP alone.");
@@ -79,14 +79,14 @@ namespace SandGuard.Player.Tests
         [Test] public void MaxLevelDiscardsOverflowAndReportsZeroExperience()
         {
             var progression = Build();
-            Assert.AreEqual(2370, progression.GainExperience(100000));
-            Assert.AreEqual(10, progression.Level);
+            Assert.AreEqual(1718970, progression.GainExperience(2000000));
+            Assert.AreEqual(100, progression.Level);
             Assert.True(progression.IsMaxLevel);
             Assert.AreEqual(0, progression.ExperienceInLevel);
             Assert.AreEqual(0, progression.ExperienceToNextLevel);
-            Assert.AreEqual(29, progression.SkillPoints, "Lv.10 totals 29 points.");
+            Assert.AreEqual(101, progression.SkillPoints, "Lv.100 totals 101 points.");
             Assert.AreEqual(0, progression.GainExperience(10));
-            Assert.AreEqual(2370, progression.TotalExperience);
+            Assert.AreEqual(1718970, progression.TotalExperience);
         }
 
         [Test] public void LevelUpRestoresConfiguredRatiosOfTheNewMaximum()
