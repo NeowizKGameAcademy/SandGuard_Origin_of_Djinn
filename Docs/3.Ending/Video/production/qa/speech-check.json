@@ -1,0 +1,12 @@
+{
+  "source": "clips/05_Last_Wish.mp4",
+  "method": "faster-whisper small, Korean, int8 CPU, beam_size=5",
+  "source_segment": {
+    "start": 2.19,
+    "end": 6.19,
+    "text": "이 사막에 살아가는 모두에게 자유를 돌려줘"
+  },
+  "matches_requested_words": true,
+  "final_edit_start": 29.19,
+  "final_edit_end": 33.19
+}
