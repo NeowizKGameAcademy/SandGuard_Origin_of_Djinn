@@ -51,7 +51,7 @@ namespace SandGuard.Player.Tests
 
             Assert.AreEqual(1, progression.Level);
             Assert.AreEqual(10, progression.MaxLevel);
-            Assert.AreEqual(1, progression.SkillPoints, "Starting points");
+            Assert.AreEqual(2, progression.SkillPoints, "Starting points");
             Assert.AreEqual(50, progression.ExperienceToNextLevel);
 
             Assert.AreEqual(30, progression.GainExperience(30));
@@ -66,7 +66,7 @@ namespace SandGuard.Player.Tests
             CollectionAssert.AreEqual(new[] { 2, 3, 4 }, levels);
             Assert.AreEqual(1, unityEvents, "The VFX hook fires once per gain even when several levels pass.");
             Assert.AreEqual(2, changed);
-            Assert.AreEqual(1 + 2 + 2 + 2, progression.SkillPoints);
+            Assert.AreEqual(2 + 2 + 2 + 2, progression.SkillPoints);
 
             Assert.AreEqual(130f, health.MaxHealth, 1e-4f, "+10 max HP per level");
             Assert.AreEqual(100f, health.CurrentHealth, 1e-4f, "Heal ratio 0 leaves current HP alone.");
@@ -84,7 +84,7 @@ namespace SandGuard.Player.Tests
             Assert.True(progression.IsMaxLevel);
             Assert.AreEqual(0, progression.ExperienceInLevel);
             Assert.AreEqual(0, progression.ExperienceToNextLevel);
-            Assert.AreEqual(25, progression.SkillPoints, "Lv.10 totals 25 points.");
+            Assert.AreEqual(29, progression.SkillPoints, "Lv.10 totals 29 points.");
             Assert.AreEqual(0, progression.GainExperience(10));
             Assert.AreEqual(2370, progression.TotalExperience);
         }
@@ -116,7 +116,7 @@ namespace SandGuard.Player.Tests
             progression.ResetProgression();
             Assert.AreEqual(1, progression.Level);
             Assert.AreEqual(0, progression.TotalExperience);
-            Assert.AreEqual(1, progression.SkillPoints);
+            Assert.AreEqual(2, progression.SkillPoints);
             Assert.AreEqual(100f, health.MaxHealth, 1e-4f);
             Assert.AreEqual(0, progression.GetComponent<PlayerStats>().Count);
         }

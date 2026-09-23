@@ -41,6 +41,23 @@ namespace SandGuard.Enemy
         /// <summary>코어 도착 처리기. 연결하면 도착 시 흡수·공격 지시를 따른다.</summary>
         public ICoreInteraction CoreInteraction { get; set; }
         public EnemyBrainState State { get; private set; }
+        float stunnedUntil;
+        public bool IsStunned => Time.time < stunnedUntil;
+        public float StunRemaining => Mathf.Max(0f, stunnedUntil - Time.time);
+
+        /// <summary>공격 준비와 이동을 중단한다. 우두머리의 기절은 최대 0.5초다.</summary>
+        public void Stun(float duration)
+        {
+            if (!isActiveAndEnabled || duration <= 0f || float.IsNaN(duration) || float.IsInfinity(duration)
+                || State == EnemyBrainState.Dead || (health != null && !health.IsAlive)) return;
+            if (shieldSkill != null || bombSkill != null) duration = Mathf.Min(duration, 0.5f);
+            stunnedUntil = Mathf.Max(stunnedUntil, Time.time + duration);
+            motor?.Stop();
+            attack?.Cancel();
+            if (shieldSkill != null && shieldSkill.IsCasting) shieldSkill.Cancel();
+            bombSkill?.Cancel();
+            nextThink = 0f;
+        }
         public ICombatTarget CurrentTarget => selector != null && selector.CurrentSelection.HasTarget ? selector.CurrentSelection.Target : null;
         public event Action<EnemyBrain> ReachedObjective;
         float nextThink;
@@ -60,6 +77,7 @@ namespace SandGuard.Enemy
         }
         void OnDisable()
         {
+            stunnedUntil = 0f;
             if (health != null) health.StateChanged -= OnLifeStateChanged;
             if (selector != null && selector.ApproachFilter == leashFilter) selector.ApproachFilter = null;
         }
@@ -109,6 +127,7 @@ namespace SandGuard.Enemy
         void Update()
         {
             if (State == EnemyBrainState.Dead) return;
+            if (IsStunned) { motor?.Stop(); return; }
             if (!AIEnabled)
             {
                 if (State != EnemyBrainState.Idle) { motor?.Stop(); attack?.Cancel(); selector?.ClearTarget(); State = EnemyBrainState.Idle; }
@@ -132,6 +151,7 @@ namespace SandGuard.Enemy
         public void Think()
         {
             if (State == EnemyBrainState.Dead) return;
+            if (IsStunned) { motor?.Stop(); attack?.Cancel(); return; }
             if (shieldSkill != null && shieldSkill.isActiveAndEnabled && shieldSkill.IsCasting)
             { motor?.Stop(); return; }
             if (bombSkill != null && bombSkill.isActiveAndEnabled && bombSkill.IsCasting)
@@ -197,6 +217,7 @@ namespace SandGuard.Enemy
         /// <summary>풀 재사용: 사망 상태를 풀고 처음부터 판단한다.</summary>
         public void ResetForReuse()
         {
+            stunnedUntil = 0f;
             State = EnemyBrainState.Idle; nextThink = 0f; AIEnabled = true;
             shieldSkill?.ResetForReuse();
             bombSkill?.ResetForReuse();

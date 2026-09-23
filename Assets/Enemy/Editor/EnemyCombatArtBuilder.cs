@@ -46,6 +46,7 @@ namespace SandGuard.Enemy.Editor
             new Spec { Name = "ShieldGuard", BodyFolder = "bandit-shielder", Height = 1.84f, MoveSpeed = 2f, Windup = .5f,
                 Gear = new[] { ("ShortSword", HumanBodyBones.RightHand, .72f), ("TowerShield", HumanBodyBones.LeftHand, 1f) } },
             new Spec { Name = "HammerBrute", BodyFolder = "bandit-hammerer", Height = 1.94f, MoveTimeScale = 1f, AttackRange = 2.3f, AttackSpeed = 2.836364f, Windup = .93f, Interval = 1.9f,
+                Priorities = (3, 1, 2, 4),
                 Gear = new[] { ("Warhammer", HumanBodyBones.RightHand, 1f) } },
             new Spec { Name = "Chief", BodyFolder = "bandit-leader", Height = 2.04f, MoveSpeed = 2.2f, AttackRange = 3f, Windup = .6f, Interval = 1.6f,
                 Gear = new[] { ("ChiefScimitar", HumanBodyBones.RightHand, 1f), ("ChiefCape", HumanBodyBones.Chest, 2.04f / 1.8f) } },

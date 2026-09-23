@@ -10,6 +10,8 @@ namespace Tower
         private float health = 1f;
         private float maxHealth = 1f;
         private LifeState state = LifeState.Alive;
+        private readonly System.Collections.Generic.Queue<(float time, float amount)> killHealing = new();
+        private float recentHealing;
 
         public float CurrentHealth => health;
         public float MaxHealth => maxHealth;
@@ -48,7 +50,8 @@ namespace Tower
             if (state != LifeState.Alive) return DamageResult.Rejected(DamageStatus.NotAlive);
             if (damage.SourceFactionId == "Ally") return DamageResult.Rejected(DamageStatus.NonHostile);
             float previous = health;
-            float applied = Mathf.Min(previous, damage.Amount);
+            float reduction = Mathf.Clamp01(controller?.Config?.damageReduction ?? 0f);
+            float applied = Mathf.Min(previous, damage.Amount * (1f - reduction));
             health -= applied;
             bool killed = applied > 0f && health <= 0f;
             var result = DamageResult.Applied(applied, killed);
@@ -63,6 +66,24 @@ namespace Tower
             Died?.Invoke(new DeathInfo(entityId, "tower.anubis", "Ally", 0, damage));
             controller?.Died();
             return result;
+        }
+
+        /// <summary>아누비스가 직접 처치했을 때만 회복한다. 최근 1초의 실제 회복량에 상한을 둔다.</summary>
+        public void RewardKill()
+        {
+            var config = controller?.Config;
+            if (state != LifeState.Alive || config == null) return;
+            float now = Time.time;
+            while (killHealing.Count > 0 && now - killHealing.Peek().time >= 1f)
+                recentHealing -= killHealing.Dequeue().amount;
+            float amount = Mathf.Min(Mathf.Max(0f, config.healPerKill), maxHealth - health,
+                Mathf.Max(0f, config.maxKillHealingPerSecond - recentHealing));
+            if (amount <= 0f) return;
+            float previous = health;
+            health += amount;
+            recentHealing += amount;
+            killHealing.Enqueue((now, amount));
+            HealthChanged?.Invoke(new HealthChangedInfo(entityId, previous, health, maxHealth, maxHealth));
         }
     }
 }

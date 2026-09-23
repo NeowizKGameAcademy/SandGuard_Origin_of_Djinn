@@ -147,18 +147,24 @@ namespace Tower
 
         private void ApplyAttackImpact()
         {
+            // 충격파는 자신을 중심으로 발동하므로 준비 중 주 대상이 죽거나 이동해도 빗나가지 않는다.
+            if (attackSequence.IsSkill && skill != null)
+            {
+                skill.Cast(transform.position, transform.forward, maxAttackHeight);
+                return;
+            }
             var target = attackSequence.Target;
             if (!MinionAttackSequence.CanHit(transform, target, stopDistance, maxAttackHeight)) return;
             Vector3 direction = target.HitPosition - transform.position;
             direction.y = 0f;
-            target.DamageReceiver.TakeDamage(new DamageInfo(Config.attack, "Ally", null,
+            var result = target.DamageReceiver.TakeDamage(new DamageInfo(Config.attack, "Ally", null,
                 "tower.anubis", target.HitPosition, direction.normalized));
+            if (result.WasKilled) health?.RewardKill();
             ApplySplash(target);
-            if (attackSequence.IsSkill) skill?.Cast(transform.position, transform.forward, maxAttackHeight);
         }
 
         /// <summary>주 대상을 맞힌 지점 주위의 다른 적에게도 비율만큼 나눠 준다. 반경이 0이면 하지 않는다.</summary>
-        /// <remarks>일반 공격과 스킬 공격 모두 같은 규칙으로 번진다. 넉백은 스킬 쪽에서만 따로 한다.</remarks>
+        /// <remarks>일반 공격에만 적용한다. 스킬은 자신 중심의 충격파로 별도 판정한다.</remarks>
         private void ApplySplash(ICombatTarget primary)
         {
             float amount = Config.attack * Config.splashRatio;
@@ -197,8 +203,9 @@ namespace Tower
 
                 Vector3 outward = other.HitPosition - center;
                 outward.y = 0f;
-                other.DamageReceiver.TakeDamage(new DamageInfo(amount, "Ally", null, "tower.anubis.splash",
+                var result = other.DamageReceiver.TakeDamage(new DamageInfo(amount, "Ally", null, "tower.anubis.splash",
                     other.HitPosition, outward.sqrMagnitude > 0.001f ? outward.normalized : transform.forward));
+                if (result.WasKilled) health?.RewardKill();
             }
 
             System.Array.Clear(splashBuffer, 0, count);

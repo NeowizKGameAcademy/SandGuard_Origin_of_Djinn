@@ -28,7 +28,7 @@ namespace SandGuard.Player
         }
 
         [Min(0), Tooltip("Lv.1에서 가진 스킬 포인트")]
-        public int startingSkillPoints = 1;
+        public int startingSkillPoints = 2;
         public List<Step> steps = new List<Step>();
 
         [Header("레벨업 보상")]
@@ -47,12 +47,12 @@ namespace SandGuard.Player
         /// <summary>Lv.<paramref name="level"/>에 도달할 때 주는 스킬 포인트.</summary>
         public int SkillPointsOnReach(int level) => level >= 2 && level <= MaxLevel && steps[level - 2] != null ? Mathf.Max(0, steps[level - 2].skillPoints) : 0;
 
-        /// <summary>Lv.10, 누적 포인트 28(시작 1 + 레벨업 27), 레벨마다 최대 체력 +10·최대 마나 +5·마나탄 피해 +3%. 회복 0. 임시 수치.</summary>
+        /// <summary>Lv.10, 누적 포인트 29(시작 2 + 레벨업 27), 레벨마다 최대 체력 +10·최대 마나 +5·마나탄 피해 +3%. 회복 0. 임시 수치.</summary>
         public void ApplyDefaults()
         {
             int[] experience = { 50, 80, 120, 170, 230, 300, 380, 470, 570 };
             int[] points = { 2, 2, 2, 3, 3, 3, 4, 4, 4 };
-            startingSkillPoints = 1;
+            startingSkillPoints = 2;
             steps = new List<Step>();
             for (int i = 0; i < experience.Length; i++) steps.Add(new Step { experience = experience[i], skillPoints = points[i] });
             healRatioOnLevelUp = 0f;

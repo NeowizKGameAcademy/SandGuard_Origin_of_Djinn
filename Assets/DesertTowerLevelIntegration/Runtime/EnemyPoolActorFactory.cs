@@ -14,7 +14,7 @@ namespace DesertTower.LevelIntegration
         [Tooltip("비우면 씬에서 찾고, 없으면 만든다")]
         public EnemyPool pool;
         [Min(1), Tooltip("사망 연출 중인 개체를 포함한 동시 활성 상한. 넘으면 스폰을 다음 프레임으로 미룬다")]
-        public int maxActive = 120;
+        public int maxActive = 250;
         [Tooltip("웨이브 시작 전에 미리 만들어 둘 개체 수. 0이면 미리 만들지 않는다")]
         [Min(0)] public int prewarmPerPrefab;
 

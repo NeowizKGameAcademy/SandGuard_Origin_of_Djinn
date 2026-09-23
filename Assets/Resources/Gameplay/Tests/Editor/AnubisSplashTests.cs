@@ -5,23 +5,32 @@ using NUnit.Framework;
 using UnityEngine;
 
 /// <summary>스플래시가 맞혔는지 기록하는 대역. 조준점은 발 위 0.5m라 높이 규칙에 걸리지 않는다.</summary>
-public sealed class AnubisSplashTarget : MonoBehaviour, ICombatTarget, IDamageable
+public sealed class AnubisSplashTarget : MonoBehaviour, ICombatTarget, IDamageable, IDisplaceable
 {
     public Guid EntityId { get; } = Guid.NewGuid();
     public string Faction = "Enemy";
     string ICombatTarget.FactionId => Faction;
     public CombatTargetKind Kind => CombatTargetKind.Enemy;
     public Vector3 HitPosition => transform.position + Vector3.up * 0.5f;
-    public bool IsTargetable => isActiveAndEnabled;
+    public float Health = float.PositiveInfinity;
+    public bool IsTargetable => isActiveAndEnabled && Health > 0f;
     public IDamageable DamageReceiver => this;
     public ILifeState LifeState => null;
     public float Taken;
     public int Hits;
+    public int Knockbacks;
+    public int Launches;
+    public void Displace(Vector3 delta) { }
+    public void Knockback(Vector3 velocity) => Knockbacks++;
+    public bool Launch(Vector3 velocity) { Launches++; return true; }
     public DamageResult TakeDamage(DamageInfo damage)
     {
+        if (!IsTargetable) return DamageResult.Rejected(DamageStatus.NotAlive);
         Taken += damage.Amount;
         Hits++;
-        return DamageResult.Applied(damage.Amount);
+        float applied = Mathf.Min(Health, damage.Amount);
+        Health -= applied;
+        return DamageResult.Applied(applied, Health <= 0f);
     }
 }
 
@@ -171,5 +180,128 @@ public sealed class AnubisSplashTests
 
         Assert.AreEqual(1, neighbour.Hits, "충돌체가 여러 개여도 한 대상은 한 번이다.");
         Assert.AreEqual(Attack * Ratio, neighbour.Taken, 0.001f);
+    }
+
+    private Component AddHealth()
+    {
+        var value = anubis.gameObject.AddComponent(Runtime("AnubisHealth"));
+        SetPrivate(value, "controller", controller);
+        PrivateCall(value, "Awake");
+        SetPrivate(controller, "health", value);
+        return value;
+    }
+
+    private void Shockwave(AnubisSplashTarget primary)
+    {
+        var skill = anubis.GetComponent(Runtime("AnubisSkill")) ?? anubis.gameObject.AddComponent(Runtime("AnubisSkill"));
+        SetPrivate(controller, "skill", skill);
+        var sequence = GetPrivate(controller, "attackSequence");
+        sequence.GetType().GetMethod("Begin").Invoke(sequence,
+            new object[] { primary, "Standing Melee Attack Backhand", 0.45f, true });
+        Physics.SyncTransforms();
+        PrivateCall(controller, "ApplyAttackImpact");
+    }
+
+    [Test]
+    public void ShockwaveReplacesNormalHitAndHitsAllDirectionsOnceWithoutLaunching()
+    {
+        var primary = Enemy("primary", Vector3.forward);
+        var behind = Enemy("behind", -Vector3.forward * 5f);
+        behind.gameObject.AddComponent<SphereCollider>();
+        var ally = Enemy("ally", Vector3.right, "Ally");
+        var upstairs = Enemy("upstairs", Vector3.up * 3f);
+        var outside = Enemy("outside", Vector3.forward * 12f);
+        Shockwave(primary);
+        Assert.That(primary.Taken, Is.EqualTo(150f));
+        Assert.That(primary.Hits, Is.EqualTo(1));
+        Assert.That(behind.Taken, Is.EqualTo(150f));
+        Assert.That(behind.Hits, Is.EqualTo(1));
+        Assert.That(behind.Knockbacks, Is.EqualTo(1));
+        Assert.That(behind.Launches, Is.Zero);
+        Assert.That(ally.Hits + upstairs.Hits + outside.Hits, Is.Zero);
+    }
+
+    [Test]
+    public void ShockwaveStillFiresAfterPrimaryLeavesMeleeRange()
+    {
+        var primary = Enemy("escaped", Vector3.forward * 20f);
+        var nearby = Enemy("nearby", -Vector3.forward * 3f);
+        Shockwave(primary);
+        Assert.That(primary.Hits, Is.Zero);
+        Assert.That(nearby.Taken, Is.EqualTo(150f));
+    }
+
+    [Test]
+    public void HundredKillsDoNotTruncateShockwaveOrExceedHealingBudget()
+    {
+        var health = AddHealth();
+        var receiver = (IDamageable)health;
+        receiver.TakeDamage(new DamageInfo(1000f, "Enemy"));
+        Assert.That(((IHealth)health).CurrentHealth, Is.EqualTo(3400f).Within(0.01f));
+        var targets = new List<AnubisSplashTarget>();
+        for (int i = 0; i < 100; i++)
+        {
+            var enemy = Enemy("enemy " + i, Quaternion.Euler(0f, i * 3.6f, 0f) * Vector3.forward * 4f);
+            enemy.Health = 100f;
+            targets.Add(enemy);
+        }
+        Shockwave(targets[0]);
+        foreach (var target in targets) Assert.That(target.Health, Is.Zero);
+        Assert.That(((IHealth)health).CurrentHealth, Is.EqualTo(3600f).Within(0.01f));
+        var history = (Queue<(float time, float amount)>)GetPrivate(health, "killHealing");
+        int entries = history.Count;
+        for (int i = 0; i < entries; i++)
+        {
+            var entry = history.Dequeue();
+            history.Enqueue((Time.time - 1.1f, entry.amount));
+        }
+        health.GetType().GetMethod("RewardKill").Invoke(health, null);
+        Assert.That(((IHealth)health).CurrentHealth, Is.EqualTo(3640f).Within(0.01f));
+    }
+
+    [Test]
+    public void NormalAndSplashKillsHealButCannotOverhealOrRevive()
+    {
+        var health = AddHealth();
+        ((IDamageable)health).TakeDamage(new DamageInfo(100f, "Enemy"));
+        var primary = Enemy("primary", Vector3.forward); primary.Health = 1f;
+        var neighbour = Enemy("neighbour", Vector3.forward * 2f); neighbour.Health = 1f;
+        Strike(primary);
+        Assert.That(((IHealth)health).CurrentHealth, Is.EqualTo(4000f));
+        SetPrivate(health, "controller", null); // 사망 연출 코루틴 없이 체력의 사망/회복 규칙만 검사한다.
+        ((IDamageable)health).TakeDamage(new DamageInfo(10000f, "Enemy"));
+        health.GetType().GetMethod("RewardKill").Invoke(health, null);
+        Assert.That(((IHealth)health).CurrentHealth, Is.Zero);
+    }
+
+    [Test]
+    public void ShockwaveStunsSurvivorsAndPoolResetClearsIt()
+    {
+        var enemy = Enemy("survivor", Vector3.forward * 3f);
+        var brainType = Type.GetType("SandGuard.Enemy.EnemyBrain, SandGuard.Enemy.Runtime", true);
+        var brain = enemy.gameObject.AddComponent(brainType);
+        Shockwave(enemy);
+        Assert.That((float)brainType.GetProperty("StunRemaining").GetValue(brain), Is.EqualTo(1.5f).Within(0.01f));
+        brainType.GetMethod("Stun").Invoke(brain, new object[] { 0.1f });
+        Assert.That((float)brainType.GetProperty("StunRemaining").GetValue(brain), Is.GreaterThan(1f));
+        SetPrivate(brain, "stunnedUntil", Time.time - 0.1f);
+        Assert.That((bool)brainType.GetProperty("IsStunned").GetValue(brain), Is.False);
+        brainType.GetMethod("Stun").Invoke(brain, new object[] { 1.5f });
+        brainType.GetMethod("ResetForReuse").Invoke(brain, null);
+        Assert.That((bool)brainType.GetProperty("IsStunned").GetValue(brain), Is.False);
+    }
+
+    [Test]
+    public void ChiefStunIsLimitedToHalfASecond()
+    {
+        var enemy = Enemy("chief", Vector3.forward);
+        var brainType = Type.GetType("SandGuard.Enemy.EnemyBrain, SandGuard.Enemy.Runtime", true);
+        var brain = enemy.gameObject.AddComponent(brainType);
+        var holder = Track("inactive chief skill", Vector3.zero);
+        holder.SetActive(false);
+        var skillType = Type.GetType("SandGuard.Enemy.ChiefBombThrowSkill, SandGuard.Enemy.Runtime", true);
+        SetPrivate(brain, "bombSkill", holder.AddComponent(skillType));
+        brainType.GetMethod("Stun").Invoke(brain, new object[] { 1.5f });
+        Assert.That((float)brainType.GetProperty("StunRemaining").GetValue(brain), Is.EqualTo(0.5f).Within(0.01f));
     }
 }
